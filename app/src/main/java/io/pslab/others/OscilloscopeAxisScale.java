@@ -96,7 +96,8 @@ public class OscilloscopeAxisScale {
      */
     public void setLeftYAxisScale(double upperLimit, double lowerLimit) {
         if (upperLimit < lowerLimit) {
-            throw new IllegalArgumentException("Upper limit must be larger than lowe limit.");
+            throw new IllegalArgumentException(String.format("Upper limit (%f) must be larger than lower limit (%f).",
+                    upperLimit, lowerLimit));
         }
 
         this.leftYAxisScaleUpper = upperLimit;
@@ -142,7 +143,8 @@ public class OscilloscopeAxisScale {
      */
     public void setRightYAxisScale(double upperLimit, double lowerLimit) {
         if (upperLimit < lowerLimit) {
-            throw new IllegalArgumentException("Upper limit must be larger than lowe limit.");
+            throw new IllegalArgumentException(String.format("Upper limit (%f) must be larger than lower limit (%f).",
+                    upperLimit, lowerLimit));
         }
 
         this.rightYAxisScaleUpper = upperLimit;
