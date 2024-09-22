@@ -2,16 +2,13 @@ package io.pslab.fragment;
 
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -24,17 +21,17 @@ import org.apache.commons.lang3.math.NumberUtils;
 import io.pslab.R;
 import io.pslab.activity.OscilloscopeActivity;
 import io.pslab.others.FloatSeekBar;
+import io.pslab.others.OscilloscopeAxisScale;
 
 public class TimebaseTriggerFragment extends Fragment {
 
     private Spinner spinnerTriggerChannelSelect;
     private Spinner spinnerTriggerModeSelect;
-    private FloatSeekBar seekBarTimebase;
     private FloatSeekBar seekBarTrigger;
     private TextView textViewTimeBase;
     private EditText editTextTrigger;
-    private CheckBox checkBoxTrigger;
-    boolean _ignore = false;
+    private OscilloscopeAxisScale axisScale;
+    private boolean ignore = false;
 
 
     public static TimebaseTriggerFragment newInstance() {
@@ -48,14 +45,16 @@ public class TimebaseTriggerFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_timebase_tigger, container, false);
 
         //seekBarTimebase = (SeekBar) v.findViewById(R.id.seekBar_timebase_tt);
-        seekBarTimebase = v.findViewById(R.id.seekBar_timebase_tt);
+        FloatSeekBar seekBarTimebase = v.findViewById(R.id.seekBar_timebase_tt);
         seekBarTrigger = v.findViewById(R.id.seekBar_trigger);
         textViewTimeBase = v.findViewById(R.id.tv_timebase_values_tt);
         editTextTrigger = v.findViewById(R.id.tv_trigger_values_tt);
         spinnerTriggerChannelSelect = v.findViewById(R.id.spinner_trigger_channel_tt);
         spinnerTriggerModeSelect = v.findViewById(R.id.spinner_trigger_mode_tt);
-        checkBoxTrigger = v.findViewById(R.id.checkbox_trigger_tt);
+        CheckBox checkBoxTrigger = v.findViewById(R.id.checkbox_trigger_tt);
         seekBarTimebase.setSaveEnabled(false);
+
+        axisScale = ((OscilloscopeActivity) this.getActivity()).getAxisScale();
 
         boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
 
@@ -73,56 +72,49 @@ public class TimebaseTriggerFragment extends Fragment {
                     switch (progress) {
                         case 0:
                             textViewTimeBase.setText(getString(R.string.timebase_microsec, 875f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 0.875;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(0.875);
+                            axisScale.setXAxisScale(0.875);
                             ((OscilloscopeActivity) getActivity()).timebase = 875;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 1:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 1f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 1;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(1);
+                            axisScale.setXAxisScale(1);
                             ((OscilloscopeActivity) getActivity()).timebase = 1000;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 2:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 2f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 2;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(2);
+                            axisScale.setXAxisScale(2);
                             ((OscilloscopeActivity) getActivity()).timebase = 2000;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 3:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 4f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 4;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(4);
+                            axisScale.setXAxisScale(4);
                             ((OscilloscopeActivity) getActivity()).timebase = 4000;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 4:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 8f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 8;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(8);
+                            axisScale.setXAxisScale(8);
                             ((OscilloscopeActivity) getActivity()).timebase = 8000;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 5:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 25.60));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 25.60;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(25.60);
+                            axisScale.setXAxisScale(25.60);
                             ((OscilloscopeActivity) getActivity()).timebase = 25600;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 6:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 38.40));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 38.40;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(38.40);
+                            axisScale.setXAxisScale(38.40);
                             ((OscilloscopeActivity) getActivity()).timebase = 38400;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
@@ -152,72 +144,63 @@ public class TimebaseTriggerFragment extends Fragment {
                     switch (progress) {
                         case 0:
                             textViewTimeBase.setText(getString(R.string.timebase_microsec, 875f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 0.875;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(0.875);
+                            axisScale.setXAxisScale(0.875);
                             ((OscilloscopeActivity) getActivity()).timebase = 875;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 1:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 1f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 1;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(1);
+                            axisScale.setXAxisScale(1);
                             ((OscilloscopeActivity) getActivity()).timebase = 1000;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 2:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 2f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 2;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(2);
+                            axisScale.setXAxisScale(2);
                             ((OscilloscopeActivity) getActivity()).timebase = 2000;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 3:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 4f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 4;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(4);
+                            axisScale.setXAxisScale(4);
                             ((OscilloscopeActivity) getActivity()).timebase = 4000;
                             ((OscilloscopeActivity) getActivity()).samples = 512;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 4:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 8f));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 8;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(8);
+                            axisScale.setXAxisScale(8);
                             ((OscilloscopeActivity) getActivity()).timebase = 8000;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 5:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 25.60));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 25.60;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(25.60);
+                            axisScale.setXAxisScale(25.60);
                             ((OscilloscopeActivity) getActivity()).timebase = 25600;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 6:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 38.40));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 38.40;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(38.40);
+                            axisScale.setXAxisScale(38.40);
                             ((OscilloscopeActivity) getActivity()).timebase = 38400;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 7:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 51.20));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 51.20;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(51.20);
+                            axisScale.setXAxisScale(51.20);
                             ((OscilloscopeActivity) getActivity()).timebase = 51200;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
                             break;
                         case 8:
                             textViewTimeBase.setText(getString(R.string.timebase_milisec, 102.40));
-                            ((OscilloscopeActivity) getActivity()).xAxisScale = 102.40;
-                            ((OscilloscopeActivity) getActivity()).setXAxisScale(102.40);
+                            axisScale.setXAxisScale(102.40);
                             ((OscilloscopeActivity) getActivity()).timebase = 102400;
                             ((OscilloscopeActivity) getActivity()).samples = 1024;
                             ((OscilloscopeActivity) getActivity()).timeGap = (2 * ((OscilloscopeActivity) getActivity()).timebase) / ((OscilloscopeActivity) getActivity()).samples;
@@ -239,11 +222,11 @@ public class TimebaseTriggerFragment extends Fragment {
             });
             seekBarTimebase.setProgress(0);
         }
-        seekBarTrigger.setters(-1 * ((OscilloscopeActivity) getActivity()).yAxisScale, ((OscilloscopeActivity) getActivity()).yAxisScale);
+        seekBarTrigger.setters(-1 * axisScale.getLeftYAxisScaleUpper(), axisScale.getLeftYAxisScaleUpper());
         seekBarTrigger.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (!_ignore) {
+                if (!ignore) {
                     editTextTrigger.setText(String.format("%s V", seekBarTrigger.getValue()));
                     ((OscilloscopeActivity) getActivity()).trigger = seekBarTrigger.getValue();
                 }
@@ -322,53 +305,42 @@ public class TimebaseTriggerFragment extends Fragment {
             }
         });
 
-        editTextTrigger.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                editTextTrigger.setCursorVisible(true);
-                return false;
-            }
+        editTextTrigger.setOnTouchListener((v1, event) -> {
+            editTextTrigger.setCursorVisible(true);
+            return false;
         });
 
-        editTextTrigger.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_DONE) {
-                    String voltageValue = editTextTrigger.getText().toString().replace("V", "");
-                    voltageValue = voltageValue.replace(" ", "");
-                    if (NumberUtils.isCreatable(voltageValue)) {
-                        _ignore = true;
-                        if (Double.parseDouble(voltageValue) > ((OscilloscopeActivity) getActivity()).yAxisScale) {
-                            editTextTrigger.setText(String.format("%s V", ((OscilloscopeActivity) getActivity()).yAxisScale));
-                            seekBarTrigger.setValue(((OscilloscopeActivity) getActivity()).yAxisScale);
-                            ((OscilloscopeActivity) getActivity()).trigger = seekBarTrigger.getValue();
-                            _ignore = false;
-                        } else if (Double.parseDouble(voltageValue) < -((OscilloscopeActivity) getActivity()).yAxisScale) {
-                            editTextTrigger.setText(String.format("%s V", -((OscilloscopeActivity) getActivity()).yAxisScale));
-                            seekBarTrigger.setValue(-((OscilloscopeActivity) getActivity()).yAxisScale);
-                            ((OscilloscopeActivity) getActivity()).trigger = seekBarTrigger.getValue();
-                            _ignore = false;
-                        } else {
-                            seekBarTrigger.setValue(Double.parseDouble(voltageValue));
-                            editTextTrigger.setText(String.format("%s V", Double.parseDouble(voltageValue)));
-                            ((OscilloscopeActivity) getActivity()).trigger = seekBarTrigger.getValue();
-                            _ignore = false;
-                        }
+        editTextTrigger.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_DONE) {
+                String voltageValue = editTextTrigger.getText().toString().replace("V", "");
+                voltageValue = voltageValue.replace(" ", "");
+                if (NumberUtils.isCreatable(voltageValue)) {
+                    ignore = true;
+                    if (Double.parseDouble(voltageValue) > axisScale.getLeftYAxisScaleUpper()) {
+                        editTextTrigger.setText(String.format("%s V", axisScale.getLeftYAxisScaleUpper()));
+                        seekBarTrigger.setValue(axisScale.getLeftYAxisScaleUpper());
+                        ((OscilloscopeActivity) getActivity()).trigger = seekBarTrigger.getValue();
+                        ignore = false;
+                    } else if (Double.parseDouble(voltageValue) < -axisScale.getLeftYAxisScaleUpper()) {
+                        editTextTrigger.setText(String.format("%s V", -axisScale.getLeftYAxisScaleUpper()));
+                        seekBarTrigger.setValue(-axisScale.getLeftYAxisScaleUpper());
+                        ((OscilloscopeActivity) getActivity()).trigger = seekBarTrigger.getValue();
+                        ignore = false;
                     } else {
-                        seekBarTrigger.setProgress(50);
+                        seekBarTrigger.setValue(Double.parseDouble(voltageValue));
+                        editTextTrigger.setText(String.format("%s V", Double.parseDouble(voltageValue)));
+                        ((OscilloscopeActivity) getActivity()).trigger = seekBarTrigger.getValue();
+                        ignore = false;
                     }
+                } else {
+                    seekBarTrigger.setProgress(50);
                 }
-                editTextTrigger.setCursorVisible(false);
-                return false;
             }
+            editTextTrigger.setCursorVisible(false);
+            return false;
         });
 
-        checkBoxTrigger.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ((OscilloscopeActivity) getActivity()).isTriggerSelected = isChecked;
-            }
-        });
+        checkBoxTrigger.setOnCheckedChangeListener((buttonView, isChecked) -> ((OscilloscopeActivity) getActivity()).isTriggerSelected = isChecked);
 
         return v;
     }
