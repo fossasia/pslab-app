@@ -635,11 +635,7 @@ public class OscilloscopeActivity extends GuideActivity implements View.OnClickL
     public void setFourierTransformSelected(boolean isSelected) {
         isFourierTransformSelected = isSelected;
 
-        if (isFourierTransformSelected) {
-            axisScale.setXAxisScale(maxFreq);
-            axisScale.setLeftYAxisScale(maxAmp, 0);
-            axisScale.setRightYAxisScale(maxAmp, 0);
-        } else {
+        if (!isFourierTransformSelected) {
             axisScale.setXAxisScale(OscilloscopeAxisScale.DEFAULT_X_AXIS_SCALE);
             axisScale.setLeftYAxisScale(OscilloscopeAxisScale.DEFAULT_Y_AXIS_SCALE);
             axisScale.setRightYAxisScale(OscilloscopeAxisScale.DEFAULT_Y_AXIS_SCALE);
@@ -1179,6 +1175,11 @@ public class OscilloscopeActivity extends GuideActivity implements View.OnClickL
                 dataSets.add(dataSet);
             }
             LineData data = new LineData(dataSets);
+            if (isFourierTransformSelected) {
+                axisScale.setXAxisScale(maxFreq);
+                axisScale.setLeftYAxisScale(maxAmp, 0);
+                axisScale.setRightYAxisScale(maxAmp, 0);
+            }
             if (isMeasurementsChecked) {
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(OscilloscopeActivity.this);
                 measurementsList.setItemAnimator(new DefaultItemAnimator());
