@@ -1244,7 +1244,6 @@ public class OscilloscopeActivity extends GuideActivity implements View.OnClickL
             timeGap = (2 * xAxisScale * 1000.0) / samples;
 
             axisScale.setXAxisScale(xAxisScale);
-            // TODO: Anashuman, is this correct?
             axisScale.setLeftYAxisScale(yAxisScale);
             axisScale.setRightYAxisScale(yAxisScale);
         } else {

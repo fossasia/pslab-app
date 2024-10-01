@@ -179,7 +179,6 @@ public class DataAnalysisFragment extends Fragment {
         seekBarHorizontalOffset.setProgress(100);
         seekBarHorizontalOffset.setProgress(0);
 
-        // TODO: Anashuman, is this correct?
         seekBarVerticalOffset.setters(-1 * axisScale.getLeftYAxisScaleUpper(), axisScale.getLeftYAxisScaleUpper());
         seekBarVerticalOffset.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

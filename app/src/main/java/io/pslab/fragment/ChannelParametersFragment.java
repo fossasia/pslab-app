@@ -28,7 +28,7 @@ public class ChannelParametersFragment extends Fragment {
 
     private static final int RECORD_AUDIO_REQUEST_CODE = 1;
 
-    private static final double[] VOLTAGE_VALUES = {16, 8, 4, 3, 2, 1.5, 1, 500, 160};
+    private static final double[] VOLTAGE_VALUES = {16, 8, 4, 3, 2, 1.5, 1, 0.5, 160};
 
     private Spinner spinnerRangeCh1;
     private Spinner spinnerRangeCh2;
