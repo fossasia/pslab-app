@@ -77,7 +77,7 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.devlight:navigationtabstrip:1.0.4")
     implementation("com.afollestad.material-dialogs", "commons", "0.9.6.0")
-    implementation("com.github.mik3y:usb-serial-for-android:v3.8.0")
+    implementation("com.github.mik3y:usb-serial-for-android:3.8.1")
     implementation("com.github.medyo:android-about-page:1.3")
     implementation("com.github.tiagohm.MarkdownView:library:0.19.0")
     implementation("com.github.mirrajabi:search-dialog:1.2.4")
