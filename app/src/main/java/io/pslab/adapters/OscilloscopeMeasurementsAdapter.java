@@ -37,7 +37,7 @@ public class OscilloscopeMeasurementsAdapter extends RecyclerView.Adapter<Oscill
             double period = OscilloscopeMeasurements.channel.get(channel).get(ChannelMeasurements.PERIOD);
             double positivePeak = OscilloscopeMeasurements.channel.get(channel).get(ChannelMeasurements.POSITIVE_PEAK);
             double negativePeak = OscilloscopeMeasurements.channel.get(channel).get(ChannelMeasurements.NEGATIVE_PEAK);
-            DecimalFormat df = new DecimalFormat("#.##");
+            DecimalFormat df = new DecimalFormat("0.00");
             df.setRoundingMode(RoundingMode.CEILING);
             if (frequency >= 1000) {
                 frequency /= 1000;
