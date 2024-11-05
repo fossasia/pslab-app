@@ -1126,23 +1126,34 @@ public class OscilloscopeActivity extends GuideActivity implements View.OnClickL
             if (!isFourierTransformSelected) {
                 for (int i = 0; i < Math.min(entries.size(), paramsChannels.length); i++) {
                     CHANNEL channel = CHANNEL.valueOf(paramsChannels[i]);
-                    double minY = Double.MAX_VALUE;
-                    double maxY = -1 * Double.MIN_VALUE;
+                    double minY;
+                    double maxY;
                     double yRange;
                     double[] voltage = new double[512];
                     ArrayList<Entry> entryArrayList = dataEntries.get(i);
-                    for (int j = 0; j < entryArrayList.size(); j++) {
-                        Entry entry = entryArrayList.get(j);
-                        if (j < voltage.length - 1) {
-                            voltage[j] = entry.getY();
-                        }
-                        if (entry.getY() > maxY) {
-                            maxY = entry.getY();
-                        }
-                        if (entry.getY() < minY) {
-                            minY = entry.getY();
+
+                    if (entryArrayList.isEmpty()) {
+                        minY = 0;
+                        maxY = 0;
+                    } else {
+                        minY = Double.MAX_VALUE;
+                        maxY = -1 * Double.MAX_VALUE;
+
+                        for (int j = 0; j < entryArrayList.size(); j++) {
+                            Entry entry = entryArrayList.get(j);
+                            float y = entry.getY();
+                            if (j < voltage.length - 1) {
+                                voltage[j] = y;
+                            }
+                            if (y > maxY) {
+                                maxY = y;
+                            }
+                            if (y < minY) {
+                                minY = y;
+                            }
                         }
                     }
+
                     final double frequency;
                     if (Objects.equals(dataParamsChannels[i], CHANNEL.MIC.toString())) {
                         frequency = analyticsClass.findFrequency(voltage, ((double) 1 / SAMPLING_RATE));
