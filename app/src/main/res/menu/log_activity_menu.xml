@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/delete_all"
-        android:title="@string/delete_all" />
-    <item
-        android:title="@string/import_log_action"
-        android:id="@+id/action_import_log" />
-</menu>
