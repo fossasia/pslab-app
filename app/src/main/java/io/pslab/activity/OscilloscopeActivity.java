@@ -432,6 +432,8 @@ public class OscilloscopeActivity extends GuideActivity implements View.OnClickL
         playMenu = menu.findItem(R.id.play_data);
         menu.findItem(R.id.record_pause_data).setVisible(!isPlayingback);
         menu.findItem(R.id.play_data).setVisible(isPlayingback);
+        menu.findItem(R.id.measurements).setChecked(isMeasurementsChecked);
+        menu.findItem(R.id.run_stop).setTitle(isRunning ? R.string.control_stop : R.string.control_run);
         return super.onPrepareOptionsMenu(menu);
     }
 
