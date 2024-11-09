@@ -1,0 +1,27 @@
+name-template: 'PSLab Version $RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: ':rocket: Features and Enhancements'
+    labels:
+      - 'feat'
+      - 'Feature'
+      - 'Enhancement'
+  - title: ':bug: Bug Fixes'
+    label: 'Fix'
+  - title: ':wrench: Maintenance'
+    labels:
+      - 'Chore'
+  - title: ':page_facing_up: Documentation'
+    label: 'Documentation'
+change-template: '- $TITLE (#$NUMBER) - @$AUTHOR'
+exclude-contributors:
+  - 'dependabot'
+  - 'dependabot[bot]'
+exclude-labels:
+  - 'Dependencies'
+  - 'Chore'
+template: |-
+  ## Changes
+  $CHANGES
+  
+  This release was made possible thanks to $CONTRIBUTORS

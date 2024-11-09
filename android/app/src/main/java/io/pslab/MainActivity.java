@@ -1,4 +1,4 @@
-package io.pslab.activity;
+package io.pslab;
 
 import io.flutter.embedding.android.FlutterActivity;
 
