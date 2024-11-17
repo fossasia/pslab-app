@@ -10,3 +10,12 @@ updates:
     directory: "/android/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "github-actions"
+    directories:
+      - "/.github/workflows"
+      - "/.github/actions/android"
+      - "/.github/actions/common"
+      - "/.github/actions/ios"
+      - "/.github/actions/screenshot-android"
+    schedule:
+      interval: "daily"
