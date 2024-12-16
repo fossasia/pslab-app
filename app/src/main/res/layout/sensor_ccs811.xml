@@ -72,7 +72,7 @@
 
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:gravity="center_vertical"
                             android:text="@string/eCO2"
                             android:textColor="@color/black"
@@ -81,7 +81,7 @@
 
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:gravity="center_vertical"
                             android:text="@string/eTVOC"
                             android:textColor="@color/black"
@@ -99,8 +99,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_ccs811_eCO2"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -109,8 +109,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_ccs811_TVOC"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"

@@ -71,7 +71,7 @@
 
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:gravity="center_vertical"
                             android:text="@string/temperature"
                             android:textColor="@color/black"
@@ -80,7 +80,7 @@
 
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:gravity="center_vertical"
                             android:text="@string/altitude"
                             android:textColor="@color/black"
@@ -89,7 +89,7 @@
 
                         <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="30dp"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:gravity="center_vertical"
                             android:text="@string/pressure"
                             android:textColor="@color/black"
@@ -106,8 +106,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_bmp180_temp"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -116,8 +116,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_bmp180_altitude"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -126,8 +126,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_bmp180_pressure"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"

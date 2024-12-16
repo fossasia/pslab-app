@@ -28,24 +28,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/sensor_control_dock_layout"
+        android:layout_below="@id/app_bar"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_below="@id/app_bar">
+        android:layout_alignParentTop="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/margin_50dp">
+            android:layout_marginTop="@dimen/margin_50dp"
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:layout_marginEnd="@dimen/card_margin"
-                android:layout_marginLeft="@dimen/card_margin"
-                android:layout_marginRight="@dimen/card_margin"
                 android:layout_marginStart="@dimen/card_margin"
-                android:layout_marginTop="20dp">
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -106,8 +106,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_tsl2561_full"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -116,8 +116,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_tsl2561_infrared"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -126,8 +126,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_tsl2561_visible"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -148,11 +148,11 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginEnd="@dimen/card_margin"
-                android:layout_marginLeft="@dimen/card_margin"
-                android:layout_marginRight="@dimen/card_margin"
                 android:layout_marginStart="@dimen/card_margin"
-                android:layout_marginTop="20dp">
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -271,11 +271,11 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
-                android:layout_marginEnd="@dimen/card_margin"
-                android:layout_marginLeft="@dimen/card_margin"
-                android:layout_marginRight="@dimen/card_margin"
                 android:layout_marginStart="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin"
                 android:layout_marginBottom="@dimen/card_margin_bottom">
 
                 <TextView
@@ -306,8 +306,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
-                            android:layout_marginBottom="5dp"
                             android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
                             android:gravity="center_vertical"
                             android:text="@string/set_gain"
                             android:textColor="@color/black"
@@ -317,8 +317,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
-                            android:layout_marginBottom="5dp"
                             android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
                             android:gravity="center_vertical"
                             android:text="@string/set_timing"
                             android:textColor="@color/black"
@@ -338,15 +338,15 @@
                             android:id="@+id/spinner_sensor_tsl2561_gain"
                             android:layout_width="160dp"
                             android:layout_height="40dp"
-                            android:layout_marginBottom="5dp"
                             android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
                             android:entries="@array/tsl2561_gain_spinner" />
 
                         <LinearLayout
                             android:layout_width="160dp"
                             android:layout_height="40dp"
-                            android:layout_marginBottom="5dp"
                             android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
                             android:orientation="horizontal">
 
                             <EditText
@@ -382,8 +382,8 @@
         android:id="@+id/sensor_control_dock_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sensor_control_doc_height"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/margin_5dp"
         android:background="@drawable/la_custom_border"
         android:gravity="top">
@@ -395,8 +395,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:background="@null"
-            app:srcCompat="@drawable/circle_play_button"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/circle_play_button" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editBox_samples_sensors"
@@ -404,8 +404,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="@dimen/control_margin_small"
-            android:layout_toEndOf="@+id/imageButton_play_pause_sensor"
             android:layout_toStartOf="@+id/tv_timegap_label"
+            android:layout_toEndOf="@+id/imageButton_play_pause_sensor"
             android:hint="@string/no_of_samples"
             android:inputType="numberSigned|numberDecimal"
             android:maxLines="1"
@@ -423,26 +423,26 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageButton_play_pause_sensor"
             android:layout_alignStart="@+id/editBox_samples_sensors"
+            android:layout_alignBottom="@+id/imageButton_play_pause_sensor"
             android:text="@string/timegap" />
 
         <SeekBar
             android:id="@+id/seekBar_timegap_sensor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/textView4"
             android:layout_alignTop="@+id/textView4"
-            android:layout_toEndOf="@+id/textView4"
-            android:layout_toStartOf="@+id/tv_timegap_label" />
+            android:layout_alignBottom="@+id/textView4"
+            android:layout_toStartOf="@+id/tv_timegap_label"
+            android:layout_toEndOf="@+id/textView4" />
 
         <TextView
             android:id="@+id/tv_timegap_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/checkBox_samples_sensor"
             android:layout_alignBottom="@+id/seekBar_timegap_sensor"
             android:layout_alignParentEnd="true"
-            android:layout_alignStart="@+id/checkBox_samples_sensor"
             android:text="@string/hundred_ms"
             android:textSize="@dimen/textsize_edittext" />
 
