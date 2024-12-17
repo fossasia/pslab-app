@@ -4,15 +4,14 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +29,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class ESPFragment extends DialogFragment {
+    private static final String TAG = ESPFragment.class.getSimpleName();
+
     private String espIPAddress = "";
     private ProgressBar espConnectProgressBar;
     private Button espConnectBtn;
@@ -46,31 +47,24 @@ public class ESPFragment extends DialogFragment {
         EditText espIPEditText = rootView.findViewById(R.id.esp_ip_edit_text);
         espConnectBtn = rootView.findViewById(R.id.esp_connect_btn);
         espConnectProgressBar = rootView.findViewById(R.id.esp_connect_progressbar);
-        espConnectBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                espIPAddress = espIPEditText.getText().toString();
-                espConnectBtn.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                Activity activity;
-                if (espIPAddress.isEmpty() && ((activity = getActivity()) != null)) {
-                    CustomSnackBar.showSnackBar(activity.findViewById(android.R.id.content),
-                            getString(R.string.incorrect_IP_address_message), null, null, Snackbar.LENGTH_SHORT);
+        espConnectBtn.setOnClickListener(v -> {
+            espIPAddress = espIPEditText.getText().toString();
+            espConnectBtn.onEditorAction(EditorInfo.IME_ACTION_DONE);
+            Activity activity;
+            if (espIPAddress.isEmpty() && ((activity = getActivity()) != null)) {
+                CustomSnackBar.showSnackBar(activity.findViewById(android.R.id.content),
+                        getString(R.string.incorrect_IP_address_message), null, null, Snackbar.LENGTH_SHORT);
 
-                } else {
-                    new ESPTask().execute();
-                }
+            } else {
+                new ESPTask().execute();
             }
-
         });
-        espIPEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    espConnectBtn.performClick();
-                    return true;
-                }
-                return false;
+        espIPEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                espConnectBtn.performClick();
+                return true;
             }
+            return false;
         });
         return rootView;
     }
@@ -78,10 +72,10 @@ public class ESPFragment extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+        getDialog().getWindow().setAttributes(params);
     }
 
     private class ESPTask extends AsyncTask<Void, Void, String> {
@@ -100,14 +94,15 @@ public class ESPFragment extends DialogFragment {
                 Request request = new Request.Builder()
                         .url("http://" + espIPAddress)
                         .build();
-                Response response = client.newCall(request).execute();
-                if (response.code() == 200) {
-                    ScienceLabCommon.setIsWifiConnected(true);
-                    ScienceLabCommon.setEspBaseIP(espIPAddress);
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.code() == 200) {
+                        ScienceLabCommon.setIsWifiConnected(true);
+                        ScienceLabCommon.setEspBaseIP(espIPAddress);
+                    }
+                    result = response.body().string();
                 }
-                result = response.body().string();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IllegalArgumentException | IOException e) {
+                Log.e(TAG, "Unable to get data from " + espIPAddress, e);
             }
             return result;
         }
