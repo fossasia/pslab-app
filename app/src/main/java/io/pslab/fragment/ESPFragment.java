@@ -54,7 +54,6 @@ public class ESPFragment extends DialogFragment {
             if (espIPAddress.isEmpty() && ((activity = getActivity()) != null)) {
                 CustomSnackBar.showSnackBar(activity.findViewById(android.R.id.content),
                         getString(R.string.incorrect_IP_address_message), null, null, Snackbar.LENGTH_SHORT);
-
             } else {
                 new ESPTask().execute();
             }
@@ -116,7 +115,7 @@ public class ESPFragment extends DialogFragment {
                 CustomSnackBar.showSnackBar(activity.findViewById(android.R.id.content),
                         getString(R.string.incorrect_IP_address_message), null, null, Snackbar.LENGTH_SHORT);
             } else {
-                Log.v("Response", result);
+                Log.v(TAG, "Response: " + result);
             }
         }
     }
