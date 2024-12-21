@@ -83,7 +83,7 @@ dependencies {
     implementation("com.github.mirrajabi:search-dialog:1.2.4")
     implementation(files("../libs/croller-release.aar"))
     implementation("com.github.BeppiMenozzi:Knob:1.9.0")
-    implementation("com.github.warkiz:IndicatorSeekBar:v2.1.1")
+    implementation("com.github.warkiz:IndicatorSeekBar:2.1.1")
     implementation("com.github.Vatican-Cameos:CarouselPicker:1.2")
     implementation("com.github.anastr:speedviewlib:1.6.1")
     implementation("com.github.GoodieBag:ProtractorView:v1.2")
