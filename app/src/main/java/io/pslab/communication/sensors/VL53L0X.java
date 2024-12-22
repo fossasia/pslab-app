@@ -276,7 +276,7 @@ public class VL53L0X {
         i2c.write(ADDRESS, new int[]{0x00}, SYSRANGE_START);
     }
 
-    public int getRaw() throws Exception {
+    public int getRaw() throws IOException {
         for (int[] regValPair : new int[][]{
                 {0x80, 0x01},
                 {0xFF, 0x01},

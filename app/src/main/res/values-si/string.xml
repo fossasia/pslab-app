@@ -493,7 +493,7 @@
     <string name="timebase_and_trigger">කාලරාමුව සහ ප්‍රේරකය</string>
     <string name="data_analysis">දත්ත විශ්ලේෂණය</string>
     <string name="xy_plot">XY Plot</string>
-    <string name="hundred_ms">100ms</string>
+    <string name="hundred_ms">100 ms</string>
     <string name="hyphen">-</string>
     <string name="plus">+</string>
     <string name="select_a_value">අගයක් තෝරන්න</string>
@@ -1025,4 +1025,5 @@
     <string name="unknown">නොදන්නා</string>
     <string name="rateapp">යෙදුම ශ්‍රේණිගත කරන්න</string>
     <string name="developers">සංවර්ධකයින්</string>
+    <string name="unit_milliseconds">\\u0020ms</string>
 </resources>

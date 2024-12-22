@@ -524,7 +524,7 @@
     <string name="timebase_and_trigger">Timebase and Trigger</string>
     <string name="data_analysis">Data Analysis</string>
     <string name="xy_plot">XY Plot</string>
-    <string name="hundred_ms">100ms</string>
+    <string name="hundred_ms">100 ms</string>
     <string name="hyphen">-</string>
     <string name="plus">+</string>
     <string name="select_a_value">Select a Value </string>

@@ -496,7 +496,7 @@
     <string name="timebase_and_trigger">База времени и триггерjd</string>
     <string name="data_analysis">Анализ данных</string>
     <string name="xy_plot">XY Plot</string>
-    <string name="hundred_ms">100ms</string>
+    <string name="hundred_ms">100 ms</string>
     <string name="hyphen">-</string>
     <string name="plus">+</string>
     <string name="select_a_value">Выберите значение </string>
@@ -1056,4 +1056,5 @@
     <string name="compass_default_0">0</string>
     <string name="unknown">неизвестный</string>
     <string name="developers">Разработчики</string>
+    <string name="unit_milliseconds">\\u0020ms</string>
 </resources>

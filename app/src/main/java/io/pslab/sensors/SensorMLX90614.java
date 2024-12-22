@@ -3,25 +3,18 @@ package io.pslab.sensors;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -36,106 +29,46 @@ import java.util.ArrayList;
 
 import io.pslab.DataFormatter;
 import io.pslab.R;
-import io.pslab.communication.ScienceLab;
 import io.pslab.communication.peripherals.I2C;
 import io.pslab.communication.sensors.MLX90614;
-import io.pslab.others.ScienceLabCommon;
 
 
-public class SensorMLX90614 extends AppCompatActivity {
+public class SensorMLX90614 extends AbstractSensorActivity {
+    private static final String TAG = SensorMLX90614.class.getSimpleName();
+
+    private static final String KEY_ENTRIES_OBJ_TEMP = TAG + "_entries_object_temperature";
+    private static final String KEY_ENTRIES_AMB_TEMP = TAG + "_entries_ambient_temperature";
+    private static final String KEY_VALUE_OBJ_TEMP = TAG + "_value_object_temperature";
+    private static final String KEY_VALUE_AMB_TEMP = TAG + "_value_ambient_temperature";
 
     private static final String PREF_NAME = "SensorMLX90614";
     private static final String KEY = "SensorMLX90614Key";
 
-    private static int counter;
-    private final Object lock = new Object();
-    private ScienceLab scienceLab;
-    private SensorMLX90614.SensorDataFetch sensorDataFetch;
-    private TextView tvSensorMLX90614ObjectTemp;
-    private TextView tvSensorMLX90614AmbientTemp;
+    private SensorDataFetch sensorDataFetch;
     private MLX90614 sensorMLX90614;
-    private LineChart mChartObjectTemperature;
-    private LineChart mChartAmbientTemperature;
-    private long startTime;
-    private int flag;
+
     private ArrayList<Entry> entriesObjectTemperature;
     private ArrayList<Entry> entriesAmbientTemperature;
-    private RelativeLayout sensorDock;
-    private CheckBox indefiniteSamplesCheckBox;
-    private EditText samplesEditBox;
-    private SeekBar timeGapSeekbar;
-    private TextView timeGapLabel;
-    private ImageButton playPauseButton;
-    private boolean play;
-    private boolean runIndefinitely;
-    private int timeGap;
+
+    private LineChart mChartObjectTemperature;
+    private LineChart mChartAmbientTemperature;
+    private TextView tvSensorMLX90614ObjectTemp;
+    private TextView tvSensorMLX90614AmbientTemp;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sensor_mlx90614);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.mlx90614);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
 
         howToConnectDialog(getString(R.string.ir_thermometer), getString(R.string.ir_thermometer_intro), R.drawable.mlx90614_schematic, getString(R.string.ir_thermometer_desc));
 
-        sensorDock = findViewById(R.id.sensor_control_dock_layout);
-        indefiniteSamplesCheckBox = findViewById(R.id.checkBox_samples_sensor);
-        samplesEditBox = findViewById(R.id.editBox_samples_sensors);
-        timeGapSeekbar = findViewById(R.id.seekBar_timegap_sensor);
-        timeGapLabel = findViewById(R.id.tv_timegap_label);
-        playPauseButton = findViewById(R.id.imageButton_play_pause_sensor);
-        setSensorDock();
-        sensorDock.setVisibility(View.VISIBLE);
-
-        scienceLab = ScienceLabCommon.scienceLab;
-        I2C i2c = scienceLab.i2c;
+        I2C i2c = getScienceLab().i2c;
         try {
             sensorMLX90614 = new MLX90614(i2c);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Sensor initialization failed.", e);
         }
 
-        entriesObjectTemperature = new ArrayList<>();
-        entriesAmbientTemperature = new ArrayList<>();
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    if (scienceLab.isConnected() && shouldPlay()) {
-                        sensorDataFetch = new SensorMLX90614.SensorDataFetch();
-                        sensorDataFetch.execute();
-                        if (flag == 0) {
-                            startTime = System.currentTimeMillis();
-                            flag = 1;
-                        }
-
-                        synchronized (lock) {
-                            try {
-                                lock.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        try {
-                            Thread.sleep(timeGap);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        };
-        new Thread(runnable).start();
+        sensorDataFetch = new SensorDataFetch();
 
         tvSensorMLX90614ObjectTemp = findViewById(R.id.tv_sensor_mlx90614_object_temp);
         tvSensorMLX90614AmbientTemp = findViewById(R.id.tv_sensor_mlx90614_ambient_temp);
@@ -210,85 +143,30 @@ public class SensorMLX90614 extends AppCompatActivity {
         yAmbientTemperature.setLabelCount(10);
 
         yAmbientTemperature2.setDrawGridLines(false);
-    }
 
-    private boolean shouldPlay() {
-        if (play) {
-            if (indefiniteSamplesCheckBox.isChecked())
-                return true;
-            else if (counter >= 0) {
-                counter--;
-                return true;
-            } else {
-                play = false;
-                return false;
-            }
+        if (savedInstanceState == null) {
+            entriesObjectTemperature = new ArrayList<>();
+            entriesAmbientTemperature = new ArrayList<>();
         } else {
-            return false;
+            tvSensorMLX90614ObjectTemp.setText(savedInstanceState.getString(KEY_VALUE_OBJ_TEMP));
+            tvSensorMLX90614AmbientTemp.setText(savedInstanceState.getString(KEY_VALUE_AMB_TEMP));
+
+            entriesObjectTemperature = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_OBJ_TEMP);
+            entriesAmbientTemperature = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_AMB_TEMP);
+
+            sensorDataFetch.updateUi();
         }
     }
 
-    private void setSensorDock() {
-        play = false;
-        runIndefinitely = true;
-        timeGap = 100;
-        final int step = 1;
-        final int max = 1000;
-        final int min = 100;
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-        playPauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (play && scienceLab.isConnected()) {
-                    playPauseButton.setImageResource(R.drawable.circle_play_button);
-                    play = false;
-                } else if (!scienceLab.isConnected()) {
-                    playPauseButton.setImageResource(R.drawable.circle_play_button);
-                    play = false;
-                } else {
-                    playPauseButton.setImageResource(R.drawable.circle_pause_button);
-                    play = true;
-                    if (!indefiniteSamplesCheckBox.isChecked()) {
-                        counter = Integer.parseInt(samplesEditBox.getText().toString());
-                    }
-                }
-            }
-        });
-        sensorDock.setVisibility(View.VISIBLE);
+        outState.putString(KEY_VALUE_OBJ_TEMP, tvSensorMLX90614ObjectTemp.getText().toString());
+        outState.putString(KEY_VALUE_AMB_TEMP, tvSensorMLX90614AmbientTemp.getText().toString());
 
-        indefiniteSamplesCheckBox.setChecked(true);
-        samplesEditBox.setEnabled(false);
-        indefiniteSamplesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    runIndefinitely = true;
-                    samplesEditBox.setEnabled(false);
-                } else {
-                    runIndefinitely = false;
-                    samplesEditBox.setEnabled(true);
-                }
-            }
-        });
-
-        timeGapSeekbar.setMax((max - min) / step);
-        timeGapSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                timeGap = min + (progress * step);
-                timeGapLabel.setText(timeGap + "ms");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        outState.putParcelableArrayList(KEY_ENTRIES_OBJ_TEMP, entriesObjectTemperature);
+        outState.putParcelableArrayList(KEY_ENTRIES_AMB_TEMP, entriesAmbientTemperature);
     }
 
     @SuppressLint("ResourceType")
@@ -311,53 +189,52 @@ public class SensorMLX90614 extends AppCompatActivity {
 
             final SharedPreferences sharedPreferences = this.getSharedPreferences(PREF_NAME, MODE_PRIVATE);
             final AlertDialog dialog = builder.create();
-            Boolean skipDialog = sharedPreferences.getBoolean(KEY, false);
-            okButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (doNotShowDialog.isChecked()) {
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean(KEY, true);
-                        editor.apply();
-                    }
-                    dialog.dismiss();
+            boolean skipDialog = sharedPreferences.getBoolean(KEY, false);
+            okButton.setOnClickListener(v -> {
+                if (doNotShowDialog.isChecked()) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(KEY, true);
+                    editor.apply();
                 }
+                dialog.dismiss();
             });
             if (!skipDialog) {
                 dialog.show();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error showing dialog.", e);
         }
     }
 
-    private class SensorDataFetch extends AsyncTask<Void, Void, Void> {
+    private class SensorDataFetch extends AbstractSensorActivity.SensorDataFetch {
 
         private Double dataMLX90614ObjectTemp;
         private Double dataMLX90614AmbientTemp;
-        private long timeElapsed;
+        /* Initialization required if updateUi is executed before getSensorData */
+        private float timeElapsed = getTimeElapsed();
 
         @Override
-        protected Void doInBackground(Void... params) {
+        public void getSensorData() {
             try {
                 if (sensorMLX90614 != null) {
                     dataMLX90614ObjectTemp = sensorMLX90614.getObjectTemperature();
                     dataMLX90614AmbientTemp = sensorMLX90614.getAmbientTemperature();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Error getting sensor data.", e);
             }
 
-            timeElapsed = (System.currentTimeMillis() - startTime) / 1000;
-            entriesObjectTemperature.add(new Entry((float) timeElapsed, dataMLX90614ObjectTemp.floatValue()));
-            entriesAmbientTemperature.add(new Entry((float) timeElapsed, dataMLX90614AmbientTemp.floatValue()));
-            return null;
+            timeElapsed = getTimeElapsed();
+            entriesObjectTemperature.add(new Entry(timeElapsed, dataMLX90614ObjectTemp.floatValue()));
+            entriesAmbientTemperature.add(new Entry(timeElapsed, dataMLX90614AmbientTemp.floatValue()));
         }
 
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            tvSensorMLX90614ObjectTemp.setText(DataFormatter.formatDouble(dataMLX90614ObjectTemp, DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMLX90614AmbientTemp.setText(DataFormatter.formatDouble(dataMLX90614AmbientTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+        public void updateUi() {
+
+            if (isSensorDataAcquired()) {
+                tvSensorMLX90614ObjectTemp.setText(DataFormatter.formatDouble(dataMLX90614ObjectTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMLX90614AmbientTemp.setText(DataFormatter.formatDouble(dataMLX90614AmbientTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSet1 = new LineDataSet(entriesObjectTemperature, getString(R.string.object_temp));
             LineDataSet dataSet2 = new LineDataSet(entriesAmbientTemperature, getString(R.string.ambient_temp));
@@ -369,31 +246,28 @@ public class SensorMLX90614 extends AppCompatActivity {
             mChartObjectTemperature.setData(data1);
             mChartObjectTemperature.notifyDataSetChanged();
             mChartObjectTemperature.setVisibleXRangeMaximum(10);
-            mChartObjectTemperature.moveViewToX(data1.getEntryCount());
-            mChartObjectTemperature.invalidate();
+            mChartObjectTemperature.moveViewToX(timeElapsed);
 
             LineData data2 = new LineData(dataSet2);
             mChartAmbientTemperature.setData(data2);
             mChartAmbientTemperature.notifyDataSetChanged();
             mChartAmbientTemperature.setVisibleXRangeMaximum(10);
-            mChartAmbientTemperature.moveViewToX(data2.getEntryCount());
-            mChartAmbientTemperature.invalidate();
-            samplesEditBox.setText(String.valueOf(counter));
-            if (counter == 0 && !runIndefinitely) {
-                play = false;
-                playPauseButton.setImageResource(R.drawable.circle_play_button);
-            }
-            synchronized (lock) {
-                lock.notify();
-            }
+            mChartAmbientTemperature.moveViewToX(timeElapsed);
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return true;
+    protected AbstractSensorActivity.SensorDataFetch getSensorDataFetch() {
+        return sensorDataFetch;
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.sensor_mlx90614;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.mlx90614;
     }
 }

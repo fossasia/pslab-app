@@ -493,7 +493,7 @@
     <string name="timebase_and_trigger">Podstawa czasu i wyzwalacz</string>
     <string name="data_analysis">Analiza danych</string>
     <string name="xy_plot">XY Plot</string>
-    <string name="hundred_ms">100ms</string>
+    <string name="hundred_ms">100 ms</string>
     <string name="hyphen">-</string>
     <string name="plus">+</string>
     <string name="select_a_value">Wybierz wartość </string>
@@ -1036,5 +1036,6 @@
     <string name="no_location_specified">Lokalizacja nie jest określona</string>
     <string name="compass_default_0">0</string>
     <string name="unknown">Nieznany</string>
+    <string name="unit_milliseconds">\\u0020ms</string>
 
 </resources>

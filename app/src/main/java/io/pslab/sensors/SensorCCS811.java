@@ -1,21 +1,12 @@
 package io.pslab.sensors;
 
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
+import android.util.Log;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -30,101 +21,40 @@ import java.util.ArrayList;
 
 import io.pslab.DataFormatter;
 import io.pslab.R;
-import io.pslab.communication.ScienceLab;
 import io.pslab.communication.peripherals.I2C;
 import io.pslab.communication.sensors.CCS811;
-import io.pslab.communication.sensors.SHT21;
-import io.pslab.others.ScienceLabCommon;
 
-public class SensorCCS811 extends AppCompatActivity {
-    private static int counter;
-    private final Object lock = new Object();
-    private ScienceLab scienceLab;
-    private SensorCCS811.SensorDataFetch sensorDataFetch;
-    private TextView tvSensorCCS811eCO2;
-    private TextView tvSensorCCS811TVOC;
+public class SensorCCS811 extends AbstractSensorActivity {
+    private static final String TAG = SensorCCS811.class.getSimpleName();
+
+    private static final String KEY_ENTRIES_ECO2 = TAG + "_entries_eco2";
+    private static final String KEY_ENTRIES_TVOC = TAG + "_entries_tvoc";
+    private static final String KEY_VALUE_ECO2 = TAG + "_value_eco2";
+    private static final String KEY_VALUE_TVOC = TAG + "_value_tvoc";
+
+    private SensorDataFetch sensorDataFetch;
     private CCS811 sensorCCS811;
-    private LineChart mCharteCO2;
-    private LineChart mChartTVOC;
-    private long startTime;
-    private int flag;
+
     private ArrayList<Entry> entrieseCO2;
     private ArrayList<Entry> entriesTVOC;
-    private RelativeLayout sensorDock;
-    private CheckBox indefiniteSamplesCheckBox;
-    private EditText samplesEditBox;
-    private SeekBar timeGapSeekbar;
-    private TextView timeGapLabel;
-    private ImageButton playPauseButton;
-    private boolean play;
-    private boolean runIndefinitely;
-    private int timeGap;
+
+    private LineChart mCharteCO2;
+    private LineChart mChartTVOC;
+    private TextView tvSensorCCS811eCO2;
+    private TextView tvSensorCCS811TVOC;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sensor_ccs811);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.ccs811);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
-
-        sensorDock = findViewById(R.id.sensor_control_dock_layout);
-        indefiniteSamplesCheckBox = findViewById(R.id.checkBox_samples_sensor);
-        samplesEditBox = findViewById(R.id.editBox_samples_sensors);
-        timeGapSeekbar = findViewById(R.id.seekBar_timegap_sensor);
-        timeGapLabel = findViewById(R.id.tv_timegap_label);
-        playPauseButton = findViewById(R.id.imageButton_play_pause_sensor);
-        setSensorDock();
-        sensorDock.setVisibility(View.VISIBLE);
-
-        scienceLab = ScienceLabCommon.scienceLab;
-        I2C i2c = scienceLab.i2c;
+        I2C i2c = getScienceLab().i2c;
         try {
-            sensorCCS811 = new CCS811(i2c, scienceLab);
+            sensorCCS811 = new CCS811(i2c, getScienceLab());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Sensor initialization failed.", e);
         }
 
-        entrieseCO2 = new ArrayList<>();
-        entriesTVOC = new ArrayList<>();
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    if (scienceLab.isConnected() && shouldPlay()) {
-                        sensorDataFetch = new SensorCCS811.SensorDataFetch();
-                        sensorDataFetch.execute();
-
-                        if (flag == 0) {
-                            startTime = System.currentTimeMillis();
-                            flag = 1;
-                        }
-
-                        synchronized (lock) {
-                            try {
-                                lock.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        try {
-                            Thread.sleep(timeGap);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        };
-        new Thread(runnable).start();
+        sensorDataFetch = new SensorDataFetch();
 
         tvSensorCCS811eCO2 = findViewById(R.id.tv_sensor_ccs811_eCO2);
         tvSensorCCS811TVOC = findViewById(R.id.tv_sensor_ccs811_TVOC);
@@ -199,115 +129,60 @@ public class SensorCCS811 extends AppCompatActivity {
 
         yTVOC2.setDrawGridLines(false);
 
-    }
-
-    private boolean shouldPlay() {
-        if (play) {
-            if (indefiniteSamplesCheckBox.isChecked())
-                return true;
-            else if (counter >= 0) {
-                counter--;
-                return true;
-            } else {
-                play = false;
-                return false;
-            }
+        if (savedInstanceState == null) {
+            entrieseCO2 = new ArrayList<>();
+            entriesTVOC = new ArrayList<>();
         } else {
-            return false;
+            tvSensorCCS811eCO2.setText(savedInstanceState.getString(KEY_VALUE_ECO2));
+            tvSensorCCS811TVOC.setText(savedInstanceState.getString(KEY_VALUE_TVOC));
+
+            entrieseCO2 = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_ECO2);
+            entriesTVOC = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_TVOC);
+
+            sensorDataFetch.updateUi();
         }
     }
 
-    private void setSensorDock() {
-        play = false;
-        runIndefinitely = true;
-        timeGap = 100;
-        final int step = 1;
-        final int max = 1000;
-        final int min = 100;
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-        playPauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (play && scienceLab.isConnected()) {
-                    playPauseButton.setImageResource(R.drawable.circle_play_button);
-                    play = false;
-                } else if (!scienceLab.isConnected()) {
-                    playPauseButton.setImageResource(R.drawable.circle_play_button);
-                    play = false;
-                } else {
-                    playPauseButton.setImageResource(R.drawable.circle_pause_button);
-                    play = true;
-                    if (!indefiniteSamplesCheckBox.isChecked()) {
-                        counter = Integer.parseInt(samplesEditBox.getText().toString());
-                    }
-                }
-            }
-        });
-        sensorDock.setVisibility(View.VISIBLE);
+        outState.putString(KEY_VALUE_ECO2, tvSensorCCS811eCO2.getText().toString());
+        outState.putString(KEY_VALUE_TVOC, tvSensorCCS811TVOC.getText().toString());
 
-        indefiniteSamplesCheckBox.setChecked(true);
-        samplesEditBox.setEnabled(false);
-        indefiniteSamplesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    runIndefinitely = true;
-                    samplesEditBox.setEnabled(false);
-                } else {
-                    runIndefinitely = false;
-                    samplesEditBox.setEnabled(true);
-                }
-            }
-        });
-
-        timeGapSeekbar.setMax((max - min) / step);
-        timeGapSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                timeGap = min + (progress * step);
-                timeGapLabel.setText(timeGap + "ms");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // Do nothing
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // Do nothing
-            }
-        });
+        outState.putParcelableArrayList(KEY_ENTRIES_ECO2, entrieseCO2);
+        outState.putParcelableArrayList(KEY_ENTRIES_TVOC, entriesTVOC);
     }
 
-    private class SensorDataFetch extends AsyncTask<Void, Void, Void> {
+    private class SensorDataFetch extends AbstractSensorActivity.SensorDataFetch {
 
-        private int[] dataCS811;
         private int dataCCS811eCO2;
         private int dataCCS811TVOC;
-        private long timeElapsed;
+        /* Initialization required if updateUi is executed before getSensorData */
+        private float timeElapsed = getTimeElapsed();
 
         @Override
-        protected Void doInBackground(Void... params) {
+        public void getSensorData() {
             try {
                 if (sensorCCS811 != null) {
-                    dataCS811 = sensorCCS811.getRaw();
+                    int[] dataCS811 = sensorCCS811.getRaw();
                     dataCCS811eCO2 = dataCS811[0];
                     dataCCS811TVOC = dataCS811[1];
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Error getting sensor data.", e);
             }
-            timeElapsed = (System.currentTimeMillis() - startTime) / 1000;
-            entrieseCO2.add(new Entry((float) timeElapsed, dataCCS811eCO2));
-            entriesTVOC.add(new Entry((float) timeElapsed, dataCCS811TVOC));
-            return null;
+            timeElapsed = getTimeElapsed();
+            entrieseCO2.add(new Entry(timeElapsed, dataCCS811eCO2));
+            entriesTVOC.add(new Entry(timeElapsed, dataCCS811TVOC));
         }
 
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            tvSensorCCS811eCO2.setText(DataFormatter.formatDouble(dataCCS811eCO2, DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorCCS811TVOC.setText(DataFormatter.formatDouble(dataCCS811TVOC, DataFormatter.HIGH_PRECISION_FORMAT));
+        public void updateUi() {
+
+            if (isSensorDataAcquired()) {
+                tvSensorCCS811eCO2.setText(DataFormatter.formatDouble(dataCCS811eCO2, DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorCCS811TVOC.setText(DataFormatter.formatDouble(dataCCS811TVOC, DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSet1 = new LineDataSet(entrieseCO2, getString(R.string.eCO2));
             LineDataSet dataSet2 = new LineDataSet(entriesTVOC, getString(R.string.eTVOC));
@@ -319,31 +194,28 @@ public class SensorCCS811 extends AppCompatActivity {
             mCharteCO2.setData(data);
             mCharteCO2.notifyDataSetChanged();
             mCharteCO2.setVisibleXRangeMaximum(10);
-            mCharteCO2.moveViewToX(data.getEntryCount());
-            mCharteCO2.invalidate();
+            mCharteCO2.moveViewToX(timeElapsed);
 
             LineData data2 = new LineData(dataSet2);
             mChartTVOC.setData(data2);
             mChartTVOC.notifyDataSetChanged();
             mChartTVOC.setVisibleXRangeMaximum(10);
-            mChartTVOC.moveViewToX(data2.getEntryCount());
-            mChartTVOC.invalidate();
-            samplesEditBox.setText(String.valueOf(counter));
-            if (counter == 0 && !runIndefinitely) {
-                play = false;
-                playPauseButton.setImageResource(R.drawable.circle_play_button);
-            }
-            synchronized (lock) {
-                lock.notify();
-            }
+            mChartTVOC.moveViewToX(timeElapsed);
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return true;
+    protected AbstractSensorActivity.SensorDataFetch getSensorDataFetch() {
+        return sensorDataFetch;
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.sensor_ccs811;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.ccs811;
     }
 }

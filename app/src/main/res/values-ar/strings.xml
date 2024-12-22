@@ -489,7 +489,7 @@
     <string name="timebase_and_trigger">الجدول الزمني والزناد</string>
     <string name="data_analysis">تحليل البيانات</string>
     <string name="xy_plot">س ص مؤامرة</string>
-    <string name="hundred_ms">100MS</string>
+    <string name="hundred_ms">100 MS</string>
     <string name="hyphen">-</string>
     <string name="plus" />
     <string name="select_a_value">تحديد قيمة</string>
@@ -972,4 +972,5 @@
     <string name="no_location_specified">الموقع غير محدد</string>
     <string name="compass_default_0">0</string>
     <string name="unknown">مجهول</string>
+    <string name="unit_milliseconds">\\u0020MS</string>
 </resources>

@@ -1,22 +1,13 @@
 package io.pslab.sensors;
 
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
+import android.util.Log;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -33,20 +24,42 @@ import java.util.List;
 
 import io.pslab.DataFormatter;
 import io.pslab.R;
-import io.pslab.communication.ScienceLab;
 import io.pslab.communication.peripherals.I2C;
 import io.pslab.communication.sensors.MPU925x;
-import io.pslab.others.ScienceLabCommon;
 
-/**
- * Created by Harsh on 6/6/18.
- */
+public class SensorMPU925X extends AbstractSensorActivity {
+    private static final String TAG = SensorMPU925X.class.getSimpleName();
 
-public class SensorMPU925X extends AppCompatActivity {
-    private static int counter;
-    private final Object lock = new Object();
-    private ScienceLab scienceLab;
-    private SensorMPU925X.SensorDataFetch sensorDataFetch;
+    private static final String KEY_ENTRIES_AX = TAG + "_entries_ax";
+    private static final String KEY_ENTRIES_AY = TAG + "_entries_ay";
+    private static final String KEY_ENTRIES_AZ = TAG + "_entries_az";
+    private static final String KEY_ENTRIES_GX = TAG + "_entries_gx";
+    private static final String KEY_ENTRIES_GY = TAG + "_entries_gy";
+    private static final String KEY_ENTRIES_GZ = TAG + "_entries_gz";
+    private static final String KEY_VALUE_AX = TAG + "_value_ax";
+    private static final String KEY_VALUE_AY = TAG + "_value_ay";
+    private static final String KEY_VALUE_AZ = TAG + "_value_az";
+    private static final String KEY_VALUE_GX = TAG + "_value_gx";
+    private static final String KEY_VALUE_GY = TAG + "_value_gy";
+    private static final String KEY_VALUE_GZ = TAG + "_value_gz";
+    private static final String KEY_VALUE_TEMP = TAG + "_value_temp";
+    private static final String KEY_POS_1 = TAG + "_pos_1";
+    private static final String KEY_POS_2 = TAG + "_pos_2";
+    private static final String KEY_POS_3 = TAG + "_pos_3";
+    private static final String KEY_POS_4 = TAG + "_pos_4";
+
+    private SensorDataFetch sensorDataFetch;
+    private MPU925x sensorMPU925X;
+
+    private ArrayList<Entry> entriesAx;
+    private ArrayList<Entry> entriesAy;
+    private ArrayList<Entry> entriesAz;
+    private ArrayList<Entry> entriesGx;
+    private ArrayList<Entry> entriesGy;
+    private ArrayList<Entry> entriesGz;
+
+    private LineChart mChartAcceleration;
+    private LineChart mChartGyroscope;
     private TextView tvSensorMPU925Xax;
     private TextView tvSensorMPU925Xay;
     private TextView tvSensorMPU925Xaz;
@@ -54,97 +67,23 @@ public class SensorMPU925X extends AppCompatActivity {
     private TextView tvSensorMPU925Xgy;
     private TextView tvSensorMPU925Xgz;
     private TextView tvSensorMPU925Xtemp;
-    private MPU925x sensorMPU925X;
-    private LineChart mChartAcceleration;
-    private LineChart mChartGyroscope;
-    private long startTime;
-    private int flag;
-    private ArrayList<Entry> entriesax;
-    private ArrayList<Entry> entriesay;
-    private ArrayList<Entry> entriesaz;
-    private ArrayList<Entry> entriesgx;
-    private ArrayList<Entry> entriesgy;
-    private ArrayList<Entry> entriesgz;
-    private RelativeLayout sensorDock;
-    private CheckBox indefiniteSamplesCheckBox;
-    private EditText samplesEditBox;
-    private SeekBar timeGapSeekbar;
-    private TextView timeGapLabel;
-    private ImageButton playPauseButton;
-    private boolean play;
-    private boolean runIndefinitely;
-    private int timeGap;
+    private Spinner spinnerSensorMPU925X1;
+    private Spinner spinnerSensorMPU925X2;
+    private Spinner spinnerSensorMPU925X3;
+    private Spinner spinnerSensorMPU925X4;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sensor_mpu925x);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(R.string.mpu925x);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
-
-        sensorDock = findViewById(R.id.sensor_control_dock_layout);
-        indefiniteSamplesCheckBox = findViewById(R.id.checkBox_samples_sensor);
-        samplesEditBox = findViewById(R.id.editBox_samples_sensors);
-        timeGapSeekbar = findViewById(R.id.seekBar_timegap_sensor);
-        timeGapLabel = findViewById(R.id.tv_timegap_label);
-        playPauseButton = findViewById(R.id.imageButton_play_pause_sensor);
-        setSensorDock();
-        sensorDock.setVisibility(View.VISIBLE);
-
-        scienceLab = ScienceLabCommon.scienceLab;
-        I2C i2c = scienceLab.i2c;
+        I2C i2c = getScienceLab().i2c;
         try {
-            if (i2c == null) throw new IOException("i2c not found");
             sensorMPU925X = new MPU925x(i2c);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | NullPointerException e) {
+            Log.e(TAG, "Sensor initialization failed.", e);
         }
 
-        entriesax = new ArrayList<>();
-        entriesay = new ArrayList<>();
-        entriesaz = new ArrayList<>();
-        entriesgx = new ArrayList<>();
-        entriesgy = new ArrayList<>();
-        entriesgz = new ArrayList<>();
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    if (scienceLab.isConnected() && shouldPlay()) {
-                        sensorDataFetch = new SensorMPU925X.SensorDataFetch();
-                        sensorDataFetch.execute();
-
-                        if (flag == 0) {
-                            startTime = System.currentTimeMillis();
-                            flag = 1;
-                        }
-
-                        synchronized (lock) {
-                            try {
-                                lock.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        try {
-                            Thread.sleep(timeGap);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        };
-        new Thread(runnable).start();
+        sensorDataFetch = new SensorDataFetch();
 
         tvSensorMPU925Xax = findViewById(R.id.tv_sensor_mpu925x_ax);
         tvSensorMPU925Xay = findViewById(R.id.tv_sensor_mpu925x_ay);
@@ -154,10 +93,10 @@ public class SensorMPU925X extends AppCompatActivity {
         tvSensorMPU925Xgz = findViewById(R.id.tv_sensor_mpu925x_gz);
         tvSensorMPU925Xtemp = findViewById(R.id.tv_sensor_mpu925x_temp);
 
-        Spinner spinnerSensorMPU925X1 = findViewById(R.id.spinner_sensor_mpu925x_1);
-        Spinner spinnerSensorMPU925X2 = findViewById(R.id.spinner_sensor_mpu925x_2);
-        Spinner spinnerSensorMPU925X3 = findViewById(R.id.spinner_sensor_mpu925x_3);
-        Spinner spinnerSensorMPU925X4 = findViewById(R.id.spinner_sensor_mpu925x_4);
+        spinnerSensorMPU925X1 = findViewById(R.id.spinner_sensor_mpu925x_1);
+        spinnerSensorMPU925X2 = findViewById(R.id.spinner_sensor_mpu925x_2);
+        spinnerSensorMPU925X3 = findViewById(R.id.spinner_sensor_mpu925x_3);
+        spinnerSensorMPU925X4 = findViewById(R.id.spinner_sensor_mpu925x_4);
 
         mChartAcceleration = findViewById(R.id.chart_sensor_mpu925x_accelerometer);
         mChartGyroscope = findViewById(R.id.chart_sensor_mpu925x_gyroscope);
@@ -235,7 +174,7 @@ public class SensorMPU925X extends AppCompatActivity {
                 sensorMPU925X.setAccelRange(Integer.parseInt(spinnerSensorMPU925X2.getSelectedItem().toString()));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error setting range.", e);
         }
 
         try {
@@ -243,136 +182,114 @@ public class SensorMPU925X extends AppCompatActivity {
                 sensorMPU925X.setGyroRange(Integer.parseInt(spinnerSensorMPU925X1.getSelectedItem().toString()));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error setting range.", e);
         }
 
-    }
-
-    private boolean shouldPlay() {
-        if (play) {
-            if (indefiniteSamplesCheckBox.isChecked())
-                return true;
-            else if (counter >= 0) {
-                counter--;
-                return true;
-            } else {
-                play = false;
-                return false;
-            }
+        if (savedInstanceState == null) {
+            entriesAx = new ArrayList<>();
+            entriesAy = new ArrayList<>();
+            entriesAz = new ArrayList<>();
+            entriesGx = new ArrayList<>();
+            entriesGy = new ArrayList<>();
+            entriesGz = new ArrayList<>();
         } else {
-            return false;
+            spinnerSensorMPU925X1.setSelection(savedInstanceState.getInt(KEY_POS_1));
+            spinnerSensorMPU925X2.setSelection(savedInstanceState.getInt(KEY_POS_2));
+            spinnerSensorMPU925X3.setSelection(savedInstanceState.getInt(KEY_POS_3));
+            spinnerSensorMPU925X4.setSelection(savedInstanceState.getInt(KEY_POS_4));
+
+            tvSensorMPU925Xax.setText(savedInstanceState.getString(KEY_VALUE_AX));
+            tvSensorMPU925Xay.setText(savedInstanceState.getString(KEY_VALUE_AY));
+            tvSensorMPU925Xaz.setText(savedInstanceState.getString(KEY_VALUE_AZ));
+            tvSensorMPU925Xgx.setText(savedInstanceState.getString(KEY_VALUE_GX));
+            tvSensorMPU925Xgy.setText(savedInstanceState.getString(KEY_VALUE_GY));
+            tvSensorMPU925Xgz.setText(savedInstanceState.getString(KEY_VALUE_GZ));
+            tvSensorMPU925Xtemp.setText(savedInstanceState.getString(KEY_VALUE_TEMP));
+
+            entriesAx = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_AX);
+            entriesAy = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_AY);
+            entriesAz = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_AZ);
+            entriesGx = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_GX);
+            entriesGy = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_GY);
+            entriesGz = savedInstanceState.getParcelableArrayList(KEY_ENTRIES_GZ);
+
+            sensorDataFetch.updateUi();
         }
     }
 
-    private void setSensorDock() {
-        play = false;
-        runIndefinitely = true;
-        timeGap = 100;
-        final int step = 1;
-        final int max = 1000;
-        final int min = 100;
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
 
-        playPauseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (play && scienceLab.isConnected()) {
-                    playPauseButton.setImageResource(R.drawable.circle_play_button);
-                    play = false;
-                } else if (!scienceLab.isConnected()) {
-                    playPauseButton.setImageResource(R.drawable.circle_play_button);
-                    play = false;
-                } else {
-                    playPauseButton.setImageResource(R.drawable.circle_pause_button);
-                    play = true;
-                    if (!indefiniteSamplesCheckBox.isChecked()) {
-                        counter = Integer.parseInt(samplesEditBox.getText().toString());
-                    }
-                }
-            }
-        });
-        sensorDock.setVisibility(View.VISIBLE);
+        outState.putInt(KEY_POS_1, spinnerSensorMPU925X1.getSelectedItemPosition());
+        outState.putInt(KEY_POS_2, spinnerSensorMPU925X2.getSelectedItemPosition());
+        outState.putInt(KEY_POS_3, spinnerSensorMPU925X3.getSelectedItemPosition());
+        outState.putInt(KEY_POS_4, spinnerSensorMPU925X4.getSelectedItemPosition());
 
-        indefiniteSamplesCheckBox.setChecked(true);
-        samplesEditBox.setEnabled(false);
-        indefiniteSamplesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    runIndefinitely = true;
-                    samplesEditBox.setEnabled(false);
-                } else {
-                    runIndefinitely = false;
-                    samplesEditBox.setEnabled(true);
-                }
-            }
-        });
+        outState.putString(KEY_VALUE_AX, tvSensorMPU925Xax.getText().toString());
+        outState.putString(KEY_VALUE_AY, tvSensorMPU925Xay.getText().toString());
+        outState.putString(KEY_VALUE_AZ, tvSensorMPU925Xaz.getText().toString());
+        outState.putString(KEY_VALUE_GX, tvSensorMPU925Xgx.getText().toString());
+        outState.putString(KEY_VALUE_GY, tvSensorMPU925Xgy.getText().toString());
+        outState.putString(KEY_VALUE_GZ, tvSensorMPU925Xgz.getText().toString());
+        outState.putString(KEY_VALUE_TEMP, tvSensorMPU925Xtemp.getText().toString());
 
-        timeGapSeekbar.setMax((max - min) / step);
-        timeGapSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                timeGap = min + (progress * step);
-                timeGapLabel.setText(timeGap + "ms");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        outState.putParcelableArrayList(KEY_ENTRIES_AX, entriesAx);
+        outState.putParcelableArrayList(KEY_ENTRIES_AY, entriesAy);
+        outState.putParcelableArrayList(KEY_ENTRIES_AZ, entriesAz);
+        outState.putParcelableArrayList(KEY_ENTRIES_GX, entriesGx);
+        outState.putParcelableArrayList(KEY_ENTRIES_GY, entriesGy);
+        outState.putParcelableArrayList(KEY_ENTRIES_GZ, entriesGz);
     }
 
-    private class SensorDataFetch extends AsyncTask<Void, Void, Void> {
+    private class SensorDataFetch extends AbstractSensorActivity.SensorDataFetch {
 
         private double[] dataGyro, dataAccel;
         private double dataTemp;
-        private long timeElapsed;
+        /* Initialization required if updateUi is executed before getSensorData */
+        private float timeElapsed = getTimeElapsed();
 
         @Override
-        protected Void doInBackground(Void... params) {
+        public void getSensorData() {
 
             try {
                 dataGyro = sensorMPU925X.getGyroscope();
                 dataAccel = sensorMPU925X.getAcceleration();
                 dataTemp = sensorMPU925X.getTemperature();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Error getting sensor data.", e);
             }
 
-            timeElapsed = (System.currentTimeMillis() - startTime) / 1000;
+            timeElapsed = getTimeElapsed();
 
-            entriesax.add(new Entry((float) timeElapsed, (float) dataAccel[0]));
-            entriesay.add(new Entry((float) timeElapsed, (float) dataAccel[1]));
-            entriesaz.add(new Entry((float) timeElapsed, (float) dataAccel[2]));
+            entriesAx.add(new Entry(timeElapsed, (float) dataAccel[0]));
+            entriesAy.add(new Entry(timeElapsed, (float) dataAccel[1]));
+            entriesAz.add(new Entry(timeElapsed, (float) dataAccel[2]));
 
-            entriesgx.add(new Entry((float) timeElapsed, (float) dataGyro[0]));
-            entriesgy.add(new Entry((float) timeElapsed, (float) dataGyro[1]));
-            entriesgz.add(new Entry((float) timeElapsed, (float) dataGyro[2]));
-
-            return null;
+            entriesGx.add(new Entry(timeElapsed, (float) dataGyro[0]));
+            entriesGy.add(new Entry(timeElapsed, (float) dataGyro[1]));
+            entriesGz.add(new Entry(timeElapsed, (float) dataGyro[2]));
         }
 
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            tvSensorMPU925Xax.setText(DataFormatter.formatDouble(dataAccel[0], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xay.setText(DataFormatter.formatDouble(dataAccel[1], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xaz.setText(DataFormatter.formatDouble(dataAccel[2], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xgx.setText(DataFormatter.formatDouble(dataGyro[0], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xgy.setText(DataFormatter.formatDouble(dataGyro[1], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xgz.setText(DataFormatter.formatDouble(dataGyro[2], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xtemp.setText(DataFormatter.formatDouble(dataTemp, DataFormatter.HIGH_PRECISION_FORMAT));
-            LineDataSet dataSet1 = new LineDataSet(entriesax, getString(R.string.ax));
-            LineDataSet dataSet2 = new LineDataSet(entriesay, getString(R.string.ay));
-            LineDataSet dataSet3 = new LineDataSet(entriesaz, getString(R.string.az));
+        public void updateUi() {
 
-            LineDataSet dataSet4 = new LineDataSet(entriesgx, getString(R.string.gx));
-            LineDataSet dataSet5 = new LineDataSet(entriesgy, getString(R.string.gy));
-            LineDataSet dataSet6 = new LineDataSet(entriesgz, getString(R.string.gz));
+            if (isSensorDataAcquired()) {
+                tvSensorMPU925Xax.setText(DataFormatter.formatDouble(dataAccel[0], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xay.setText(DataFormatter.formatDouble(dataAccel[1], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xaz.setText(DataFormatter.formatDouble(dataAccel[2], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xgx.setText(DataFormatter.formatDouble(dataGyro[0], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xgy.setText(DataFormatter.formatDouble(dataGyro[1], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xgz.setText(DataFormatter.formatDouble(dataGyro[2], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xtemp.setText(DataFormatter.formatDouble(dataTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+            }
+
+            LineDataSet dataSet1 = new LineDataSet(entriesAx, getString(R.string.ax));
+            LineDataSet dataSet2 = new LineDataSet(entriesAy, getString(R.string.ay));
+            LineDataSet dataSet3 = new LineDataSet(entriesAz, getString(R.string.az));
+
+            LineDataSet dataSet4 = new LineDataSet(entriesGx, getString(R.string.gx));
+            LineDataSet dataSet5 = new LineDataSet(entriesGy, getString(R.string.gy));
+            LineDataSet dataSet6 = new LineDataSet(entriesGz, getString(R.string.gz));
 
 
             dataSet1.setColor(Color.BLUE);
@@ -397,32 +314,28 @@ public class SensorMPU925X extends AppCompatActivity {
             mChartAcceleration.setData(data);
             mChartAcceleration.notifyDataSetChanged();
             mChartAcceleration.setVisibleXRangeMaximum(10);
-            mChartAcceleration.moveViewToX(data.getEntryCount());
-            mChartAcceleration.invalidate();
+            mChartAcceleration.moveViewToX(timeElapsed);
 
             LineData data2 = new LineData(dataSets2);
             mChartGyroscope.setData(data2);
             mChartGyroscope.notifyDataSetChanged();
             mChartGyroscope.setVisibleXRangeMaximum(10);
-            mChartGyroscope.moveViewToX(data2.getEntryCount());
-            mChartGyroscope.invalidate();
-            samplesEditBox.setText(String.valueOf(counter));
-            if (counter == 0 && !runIndefinitely) {
-                play = false;
-                playPauseButton.setImageResource(R.drawable.circle_play_button);
-            }
-            synchronized (lock) {
-                lock.notify();
-            }
+            mChartGyroscope.moveViewToX(timeElapsed);
         }
     }
 
+    @Override
+    protected AbstractSensorActivity.SensorDataFetch getSensorDataFetch() {
+        return sensorDataFetch;
+    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return true;
+    protected int getLayoutResId() {
+        return R.layout.sensor_mpu925x;
+    }
+
+    @Override
+    protected int getTitleResId() {
+        return R.string.mpu925x;
     }
 }
