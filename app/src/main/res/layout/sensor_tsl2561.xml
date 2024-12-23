@@ -106,8 +106,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_tsl2561_full"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -116,8 +116,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_tsl2561_infrared"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"
@@ -126,8 +126,8 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_tsl2561_visible"
-                            android:layout_width="80dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
                             android:gravity="center"
                             android:textColor="@color/black"

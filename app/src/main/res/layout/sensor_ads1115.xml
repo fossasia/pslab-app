@@ -87,6 +87,7 @@
                         android:background="@drawable/tv_border"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sensor_body_font"
+                        android:gravity="center"
                         android:textStyle="bold" />
 
                     <ImageView

@@ -74,9 +74,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:gravity="center_vertical"
                             android:text="@string/ax"
-                            android:textAlignment="textStart"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -84,9 +83,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:gravity="center_vertical"
                             android:text="@string/ay"
-                            android:textAlignment="textStart"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -94,9 +92,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:gravity="center_vertical"
                             android:text="@string/az"
-                            android:textAlignment="textStart"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -104,9 +101,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:gravity="center_vertical"
                             android:text="@string/temp"
-                            android:textAlignment="textStart"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -121,44 +117,40 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_mpu925x_ax"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
-                            android:textAlignment="textStart"
+                            android:gravity="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_sensor_mpu925x_ay"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
-                            android:textAlignment="textStart"
+                            android:gravity="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_sensor_mpu925x_az"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
-                            android:textAlignment="textStart"
+                            android:gravity="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_sensor_mpu925x_temp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
-                            android:textAlignment="textStart"
+                            android:gravity="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -174,9 +166,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:gravity="center_vertical"
                             android:text="@string/gx"
-                            android:textAlignment="textStart"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -184,9 +175,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:gravity="center_vertical"
                             android:text="@string/gy"
-                            android:textAlignment="textStart"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -194,9 +184,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:gravity="center_vertical"
                             android:text="@string/gz"
-                            android:textAlignment="textStart"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
@@ -211,33 +200,30 @@
 
                         <TextView
                             android:id="@+id/tv_sensor_mpu925x_gx"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
-                            android:textAlignment="textStart"
+                            android:gravity="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_sensor_mpu925x_gy"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
-                            android:textAlignment="textStart"
+                            android:gravity="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_sensor_mpu925x_gz"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_gravity="start"
+                            android:layout_width="@dimen/tv_sensor_width"
+                            android:layout_height="@dimen/tv_sensor_height"
                             android:background="@drawable/tv_border"
-                            android:textAlignment="textStart"
+                            android:gravity="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sensor_body_font"
                             android:textStyle="bold" />
