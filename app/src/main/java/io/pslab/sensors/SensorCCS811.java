@@ -187,9 +187,6 @@ public class SensorCCS811 extends AbstractSensorActivity {
             LineDataSet dataSeteCO2 = new LineDataSet(entrieseCO2, getString(R.string.eCO2));
             LineDataSet dataSetTVOC = new LineDataSet(entriesTVOC, getString(R.string.eTVOC));
 
-            dataSeteCO2.setDrawCircles(true);
-            dataSetTVOC.setDrawCircles(true);
-
             updateChart(mCharteCO2, timeElapsed, dataSeteCO2);
             updateChart(mChartTVOC, timeElapsed, dataSetTVOC);
         }

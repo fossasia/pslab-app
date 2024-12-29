@@ -133,7 +133,6 @@ public class SensorVL53L0X extends AbstractSensorActivity {
             }
 
             LineDataSet dataSet = new LineDataSet(entries, getString(R.string.bx));
-            dataSet.setDrawCircles(true);
 
             updateChart(mChart, timeElapsed, dataSet);
         }

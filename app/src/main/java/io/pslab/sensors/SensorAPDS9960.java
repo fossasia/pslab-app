@@ -232,9 +232,6 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
                 LineDataSet dataSetLux = new LineDataSet(entriesLux, getString(R.string.light_lux));
                 LineDataSet dataSetProximity = new LineDataSet(entriesProximity, getString(R.string.proximity));
 
-                dataSetLux.setDrawCircles(true);
-                dataSetProximity.setDrawCircles(true);
-
                 updateChart(mChartLux, timeElapsed, dataSetLux);
                 updateChart(mChartProximity, timeElapsed, dataSetProximity);
 

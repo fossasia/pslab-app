@@ -148,7 +148,6 @@ public class SensorADS1115 extends AbstractSensorActivity {
             }
 
             LineDataSet dataSet = new LineDataSet(entries, getString(R.string.bx));
-            dataSet.setDrawCircles(true);
 
             updateChart(mChart, timeElapsed, dataSet);
         }

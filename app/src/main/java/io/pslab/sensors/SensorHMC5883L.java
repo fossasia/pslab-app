@@ -166,10 +166,6 @@ public class SensorHMC5883L extends AbstractSensorActivity {
             dataSetBy.setColor(Color.GREEN);
             dataSetBz.setColor(Color.RED);
 
-            dataSetBx.setDrawCircles(true);
-            dataSetBy.setDrawCircles(true);
-            dataSetBz.setDrawCircles(true);
-
             updateChart(mChart, timeElapsed, dataSetBx, dataSetBy, dataSetBz);
         }
     }

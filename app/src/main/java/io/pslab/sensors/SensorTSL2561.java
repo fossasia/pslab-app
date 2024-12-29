@@ -188,10 +188,6 @@ public class SensorTSL2561 extends AbstractSensorActivity {
             dataSetInfrared.setColor(Color.GREEN);
             dataSetVisible.setColor(Color.RED);
 
-            datasetFull.setDrawCircles(true);
-            dataSetInfrared.setDrawCircles(true);
-            dataSetVisible.setDrawCircles(true);
-
             updateChart(mChart, timeElapsed, datasetFull, dataSetInfrared, dataSetVisible);
         }
     }

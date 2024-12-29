@@ -239,9 +239,6 @@ public class SensorMLX90614 extends AbstractSensorActivity {
             LineDataSet dataSetObjectTemperature = new LineDataSet(entriesObjectTemperature, getString(R.string.object_temp));
             LineDataSet dataSetAmbientTemperature = new LineDataSet(entriesAmbientTemperature, getString(R.string.ambient_temp));
 
-            dataSetObjectTemperature.setDrawCircles(true);
-            dataSetAmbientTemperature.setDrawCircles(true);
-
             updateChart(mChartObjectTemperature, timeElapsed, dataSetObjectTemperature);
             updateChart(mChartAmbientTemperature, timeElapsed, dataSetAmbientTemperature);
         }

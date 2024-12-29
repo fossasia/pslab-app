@@ -189,9 +189,6 @@ public class SensorSHT21 extends AbstractSensorActivity {
             LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));
             LineDataSet dataSetHumidity = new LineDataSet(entriesHumidity, getString(R.string.humidity));
 
-            dataSetTemperature.setDrawCircles(true);
-            dataSetHumidity.setDrawCircles(true);
-
             updateChart(mChartTemperature, timeElapsed, dataSetTemperature);
             updateChart(mChartHumidity, timeElapsed, dataSetHumidity);
         }
