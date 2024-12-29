@@ -48,7 +48,7 @@ public class SensorVL53L0X extends AbstractSensorActivity {
         tvSensorVL53L0X = findViewById(R.id.tv_sensor_vl53l0x);
         mChart = findViewById(R.id.chart_sensor_ads);
 
-        initChart(mChart, 0f, 10000f);
+        initChart(mChart);
 
         if (savedInstanceState == null) {
             entries = new ArrayList<>();

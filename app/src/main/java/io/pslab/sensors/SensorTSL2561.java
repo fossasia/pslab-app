@@ -67,7 +67,7 @@ public class SensorTSL2561 extends AbstractSensorActivity {
         etSensorTSL2561Timing = findViewById(R.id.et_sensor_tsl2561_timing);
         mChart = findViewById(R.id.chart_tsl2561);
 
-        initChart(mChart, 0f, 1700f);
+        initChart(mChart);
 
         try {
             if (sensorTSL2561 != null & getScienceLab().isConnected()) {

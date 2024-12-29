@@ -73,8 +73,8 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
         mChartLux = findViewById(R.id.chart_sensor_apds9960_lux);
         mChartProximity = findViewById(R.id.chart_sensor_apds9960_proximity);
 
-        initChart(mChartLux, 0f, 10000f);
-        initChart(mChartProximity, 0f, 256f);
+        initChart(mChartLux);
+        initChart(mChartProximity);
 
         if (savedInstanceState == null) {
             entriesLux = new ArrayList<>();

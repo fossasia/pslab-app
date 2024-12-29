@@ -65,9 +65,9 @@ public class SensorBMP180 extends AbstractSensorActivity {
         mChartAltitude = findViewById(R.id.chart_alt_bmp180);
         mChartPressure = findViewById(R.id.chart_pre_bmp180);
 
-        initChart(mChartTemperature, 0f, 70f);
-        initChart(mChartAltitude, 0f, 3000f);
-        initChart(mChartPressure, 0f, 1000000f);
+        initChart(mChartTemperature);
+        initChart(mChartAltitude);
+        initChart(mChartPressure);
 
         if (savedInstanceState == null) {
             entriesTemperature = new ArrayList<>();

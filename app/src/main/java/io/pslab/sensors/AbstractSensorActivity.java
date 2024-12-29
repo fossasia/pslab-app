@@ -1,6 +1,7 @@
 package io.pslab.sensors;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -273,13 +274,14 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
     }
 
     private static void updateChart(LineChart chart, float timeElapsed, LineData data) {
+        data.setValueTextSize(0f); // turn off text
         chart.setData(data);
         chart.notifyDataSetChanged();
         chart.setVisibleXRangeMaximum(10);
         chart.moveViewToX(timeElapsed);
     }
 
-    protected static void initChart(LineChart chart, float xAxisMinimum, float xAxisMaximum) {
+    protected void initChart(LineChart chart) {
         XAxis x = chart.getXAxis();
         YAxis y = chart.getAxisLeft();
         YAxis y2 = chart.getAxisRight();
@@ -293,10 +295,10 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
         chart.setScaleYEnabled(false);
         chart.setBackgroundColor(Color.BLACK);
         chart.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        chart.setData(data);
+        chart.setAutoScaleMinMaxEnabled(true);
+        chart.setNoDataText(getString(R.string.no_data_fetched));
+        chart.setNoDataTextColor(Color.YELLOW);
+        chart.setNoDataTextTypeface(Typeface.MONOSPACE);
 
         Legend l = chart.getLegend();
         l.setForm(Legend.LegendForm.LINE);
@@ -307,10 +309,9 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
         x.setAvoidFirstLastClipping(true);
 
         y.setTextColor(Color.WHITE);
-        y.setAxisMaximum(xAxisMaximum);
-        y.setAxisMinimum(xAxisMinimum);
         y.setDrawGridLines(true);
-        y.setLabelCount(10);
+        y.setLabelCount(10, true);
+        y.setGranularity(0.1f);
 
         y2.setDrawGridLines(false);
 

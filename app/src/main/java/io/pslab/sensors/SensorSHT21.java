@@ -57,8 +57,8 @@ public class SensorSHT21 extends AbstractSensorActivity {
         mChartTemperature = findViewById(R.id.chart_temperature_sht21);
         mChartHumidity = findViewById(R.id.chart_humidity_sht21);
 
-        initChart(mChartTemperature, -40, 125f);
-        initChart(mChartHumidity, 0f, 100f);
+        initChart(mChartTemperature);
+        initChart(mChartHumidity);
 
         if (savedInstanceState == null) {
             entriesTemperature = new ArrayList<>();

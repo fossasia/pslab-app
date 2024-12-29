@@ -56,8 +56,8 @@ public class SensorCCS811 extends AbstractSensorActivity {
         mCharteCO2 = findViewById(R.id.chart_eCO2_ccs811);
         mChartTVOC = findViewById(R.id.chart_TVOC_ccs811);
 
-        initChart(mCharteCO2, 0f, 10000f);
-        initChart(mChartTVOC, 0f, 2000f);
+        initChart(mCharteCO2);
+        initChart(mChartTVOC);
 
         if (savedInstanceState == null) {
             entrieseCO2 = new ArrayList<>();

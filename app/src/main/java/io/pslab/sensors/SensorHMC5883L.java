@@ -61,7 +61,7 @@ public class SensorHMC5883L extends AbstractSensorActivity {
         tvSensorHMC5883Lbz = findViewById(R.id.tv_sensor_hmc5883l_bz);
         mChart = findViewById(R.id.chart_hmc5883l);
 
-        initChart(mChart, -10f, 10f);
+        initChart(mChart);
 
         if (savedInstanceState == null) {
             entriesBx = new ArrayList<>();

@@ -63,7 +63,7 @@ public class SensorADS1115 extends AbstractSensorActivity {
             sensorADS1115.setDataRate(Integer.parseInt(spinnerSensorADS1115Rate.getSelectedItem().toString()));
         }
 
-        initChart(mChart, -6.15f, 6.15f);
+        initChart(mChart);
 
         if (savedInstanceState == null) {
             entries = new ArrayList<>();

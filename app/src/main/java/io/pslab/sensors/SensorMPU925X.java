@@ -95,8 +95,8 @@ public class SensorMPU925X extends AbstractSensorActivity {
         mChartAcceleration = findViewById(R.id.chart_sensor_mpu925x_accelerometer);
         mChartGyroscope = findViewById(R.id.chart_sensor_mpu925x_gyroscope);
 
-        initChart(mChartAcceleration, -25f, 25f);
-        initChart(mChartGyroscope, -200f, 200f);
+        initChart(mChartAcceleration);
+        initChart(mChartGyroscope);
 
         try {
             if (sensorMPU925X != null) {

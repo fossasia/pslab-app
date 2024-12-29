@@ -71,8 +71,8 @@ public class SensorMLX90614 extends AbstractSensorActivity {
         mChartObjectTemperature = findViewById(R.id.chart_obj_temp_mlx);
         mChartAmbientTemperature = findViewById(R.id.chart_amb_temp_mlx);
 
-        initChart(mChartObjectTemperature, -40f, 125f);
-        initChart(mChartAmbientTemperature, -70f, 380f);
+        initChart(mChartObjectTemperature);
+        initChart(mChartAmbientTemperature);
 
         if (savedInstanceState == null) {
             entriesObjectTemperature = new ArrayList<>();

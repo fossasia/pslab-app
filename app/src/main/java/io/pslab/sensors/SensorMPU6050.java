@@ -96,8 +96,8 @@ public class SensorMPU6050 extends AbstractSensorActivity {
         mChartAcceleration = findViewById(R.id.chart_sensor_mpu6050_accelerometer);
         mChartGyroscope = findViewById(R.id.chart_sensor_mpu6050_gyroscope);
 
-        initChart(mChartAcceleration, -25f, 25f);
-        initChart(mChartGyroscope, -200f, 200f);
+        initChart(mChartAcceleration);
+        initChart(mChartGyroscope);
 
         try {
             if (sensorMPU6050 != null && getScienceLab().isConnected()) {
