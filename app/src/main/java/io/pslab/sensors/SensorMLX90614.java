@@ -236,23 +236,14 @@ public class SensorMLX90614 extends AbstractSensorActivity {
                 tvSensorMLX90614AmbientTemp.setText(DataFormatter.formatDouble(dataMLX90614AmbientTemp, DataFormatter.HIGH_PRECISION_FORMAT));
             }
 
-            LineDataSet dataSet1 = new LineDataSet(entriesObjectTemperature, getString(R.string.object_temp));
-            LineDataSet dataSet2 = new LineDataSet(entriesAmbientTemperature, getString(R.string.ambient_temp));
+            LineDataSet dataSetObjectTemperature = new LineDataSet(entriesObjectTemperature, getString(R.string.object_temp));
+            LineDataSet dataSetAmbientTemperature = new LineDataSet(entriesAmbientTemperature, getString(R.string.ambient_temp));
 
-            dataSet1.setDrawCircles(true);
-            dataSet2.setDrawCircles(true);
+            dataSetObjectTemperature.setDrawCircles(true);
+            dataSetAmbientTemperature.setDrawCircles(true);
 
-            LineData data1 = new LineData(dataSet1);
-            mChartObjectTemperature.setData(data1);
-            mChartObjectTemperature.notifyDataSetChanged();
-            mChartObjectTemperature.setVisibleXRangeMaximum(10);
-            mChartObjectTemperature.moveViewToX(timeElapsed);
-
-            LineData data2 = new LineData(dataSet2);
-            mChartAmbientTemperature.setData(data2);
-            mChartAmbientTemperature.notifyDataSetChanged();
-            mChartAmbientTemperature.setVisibleXRangeMaximum(10);
-            mChartAmbientTemperature.moveViewToX(timeElapsed);
+            updateChart(mChartObjectTemperature, timeElapsed, dataSetObjectTemperature);
+            updateChart(mChartAmbientTemperature, timeElapsed, dataSetAmbientTemperature);
         }
     }
 

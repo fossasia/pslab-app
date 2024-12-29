@@ -184,23 +184,14 @@ public class SensorCCS811 extends AbstractSensorActivity {
                 tvSensorCCS811TVOC.setText(DataFormatter.formatDouble(dataCCS811TVOC, DataFormatter.HIGH_PRECISION_FORMAT));
             }
 
-            LineDataSet dataSet1 = new LineDataSet(entrieseCO2, getString(R.string.eCO2));
-            LineDataSet dataSet2 = new LineDataSet(entriesTVOC, getString(R.string.eTVOC));
+            LineDataSet dataSeteCO2 = new LineDataSet(entrieseCO2, getString(R.string.eCO2));
+            LineDataSet dataSetTVOC = new LineDataSet(entriesTVOC, getString(R.string.eTVOC));
 
-            dataSet1.setDrawCircles(true);
-            dataSet2.setDrawCircles(true);
+            dataSeteCO2.setDrawCircles(true);
+            dataSetTVOC.setDrawCircles(true);
 
-            LineData data = new LineData(dataSet1);
-            mCharteCO2.setData(data);
-            mCharteCO2.notifyDataSetChanged();
-            mCharteCO2.setVisibleXRangeMaximum(10);
-            mCharteCO2.moveViewToX(timeElapsed);
-
-            LineData data2 = new LineData(dataSet2);
-            mChartTVOC.setData(data2);
-            mChartTVOC.notifyDataSetChanged();
-            mChartTVOC.setVisibleXRangeMaximum(10);
-            mChartTVOC.moveViewToX(timeElapsed);
+            updateChart(mCharteCO2, timeElapsed, dataSeteCO2);
+            updateChart(mChartTVOC, timeElapsed, dataSetTVOC);
         }
     }
 

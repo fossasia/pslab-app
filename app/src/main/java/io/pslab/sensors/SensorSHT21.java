@@ -186,23 +186,14 @@ public class SensorSHT21 extends AbstractSensorActivity {
                 tvSensorSHT21Humidity.setText(DataFormatter.formatDouble(dataSHT21Humidity.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
             }
 
-            LineDataSet dataSet1 = new LineDataSet(entriesTemperature, getString(R.string.temperature));
-            LineDataSet dataSet2 = new LineDataSet(entriesHumidity, getString(R.string.humidity));
+            LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));
+            LineDataSet dataSetHumidity = new LineDataSet(entriesHumidity, getString(R.string.humidity));
 
-            dataSet1.setDrawCircles(true);
-            dataSet2.setDrawCircles(true);
+            dataSetTemperature.setDrawCircles(true);
+            dataSetHumidity.setDrawCircles(true);
 
-            LineData data = new LineData(dataSet1);
-            mChartTemperature.setData(data);
-            mChartTemperature.notifyDataSetChanged();
-            mChartTemperature.setVisibleXRangeMaximum(10);
-            mChartTemperature.moveViewToX(timeElapsed);
-
-            LineData data2 = new LineData(dataSet2);
-            mChartHumidity.setData(data2);
-            mChartHumidity.notifyDataSetChanged();
-            mChartHumidity.setVisibleXRangeMaximum(10);
-            mChartHumidity.moveViewToX(timeElapsed);
+            updateChart(mChartTemperature, timeElapsed, dataSetTemperature);
+            updateChart(mChartHumidity, timeElapsed, dataSetHumidity);
         }
     }
 

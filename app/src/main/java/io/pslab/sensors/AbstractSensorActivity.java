@@ -21,6 +21,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
 import java.util.Locale;
 
 import io.pslab.R;
@@ -240,6 +244,35 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
      */
     protected long getStartTime() {
         return startTime;
+    }
+
+    /**
+     * Update data of a chart.
+     *
+     * @param chart       chart to update
+     * @param timeElapsed time elapsed since last update of chart
+     * @param dataSet     data set which contains data to display
+     */
+    protected static void updateChart(LineChart chart, float timeElapsed, ILineDataSet dataSet) {
+        updateChart(chart, timeElapsed, new LineData(dataSet));
+    }
+
+    /**
+     * Update data of a chart.
+     *
+     * @param chart       chart to update
+     * @param timeElapsed time elapsed since last update of chart
+     * @param dataSets    data sets which contains data to display
+     */
+    protected static void updateChart(LineChart chart, float timeElapsed, ILineDataSet... dataSets) {
+        updateChart(chart, timeElapsed, new LineData(dataSets));
+    }
+
+    private static void updateChart(LineChart chart, float timeElapsed, LineData data) {
+        chart.setData(data);
+        chart.notifyDataSetChanged();
+        chart.setVisibleXRangeMaximum(10);
+        chart.moveViewToX(timeElapsed);
     }
 
     @Override

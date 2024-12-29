@@ -17,11 +17,9 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.pslab.R;
 import io.pslab.communication.peripherals.I2C;
@@ -182,28 +180,19 @@ public class SensorTSL2561 extends AbstractSensorActivity {
                 tvSensorTSL2561Visible.setText(String.valueOf(dataTSL2561[2]));
             }
 
-            LineDataSet dataset1 = new LineDataSet(entriesFull, getString(R.string.full));
-            LineDataSet dataSet2 = new LineDataSet(entriesInfrared, getString(R.string.infrared));
-            LineDataSet dataSet3 = new LineDataSet(entriesVisible, getString(R.string.visible));
+            LineDataSet datasetFull = new LineDataSet(entriesFull, getString(R.string.full));
+            LineDataSet dataSetInfrared = new LineDataSet(entriesInfrared, getString(R.string.infrared));
+            LineDataSet dataSetVisible = new LineDataSet(entriesVisible, getString(R.string.visible));
 
-            dataset1.setColor(Color.BLUE);
-            dataSet2.setColor(Color.GREEN);
-            dataSet3.setColor(Color.RED);
+            datasetFull.setColor(Color.BLUE);
+            dataSetInfrared.setColor(Color.GREEN);
+            dataSetVisible.setColor(Color.RED);
 
-            dataset1.setDrawCircles(true);
-            dataSet2.setDrawCircles(true);
-            dataSet3.setDrawCircles(true);
+            datasetFull.setDrawCircles(true);
+            dataSetInfrared.setDrawCircles(true);
+            dataSetVisible.setDrawCircles(true);
 
-            List<ILineDataSet> dataSets = new ArrayList<>();
-            dataSets.add(dataset1);
-            dataSets.add(dataSet2);
-            dataSets.add(dataSet3);
-
-            LineData data = new LineData(dataSets);
-            mChart.setData(data);
-            mChart.notifyDataSetChanged();
-            mChart.setVisibleXRangeMaximum(10);
-            mChart.moveViewToX(timeElapsed);
+            updateChart(mChart, timeElapsed, datasetFull, dataSetInfrared, dataSetVisible);
         }
     }
 

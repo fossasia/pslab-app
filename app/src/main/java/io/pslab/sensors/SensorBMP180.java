@@ -231,31 +231,17 @@ public class SensorBMP180 extends AbstractSensorActivity {
                 tvSensorBMP180Pressure.setText(DataFormatter.formatDouble(dataBMP180[2], DataFormatter.HIGH_PRECISION_FORMAT));
             }
 
-            LineDataSet dataSet1 = new LineDataSet(entriesTemperature, getString(R.string.temperature));
-            LineDataSet dataSet2 = new LineDataSet(entriesAltitude, getString(R.string.altitude));
-            LineDataSet dataSet3 = new LineDataSet(entriesPressure, getString(R.string.pressure));
+            LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));
+            LineDataSet dataSetAltitude = new LineDataSet(entriesAltitude, getString(R.string.altitude));
+            LineDataSet dataSetPressure = new LineDataSet(entriesPressure, getString(R.string.pressure));
 
-            dataSet1.setColor(Color.BLUE);
-            dataSet2.setColor(Color.GREEN);
-            dataSet3.setColor(Color.RED);
+            dataSetTemperature.setColor(Color.BLUE);
+            dataSetAltitude.setColor(Color.GREEN);
+            dataSetPressure.setColor(Color.RED);
 
-            LineData data = new LineData(dataSet1);
-            mChartTemperature.setData(data);
-            mChartTemperature.notifyDataSetChanged();
-            mChartTemperature.setVisibleXRangeMaximum(10);
-            mChartTemperature.moveViewToX(timeElapsed);
-
-            LineData data2 = new LineData(dataSet2);
-            mChartAltitude.setData(data2);
-            mChartAltitude.notifyDataSetChanged();
-            mChartAltitude.setVisibleXRangeMaximum(10);
-            mChartAltitude.moveViewToX(timeElapsed);
-
-            LineData data3 = new LineData(dataSet3);
-            mChartPressure.setData(data3);
-            mChartPressure.notifyDataSetChanged();
-            mChartPressure.setVisibleXRangeMaximum(10);
-            mChartPressure.moveViewToX(timeElapsed);
+            updateChart(mChartTemperature, timeElapsed, dataSetTemperature);
+            updateChart(mChartAltitude, timeElapsed, dataSetAltitude);
+            updateChart(mChartPressure, timeElapsed, dataSetPressure);
         }
     }
 

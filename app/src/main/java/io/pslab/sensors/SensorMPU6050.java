@@ -16,7 +16,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -280,44 +279,24 @@ public class SensorMPU6050 extends AbstractSensorActivity {
                 tvSensorMPU6050temp.setText(DataFormatter.formatDouble(dataMPU6050.get(3), DataFormatter.HIGH_PRECISION_FORMAT));
             }
 
-            LineDataSet dataset1 = new LineDataSet(entriesAx, getString(R.string.ax));
-            LineDataSet dataSet2 = new LineDataSet(entriesAy, getString(R.string.ay));
-            LineDataSet dataSet3 = new LineDataSet(entriesAz, getString(R.string.az));
+            LineDataSet dataSetAx = new LineDataSet(entriesAx, getString(R.string.ax));
+            LineDataSet dataSetAy = new LineDataSet(entriesAy, getString(R.string.ay));
+            LineDataSet dataSetAz = new LineDataSet(entriesAz, getString(R.string.az));
 
-            LineDataSet dataset4 = new LineDataSet(entriesGx, getString(R.string.gx));
-            LineDataSet dataSet5 = new LineDataSet(entriesGy, getString(R.string.gy));
-            LineDataSet dataSet6 = new LineDataSet(entriesGz, getString(R.string.gz));
+            LineDataSet dataSetGx = new LineDataSet(entriesGx, getString(R.string.gx));
+            LineDataSet dataSetGy = new LineDataSet(entriesGy, getString(R.string.gy));
+            LineDataSet dataSetGz = new LineDataSet(entriesGz, getString(R.string.gz));
 
+            dataSetAx.setColor(Color.BLUE);
+            dataSetAy.setColor(Color.GREEN);
+            dataSetAz.setColor(Color.RED);
 
-            dataset1.setColor(Color.BLUE);
-            dataSet2.setColor(Color.GREEN);
-            dataSet3.setColor(Color.RED);
+            dataSetGx.setColor(Color.BLUE);
+            dataSetGy.setColor(Color.GREEN);
+            dataSetGz.setColor(Color.RED);
 
-            dataset4.setColor(Color.BLUE);
-            dataSet5.setColor(Color.GREEN);
-            dataSet6.setColor(Color.RED);
-
-            List<ILineDataSet> dataSets = new ArrayList<>();
-            dataSets.add(dataset1);
-            dataSets.add(dataSet2);
-            dataSets.add(dataSet3);
-
-            List<ILineDataSet> dataSets2 = new ArrayList<>();
-            dataSets2.add(dataset4);
-            dataSets2.add(dataSet5);
-            dataSets2.add(dataSet6);
-
-            LineData data = new LineData(dataSets);
-            mChartAcceleration.setData(data);
-            mChartAcceleration.notifyDataSetChanged();
-            mChartAcceleration.setVisibleXRangeMaximum(10);
-            mChartAcceleration.moveViewToX(timeElapsed);
-
-            LineData data2 = new LineData(dataSets2);
-            mChartGyroscope.setData(data2);
-            mChartGyroscope.notifyDataSetChanged();
-            mChartGyroscope.setVisibleXRangeMaximum(10);
-            mChartGyroscope.moveViewToX(timeElapsed);
+            updateChart(mChartAcceleration, timeElapsed, dataSetAx, dataSetAy, dataSetAz);
+            updateChart(mChartGyroscope, timeElapsed, dataSetGx, dataSetGy, dataSetGz);
         }
     }
 

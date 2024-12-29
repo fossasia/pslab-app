@@ -229,23 +229,15 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
                     tvSensorAPDS9960Proximity.setText(DataFormatter.formatDouble(dataAPDS9960Proximity, DataFormatter.HIGH_PRECISION_FORMAT));
                 }
 
-                LineDataSet dataSet1 = new LineDataSet(entriesLux, getString(R.string.light_lux));
-                LineDataSet dataSet2 = new LineDataSet(entriesProximity, getString(R.string.proximity));
+                LineDataSet dataSetLux = new LineDataSet(entriesLux, getString(R.string.light_lux));
+                LineDataSet dataSetProximity = new LineDataSet(entriesProximity, getString(R.string.proximity));
 
-                dataSet1.setDrawCircles(true);
-                dataSet2.setDrawCircles(true);
+                dataSetLux.setDrawCircles(true);
+                dataSetProximity.setDrawCircles(true);
 
-                LineData data = new LineData(dataSet1);
-                mChartLux.setData(data);
-                mChartLux.notifyDataSetChanged();
-                mChartLux.setVisibleXRangeMaximum(10);
-                mChartLux.moveViewToX(timeElapsed);
+                updateChart(mChartLux, timeElapsed, dataSetLux);
+                updateChart(mChartProximity, timeElapsed, dataSetProximity);
 
-                LineData data2 = new LineData(dataSet2);
-                mChartProximity.setData(data2);
-                mChartProximity.notifyDataSetChanged();
-                mChartProximity.setVisibleXRangeMaximum(10);
-                mChartProximity.moveViewToX(timeElapsed);
             } else if (isSensorDataAcquired()) {
                 switch (dataAPDS9960Gesture) {
                     case 1:
