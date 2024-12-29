@@ -9,11 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -69,107 +65,9 @@ public class SensorBMP180 extends AbstractSensorActivity {
         mChartAltitude = findViewById(R.id.chart_alt_bmp180);
         mChartPressure = findViewById(R.id.chart_pre_bmp180);
 
-        XAxis xTemperature = mChartTemperature.getXAxis();
-        YAxis yTemperature = mChartTemperature.getAxisLeft();
-        YAxis yTemperature2 = mChartTemperature.getAxisRight();
-
-        XAxis xAltitude = mChartAltitude.getXAxis();
-        YAxis yAltitude = mChartAltitude.getAxisLeft();
-        YAxis yAltitude2 = mChartAltitude.getAxisRight();
-
-        XAxis xPressure = mChartPressure.getXAxis();
-        YAxis yPressure = mChartPressure.getAxisLeft();
-        YAxis yPressure2 = mChartPressure.getAxisRight();
-
-        mChartTemperature.setTouchEnabled(true);
-        mChartTemperature.setHighlightPerDragEnabled(true);
-        mChartTemperature.setDragEnabled(true);
-        mChartTemperature.setScaleEnabled(true);
-        mChartTemperature.setDrawGridBackground(false);
-        mChartTemperature.setPinchZoom(true);
-        mChartTemperature.setScaleYEnabled(false);
-        mChartTemperature.setBackgroundColor(Color.BLACK);
-        mChartTemperature.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartTemperature.setData(data);
-
-        Legend l = mChartTemperature.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        xTemperature.setTextColor(Color.WHITE);
-        xTemperature.setDrawGridLines(true);
-        xTemperature.setAvoidFirstLastClipping(true);
-
-        yTemperature.setTextColor(Color.WHITE);
-        yTemperature.setAxisMaximum(70f);
-        yTemperature.setAxisMinimum(0f);
-        yTemperature.setDrawGridLines(true);
-        yTemperature.setLabelCount(10);
-
-        yTemperature2.setDrawGridLines(false);
-
-        mChartAltitude.setTouchEnabled(true);
-        mChartAltitude.setHighlightPerDragEnabled(true);
-        mChartAltitude.setDragEnabled(true);
-        mChartAltitude.setScaleEnabled(true);
-        mChartAltitude.setDrawGridBackground(false);
-        mChartAltitude.setPinchZoom(true);
-        mChartAltitude.setScaleYEnabled(false);
-        mChartAltitude.setBackgroundColor(Color.BLACK);
-        mChartAltitude.getDescription().setEnabled(false);
-
-        LineData data2 = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartAltitude.setData(data2);
-
-        Legend l2 = mChartAltitude.getLegend();
-        l2.setForm(Legend.LegendForm.LINE);
-        l2.setTextColor(Color.WHITE);
-
-        xAltitude.setTextColor(Color.WHITE);
-        xAltitude.setDrawGridLines(true);
-        xAltitude.setAvoidFirstLastClipping(true);
-
-        yAltitude.setTextColor(Color.WHITE);
-        yAltitude.setAxisMaximum(3000f);
-        yAltitude.setAxisMinimum(0f);
-        yAltitude.setDrawGridLines(true);
-        yAltitude.setLabelCount(10);
-
-        yAltitude2.setDrawGridLines(false);
-
-        mChartPressure.setTouchEnabled(true);
-        mChartPressure.setHighlightPerDragEnabled(true);
-        mChartPressure.setDragEnabled(true);
-        mChartPressure.setScaleEnabled(true);
-        mChartPressure.setDrawGridBackground(false);
-        mChartPressure.setPinchZoom(true);
-        mChartPressure.setScaleYEnabled(false);
-        mChartPressure.setBackgroundColor(Color.BLACK);
-        mChartPressure.getDescription().setEnabled(false);
-
-        LineData data3 = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartTemperature.setData(data3);
-
-        Legend l3 = mChartTemperature.getLegend();
-        l3.setForm(Legend.LegendForm.LINE);
-        l3.setTextColor(Color.WHITE);
-
-        xPressure.setTextColor(Color.WHITE);
-        xPressure.setDrawGridLines(true);
-        xPressure.setAvoidFirstLastClipping(true);
-
-        yPressure.setTextColor(Color.WHITE);
-        yPressure.setAxisMaximum(1000000f);
-        yPressure.setAxisMinimum(0f);
-        yPressure.setDrawGridLines(true);
-        yPressure.setLabelCount(10);
-
-        yPressure2.setDrawGridLines(false);
+        initChart(mChartTemperature, 0f, 70f);
+        initChart(mChartAltitude, 0f, 3000f);
+        initChart(mChartPressure, 0f, 1000000f);
 
         if (savedInstanceState == null) {
             entriesTemperature = new ArrayList<>();

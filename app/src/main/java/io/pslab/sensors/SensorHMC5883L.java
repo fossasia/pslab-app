@@ -9,11 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -64,39 +60,8 @@ public class SensorHMC5883L extends AbstractSensorActivity {
         tvSensorHMC5883Lby = findViewById(R.id.tv_sensor_hmc5883l_by);
         tvSensorHMC5883Lbz = findViewById(R.id.tv_sensor_hmc5883l_bz);
         mChart = findViewById(R.id.chart_hmc5883l);
-        XAxis x = mChart.getXAxis();
-        YAxis y = mChart.getAxisLeft();
-        YAxis y2 = mChart.getAxisRight();
 
-        mChart.setTouchEnabled(true);
-        mChart.setHighlightPerDragEnabled(true);
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
-        mChart.setDrawGridBackground(false);
-        mChart.setPinchZoom(true);
-        mChart.setScaleYEnabled(false);
-        mChart.setBackgroundColor(Color.BLACK);
-        mChart.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChart.setData(data);
-
-        Legend l = mChart.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        x.setTextColor(Color.WHITE);
-        x.setDrawGridLines(true);
-        x.setAvoidFirstLastClipping(true);
-
-        y.setTextColor(Color.WHITE);
-        y.setAxisMaximum(10f);
-        y.setAxisMinimum(-10f);
-        y.setDrawGridLines(true);
-        y.setLabelCount(10);
-
-        y2.setDrawGridLines(false);
+        initChart(mChart, -10f, 10f);
 
         if (savedInstanceState == null) {
             entriesBx = new ArrayList<>();

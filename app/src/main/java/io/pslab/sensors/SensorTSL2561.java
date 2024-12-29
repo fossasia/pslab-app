@@ -11,11 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -71,6 +67,8 @@ public class SensorTSL2561 extends AbstractSensorActivity {
         etSensorTSL2561Timing = findViewById(R.id.et_sensor_tsl2561_timing);
         mChart = findViewById(R.id.chart_tsl2561);
 
+        initChart(mChart, 0f, 1700f);
+
         try {
             if (sensorTSL2561 != null & getScienceLab().isConnected()) {
                 sensorTSL2561.setGain(spinnerSensorTSL2561Gain.getSelectedItem().toString());
@@ -78,40 +76,6 @@ public class SensorTSL2561 extends AbstractSensorActivity {
         } catch (IOException e) {
             Log.e(TAG, "Error setting gain.", e);
         }
-
-        XAxis x = mChart.getXAxis();
-        YAxis y = mChart.getAxisLeft();
-        YAxis y2 = mChart.getAxisRight();
-
-        mChart.setTouchEnabled(true);
-        mChart.setHighlightPerDragEnabled(true);
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
-        mChart.setDrawGridBackground(false);
-        mChart.setPinchZoom(true);
-        mChart.setScaleYEnabled(false);
-        mChart.setBackgroundColor(Color.BLACK);
-        mChart.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChart.setData(data);
-
-        Legend l = mChart.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        x.setTextColor(Color.WHITE);
-        x.setDrawGridLines(true);
-        x.setAvoidFirstLastClipping(true);
-
-        y.setTextColor(Color.WHITE);
-        y.setAxisMaximum(1700f);
-        y.setAxisMinimum(0f);
-        y.setDrawGridLines(true);
-        y.setLabelCount(10);
-
-        y2.setDrawGridLines(false);
 
         if (savedInstanceState == null) {
             entriesFull = new ArrayList<>();

@@ -1,6 +1,5 @@
 package io.pslab.sensors;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -9,11 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -62,73 +57,8 @@ public class SensorSHT21 extends AbstractSensorActivity {
         mChartTemperature = findViewById(R.id.chart_temperature_sht21);
         mChartHumidity = findViewById(R.id.chart_humidity_sht21);
 
-        XAxis xTemperature = mChartTemperature.getXAxis();
-        YAxis yTemperature = mChartTemperature.getAxisLeft();
-        YAxis yTemperature2 = mChartTemperature.getAxisRight();
-
-        XAxis xHumidity = mChartHumidity.getXAxis();
-        YAxis yHumidity = mChartHumidity.getAxisLeft();
-        YAxis yHumidity2 = mChartHumidity.getAxisRight();
-
-        mChartTemperature.setTouchEnabled(true);
-        mChartTemperature.setHighlightPerDragEnabled(true);
-        mChartTemperature.setDragEnabled(true);
-        mChartTemperature.setScaleEnabled(true);
-        mChartTemperature.setDrawGridBackground(false);
-        mChartTemperature.setPinchZoom(true);
-        mChartTemperature.setScaleYEnabled(false);
-        mChartTemperature.setBackgroundColor(Color.BLACK);
-        mChartTemperature.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartTemperature.setData(data);
-
-        Legend l = mChartTemperature.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        xTemperature.setTextColor(Color.WHITE);
-        xTemperature.setDrawGridLines(true);
-        xTemperature.setAvoidFirstLastClipping(true);
-
-        yTemperature.setTextColor(Color.WHITE);
-        yTemperature.setAxisMaximum(125f);
-        yTemperature.setAxisMinimum(-40f);
-        yTemperature.setDrawGridLines(true);
-        yTemperature.setLabelCount(10);
-
-        yTemperature2.setDrawGridLines(false);
-
-        mChartHumidity.setTouchEnabled(true);
-        mChartHumidity.setHighlightPerDragEnabled(true);
-        mChartHumidity.setDragEnabled(true);
-        mChartHumidity.setScaleEnabled(true);
-        mChartHumidity.setDrawGridBackground(false);
-        mChartHumidity.setPinchZoom(true);
-        mChartHumidity.setScaleYEnabled(false);
-        mChartHumidity.setBackgroundColor(Color.BLACK);
-        mChartHumidity.getDescription().setEnabled(false);
-
-        LineData data2 = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartHumidity.setData(data2);
-
-        Legend l2 = mChartHumidity.getLegend();
-        l2.setForm(Legend.LegendForm.LINE);
-        l2.setTextColor(Color.WHITE);
-
-        xHumidity.setTextColor(Color.WHITE);
-        xHumidity.setDrawGridLines(true);
-        xHumidity.setAvoidFirstLastClipping(true);
-
-        yHumidity.setTextColor(Color.WHITE);
-        yHumidity.setAxisMaximum(100f);
-        yHumidity.setAxisMinimum(0f);
-        yHumidity.setDrawGridLines(true);
-        yHumidity.setLabelCount(10);
-
-        yHumidity2.setDrawGridLines(false);
+        initChart(mChartTemperature, -40, 125f);
+        initChart(mChartHumidity, 0f, 100f);
 
         if (savedInstanceState == null) {
             entriesTemperature = new ArrayList<>();

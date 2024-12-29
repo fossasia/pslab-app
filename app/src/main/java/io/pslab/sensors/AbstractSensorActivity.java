@@ -1,5 +1,6 @@
 package io.pslab.sensors;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -22,6 +23,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
@@ -273,6 +277,43 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
         chart.notifyDataSetChanged();
         chart.setVisibleXRangeMaximum(10);
         chart.moveViewToX(timeElapsed);
+    }
+
+    protected static void initChart(LineChart chart, float xAxisMinimum, float xAxisMaximum) {
+        XAxis x = chart.getXAxis();
+        YAxis y = chart.getAxisLeft();
+        YAxis y2 = chart.getAxisRight();
+
+        chart.setTouchEnabled(true);
+        chart.setHighlightPerDragEnabled(true);
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setDrawGridBackground(false);
+        chart.setPinchZoom(true);
+        chart.setScaleYEnabled(false);
+        chart.setBackgroundColor(Color.BLACK);
+        chart.getDescription().setEnabled(false);
+
+        LineData data = new LineData();
+        data.setValueTextColor(Color.WHITE);
+        chart.setData(data);
+
+        Legend l = chart.getLegend();
+        l.setForm(Legend.LegendForm.LINE);
+        l.setTextColor(Color.WHITE);
+
+        x.setTextColor(Color.WHITE);
+        x.setDrawGridLines(true);
+        x.setAvoidFirstLastClipping(true);
+
+        y.setTextColor(Color.WHITE);
+        y.setAxisMaximum(xAxisMaximum);
+        y.setAxisMinimum(xAxisMinimum);
+        y.setDrawGridLines(true);
+        y.setLabelCount(10);
+
+        y2.setDrawGridLines(false);
+
     }
 
     @Override

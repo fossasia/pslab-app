@@ -1,6 +1,5 @@
 package io.pslab.sensors;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -9,11 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -52,39 +47,8 @@ public class SensorVL53L0X extends AbstractSensorActivity {
 
         tvSensorVL53L0X = findViewById(R.id.tv_sensor_vl53l0x);
         mChart = findViewById(R.id.chart_sensor_ads);
-        XAxis x = mChart.getXAxis();
-        YAxis y = mChart.getAxisLeft();
-        YAxis y2 = mChart.getAxisRight();
 
-        mChart.setTouchEnabled(true);
-        mChart.setHighlightPerDragEnabled(true);
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
-        mChart.setDrawGridBackground(false);
-        mChart.setPinchZoom(true);
-        mChart.setScaleYEnabled(false);
-        mChart.setBackgroundColor(Color.BLACK);
-        mChart.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChart.setData(data);
-
-        Legend l = mChart.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        x.setTextColor(Color.WHITE);
-        x.setDrawGridLines(true);
-        x.setAvoidFirstLastClipping(true);
-
-        y.setTextColor(Color.WHITE);
-        y.setAxisMaximum(10000f);
-        y.setAxisMinimum(0);
-        y.setDrawGridLines(true);
-        y.setLabelCount(10);
-
-        y2.setDrawGridLines(false);
+        initChart(mChart, 0f, 10000f);
 
         if (savedInstanceState == null) {
             entries = new ArrayList<>();

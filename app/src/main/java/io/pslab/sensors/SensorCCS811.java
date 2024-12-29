@@ -1,6 +1,5 @@
 package io.pslab.sensors;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -9,11 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -61,73 +56,8 @@ public class SensorCCS811 extends AbstractSensorActivity {
         mCharteCO2 = findViewById(R.id.chart_eCO2_ccs811);
         mChartTVOC = findViewById(R.id.chart_TVOC_ccs811);
 
-        XAxis xeCO2 = mCharteCO2.getXAxis();
-        YAxis yeCO2 = mCharteCO2.getAxisLeft();
-        YAxis yeCO22 = mCharteCO2.getAxisRight();
-
-        XAxis xTVOC = mChartTVOC.getXAxis();
-        YAxis yTVOC = mChartTVOC.getAxisLeft();
-        YAxis yTVOC2 = mChartTVOC.getAxisRight();
-
-        mCharteCO2.setTouchEnabled(true);
-        mCharteCO2.setHighlightPerDragEnabled(true);
-        mCharteCO2.setDragEnabled(true);
-        mCharteCO2.setScaleEnabled(true);
-        mCharteCO2.setDrawGridBackground(false);
-        mCharteCO2.setPinchZoom(true);
-        mCharteCO2.setScaleYEnabled(false);
-        mCharteCO2.setBackgroundColor(Color.BLACK);
-        mCharteCO2.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mCharteCO2.setData(data);
-
-        Legend l = mCharteCO2.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        xeCO2.setTextColor(Color.WHITE);
-        xeCO2.setDrawGridLines(true);
-        xeCO2.setAvoidFirstLastClipping(true);
-
-        yeCO2.setTextColor(Color.WHITE);
-        yeCO2.setAxisMaximum(10000f);
-        yeCO2.setAxisMinimum(0);
-        yeCO2.setDrawGridLines(true);
-        yeCO2.setLabelCount(10);
-
-        yeCO22.setDrawGridLines(false);
-
-        mChartTVOC.setTouchEnabled(true);
-        mChartTVOC.setHighlightPerDragEnabled(true);
-        mChartTVOC.setDragEnabled(true);
-        mChartTVOC.setScaleEnabled(true);
-        mChartTVOC.setDrawGridBackground(false);
-        mChartTVOC.setPinchZoom(true);
-        mChartTVOC.setScaleYEnabled(false);
-        mChartTVOC.setBackgroundColor(Color.BLACK);
-        mChartTVOC.getDescription().setEnabled(false);
-
-        LineData data2 = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartTVOC.setData(data2);
-
-        Legend l2 = mChartTVOC.getLegend();
-        l2.setForm(Legend.LegendForm.LINE);
-        l2.setTextColor(Color.WHITE);
-
-        xTVOC.setTextColor(Color.WHITE);
-        xTVOC.setDrawGridLines(true);
-        xTVOC.setAvoidFirstLastClipping(true);
-
-        yTVOC.setTextColor(Color.WHITE);
-        yTVOC.setAxisMaximum(2000f);
-        yTVOC.setAxisMinimum(0f);
-        yTVOC.setDrawGridLines(true);
-        yTVOC.setLabelCount(10);
-
-        yTVOC2.setDrawGridLines(false);
+        initChart(mCharteCO2, 0f, 10000f);
+        initChart(mChartTVOC, 0f, 2000f);
 
         if (savedInstanceState == null) {
             entrieseCO2 = new ArrayList<>();

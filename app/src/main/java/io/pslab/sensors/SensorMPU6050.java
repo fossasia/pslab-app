@@ -10,11 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -100,73 +96,8 @@ public class SensorMPU6050 extends AbstractSensorActivity {
         mChartAcceleration = findViewById(R.id.chart_sensor_mpu6050_accelerometer);
         mChartGyroscope = findViewById(R.id.chart_sensor_mpu6050_gyroscope);
 
-        XAxis xAccelerometer = mChartAcceleration.getXAxis();
-        YAxis yAccelerometer = mChartAcceleration.getAxisLeft();
-        YAxis yAccelerometer2 = mChartAcceleration.getAxisRight();
-
-        XAxis xGyroscope = mChartGyroscope.getXAxis();
-        YAxis yGyroscope = mChartGyroscope.getAxisLeft();
-        YAxis yGyroscope2 = mChartGyroscope.getAxisRight();
-
-        mChartAcceleration.setTouchEnabled(true);
-        mChartAcceleration.setHighlightPerDragEnabled(true);
-        mChartAcceleration.setDragEnabled(true);
-        mChartAcceleration.setScaleEnabled(true);
-        mChartAcceleration.setDrawGridBackground(false);
-        mChartAcceleration.setPinchZoom(true);
-        mChartAcceleration.setScaleYEnabled(false);
-        mChartAcceleration.setBackgroundColor(Color.BLACK);
-        mChartAcceleration.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartAcceleration.setData(data);
-
-        Legend l = mChartAcceleration.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        xAccelerometer.setTextColor(Color.WHITE);
-        xAccelerometer.setDrawGridLines(true);
-        xAccelerometer.setAvoidFirstLastClipping(true);
-
-        yAccelerometer.setTextColor(Color.WHITE);
-        yAccelerometer.setAxisMaximum(25f);
-        yAccelerometer.setAxisMinimum(-25f);
-        yAccelerometer.setDrawGridLines(true);
-        yAccelerometer.setLabelCount(10);
-
-        yAccelerometer2.setDrawGridLines(false);
-
-        mChartGyroscope.setTouchEnabled(true);
-        mChartGyroscope.setHighlightPerDragEnabled(true);
-        mChartGyroscope.setDragEnabled(true);
-        mChartGyroscope.setScaleEnabled(true);
-        mChartGyroscope.setDrawGridBackground(false);
-        mChartGyroscope.setPinchZoom(true);
-        mChartGyroscope.setScaleYEnabled(false);
-        mChartGyroscope.setBackgroundColor(Color.BLACK);
-        mChartGyroscope.getDescription().setEnabled(false);
-
-        LineData data2 = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartGyroscope.setData(data2);
-
-        Legend l2 = mChartGyroscope.getLegend();
-        l2.setForm(Legend.LegendForm.LINE);
-        l2.setTextColor(Color.WHITE);
-
-        xGyroscope.setTextColor(Color.WHITE);
-        xGyroscope.setDrawGridLines(true);
-        xGyroscope.setAvoidFirstLastClipping(true);
-
-        yGyroscope.setTextColor(Color.WHITE);
-        yGyroscope.setAxisMaximum(200f);
-        yGyroscope.setAxisMinimum(-200f);
-        yGyroscope.setDrawGridLines(true);
-        yGyroscope.setLabelCount(10);
-
-        yGyroscope2.setDrawGridLines(false);
+        initChart(mChartAcceleration, -25f, 25f);
+        initChart(mChartGyroscope, -200f, 200f);
 
         try {
             if (sensorMPU6050 != null && getScienceLab().isConnected()) {
