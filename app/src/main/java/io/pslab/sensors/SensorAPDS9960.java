@@ -1,6 +1,5 @@
 package io.pslab.sensors;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Spinner;
@@ -10,11 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
@@ -78,73 +73,8 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
         mChartLux = findViewById(R.id.chart_sensor_apds9960_lux);
         mChartProximity = findViewById(R.id.chart_sensor_apds9960_proximity);
 
-        XAxis xLux = mChartLux.getXAxis();
-        YAxis yLux = mChartLux.getAxisLeft();
-        YAxis yLux2 = mChartLux.getAxisRight();
-
-        XAxis xProximity = mChartProximity.getXAxis();
-        YAxis yProximity = mChartProximity.getAxisLeft();
-        YAxis yProximity2 = mChartProximity.getAxisRight();
-
-        mChartLux.setTouchEnabled(true);
-        mChartLux.setHighlightPerDragEnabled(true);
-        mChartLux.setDragEnabled(true);
-        mChartLux.setScaleEnabled(true);
-        mChartLux.setDrawGridBackground(false);
-        mChartLux.setPinchZoom(true);
-        mChartLux.setScaleYEnabled(false);
-        mChartLux.setBackgroundColor(Color.BLACK);
-        mChartLux.getDescription().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartLux.setData(data);
-
-        Legend l = mChartLux.getLegend();
-        l.setForm(Legend.LegendForm.LINE);
-        l.setTextColor(Color.WHITE);
-
-        xLux.setTextColor(Color.WHITE);
-        xLux.setDrawGridLines(true);
-        xLux.setAvoidFirstLastClipping(true);
-
-        yLux.setTextColor(Color.WHITE);
-        yLux.setAxisMaximum(10000f);
-        yLux.setAxisMinimum(0);
-        yLux.setDrawGridLines(true);
-        yLux.setLabelCount(10);
-
-        yLux2.setDrawGridLines(false);
-
-        mChartProximity.setTouchEnabled(true);
-        mChartProximity.setHighlightPerDragEnabled(true);
-        mChartProximity.setDragEnabled(true);
-        mChartProximity.setScaleEnabled(true);
-        mChartProximity.setDrawGridBackground(false);
-        mChartProximity.setPinchZoom(true);
-        mChartProximity.setScaleYEnabled(false);
-        mChartProximity.setBackgroundColor(Color.BLACK);
-        mChartProximity.getDescription().setEnabled(false);
-
-        LineData data2 = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChartProximity.setData(data2);
-
-        Legend l2 = mChartProximity.getLegend();
-        l2.setForm(Legend.LegendForm.LINE);
-        l2.setTextColor(Color.WHITE);
-
-        xProximity.setTextColor(Color.WHITE);
-        xProximity.setDrawGridLines(true);
-        xProximity.setAvoidFirstLastClipping(true);
-
-        yProximity.setTextColor(Color.WHITE);
-        yProximity.setAxisMaximum(256f);
-        yProximity.setAxisMinimum(0f);
-        yProximity.setDrawGridLines(true);
-        yProximity.setLabelCount(10);
-
-        yProximity2.setDrawGridLines(false);
+        initChart(mChartLux, 0f, 10000f);
+        initChart(mChartProximity, 0f, 256f);
 
         if (savedInstanceState == null) {
             entriesLux = new ArrayList<>();
