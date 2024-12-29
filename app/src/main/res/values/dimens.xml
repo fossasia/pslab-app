@@ -25,8 +25,6 @@
     <dimen name="instrument_tile_icon_size">100dp</dimen>
     <dimen name="instrument_card_margin">10dp</dimen>
 
-    <dimen name="title_font_size">14sp</dimen>
-
     <dimen name="control_margin">10dp</dimen>
     <dimen name="control_margin_small">5dp</dimen>
     <dimen name="control_margin_medium">15dp</dimen>

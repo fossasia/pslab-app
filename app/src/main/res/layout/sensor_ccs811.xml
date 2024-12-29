@@ -267,7 +267,7 @@
                     android:padding="@dimen/title_padding"
                     android:text="@string/plot_eTVOC"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/title_font_size"
+                    android:textSize="@dimen/sensor_title_font"
                     android:textStyle="bold" />
 
                 <RelativeLayout
