@@ -93,28 +93,35 @@ public class SensorSHT21 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorSHT21 != null) {
                     sensorSHT21.selectParameter("temperature");
                     dataSHT21Temp = sensorSHT21.getRaw();
                     sensorSHT21.selectParameter("humidity");
                     dataSHT21Humidity = sensorSHT21.getRaw();
+
+                    success = dataSHT21Temp != null && dataSHT21Humidity != null;
                 }
             } catch (IOException | InterruptedException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
             }
             timeElapsed = getTimeElapsed();
-            entriesTemperature.add(new Entry(timeElapsed, dataSHT21Temp.get(0).floatValue()));
-            entriesTemperature.add(new Entry(timeElapsed, dataSHT21Humidity.get(0).floatValue()));
+
+            if (success) {
+                entriesTemperature.add(new Entry(timeElapsed, dataSHT21Temp.get(0).floatValue()));
+                entriesTemperature.add(new Entry(timeElapsed, dataSHT21Humidity.get(0).floatValue()));
+            }
+
+            return success;
         }
 
         public void updateUi() {
 
-            if (isSensorDataAcquired()) {
-                tvSensorSHT21Temp.setText(DataFormatter.formatDouble(dataSHT21Temp.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorSHT21Humidity.setText(DataFormatter.formatDouble(dataSHT21Humidity.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
-            }
+            tvSensorSHT21Temp.setText(DataFormatter.formatDouble(dataSHT21Temp.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+            tvSensorSHT21Humidity.setText(DataFormatter.formatDouble(dataSHT21Humidity.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
 
             LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));
             LineDataSet dataSetHumidity = new LineDataSet(entriesHumidity, getString(R.string.humidity));

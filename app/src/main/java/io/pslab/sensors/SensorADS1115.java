@@ -92,10 +92,13 @@ public class SensorADS1115 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorADS1115 != null) {
                     dataADS1115 = sensorADS1115.getRaw();
+                    success = true;
                 }
             } catch (IOException | InterruptedException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
@@ -103,13 +106,13 @@ public class SensorADS1115 extends AbstractSensorActivity {
 
             timeElapsed = getTimeElapsed();
             entries.add(new Entry(timeElapsed, dataADS1115));
+
+            return success;
         }
 
         @Override
         public void updateUi() {
-            if (isSensorDataAcquired()) {
-                tvSensorADS1115.setText(String.valueOf(dataADS1115));
-            }
+            tvSensorADS1115.setText(String.valueOf(dataADS1115));
 
             LineDataSet dataSet = new LineDataSet(entries, getString(R.string.bx));
 

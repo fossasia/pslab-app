@@ -122,27 +122,33 @@ public class SensorTSL2561 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorTSL2561 != null) {
                     dataTSL2561 = sensorTSL2561.getRaw();
+                    success = dataTSL2561 != null;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
             }
             timeElapsed = getTimeElapsed();
-            entriesFull.add(new Entry(timeElapsed, dataTSL2561[0]));
-            entriesInfrared.add(new Entry(timeElapsed, dataTSL2561[1]));
-            entriesVisible.add(new Entry(timeElapsed, dataTSL2561[2]));
+
+            if (success) {
+                entriesFull.add(new Entry(timeElapsed, dataTSL2561[0]));
+                entriesInfrared.add(new Entry(timeElapsed, dataTSL2561[1]));
+                entriesVisible.add(new Entry(timeElapsed, dataTSL2561[2]));
+            }
+
+            return success;
         }
 
         public void updateUi() {
 
-            if (isSensorDataAcquired()) {
-                tvSensorTSL2561FullSpectrum.setText(String.valueOf(dataTSL2561[0]));
-                tvSensorTSL2561Infrared.setText(String.valueOf(dataTSL2561[1]));
-                tvSensorTSL2561Visible.setText(String.valueOf(dataTSL2561[2]));
-            }
+            tvSensorTSL2561FullSpectrum.setText(String.valueOf(dataTSL2561[0]));
+            tvSensorTSL2561Infrared.setText(String.valueOf(dataTSL2561[1]));
+            tvSensorTSL2561Visible.setText(String.valueOf(dataTSL2561[2]));
 
             LineDataSet datasetFull = new LineDataSet(entriesFull, getString(R.string.full));
             LineDataSet dataSetInfrared = new LineDataSet(entriesInfrared, getString(R.string.infrared));

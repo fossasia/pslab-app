@@ -100,28 +100,34 @@ public class SensorHMC5883L extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorHMC5883L != null) {
                     dataHMC5883L = sensorHMC5883L.getRaw();
+                    success = true;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
             }
 
             timeElapsed = getTimeElapsed();
-            entriesBx.add(new Entry(timeElapsed, dataHMC5883L.get(0).floatValue()));
-            entriesBy.add(new Entry(timeElapsed, dataHMC5883L.get(1).floatValue()));
-            entriesBz.add(new Entry(timeElapsed, dataHMC5883L.get(2).floatValue()));
+
+            if (success) {
+                entriesBx.add(new Entry(timeElapsed, dataHMC5883L.get(0).floatValue()));
+                entriesBy.add(new Entry(timeElapsed, dataHMC5883L.get(1).floatValue()));
+                entriesBz.add(new Entry(timeElapsed, dataHMC5883L.get(2).floatValue()));
+            }
+
+            return success;
         }
 
         public void updateUi() {
 
-            if (isSensorDataAcquired()) {
-                tvSensorHMC5883Lbx.setText(DataFormatter.formatDouble(dataHMC5883L.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorHMC5883Lby.setText(DataFormatter.formatDouble(dataHMC5883L.get(1), DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorHMC5883Lbz.setText(DataFormatter.formatDouble(dataHMC5883L.get(2), DataFormatter.HIGH_PRECISION_FORMAT));
-            }
+            tvSensorHMC5883Lbx.setText(DataFormatter.formatDouble(dataHMC5883L.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+            tvSensorHMC5883Lby.setText(DataFormatter.formatDouble(dataHMC5883L.get(1), DataFormatter.HIGH_PRECISION_FORMAT));
+            tvSensorHMC5883Lbz.setText(DataFormatter.formatDouble(dataHMC5883L.get(2), DataFormatter.HIGH_PRECISION_FORMAT));
 
             LineDataSet dataSetBx = new LineDataSet(entriesBx, getString(R.string.bx));
             LineDataSet dataSetBy = new LineDataSet(entriesBy, getString(R.string.by));

@@ -106,28 +106,34 @@ public class SensorBMP180 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorBMP180 != null && getScienceLab().isConnected()) {
                     dataBMP180 = sensorBMP180.getRaw();
+                    success = dataBMP180 != null;
                 }
             } catch (IOException | InterruptedException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
             }
 
             timeElapsed = getTimeElapsed();
-            entriesTemperature.add(new Entry(timeElapsed, (float) dataBMP180[0]));
-            entriesAltitude.add(new Entry(timeElapsed, (float) dataBMP180[1]));
-            entriesPressure.add(new Entry(timeElapsed, (float) dataBMP180[2]));
+
+            if (success) {
+                entriesTemperature.add(new Entry(timeElapsed, (float) dataBMP180[0]));
+                entriesAltitude.add(new Entry(timeElapsed, (float) dataBMP180[1]));
+                entriesPressure.add(new Entry(timeElapsed, (float) dataBMP180[2]));
+            }
+
+            return success;
         }
 
         public void updateUi() {
 
-            if (isSensorDataAcquired()) {
-                tvSensorBMP180Temp.setText(DataFormatter.formatDouble(dataBMP180[0], DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorBMP180Altitude.setText(DataFormatter.formatDouble(dataBMP180[1], DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorBMP180Pressure.setText(DataFormatter.formatDouble(dataBMP180[2], DataFormatter.HIGH_PRECISION_FORMAT));
-            }
+            tvSensorBMP180Temp.setText(DataFormatter.formatDouble(dataBMP180[0], DataFormatter.HIGH_PRECISION_FORMAT));
+            tvSensorBMP180Altitude.setText(DataFormatter.formatDouble(dataBMP180[1], DataFormatter.HIGH_PRECISION_FORMAT));
+            tvSensorBMP180Pressure.setText(DataFormatter.formatDouble(dataBMP180[2], DataFormatter.HIGH_PRECISION_FORMAT));
 
             LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));
             LineDataSet dataSetAltitude = new LineDataSet(entriesAltitude, getString(R.string.altitude));

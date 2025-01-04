@@ -144,27 +144,33 @@ public class SensorMLX90614 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorMLX90614 != null) {
                     dataMLX90614ObjectTemp = sensorMLX90614.getObjectTemperature();
                     dataMLX90614AmbientTemp = sensorMLX90614.getAmbientTemperature();
+                    success = true;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
             }
 
             timeElapsed = getTimeElapsed();
-            entriesObjectTemperature.add(new Entry(timeElapsed, dataMLX90614ObjectTemp.floatValue()));
-            entriesAmbientTemperature.add(new Entry(timeElapsed, dataMLX90614AmbientTemp.floatValue()));
+
+            if (success) {
+                entriesObjectTemperature.add(new Entry(timeElapsed, dataMLX90614ObjectTemp.floatValue()));
+                entriesAmbientTemperature.add(new Entry(timeElapsed, dataMLX90614AmbientTemp.floatValue()));
+            }
+
+            return success;
         }
 
         public void updateUi() {
 
-            if (isSensorDataAcquired()) {
-                tvSensorMLX90614ObjectTemp.setText(DataFormatter.formatDouble(dataMLX90614ObjectTemp, DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorMLX90614AmbientTemp.setText(DataFormatter.formatDouble(dataMLX90614AmbientTemp, DataFormatter.HIGH_PRECISION_FORMAT));
-            }
+            tvSensorMLX90614ObjectTemp.setText(DataFormatter.formatDouble(dataMLX90614ObjectTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+            tvSensorMLX90614AmbientTemp.setText(DataFormatter.formatDouble(dataMLX90614AmbientTemp, DataFormatter.HIGH_PRECISION_FORMAT));
 
             LineDataSet dataSetObjectTemperature = new LineDataSet(entriesObjectTemperature, getString(R.string.object_temp));
             LineDataSet dataSetAmbientTemperature = new LineDataSet(entriesAmbientTemperature, getString(R.string.ambient_temp));

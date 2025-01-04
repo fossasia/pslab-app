@@ -333,24 +333,26 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
 
     protected abstract class SensorDataFetch {
 
-        private volatile boolean isSensorDataAcquired;
-
         protected float getTimeElapsed() {
             return (System.currentTimeMillis() - getStartTime()) / 1000f;
         }
 
-        protected boolean isSensorDataAcquired() {
-            return isSensorDataAcquired;
-        }
-
         protected void execute() {
-            getSensorData();
-            isSensorDataAcquired = true;
-            updateUi();
+            if (getSensorData()) {
+                updateUi();
+            }
         }
 
-        abstract void getSensorData();
+        /**
+         * Does whatever is necessary to get data from sensor.
+         *
+         * @return {@code true} if data was fetched successfully, else {@code false}
+         */
+        abstract boolean getSensorData();
 
+        /**
+         * Called whenever new data is read from sensor.
+         */
         abstract void updateUi();
     }
 }

@@ -123,7 +123,9 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorAPDS9960 != null) {
                     if (spinnerMode.getSelectedItemPosition() == 0) {
@@ -139,6 +141,7 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
                         sensorAPDS9960.enableProximity(true);
                         dataAPDS9960Gesture = sensorAPDS9960.getGesture();
                     }
+                    success = true;
                 }
             } catch (IOException | InterruptedException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
@@ -146,18 +149,18 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
             timeElapsed = getTimeElapsed();
             entriesLux.add(new Entry(timeElapsed, (float) dataAPDS9960Lux));
             entriesProximity.add(new Entry(timeElapsed, dataAPDS9960Proximity));
+
+            return success;
         }
 
         public void updateUi() {
             if (spinnerMode.getSelectedItemPosition() == 0) {
 
-                if (isSensorDataAcquired()) {
-                    tvSensorAPDS9960Red.setText(DataFormatter.formatDouble(dataAPDS9960Color[0], DataFormatter.HIGH_PRECISION_FORMAT));
-                    tvSensorAPDS9960Green.setText(DataFormatter.formatDouble(dataAPDS9960Color[1], DataFormatter.HIGH_PRECISION_FORMAT));
-                    tvSensorAPDS9960Blue.setText(DataFormatter.formatDouble(dataAPDS9960Color[2], DataFormatter.HIGH_PRECISION_FORMAT));
-                    tvSensorAPDS9960Clear.setText(DataFormatter.formatDouble(dataAPDS9960Color[3], DataFormatter.HIGH_PRECISION_FORMAT));
-                    tvSensorAPDS9960Proximity.setText(DataFormatter.formatDouble(dataAPDS9960Proximity, DataFormatter.HIGH_PRECISION_FORMAT));
-                }
+                tvSensorAPDS9960Red.setText(DataFormatter.formatDouble(dataAPDS9960Color[0], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorAPDS9960Green.setText(DataFormatter.formatDouble(dataAPDS9960Color[1], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorAPDS9960Blue.setText(DataFormatter.formatDouble(dataAPDS9960Color[2], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorAPDS9960Clear.setText(DataFormatter.formatDouble(dataAPDS9960Color[3], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorAPDS9960Proximity.setText(DataFormatter.formatDouble(dataAPDS9960Proximity, DataFormatter.HIGH_PRECISION_FORMAT));
 
                 LineDataSet dataSetLux = new LineDataSet(entriesLux, getString(R.string.light_lux));
                 LineDataSet dataSetProximity = new LineDataSet(entriesProximity, getString(R.string.proximity));
@@ -165,7 +168,7 @@ public class SensorAPDS9960 extends AbstractSensorActivity {
                 updateChart(mChartLux, timeElapsed, dataSetLux);
                 updateChart(mChartProximity, timeElapsed, dataSetProximity);
 
-            } else if (isSensorDataAcquired()) {
+            } else {
                 switch (dataAPDS9960Gesture) {
                     case 1:
                         tvSensorAPDS9960Gesture.setText(R.string.up);

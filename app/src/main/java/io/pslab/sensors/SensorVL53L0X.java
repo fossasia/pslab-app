@@ -77,24 +77,30 @@ public class SensorVL53L0X extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorVL53L0X != null) {
                     dataVL53L0X = sensorVL53L0X.getRaw();
+                    success = true;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
             }
 
             timeElapsed = getTimeElapsed();
-            entries.add(new Entry(timeElapsed, (float) dataVL53L0X));
+
+            if (success) {
+                entries.add(new Entry(timeElapsed, (float) dataVL53L0X));
+            }
+
+            return success;
         }
 
         public void updateUi() {
 
-            if (isSensorDataAcquired()) {
-                tvSensorVL53L0X.setText(String.valueOf(dataVL53L0X));
-            }
+            tvSensorVL53L0X.setText(String.valueOf(dataVL53L0X));
 
             LineDataSet dataSet = new LineDataSet(entries, getString(R.string.bx));
 

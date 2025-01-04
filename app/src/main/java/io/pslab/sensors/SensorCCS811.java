@@ -92,27 +92,33 @@ public class SensorCCS811 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public void getSensorData() {
+        public boolean getSensorData() {
+            boolean success = false;
+
             try {
                 if (sensorCCS811 != null) {
                     int[] dataCS811 = sensorCCS811.getRaw();
                     dataCCS811eCO2 = dataCS811[0];
                     dataCCS811TVOC = dataCS811[1];
+                    success = true;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
             }
             timeElapsed = getTimeElapsed();
-            entrieseCO2.add(new Entry(timeElapsed, dataCCS811eCO2));
-            entriesTVOC.add(new Entry(timeElapsed, dataCCS811TVOC));
+
+            if (success) {
+                entrieseCO2.add(new Entry(timeElapsed, dataCCS811eCO2));
+                entriesTVOC.add(new Entry(timeElapsed, dataCCS811TVOC));
+            }
+
+            return success;
         }
 
         public void updateUi() {
 
-            if (isSensorDataAcquired()) {
-                tvSensorCCS811eCO2.setText(DataFormatter.formatDouble(dataCCS811eCO2, DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorCCS811TVOC.setText(DataFormatter.formatDouble(dataCCS811TVOC, DataFormatter.HIGH_PRECISION_FORMAT));
-            }
+            tvSensorCCS811eCO2.setText(DataFormatter.formatDouble(dataCCS811eCO2, DataFormatter.HIGH_PRECISION_FORMAT));
+            tvSensorCCS811TVOC.setText(DataFormatter.formatDouble(dataCCS811TVOC, DataFormatter.HIGH_PRECISION_FORMAT));
 
             LineDataSet dataSeteCO2 = new LineDataSet(entrieseCO2, getString(R.string.eCO2));
             LineDataSet dataSetTVOC = new LineDataSet(entriesTVOC, getString(R.string.eTVOC));
