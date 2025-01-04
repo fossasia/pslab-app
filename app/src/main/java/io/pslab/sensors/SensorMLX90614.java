@@ -151,7 +151,7 @@ public class SensorMLX90614 extends AbstractSensorActivity {
                 if (sensorMLX90614 != null) {
                     dataMLX90614ObjectTemp = sensorMLX90614.getObjectTemperature();
                     dataMLX90614AmbientTemp = sensorMLX90614.getAmbientTemperature();
-                    success = true;
+                    success = dataMLX90614ObjectTemp != null && dataMLX90614AmbientTemp != null;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error getting sensor data.", e);

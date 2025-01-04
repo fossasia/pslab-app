@@ -106,7 +106,7 @@ public class SensorHMC5883L extends AbstractSensorActivity {
             try {
                 if (sensorHMC5883L != null) {
                     dataHMC5883L = sensorHMC5883L.getRaw();
-                    success = true;
+                    success = dataHMC5883L != null;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error getting sensor data.", e);
