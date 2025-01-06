@@ -9,6 +9,7 @@ class CommonScaffold extends StatefulWidget {
   final Key? scaffoldKey;
   final int index;
   final List<Widget>? actions;
+  final String icUsbDisconnected = 'assets/icons/ic_usb_disconnected.png';
 
   const CommonScaffold(
       {super.key,
@@ -53,9 +54,10 @@ class _CommonScaffoldState extends State<CommonScaffold> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.usb_off,
-              color: Colors.white,
+            icon: Image.asset(
+              widget.icUsbDisconnected,
+              width: 24,
+              height: 24,
             ),
             onPressed: () {
               /**/

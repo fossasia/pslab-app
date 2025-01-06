@@ -13,12 +13,12 @@ class InstrumentsScreen extends StatefulWidget {
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: CommonScaffold(
-        index: 0,
-        title: 'Instruments',
-        body: SafeArea(
+    return CommonScaffold(
+      index: 0,
+      title: 'Instruments',
+      body: SafeArea(
+        child: ScrollConfiguration(
+          behavior: const ScrollBehavior(),
           child: ListView.builder(
             itemCount: instrumentHeadings.length,
             itemBuilder: (context, index) {
