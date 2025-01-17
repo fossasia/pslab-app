@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class NavDrawer extends StatefulWidget {
   final int selectedIndex;
@@ -39,17 +38,17 @@ class _NavDrawerState extends State<NavDrawer> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16),
                     child: Text('Not Connected',
-                        style: GoogleFonts.roboto(
-                          fontSize: 14,
-                        )),
+                        style: TextStyle(
+                            fontSize: 14, fontStyle: FontStyle.normal)),
                   ),
                 ],
               ),
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -81,6 +80,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -101,6 +101,7 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             const Divider(),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -120,6 +121,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -139,6 +141,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -159,6 +162,7 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             const Divider(),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -178,6 +182,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -197,6 +202,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -216,6 +222,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -235,6 +242,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -254,6 +262,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -273,6 +282,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -292,6 +302,7 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
+              minLeadingWidth: 30.w,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(

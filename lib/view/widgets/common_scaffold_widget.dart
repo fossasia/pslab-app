@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'navigation_drawer.dart';
-
 class CommonScaffold extends StatefulWidget {
   final String title;
   final Widget body;
   final Key? scaffoldKey;
-  final int index;
   final List<Widget>? actions;
-  final String icUsbDisconnected = 'assets/icons/ic_usb_disconnected.png';
 
-  const CommonScaffold(
-      {super.key,
-      required this.body,
-      required this.title,
-      this.scaffoldKey,
-      this.actions,
-      required this.index});
+  const CommonScaffold({
+    super.key,
+    required this.body,
+    required this.title,
+    this.scaffoldKey,
+    this.actions,
+  });
 
   @override
   State<StatefulWidget> createState() => _CommonScaffoldState();
@@ -35,10 +31,19 @@ class _CommonScaffoldState extends State<CommonScaffold> {
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {
-              Scaffold.of(context).openDrawer();
+              if (Navigator.canPop(context) &&
+                  ModalRoute.of(context)?.settings.name == '/') {
+                Navigator.popUntil(context, ModalRoute.withName('/'));
+              } else {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/',
+                  (route) => route.isFirst,
+                );
+              }
             },
             icon: const Icon(
-              Icons.menu,
+              Icons.arrow_back,
               color: Colors.white,
             ),
           );
@@ -49,35 +54,14 @@ class _CommonScaffoldState extends State<CommonScaffold> {
           widget.title,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 19,
+            fontSize: 15,
           ),
         ),
         actions: [
-          IconButton(
-            icon: Image.asset(
-              widget.icUsbDisconnected,
-              width: 24,
-              height: 24,
-            ),
-            onPressed: () {
-              /**/
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              /**/
-            },
-          ),
+          if (widget.actions != null) ...widget.actions!,
         ],
       ),
       body: widget.body,
-      drawer: NavDrawer(
-        selectedIndex: widget.index,
-      ),
     );
   }
 }

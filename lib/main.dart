@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
+import 'package:pslab/view/oscilloscope_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
           initialRoute: '/',
           routes: {
             '/': (context) => const InstrumentsScreen(),
+            '/oscilloscope': (context) => const OscilloscopeScreen(),
             '/connectDevice': (context) => const ConnectDeviceScreen(),
             '/faq': (context) => const FAQScreen(),
           },
