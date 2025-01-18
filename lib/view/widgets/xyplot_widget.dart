@@ -13,99 +13,124 @@ class _XYPlotState extends State<XYPlotWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 5, bottom: 5),
-      decoration: BoxDecoration(
-        border: Border.all(width: 1, color: const Color(0xFFD32F2F)),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 0.h,
-            left: 2.w,
-            right: 0.w,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 2.h),
-                  child: Checkbox(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    activeColor: const Color(0xFFCE525F),
-                    value: isXYPlotSelected,
-                    onChanged: (bool? value) {
-                      setState(
-                        () {
-                          isXYPlotSelected = value;
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 8, bottom: 5),
+          decoration: BoxDecoration(
+            border: Border.all(width: 1, color: const Color(0xFFD32F2F)),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0.h,
+                left: 2.w,
+                right: 0.w,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 2.h),
+                      child: Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        activeColor: const Color(0xFFCE525F),
+                        value: isXYPlotSelected,
+                        onChanged: (bool? value) {
+                          setState(
+                            () {
+                              isXYPlotSelected = value;
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 2.h),
-                  child: const Text(
-                    'Enable XY Plot',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                      fontStyle: FontStyle.normal,
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 2.h),
+                      child: const Text(
+                        'Enable XY Plot',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    DropdownMenu<String>(
+                      width: 50.w,
+                      initialSelection: 'CH1',
+                      dropdownMenuEntries: <String>[
+                        'CH1',
+                        'CH2',
+                        'CH3',
+                        'MIC',
+                      ].map(
+                        (String value) {
+                          return DropdownMenuEntry<String>(
+                            label: value,
+                            value: value,
+                          );
+                        },
+                      ).toList(),
+                      inputDecorationTheme: const InputDecorationTheme(
+                        border: InputBorder.none,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                    DropdownMenu<String>(
+                      width: 50.w,
+                      initialSelection: 'CH2',
+                      dropdownMenuEntries: <String>[
+                        'CH1',
+                        'CH2',
+                        'CH3',
+                        'MIC',
+                      ].map(
+                        (String value) {
+                          return DropdownMenuEntry<String>(
+                            label: value,
+                            value: value,
+                          );
+                        },
+                      ).toList(),
+                      inputDecorationTheme: const InputDecorationTheme(
+                        border: InputBorder.none,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
-                const Spacer(),
-                DropdownMenu<String>(
-                  width: 50.w,
-                  initialSelection: 'CH1',
-                  dropdownMenuEntries: <String>[
-                    'CH1',
-                    'CH2',
-                    'CH3',
-                    'MIC',
-                  ].map(
-                    (String value) {
-                      return DropdownMenuEntry<String>(
-                        label: value,
-                        value: value,
-                      );
-                    },
-                  ).toList(),
-                  inputDecorationTheme: const InputDecorationTheme(
-                    border: InputBorder.none,
-                  ),
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                  ),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          left: 0.w,
+          right: 0.w,
+          top: 2.h,
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 2.w),
+              decoration: const BoxDecoration(color: Colors.white),
+              child: const Text(
+                'XY Plot',
+                style: TextStyle(
+                  color: Color(0xFFC72C2C),
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
                 ),
-                DropdownMenu<String>(
-                  width: 50.w,
-                  initialSelection: 'CH2',
-                  dropdownMenuEntries: <String>[
-                    'CH1',
-                    'CH2',
-                    'CH3',
-                    'MIC',
-                  ].map(
-                    (String value) {
-                      return DropdownMenuEntry<String>(
-                        label: value,
-                        value: value,
-                      );
-                    },
-                  ).toList(),
-                  inputDecorationTheme: const InputDecorationTheme(
-                    border: InputBorder.none,
-                  ),
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }
