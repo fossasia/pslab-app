@@ -122,7 +122,7 @@ public class SensorTSL2561 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -144,11 +144,13 @@ public class SensorTSL2561 extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorTSL2561FullSpectrum.setText(String.valueOf(dataTSL2561[0]));
-            tvSensorTSL2561Infrared.setText(String.valueOf(dataTSL2561[1]));
-            tvSensorTSL2561Visible.setText(String.valueOf(dataTSL2561[2]));
+            if (isSensorDataAcquired()) {
+                tvSensorTSL2561FullSpectrum.setText(String.valueOf(dataTSL2561[0]));
+                tvSensorTSL2561Infrared.setText(String.valueOf(dataTSL2561[1]));
+                tvSensorTSL2561Visible.setText(String.valueOf(dataTSL2561[2]));
+            }
 
             LineDataSet datasetFull = new LineDataSet(entriesFull, getString(R.string.full));
             LineDataSet dataSetInfrared = new LineDataSet(entriesInfrared, getString(R.string.infrared));

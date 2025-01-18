@@ -93,7 +93,7 @@ public class SensorSHT21 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -118,10 +118,12 @@ public class SensorSHT21 extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorSHT21Temp.setText(DataFormatter.formatDouble(dataSHT21Temp.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorSHT21Humidity.setText(DataFormatter.formatDouble(dataSHT21Humidity.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+            if (isSensorDataAcquired()) {
+                tvSensorSHT21Temp.setText(DataFormatter.formatDouble(dataSHT21Temp.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorSHT21Humidity.setText(DataFormatter.formatDouble(dataSHT21Humidity.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));
             LineDataSet dataSetHumidity = new LineDataSet(entriesHumidity, getString(R.string.humidity));

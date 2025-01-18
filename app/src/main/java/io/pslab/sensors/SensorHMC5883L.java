@@ -100,7 +100,7 @@ public class SensorHMC5883L extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -123,11 +123,13 @@ public class SensorHMC5883L extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorHMC5883Lbx.setText(DataFormatter.formatDouble(dataHMC5883L.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorHMC5883Lby.setText(DataFormatter.formatDouble(dataHMC5883L.get(1), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorHMC5883Lbz.setText(DataFormatter.formatDouble(dataHMC5883L.get(2), DataFormatter.HIGH_PRECISION_FORMAT));
+            if (isSensorDataAcquired()) {
+                tvSensorHMC5883Lbx.setText(DataFormatter.formatDouble(dataHMC5883L.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorHMC5883Lby.setText(DataFormatter.formatDouble(dataHMC5883L.get(1), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorHMC5883Lbz.setText(DataFormatter.formatDouble(dataHMC5883L.get(2), DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSetBx = new LineDataSet(entriesBx, getString(R.string.bx));
             LineDataSet dataSetBy = new LineDataSet(entriesBy, getString(R.string.by));

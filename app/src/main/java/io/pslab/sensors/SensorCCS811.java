@@ -92,7 +92,7 @@ public class SensorCCS811 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -115,11 +115,13 @@ public class SensorCCS811 extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorCCS811eCO2.setText(DataFormatter.formatDouble(dataCCS811eCO2, DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorCCS811TVOC.setText(DataFormatter.formatDouble(dataCCS811TVOC, DataFormatter.HIGH_PRECISION_FORMAT));
-
+            if (isSensorDataAcquired()) {
+                tvSensorCCS811eCO2.setText(DataFormatter.formatDouble(dataCCS811eCO2, DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorCCS811TVOC.setText(DataFormatter.formatDouble(dataCCS811TVOC, DataFormatter.HIGH_PRECISION_FORMAT));
+            }
+            
             LineDataSet dataSeteCO2 = new LineDataSet(entrieseCO2, getString(R.string.eCO2));
             LineDataSet dataSetTVOC = new LineDataSet(entriesTVOC, getString(R.string.eTVOC));
 

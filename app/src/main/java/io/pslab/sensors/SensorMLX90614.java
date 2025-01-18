@@ -144,7 +144,7 @@ public class SensorMLX90614 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -167,10 +167,12 @@ public class SensorMLX90614 extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorMLX90614ObjectTemp.setText(DataFormatter.formatDouble(dataMLX90614ObjectTemp, DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMLX90614AmbientTemp.setText(DataFormatter.formatDouble(dataMLX90614AmbientTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+            if (isSensorDataAcquired()) {
+                tvSensorMLX90614ObjectTemp.setText(DataFormatter.formatDouble(dataMLX90614ObjectTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMLX90614AmbientTemp.setText(DataFormatter.formatDouble(dataMLX90614AmbientTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSetObjectTemperature = new LineDataSet(entriesObjectTemperature, getString(R.string.object_temp));
             LineDataSet dataSetAmbientTemperature = new LineDataSet(entriesAmbientTemperature, getString(R.string.ambient_temp));

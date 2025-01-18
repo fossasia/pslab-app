@@ -106,7 +106,7 @@ public class SensorBMP180 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -129,11 +129,13 @@ public class SensorBMP180 extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorBMP180Temp.setText(DataFormatter.formatDouble(dataBMP180[0], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorBMP180Altitude.setText(DataFormatter.formatDouble(dataBMP180[1], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorBMP180Pressure.setText(DataFormatter.formatDouble(dataBMP180[2], DataFormatter.HIGH_PRECISION_FORMAT));
+            if (isSensorDataAcquired()) {
+                tvSensorBMP180Temp.setText(DataFormatter.formatDouble(dataBMP180[0], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorBMP180Altitude.setText(DataFormatter.formatDouble(dataBMP180[1], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorBMP180Pressure.setText(DataFormatter.formatDouble(dataBMP180[2], DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));
             LineDataSet dataSetAltitude = new LineDataSet(entriesAltitude, getString(R.string.altitude));

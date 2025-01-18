@@ -77,7 +77,7 @@ public class SensorVL53L0X extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -98,9 +98,11 @@ public class SensorVL53L0X extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorVL53L0X.setText(String.valueOf(dataVL53L0X));
+            if (isSensorDataAcquired()) {
+                tvSensorVL53L0X.setText(String.valueOf(dataVL53L0X));
+            }
 
             LineDataSet dataSet = new LineDataSet(entries, getString(R.string.bx));
 

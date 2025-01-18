@@ -179,7 +179,7 @@ public class SensorMPU6050 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -204,15 +204,17 @@ public class SensorMPU6050 extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorMPU6050ax.setText(DataFormatter.formatDouble(dataMPU6050.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU6050ay.setText(DataFormatter.formatDouble(dataMPU6050.get(1), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU6050az.setText(DataFormatter.formatDouble(dataMPU6050.get(2), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU6050gx.setText(DataFormatter.formatDouble(dataMPU6050.get(4), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU6050gy.setText(DataFormatter.formatDouble(dataMPU6050.get(5), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU6050gz.setText(DataFormatter.formatDouble(dataMPU6050.get(6), DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU6050temp.setText(DataFormatter.formatDouble(dataMPU6050.get(3), DataFormatter.HIGH_PRECISION_FORMAT));
+            if (isSensorDataAcquired()) {
+                tvSensorMPU6050ax.setText(DataFormatter.formatDouble(dataMPU6050.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU6050ay.setText(DataFormatter.formatDouble(dataMPU6050.get(1), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU6050az.setText(DataFormatter.formatDouble(dataMPU6050.get(2), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU6050gx.setText(DataFormatter.formatDouble(dataMPU6050.get(4), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU6050gy.setText(DataFormatter.formatDouble(dataMPU6050.get(5), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU6050gz.setText(DataFormatter.formatDouble(dataMPU6050.get(6), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU6050temp.setText(DataFormatter.formatDouble(dataMPU6050.get(3), DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSetAx = new LineDataSet(entriesAx, getString(R.string.ax));
             LineDataSet dataSetAy = new LineDataSet(entriesAy, getString(R.string.ay));

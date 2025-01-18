@@ -92,7 +92,7 @@ public class SensorADS1115 extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -111,8 +111,10 @@ public class SensorADS1115 extends AbstractSensorActivity {
         }
 
         @Override
-        public void updateUi() {
-            tvSensorADS1115.setText(String.valueOf(dataADS1115));
+        protected void updateUi() {
+            if (isSensorDataAcquired()) {
+                tvSensorADS1115.setText(String.valueOf(dataADS1115));
+            }
 
             LineDataSet dataSet = new LineDataSet(entries, getString(R.string.bx));
 

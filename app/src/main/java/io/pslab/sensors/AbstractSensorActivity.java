@@ -333,12 +333,19 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
 
     protected abstract class SensorDataFetch {
 
+        private volatile boolean isSensorDataAcquired;
+
+        protected boolean isSensorDataAcquired() {
+            return isSensorDataAcquired;
+        }
+
         protected float getTimeElapsed() {
             return (System.currentTimeMillis() - getStartTime()) / 1000f;
         }
 
         protected void execute() {
-            if (getSensorData()) {
+            isSensorDataAcquired = getSensorData();
+            if (isSensorDataAcquired) {
                 updateUi();
             }
         }
@@ -348,11 +355,11 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
          *
          * @return {@code true} if data was fetched successfully, else {@code false}
          */
-        abstract boolean getSensorData();
+        protected abstract boolean getSensorData();
 
         /**
          * Called whenever new data is read from sensor.
          */
-        abstract void updateUi();
+        protected abstract void updateUi();
     }
 }

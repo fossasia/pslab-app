@@ -179,7 +179,7 @@ public class SensorMPU925X extends AbstractSensorActivity {
         private float timeElapsed = getTimeElapsed();
 
         @Override
-        public boolean getSensorData() {
+        protected boolean getSensorData() {
             boolean success = false;
 
             try {
@@ -207,15 +207,17 @@ public class SensorMPU925X extends AbstractSensorActivity {
             return success;
         }
 
-        public void updateUi() {
+        protected void updateUi() {
 
-            tvSensorMPU925Xax.setText(DataFormatter.formatDouble(dataAccel[0], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xay.setText(DataFormatter.formatDouble(dataAccel[1], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xaz.setText(DataFormatter.formatDouble(dataAccel[2], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xgx.setText(DataFormatter.formatDouble(dataGyro[0], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xgy.setText(DataFormatter.formatDouble(dataGyro[1], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xgz.setText(DataFormatter.formatDouble(dataGyro[2], DataFormatter.HIGH_PRECISION_FORMAT));
-            tvSensorMPU925Xtemp.setText(DataFormatter.formatDouble(dataTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+            if (isSensorDataAcquired()) {
+                tvSensorMPU925Xax.setText(DataFormatter.formatDouble(dataAccel[0], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xay.setText(DataFormatter.formatDouble(dataAccel[1], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xaz.setText(DataFormatter.formatDouble(dataAccel[2], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xgx.setText(DataFormatter.formatDouble(dataGyro[0], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xgy.setText(DataFormatter.formatDouble(dataGyro[1], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xgz.setText(DataFormatter.formatDouble(dataGyro[2], DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorMPU925Xtemp.setText(DataFormatter.formatDouble(dataTemp, DataFormatter.HIGH_PRECISION_FORMAT));
+            }
 
             LineDataSet dataSetAx = new LineDataSet(entriesAx, getString(R.string.ax));
             LineDataSet dataSetAy = new LineDataSet(entriesAy, getString(R.string.ay));
