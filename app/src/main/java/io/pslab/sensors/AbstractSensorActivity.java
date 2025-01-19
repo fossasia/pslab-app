@@ -346,7 +346,7 @@ abstract class AbstractSensorActivity extends AppCompatActivity {
         protected void execute() {
             isSensorDataAcquired = getSensorData();
             if (isSensorDataAcquired) {
-                updateUi();
+                runOnUiThread(this::updateUi);
             }
         }
 
