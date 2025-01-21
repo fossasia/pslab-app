@@ -56,3 +56,32 @@ List<String> instrumentIcons = [
   'assets/icons/tile_icon_gas.png',
   'assets/icons/tile_icon_gas.png',
 ];
+
+List<String> yAxisRanges = [
+  '+/-16V',
+  '+/-8V',
+  '+/-4V',
+  '+/-3V',
+  '+/-2V',
+  '+/-1.5V',
+  '+/-1V',
+  '+/-500mV',
+  '+/-160V',
+];
+
+List<String> rangeMenuEntries = [
+  'CH1',
+  'CH2',
+  'CH3',
+  'MIC',
+  'CAP'
+      'RES',
+  'VOL',
+];
+
+List<String> channelEntries = [
+  'CH1',
+  'CH2',
+  'CH3',
+  'MIC',
+];

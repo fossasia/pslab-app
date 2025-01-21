@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/board_state_provider.dart';
 
 import 'navigation_drawer.dart';
 
@@ -10,6 +12,7 @@ class MainScaffold extends StatefulWidget {
   final int index;
   final List<Widget>? actions;
   final String icUsbDisconnected = 'assets/icons/ic_usb_disconnected.png';
+  final String icUsbConnected = 'assets/icons/ic_usb_connected.png';
 
   const MainScaffold(
       {super.key,
@@ -53,14 +56,20 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Image.asset(
-              widget.icUsbDisconnected,
-              width: 24,
-              height: 24,
-            ),
-            onPressed: () {
-              /**/
+          Consumer<BoardStateProvider>(
+            builder: (context, provider, _) {
+              return IconButton(
+                icon: Image.asset(
+                  provider.pslabIsConnected
+                      ? widget.icUsbConnected
+                      : widget.icUsbDisconnected,
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {
+                  /**/
+                },
+              );
             },
           ),
           IconButton(

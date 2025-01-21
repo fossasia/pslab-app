@@ -1,0 +1,208 @@
+class CommandsProto {
+  int ACKNOWLEDGE = 254;
+  int MAX_SAMPLES = 10000;
+  int DATA_SPLITTING = 60;
+
+  int FLASH = 1;
+  int READ_FLASH = 1;
+  int WRITE_FLASH = 2;
+  int WRITE_BULK_FLASH = 3;
+  int READ_BULK_FLASH = 4;
+
+  int ADC = 2;
+  int CAPTURE_ONE = 1;
+  int CAPTURE_TWO = 2;
+  int CAPTURE_DMASPEED = 3;
+  int CAPTURE_FOUR = 4;
+  int CONFIGURE_TRIGGER = 5;
+  int GET_CAPTURE_STATUS = 6;
+  int GET_CAPTURE_CHANNEL = 7;
+  int SET_PGA_GAIN = 8;
+  int GET_VOLTAGE = 9;
+  int GET_VOLTAGE_SUMMED = 10;
+  int START_ADC_STREAMING = 11;
+  int SELECT_PGA_CHANNEL = 12;
+  int CAPTURE_12BIT = 13;
+  int CAPTURE_MULTIPLE = 14;
+  int SET_HI_CAPTURE = 15;
+  int SET_LO_CAPTURE = 16;
+
+  int MULTIPOINT_CAPACITANCE = 20;
+  int SET_CAP = 21;
+  int PULSE_TRAIN = 22;
+
+  int SPI_HEADER = 3;
+  int START_SPI = 1;
+  int SEND_SPI8 = 2;
+  int SEND_SPI16 = 3;
+  int STOP_SPI = 4;
+  int SET_SPI_PARAMETERS = 5;
+  int SEND_SPI8_BURST = 6;
+  int SEND_SPI16_BURST = 7;
+
+  int I2C_HEADER = 4;
+  int I2C_START = 1;
+  int I2C_SEND = 2;
+  int I2C_STOP = 3;
+  int I2C_RESTART = 4;
+  int I2C_READ_END = 5;
+  int I2C_READ_MORE = 6;
+  int I2C_WAIT = 7;
+  int I2C_SEND_BURST = 8;
+  int I2C_CONFIG = 9;
+  int I2C_STATUS = 10;
+  int I2C_READ_BULK = 11;
+  int I2C_WRITE_BULK = 12;
+  int I2C_ENABLE_SMBUS = 13;
+  int I2C_INIT = 14;
+  int I2C_PULLDOWN_SCL = 15;
+  int I2C_DISABLE_SMBUS = 16;
+  int I2C_START_SCOPE = 17;
+
+  int UART_2 = 5;
+  int SEND_BYTE = 1;
+  int SEND_INT = 2;
+  int SEND_ADDRESS = 3;
+  int SET_BAUD = 4;
+  int SET_MODE = 5;
+  int READ_BYTE = 6;
+  int READ_INT = 7;
+  int READ_UART2_STATUS = 8;
+
+  int DAC = 6;
+  int SET_DAC = 1;
+  int SET_CALIBRATED_DAC = 2;
+
+  int WAVEGEN = 7;
+  int SET_WG = 1;
+  int SET_SQR1 = 3;
+  int SET_SQR2 = 4;
+  int SET_SQRS = 5;
+  int TUNE_SINE_OSCILLATOR = 6;
+  int SQR4 = 7;
+  int MAP_REFERENCE = 8;
+  int SET_BOTH_WG = 9;
+  int SET_WAVEFORM_TYPE = 10;
+  int SELECT_FREQ_REGISTER = 11;
+  int DELAY_GENERATOR = 12;
+  int SET_SINE1 = 13;
+  int SET_SINE2 = 14;
+
+  int LOAD_WAVEFORM1 = 15;
+  int LOAD_WAVEFORM2 = 16;
+  int SQR1_PATTERN = 17;
+
+  int DOUT = 8;
+  int SET_STATE = 1;
+
+  int DIN = 9;
+  int GET_STATE = 1;
+  int GET_STATES = 2;
+
+  int LA1 = 0;
+  int LA2 = 1;
+  int LA3 = 2;
+  int LA4 = 3;
+  int LMETER = 4;
+
+  int TIMING = 10;
+  int GET_TIMING = 1;
+  int GET_PULSE_TIME = 2;
+  int GET_DUTY_CYCLE = 3;
+  int START_ONE_CHAN_LA = 4;
+  int START_TWO_CHAN_LA = 5;
+  int START_FOUR_CHAN_LA = 6;
+  int FETCH_DMA_DATA = 7;
+  int FETCH_INT_DMA_DATA = 8;
+  int FETCH_LONG_DMA_DATA = 9;
+  int GET_LA_PROGRESS = 10;
+  int GET_INITIAL_DIGITAL_STATES = 11;
+
+  int TIMING_MEASUREMENTS = 12;
+  int INTERVAL_MEASUREMENTS = 13;
+  int CONFIGURE_COMPARATOR = 14;
+  int START_ALTERNATE_ONE_CHAN_LA = 15;
+  int START_THREE_CHAN_LA = 16;
+  int STOP_LA = 17;
+
+  int COMMON = 11;
+
+  int GET_CTMU_VOLTAGE = 1;
+  int GET_CAPACITANCE = 2;
+  int GET_FREQUENCY = 3;
+  int GET_INDUCTANCE = 4;
+
+  int GET_VERSION = 5;
+
+  int RETRIEVE_BUFFER = 8;
+  int GET_HIGH_FREQUENCY = 9;
+  int CLEAR_BUFFER = 10;
+  int SET_RGB1 = 11;
+  int READ_PROGRAM_ADDRESS = 12;
+  int WRITE_PROGRAM_ADDRESS = 13;
+  int READ_DATA_ADDRESS = 14;
+  int WRITE_DATA_ADDRESS = 15;
+
+  int GET_CAP_RANGE = 16;
+  int SET_RGB2 = 17;
+  int READ_LOG = 18;
+  int RESTORE_STANDALONE = 19;
+  int GET_ALTERNATE_HIGH_FREQUENCY = 20;
+  int SET_RGB3 = 22;
+
+  int START_CTMU = 23;
+  int STOP_CTMU = 24;
+
+  int START_COUNTING = 25;
+  int FETCH_COUNT = 26;
+  int FILL_BUFFER = 27;
+
+  int SETBAUD = 12;
+  int BAUD9600 = 1;
+  int BAUD14400 = 2;
+  int BAUD19200 = 3;
+  int BAUD28800 = 4;
+  int BAUD38400 = 5;
+  int BAUD57600 = 6;
+  int BAUD115200 = 7;
+  int BAUD230400 = 8;
+  int BAUD1000000 = 9;
+
+  int NRFL01 = 13;
+  int NRF_SETUP = 1;
+  int NRF_RXMODE = 2;
+  int NRF_TXMODE = 3;
+  int NRF_POWER_DOWN = 4;
+  int NRF_RXCHAR = 5;
+  int NRF_TXCHAR = 6;
+  int NRF_HASDATA = 7;
+  int NRF_FLUSH = 8;
+  int NRF_WRITEREG = 9;
+  int NRF_READREG = 10;
+  int NRF_GETSTATUS = 11;
+  int NRF_WRITECOMMAND = 12;
+  int NRF_WRITEPAYLOAD = 13;
+  int NRF_READPAYLOAD = 14;
+  int NRF_WRITEADDRESS = 15;
+  int NRF_TRANSACTION = 16;
+  int NRF_START_TOKEN_MANAGER = 17;
+  int NRF_STOP_TOKEN_MANAGER = 18;
+  int NRF_TOTAL_TOKENS = 19;
+  int NRF_REPORTS = 20;
+  int NRF_WRITE_REPORT = 21;
+  int NRF_DELETE_REPORT_ROW = 22;
+
+  int NRF_WRITEADDRESSES = 23;
+
+  int NONSTANDARD_IO = 14;
+  int HX711_HEADER = 1;
+  int HCSR04_HEADER = 2;
+  int AM2302_HEADER = 3;
+  int TCD1304_HEADER = 4;
+  int STEPPER_MOTOR = 5;
+
+  int PASSTHROUGHS = 15;
+  int PASS_UART = 1;
+
+  int STOP_STREAMING = 253;
+}

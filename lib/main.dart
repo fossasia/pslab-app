@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/board_state_provider.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 
 void main() {
+  setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  getIt<BoardStateProvider>().initialize();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<BoardStateProvider>(
+          create: (context) => getIt<BoardStateProvider>(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

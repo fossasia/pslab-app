@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/oscilloscope_state_provider.dart';
+
+import '../../constants.dart';
 
 class ChannelParametersWidget extends StatefulWidget {
   const ChannelParametersWidget({super.key});
@@ -9,14 +13,10 @@ class ChannelParametersWidget extends StatefulWidget {
 }
 
 class _ChannelParametersState extends State<ChannelParametersWidget> {
-  bool? isCH1Selected = false;
-  bool? isCH2Selected = false;
-  bool? isCH3Selected = false;
-  bool? isMICSelected = false;
-  bool? isInBuiltMICSelected = false;
-
   @override
   Widget build(BuildContext context) {
+    OscilloscopeStateProvider oscilloscopeStateProvider =
+        Provider.of<OscilloscopeStateProvider>(context);
     return Stack(
       children: [
         Container(
@@ -36,12 +36,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                   children: [
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: isCH1Selected,
+                      value: oscilloscopeStateProvider.isCH1Selected,
                       activeColor: const Color(0xFFCE525F),
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            isCH1Selected = value;
+                            oscilloscopeStateProvider.isCH1Selected = value;
                           },
                         );
                       },
@@ -72,19 +72,9 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Padding(
                       padding: EdgeInsets.only(top: 1.h, left: 4.w),
                       child: DropdownMenu<String>(
-                        initialSelection: '+/-16V',
+                        initialSelection: yAxisRanges[0],
                         width: 60.w,
-                        dropdownMenuEntries: <String>[
-                          '+/-16V',
-                          '+/-8V',
-                          '+/-4V',
-                          '+/-3V',
-                          '+/-2V',
-                          '+/-1.5V',
-                          '+/-1V',
-                          '+/-500mV',
-                          '+/-160V',
-                        ].map(
+                        dropdownMenuEntries: yAxisRanges.map(
                           (String value) {
                             return DropdownMenuEntry<String>(
                               label: value,
@@ -98,22 +88,48 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         textStyle: const TextStyle(
                           fontSize: 14,
                         ),
+                        onSelected: (String? value) {
+                          switch (yAxisRanges.indexOf(value!)) {
+                            case 0:
+                              oscilloscopeStateProvider.yAxisRange = 16;
+                              break;
+                            case 1:
+                              oscilloscopeStateProvider.yAxisRange = 8;
+                              break;
+                            case 2:
+                              oscilloscopeStateProvider.yAxisRange = 4;
+                              break;
+                            case 3:
+                              oscilloscopeStateProvider.yAxisRange = 3;
+                              break;
+                            case 4:
+                              oscilloscopeStateProvider.yAxisRange = 2;
+                              break;
+                            case 5:
+                              oscilloscopeStateProvider.yAxisRange = 1.5;
+                              break;
+                            case 6:
+                              oscilloscopeStateProvider.yAxisRange = 1;
+                              break;
+                            case 7:
+                              oscilloscopeStateProvider.yAxisRange = 500;
+                              break;
+                            case 8:
+                              oscilloscopeStateProvider.yAxisRange = 160;
+                              break;
+                            default:
+                              oscilloscopeStateProvider.yAxisRange = 16;
+                              break;
+                          }
+                        },
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 0.h),
                       child: DropdownMenu<String>(
                         width: 50.w,
-                        initialSelection: 'CH1',
-                        dropdownMenuEntries: <String>[
-                          'CH1',
-                          'CH2',
-                          'CH3',
-                          'MIC',
-                          'RES',
-                          'VOL',
-                          'CAP',
-                        ].map(
+                        initialSelection: rangeMenuEntries[0],
+                        dropdownMenuEntries: rangeMenuEntries.map(
                           (String value) {
                             return DropdownMenuEntry<String>(
                               label: value,
@@ -141,12 +157,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                   children: [
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: isCH2Selected,
+                      value: oscilloscopeStateProvider.isCH2Selected,
                       activeColor: const Color(0xFFCE525F),
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            isCH2Selected = value;
+                            oscilloscopeStateProvider.isCH2Selected = value;
                           },
                         );
                       },
@@ -214,12 +230,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                   children: [
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: isCH3Selected,
+                      value: oscilloscopeStateProvider.isCH3Selected,
                       activeColor: const Color(0xFFCE525F),
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            isCH3Selected = value;
+                            oscilloscopeStateProvider.isCH3Selected = value;
                           },
                         );
                       },
@@ -249,16 +265,23 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       activeColor: const Color(0xFFCE525F),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: true,
-                      groupValue: isInBuiltMICSelected,
+                      groupValue:
+                          oscilloscopeStateProvider.isInBuiltMICSelected,
                       toggleable: true,
                       onChanged: (bool? value) {
                         setState(
                           () {
                             if (value == null) {
-                              isInBuiltMICSelected = false;
+                              oscilloscopeStateProvider.isInBuiltMICSelected =
+                                  false;
+                              oscilloscopeStateProvider.isAudioInputSelected =
+                                  false;
                             } else {
-                              isInBuiltMICSelected = value;
-                              isMICSelected = !value;
+                              oscilloscopeStateProvider.isAudioInputSelected =
+                                  true;
+                              oscilloscopeStateProvider.isInBuiltMICSelected =
+                                  value;
+                              oscilloscopeStateProvider.isMICSelected = !value;
                             }
                           },
                         );
@@ -279,16 +302,21 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       activeColor: const Color(0xFFCE525F),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: true,
-                      groupValue: isMICSelected,
+                      groupValue: oscilloscopeStateProvider.isMICSelected,
                       toggleable: true,
                       onChanged: (bool? value) {
                         setState(
                           () {
                             if (value == null) {
-                              isMICSelected = false;
+                              oscilloscopeStateProvider.isMICSelected = false;
+                              oscilloscopeStateProvider.isAudioInputSelected =
+                                  false;
                             } else {
-                              isMICSelected = value;
-                              isInBuiltMICSelected = !value;
+                              oscilloscopeStateProvider.isAudioInputSelected =
+                                  true;
+                              oscilloscopeStateProvider.isMICSelected = value;
+                              oscilloscopeStateProvider.isInBuiltMICSelected =
+                                  !value;
                             }
                           },
                         );

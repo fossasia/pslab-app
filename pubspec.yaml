@@ -40,6 +40,12 @@ dependencies:
   google_fonts: ^6.2.1
   fl_chart: ^0.70.1
   provider: ^6.1.2
+  usb_serial:
+    git:
+      url: https://github.com/AsCress/usbserial.git
+      ref: master
+  polynomial: 1.0.0
+  get_it: ^8.0.3
 
 dev_dependencies:
   flutter_test:

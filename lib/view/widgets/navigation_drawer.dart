@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pslab/providers/board_state_provider.dart';
 
 class NavDrawer extends StatefulWidget {
   final int selectedIndex;
@@ -38,11 +40,17 @@ class _NavDrawerState extends State<NavDrawer> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text('Not Connected',
-                        style: TextStyle(
-                            fontSize: 14, fontStyle: FontStyle.normal)),
+                  Consumer<BoardStateProvider>(
+                    builder: (context, provider, _) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          provider.pslabVersionID,
+                          style: const TextStyle(
+                              fontSize: 14, fontStyle: FontStyle.normal),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
