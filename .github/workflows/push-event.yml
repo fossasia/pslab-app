@@ -130,7 +130,7 @@ jobs:
       - name: Update app in Closed Testing track
         if: ${{ github.repository == 'fossasia/pslab-android' }}
         run: |
-          git clone --branch=fastlane --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
+          git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
           fastlane uploadToClosedTesting
           if [[ $? -ne 0 ]]; then
               exit 1
