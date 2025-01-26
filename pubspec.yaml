@@ -35,7 +35,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.17
   google_fonts: ^6.2.1
   fl_chart: ^0.70.1
@@ -44,8 +43,12 @@ dependencies:
     git:
       url: https://github.com/AsCress/usbserial.git
       ref: master
-  polynomial: 1.0.0
   get_it: ^8.0.3
+  flutter_audio_capture:
+    git:
+      url: https://github.com/AsCress/flutter_audio_capture.git
+      ref: master
+  data: ^0.13.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,6 @@
-import 'package:polynomial/polynomial.dart';
+import 'dart:core';
+
+import 'package:data/data.dart';
 import 'package:pslab/communication/analogChannel/analog_constants.dart';
 
 class AnalogInputSource {
@@ -20,8 +22,8 @@ class AnalogInputSource {
     _gainValues = analogConstants.gains;
     CHOSA = analogConstants.picADCMultiplex[_channelName]!;
 
-    calPoly10 = Polynomial([0, 3.3 / 1023, 0]);
-    calPoly12 = Polynomial([0, 3.3 / 4095, 0]);
+    calPoly10 = Polynomial.fromCoefficients(DataType.float, [0, 3.3 / 1023, 0]);
+    calPoly12 = Polynomial.fromCoefficients(DataType.float, [0, 3.3 / 4095, 0]);
 
     if (_range[1] - _range[0] < 0) {
       inverted = true;
@@ -65,12 +67,16 @@ class AnalogInputSource {
     slope = 2 * (B - A);
     intercept = 2 * A;
     if (!calibrationReady || _gain == 8) {
-      calPoly10 = Polynomial([intercept, slope / 1023, 0]);
-      calPoly12 = Polynomial([intercept, slope / 4095, 0]);
+      calPoly10 = Polynomial.fromCoefficients(
+          DataType.float, [intercept, slope / 1023, 0]);
+      calPoly12 = Polynomial.fromCoefficients(
+          DataType.float, [intercept, slope / 4095, 0]);
     }
 
-    voltToCode10 = Polynomial([-1023 * intercept / slope, 1023 / slope, 0]);
-    voltToCode12 = Polynomial([-4095 * intercept / slope, 4095, 0]);
+    voltToCode10 = Polynomial.fromCoefficients(
+        DataType.float, [-1023 * intercept / slope, 1023 / slope, 0]);
+    voltToCode12 = Polynomial.fromCoefficients(
+        DataType.float, [-4095 * intercept / slope, 4095.0, 0]);
   }
 
   List<double> cal12(List<double> raw) {

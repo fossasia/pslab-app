@@ -15,7 +15,16 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   void _onItemTapped(int index) {
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, '/oscilloscope');
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/oscilloscope') {
+          Navigator.popUntil(context, ModalRoute.withName('/oscilloscope'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/oscilloscope',
+            (route) => route.isFirst,
+          );
+        }
         break;
       default:
         break;
@@ -35,8 +44,6 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
     ]);
   }
 

@@ -74,8 +74,8 @@ List<String> rangeMenuEntries = [
   'CH2',
   'CH3',
   'MIC',
-  'CAP'
-      'RES',
+  'CAP',
+  'RES',
   'VOL',
 ];
 

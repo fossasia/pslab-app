@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class XYPlotWidget extends StatefulWidget {
   const XYPlotWidget({super.key});
@@ -24,41 +23,44 @@ class _XYPlotState extends State<XYPlotWidget> {
           child: Stack(
             children: [
               Positioned(
-                top: 0.h,
-                left: 2.w,
-                right: 0.w,
+                top: 4,
+                left: 4,
+                right: 0,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 2.h),
-                      child: Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        activeColor: const Color(0xFFCE525F),
-                        value: isXYPlotSelected,
-                        onChanged: (bool? value) {
-                          setState(
-                            () {
-                              isXYPlotSelected = value;
-                            },
-                          );
-                        },
+                    Checkbox(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      activeColor: const Color(0xFFCE525F),
+                      value: isXYPlotSelected,
+                      onChanged: (bool? value) {
+                        setState(
+                          () {
+                            isXYPlotSelected = value;
+                          },
+                        );
+                      },
+                    ),
+                    const Text(
+                      'Enable XY Plot',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 2.h),
-                      child: const Text(
-                        'Enable XY Plot',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: -6,
+                left: 12,
+                right: 12,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
                     DropdownMenu<String>(
-                      width: 50.w,
+                      width: 90,
                       initialSelection: 'CH1',
                       dropdownMenuEntries: <String>[
                         'CH1',
@@ -77,11 +79,11 @@ class _XYPlotState extends State<XYPlotWidget> {
                         border: InputBorder.none,
                       ),
                       textStyle: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                       ),
                     ),
                     DropdownMenu<String>(
-                      width: 50.w,
+                      width: 90,
                       initialSelection: 'CH2',
                       dropdownMenuEntries: <String>[
                         'CH1',
@@ -100,23 +102,23 @@ class _XYPlotState extends State<XYPlotWidget> {
                         border: InputBorder.none,
                       ),
                       textStyle: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                       ),
                     ),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         ),
         Positioned(
-          left: 0.w,
-          right: 0.w,
-          top: 2.h,
+          left: 0,
+          right: 0,
+          top: 1,
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
+              padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: const BoxDecoration(color: Colors.white),
               child: const Text(
                 'XY Plot',

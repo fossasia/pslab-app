@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
@@ -28,8 +27,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
           child: Stack(
             children: [
               Positioned(
-                top: 0.h,
-                left: 2.w,
+                top: -4,
+                left: 4,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -41,39 +40,36 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            oscilloscopeStateProvider.isCH1Selected = value;
+                            oscilloscopeStateProvider.isCH1Selected = value!;
                           },
                         );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
-                        'CH1',
+                    const Text(
+                      'CH1',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Text(
+                        'Range',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF424242),
+                          fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
                           fontSize: 15,
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 1.h, left: 3.w),
-                      child: const Text(
-                        'Range',
-                        style: TextStyle(
-                          color: Color(0xFF424242),
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 1.h, left: 4.w),
+                      padding: const EdgeInsets.only(left: 8),
                       child: DropdownMenu<String>(
                         initialSelection: yAxisRanges[0],
-                        width: 60.w,
+                        width: 120,
                         dropdownMenuEntries: yAxisRanges.map(
                           (String value) {
                             return DropdownMenuEntry<String>(
@@ -85,9 +81,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          fontSize: 14,
-                        ),
+                        textStyle: const TextStyle(fontSize: 15),
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
                             case 0:
@@ -124,33 +118,30 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 0.h),
-                      child: DropdownMenu<String>(
-                        width: 50.w,
-                        initialSelection: rangeMenuEntries[0],
-                        dropdownMenuEntries: rangeMenuEntries.map(
-                          (String value) {
-                            return DropdownMenuEntry<String>(
-                              label: value,
-                              value: value,
-                            );
-                          },
-                        ).toList(),
-                        inputDecorationTheme: const InputDecorationTheme(
-                          border: InputBorder.none,
-                        ),
-                        textStyle: const TextStyle(
-                          fontSize: 15,
-                        ),
+                    DropdownMenu<String>(
+                      width: 90,
+                      initialSelection: rangeMenuEntries[0],
+                      dropdownMenuEntries: rangeMenuEntries.map(
+                        (String value) {
+                          return DropdownMenuEntry<String>(
+                            label: value,
+                            value: value,
+                          );
+                        },
+                      ).toList(),
+                      inputDecorationTheme: const InputDecorationTheme(
+                        border: InputBorder.none,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 15,
                       ),
                     ),
                   ],
                 ),
               ),
               Positioned(
-                left: 2.w,
-                bottom: 8.h,
+                left: 4,
+                bottom: 2,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -162,54 +153,37 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            oscilloscopeStateProvider.isCH2Selected = value;
+                            oscilloscopeStateProvider.isCH2Selected = value!;
                           },
                         );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
-                        'CH2',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 15,
-                        ),
+                    const Text(
+                      'CH2',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 15,
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 1.h, left: 3.w),
-                      child: const Text(
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Text(
                         'Range',
                         style: TextStyle(
                           color: Color(0xFF424242),
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
-                          fontSize: 14,
+                          fontSize: 15,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h, left: 4.w),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
                       child: SizedBox(
-                        width: 60.w,
-                        child: const Text(
+                        width: 120,
+                        child: Text(
                           '+/-16V',
-                          style: TextStyle(
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: SizedBox(
-                        width: 45.w,
-                        child: const Text(
-                          'CH2',
                           style: TextStyle(
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.normal,
@@ -222,8 +196,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                 ),
               ),
               Positioned(
-                top: 16.h,
-                right: 4.w,
+                top: 4,
+                right: 8,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -235,28 +209,25 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            oscilloscopeStateProvider.isCH3Selected = value;
+                            oscilloscopeStateProvider.isCH3Selected = value!;
                           },
                         );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
-                        'CH3 (+/- 3.3V)',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 15,
-                        ),
+                    const Text(
+                      'CH3 (+/- 3.3V)',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 15,
                       ),
                     ),
                   ],
                 ),
               ),
               Positioned(
-                bottom: 8.h,
-                right: 4.w,
+                bottom: 2,
+                right: 8,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -287,15 +258,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
-                        'In-Built MIC',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.normal,
-                        ),
+                    const Text(
+                      'In-Built MIC',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
                     Radio<bool>(
@@ -322,15 +290,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: const Text(
-                        'PSLab MIC',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.normal,
-                        ),
+                    const Text(
+                      'PSLab MIC',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
                   ],
@@ -340,16 +305,16 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
           ),
         ),
         Positioned(
-          left: 0.w,
-          right: 0.w,
-          top: 2.h,
+          left: 0,
+          right: 0,
+          top: 1,
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
+              padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: const BoxDecoration(color: Colors.white),
               child: const Text(
-                'Channel Parameters',
+                'Channels',
                 style: TextStyle(
                   color: Color(0xFFC72C2C),
                   fontStyle: FontStyle.normal,

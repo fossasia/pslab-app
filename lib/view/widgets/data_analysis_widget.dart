@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DataAnalysisWidget extends StatefulWidget {
   const DataAnalysisWidget({super.key});
@@ -30,75 +29,45 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                 child: Stack(
                   children: [
                     Positioned(
-                      top: 0.h,
-                      left: 2.w,
-                      right: 0.h,
+                      top: 4,
+                      left: 4,
+                      right: 0,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 2.h),
-                            child: Checkbox(
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                              activeColor: const Color(0xFFCE525F),
-                              value: isFourierTransformSelected,
-                              onChanged: (bool? value) {
-                                setState(
-                                  () {
-                                    isFourierTransformSelected = value;
-                                  },
-                                );
-                              },
-                            ),
+                          Checkbox(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            activeColor: const Color(0xFFCE525F),
+                            value: isFourierTransformSelected,
+                            onChanged: (bool? value) {
+                              setState(
+                                () {
+                                  isFourierTransformSelected = value;
+                                },
+                              );
+                            },
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 2.h),
-                            child: const Text(
-                              'Fourier Analysis',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                                fontStyle: FontStyle.normal,
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          DropdownMenu<String>(
-                            width: 50.w,
-                            initialSelection: 'CH1',
-                            dropdownMenuEntries: <String>[
-                              'CH1',
-                              'CH2',
-                              'CH3',
-                              'MIC',
-                            ].map(
-                              (String value) {
-                                return DropdownMenuEntry<String>(
-                                  label: value,
-                                  value: value,
-                                );
-                              },
-                            ).toList(),
-                            inputDecorationTheme: const InputDecorationTheme(
-                              border: InputBorder.none,
-                            ),
-                            textStyle: const TextStyle(
-                              fontSize: 14,
+                          const Text(
+                            'Fourier Analysis',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                              fontStyle: FontStyle.normal,
                             ),
                           ),
                         ],
                       ),
                     ),
                     Positioned(
-                      bottom: 0.h,
-                      left: 6.w,
-                      right: 0.h,
+                      bottom: -6,
+                      left: 12,
+                      right: 0,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           DropdownMenu<String>(
-                            width: 80.w,
+                            width: 150,
                             initialSelection: 'Sine Fit',
                             dropdownMenuEntries: <String>[
                               'Sine Fit',
@@ -115,50 +84,79 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               border: InputBorder.none,
                             ),
                             textStyle: const TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                          const Spacer(),
-                          Padding(
-                            padding: EdgeInsets.only(left: 4.w),
-                            child: DropdownMenu<String>(
-                              width: 50.w,
-                              initialSelection: 'CH1',
-                              dropdownMenuEntries: <String>[
-                                'CH1',
-                                'CH2',
-                                'CH3',
-                                'MIC',
-                              ].map(
-                                (String value) {
-                                  return DropdownMenuEntry<String>(
-                                    label: value,
-                                    value: value,
-                                  );
-                                },
-                              ).toList(),
-                              inputDecorationTheme: const InputDecorationTheme(
-                                border: InputBorder.none,
-                              ),
-                              textStyle: const TextStyle(
-                                fontSize: 14,
-                              ),
+                              fontSize: 15,
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    Positioned(
+                      top: -2,
+                      right: 0,
+                      child: DropdownMenu<String>(
+                        width: 90,
+                        initialSelection: '',
+                        dropdownMenuEntries: <String>[
+                          '',
+                          'CH1',
+                          'CH2',
+                          'CH3',
+                          'MIC',
+                        ].map(
+                          (String value) {
+                            return DropdownMenuEntry<String>(
+                              label: value,
+                              value: value,
+                            );
+                          },
+                        ).toList(),
+                        inputDecorationTheme: const InputDecorationTheme(
+                          border: InputBorder.none,
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -6,
+                      right: 0,
+                      child: DropdownMenu<String>(
+                        width: 90,
+                        initialSelection: '',
+                        dropdownMenuEntries: <String>[
+                          '',
+                          'CH1',
+                          'CH2',
+                          'CH3',
+                          'MIC',
+                        ].map(
+                          (String value) {
+                            return DropdownMenuEntry<String>(
+                              label: value,
+                              value: value,
+                            );
+                          },
+                        ).toList(),
+                        inputDecorationTheme: const InputDecorationTheme(
+                          border: InputBorder.none,
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               Positioned(
-                left: 0.w,
-                right: 0.w,
-                top: 2.h,
+                left: 0,
+                right: 0,
+                top: 1,
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 2.w),
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: const BoxDecoration(color: Colors.white),
                     child: const Text(
                       'Data Analysis',
@@ -187,12 +185,12 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                 child: Stack(
                   children: [
                     Positioned(
-                      bottom: 0.h,
-                      top: 0.h,
-                      left: 6.w,
+                      bottom: 0,
+                      top: 0,
+                      left: 12,
                       child: Center(
                         child: DropdownMenu<String>(
-                          width: 50.w,
+                          width: 90,
                           initialSelection: 'CH1',
                           dropdownMenuEntries: <String>[
                             'CH1',
@@ -211,15 +209,15 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             border: InputBorder.none,
                           ),
                           textStyle: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 15,
                           ),
                         ),
                       ),
                     ),
                     Positioned(
-                      top: 4.h,
-                      right: 4.w,
-                      left: 45.w,
+                      top: 4,
+                      right: 8,
+                      left: 75,
                       child: Row(
                         children: [
                           Expanded(
@@ -256,9 +254,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                       ),
                     ),
                     Positioned(
-                      bottom: 0.h,
-                      right: 4.w,
-                      left: 45.w,
+                      bottom: -2,
+                      right: 8,
+                      left: 75,
                       child: Row(
                         children: [
                           Expanded(
@@ -298,13 +296,13 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                 ),
               ),
               Positioned(
-                left: 0.w,
-                right: 0.w,
-                top: 2.h,
+                left: 0,
+                right: 0,
+                top: 1,
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 2.w),
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: const BoxDecoration(color: Colors.white),
                     child: const Text(
                       'Offsets',

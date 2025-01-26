@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  data:
+    dependency: "direct main"
+    description:
+      name: data
+      sha256: eb69f565061178da682b57e07468ff284e1156322ae48f0e7270e466943ea0df
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.0"
   equatable:
     dependency: transitive
     description:
@@ -93,15 +101,24 @@ packages:
     dependency: "direct main"
     description:
       name: fl_chart
-      sha256: "10ddaf334fe84d59333a12d153043e366f243e0bdfff2df0313e1e249f5bf926"
+      sha256: "5276944c6ffc975ae796569a826c38a62d2abcf264e26b88fa6f482e107f4237"
       url: "https://pub.dev"
     source: hosted
-    version: "0.70.1"
+    version: "0.70.2"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_audio_capture:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "1cbaaa082d3158eb7c605789f48a3fc4e9eb3b14"
+      url: "https://github.com/AsCress/flutter_audio_capture.git"
+    source: git
+    version: "1.1.8"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -110,14 +127,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-  flutter_screenutil:
-    dependency: "direct main"
-    description:
-      name: flutter_screenutil
-      sha256: "8239210dd68bee6b0577aa4a090890342d04a136ce1c81f98ee513fc0ce891de"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.9.3"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -151,10 +160,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
+      sha256: fe7ab022b76f3034adc518fb6ea04a82387620e19977665ea18d30a1cf43442f
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.2"
+    version: "1.3.0"
   http_parser:
     dependency: transitive
     description:
@@ -219,6 +228,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.15.0"
+  more:
+    dependency: transitive
+    description:
+      name: more
+      sha256: "7589f39d4e5858213e80454844c6f0b1ef58e254e6614fe387e2029fc325efad"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.4.0"
   nested:
     dependency: transitive
     description:
@@ -315,14 +332,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
-  polynomial:
-    dependency: "direct main"
-    description:
-      name: polynomial
-      sha256: "2a2e58e70a131a02d6073ff11d56dde8392d76d075ffdd038c067fc3e8258733"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   provider:
     dependency: "direct main"
     description:
@@ -397,7 +406,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "35f3cca1454f03f07bb646bfb36aed32011e5443"
+      resolved-ref: ba7892bca3b8bf7725af92c6cc58279659c2a2bc
       url: "https://github.com/AsCress/usbserial.git"
     source: git
     version: "0.5.1"
@@ -466,5 +475,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.6.0 <4.0.0"
+  dart: ">=3.5.4 <4.0.0"
   flutter: ">=3.24.0"

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TimebaseTriggerWidget extends StatefulWidget {
   const TimebaseTriggerWidget({super.key});
@@ -26,41 +25,35 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
           child: Stack(
             children: [
               Positioned(
-                top: 0.h,
-                left: 2.w,
-                right: 0.w,
+                bottom: -4,
+                left: 4,
+                right: 0,
                 child: Row(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 2.h),
-                      child: Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        activeColor: const Color(0xFFCE525F),
-                        value: isTriggerChecked,
-                        onChanged: (bool? value) {
-                          setState(
-                            () {
-                              isTriggerChecked = value;
-                            },
-                          );
-                        },
+                    Checkbox(
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      activeColor: const Color(0xFFCE525F),
+                      value: isTriggerChecked,
+                      onChanged: (bool? value) {
+                        setState(
+                          () {
+                            isTriggerChecked = value;
+                          },
+                        );
+                      },
+                    ),
+                    const Text(
+                      'Trigger',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal,
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 2.h),
-                      child: const Text(
-                        'Trigger',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 8.w),
+                      padding: const EdgeInsets.only(left: 8),
                       child: DropdownMenu<String>(
-                        width: 50.w,
+                        width: 90,
                         initialSelection: 'CH1',
                         dropdownMenuEntries: <String>[
                           'CH1',
@@ -79,7 +72,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           border: InputBorder.none,
                         ),
                         textStyle: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 15,
                         ),
                       ),
                     ),
@@ -114,9 +107,9 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 8.w),
+                      padding: const EdgeInsets.only(left: 32),
                       child: DropdownMenu<String>(
-                        width: 70.w,
+                        width: 150,
                         initialSelection: 'Rising Edge',
                         dropdownMenuEntries: <String>[
                           'Rising Edge',
@@ -142,9 +135,9 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                 ),
               ),
               Positioned(
-                bottom: 0.h,
-                left: 8.w,
-                right: 8.w,
+                top: -2,
+                left: 16,
+                right: 16,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -152,7 +145,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     const Text(
                       'Timebase',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                       ),
@@ -195,13 +188,13 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
           ),
         ),
         Positioned(
-          left: 0.w,
-          right: 0.w,
-          top: 2.h,
+          left: 0,
+          right: 0,
+          top: 1,
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
+              padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: const BoxDecoration(color: Colors.white),
               child: const Text(
                 'Timebase & Trigger',
