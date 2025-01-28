@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -45,6 +46,11 @@ import io.pslab.sensors.SensorVL53L0X;
  */
 
 public class SensorActivity extends GuideActivity {
+    private static final String TAG = SensorActivity.class.getSimpleName();
+
+    private static final String KEY_ENTRIES_ADDRESSES = TAG + "_entries_addrs";
+    private static final String KEY_ENTRIES_NAMES = TAG + "_entries_names";
+    private static final String KEY_VALUE_SCAN = TAG + "_value_tvscan";
 
     private I2C i2c;
     private ScienceLab scienceLab;
@@ -93,6 +99,15 @@ public class SensorActivity extends GuideActivity {
         tvSensorScan.setText(getResources().getString(R.string.use_autoscan));
         lvSensor = findViewById(R.id.lv_sensor);
         lvSensor.setAdapter(adapter);
+
+        if (savedInstanceState != null) {
+            String savedScanResults = savedInstanceState.getString(KEY_VALUE_SCAN);
+            List<String> savedNames = savedInstanceState.getStringArrayList(KEY_ENTRIES_NAMES);
+            List<String> savedAddresses = savedInstanceState.getStringArrayList(KEY_ENTRIES_ADDRESSES);
+            if (savedScanResults != null) tvSensorScan.setText(savedScanResults);
+            if (savedNames != null) dataName.addAll(savedNames);
+            if (savedAddresses != null) dataAddress.addAll(savedAddresses);
+        }
 
         buttonSensorAutoScan.setOnClickListener(v -> {
             buttonSensorAutoScan.setClickable(false);
@@ -153,6 +168,14 @@ public class SensorActivity extends GuideActivity {
                             "Sensor Not Supported", null, null, Snackbar.LENGTH_SHORT);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_VALUE_SCAN, tvSensorScan.getText().toString());
+        outState.putStringArrayList(KEY_ENTRIES_NAMES, new ArrayList<>(dataName));
+        outState.putStringArrayList(KEY_ENTRIES_ADDRESSES, new ArrayList<>(dataAddress));
     }
 
     private class PopulateSensors extends AsyncTask<Void, Void, Void> {
