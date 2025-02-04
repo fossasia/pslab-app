@@ -66,6 +66,7 @@ class CommunicationHandler {
     int numBytesRead = 0;
     await for (Uint8List receivedData
         in mPort!.inputStream!.timeout(Duration(milliseconds: timeoutMillis))) {
+      numBytesRead += receivedData.length;
       dest.setRange(0, receivedData.length, receivedData);
       if (receivedData.length == bytesToRead) {
         print("Read: $bytesToRead");

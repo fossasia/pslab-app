@@ -106,7 +106,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                               oscilloscopeStateProvider.setYAxisScale(1);
                               break;
                             case 7:
-                              oscilloscopeStateProvider.setYAxisScale(500);
+                              oscilloscopeStateProvider.setYAxisScale(0.5);
                               break;
                             case 8:
                               oscilloscopeStateProvider.setYAxisScale(160);
