@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/communication_handler.dart';
 import 'package:pslab/communication/packet_handler.dart';
@@ -128,6 +128,142 @@ class ScienceLab {
       }
     }
     calibrated = false;
+  }
+
+  Future<void> captureTraces(int number, int samples, double timeGap,
+      String? channelOneInput, bool trigger, int? CH123SA) async {
+    CH123SA ??= 0;
+    channelOneInput ??= 'CH1';
+    timebase = timeGap;
+    timebase = timebase.toInt().toDouble();
+    if (!analogInputSources.containsKey(channelOneInput)) {
+      print("Invalid channel: $channelOneInput");
+      return;
+    }
+    int CHOSA = analogInputSources[channelOneInput]!.CHOSA;
+    aChannels[0].setParams(channelOneInput, samples, 0, timebase, 10,
+        analogInputSources[channelOneInput], null);
+    try {
+      mPacketHandler.sendByte(mCommandsProto.ADC);
+      if (number == 1) {
+        if (timeGap < 0.5) {
+          timebase = 0.5;
+        }
+        if (samples > MAX_SAMPLES) {
+          samples = MAX_SAMPLES;
+        }
+        if (trigger) {
+          if (timeGap < 0.75) {
+            timebase = 0.75;
+          }
+          mPacketHandler.sendByte(mCommandsProto.CAPTURE_ONE);
+          mPacketHandler.sendByte(CHOSA | 0x80);
+        } else if (timeGap > 1) {
+          aChannels[0].setParams(channelOneInput, samples, 0, timebase, 12,
+              analogInputSources[channelOneInput], null);
+          mPacketHandler.sendByte(mCommandsProto.CAPTURE_DMASPEED);
+          mPacketHandler.sendByte(CHOSA | 0x80);
+        } else {
+          mPacketHandler.sendByte(mCommandsProto.CAPTURE_DMASPEED);
+          mPacketHandler.sendByte(CHOSA);
+        }
+      } else if (number == 2) {
+        if (timeGap < 0.875) {
+          timebase = 0.875;
+        }
+        if (samples > MAX_SAMPLES / 2) {
+          samples = (MAX_SAMPLES / 2).toInt();
+        }
+        aChannels[1].setParams('CH2', samples, samples, timebase, 10,
+            analogInputSources['CH2'], null);
+        mPacketHandler.sendByte(mCommandsProto.CAPTURE_TWO);
+        mPacketHandler.sendByte(CHOSA | (0x80 * (trigger ? 1 : 0)));
+      } else {
+        if (timeGap < 1.75) {
+          timebase = 1.75;
+        }
+        if (samples > MAX_SAMPLES / 4) {
+          samples = (MAX_SAMPLES / 4).toInt();
+        }
+        int i = 1;
+        for (String temp in ['CH2', 'CH3', 'MIC']) {
+          aChannels[i].setParams(temp, samples, i * samples, timebase, 10,
+              analogInputSources[temp], null);
+          i++;
+        }
+        mPacketHandler.sendByte(mCommandsProto.CAPTURE_FOUR);
+        mPacketHandler
+            .sendByte(CHOSA | (CH123SA << 4) | (0x80 * (trigger ? 1 : 0)));
+      }
+      this.samples = samples;
+      mPacketHandler.sendInt(samples);
+      mPacketHandler.sendInt((timebase * 8).toInt());
+      await mPacketHandler.getAcknowledgement();
+      channelsInBuffer = number;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<Map<String, List<double>>> fetchTrace(int channelNumber) async {
+    await fetchData(channelNumber);
+    Map<String, List<double>> retData = {};
+    retData['x'] = aChannels[channelNumber - 1].getXAxis();
+    retData['y'] = aChannels[channelNumber - 1].getYAxis();
+    return retData;
+  }
+
+  Future<bool> fetchData(int channelNumber) async {
+    int samples = aChannels[channelNumber - 1].length;
+    if (channelNumber > channelsInBuffer) {
+      print("Channel Unavailable");
+      return false;
+    }
+    print("Samples: $samples");
+    print("Data Splitting: $dataSplitting");
+    List<int> listData = [];
+    try {
+      for (int i = 0; i < samples / dataSplitting; i++) {
+        mPacketHandler.sendByte(mCommandsProto.COMMON);
+        mPacketHandler.sendByte(mCommandsProto.RETRIEVE_BUFFER);
+        mPacketHandler.sendInt(
+            aChannels[channelNumber - 1].bufferIndex + (i * dataSplitting));
+        mPacketHandler.sendInt(dataSplitting);
+        Uint8List data = Uint8List(dataSplitting * 2 + 1);
+        await mPacketHandler.read(data, dataSplitting * 2 + 1);
+        for (int j = 0; j < data.length - 1; j++) {
+          listData.add(data[j] & 0xFF);
+        }
+      }
+      if ((samples % dataSplitting) != 0) {
+        mPacketHandler.sendByte(mCommandsProto.COMMON);
+        mPacketHandler.sendByte(mCommandsProto.RETRIEVE_BUFFER);
+        mPacketHandler.sendInt(aChannels[channelNumber - 1].bufferIndex +
+            samples -
+            samples % dataSplitting);
+        mPacketHandler.sendInt(samples % dataSplitting);
+        Uint8List data = Uint8List(2 * (samples % dataSplitting) + 1);
+        await mPacketHandler.read(data, 2 * (samples % dataSplitting) + 1);
+        for (int j = 0; j < data.length - 1; j++) {
+          listData.add(data[j] & 0xFF);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    for (int i = 0; i < listData.length / 2; i++) {
+      buffer[i] = (listData[i * 2] | (listData[i * 2 + 1] << 8)).toDouble();
+      while (buffer[i] > 1023) {
+        buffer[i] -= 1023;
+      }
+    }
+
+    print("RAW DATA: ${buffer.sublist(0, samples).toString()}");
+
+    aChannels[channelNumber - 1].yAxis =
+        aChannels[channelNumber - 1].fixValue(buffer.sublist(0, samples));
+    return true;
   }
 
   Future<double> setGain(String channel, int gain, bool? force) async {

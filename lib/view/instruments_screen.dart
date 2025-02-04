@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/view/widgets/applications_list_item.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -38,6 +39,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
     super.initState();
+    Permission.microphone.request();
   }
 
   void _setOrientation() {

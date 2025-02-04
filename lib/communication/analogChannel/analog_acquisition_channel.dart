@@ -6,6 +6,7 @@ class AnalogAcquisitionChannel {
   late double _calibration_ref196;
   late int length;
   late double _timebase;
+  late int bufferIndex;
   final List<double> _xAxis = List.filled(10000, 0.0);
   List<double> yAxis = List.filled(10000, 0.0);
 
@@ -14,6 +15,7 @@ class AnalogAcquisitionChannel {
     _resolution = 10;
     length = 100;
     _timebase = 1;
+    bufferIndex = 0;
     _analogInputSource = AnalogInputSource('CH1');
   }
 
@@ -33,12 +35,13 @@ class AnalogAcquisitionChannel {
     return calcData;
   }
 
-  void setParams(String? channel, int length, double timebase, int resolution,
-      AnalogInputSource? source, double? gain) {
+  void setParams(String? channel, int length, int bufferIndex, double timebase,
+      int resolution, AnalogInputSource? source, double? gain) {
     _analogInputSource = source!;
     if (resolution != -1) _resolution = resolution;
     if (length != -1) this.length = length;
     if (timebase != -1) _timebase = timebase;
+    if (bufferIndex != -1) this.bufferIndex = bufferIndex;
     regenerateXAxis();
   }
 

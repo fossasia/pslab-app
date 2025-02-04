@@ -4,11 +4,12 @@ class AudioJack {
   static const int samplingRate = 44100;
   final FlutterAudioCapture flutterAudioCapture = FlutterAudioCapture();
 
-  late List<double> _audioBuffer;
+  List<double> _audioBuffer = [];
 
   AudioJack();
 
-  Future<bool> _configure() async {
+  Future<bool> configure() async {
+    await flutterAudioCapture.init();
     await flutterAudioCapture.start(_listener, _onError,
         sampleRate: samplingRate);
     return true;

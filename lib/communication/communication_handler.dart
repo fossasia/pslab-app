@@ -74,7 +74,6 @@ class CommunicationHandler {
       }
       return numBytesRead;
     }
-    print("Read: $numBytesRead");
     return numBytesRead;
   }
 

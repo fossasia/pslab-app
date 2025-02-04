@@ -69,7 +69,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       padding: const EdgeInsets.only(left: 8),
                       child: DropdownMenu<String>(
                         initialSelection: yAxisRanges[0],
-                        width: 120,
+                        width: 140,
                         dropdownMenuEntries: yAxisRanges.map(
                           (String value) {
                             return DropdownMenuEntry<String>(
@@ -85,55 +85,37 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
                             case 0:
-                              oscilloscopeStateProvider.yAxisRange = 16;
+                              oscilloscopeStateProvider.setYAxisScale(16);
                               break;
                             case 1:
-                              oscilloscopeStateProvider.yAxisRange = 8;
+                              oscilloscopeStateProvider.setYAxisScale(8);
                               break;
                             case 2:
-                              oscilloscopeStateProvider.yAxisRange = 4;
+                              oscilloscopeStateProvider.setYAxisScale(4);
                               break;
                             case 3:
-                              oscilloscopeStateProvider.yAxisRange = 3;
+                              oscilloscopeStateProvider.setYAxisScale(3);
                               break;
                             case 4:
-                              oscilloscopeStateProvider.yAxisRange = 2;
+                              oscilloscopeStateProvider.setYAxisScale(2);
                               break;
                             case 5:
-                              oscilloscopeStateProvider.yAxisRange = 1.5;
+                              oscilloscopeStateProvider.setYAxisScale(1.5);
                               break;
                             case 6:
-                              oscilloscopeStateProvider.yAxisRange = 1;
+                              oscilloscopeStateProvider.setYAxisScale(1);
                               break;
                             case 7:
-                              oscilloscopeStateProvider.yAxisRange = 500;
+                              oscilloscopeStateProvider.setYAxisScale(500);
                               break;
                             case 8:
-                              oscilloscopeStateProvider.yAxisRange = 160;
+                              oscilloscopeStateProvider.setYAxisScale(160);
                               break;
                             default:
-                              oscilloscopeStateProvider.yAxisRange = 16;
+                              oscilloscopeStateProvider.setYAxisScale(16);
                               break;
                           }
                         },
-                      ),
-                    ),
-                    DropdownMenu<String>(
-                      width: 90,
-                      initialSelection: rangeMenuEntries[0],
-                      dropdownMenuEntries: rangeMenuEntries.map(
-                        (String value) {
-                          return DropdownMenuEntry<String>(
-                            label: value,
-                            value: value,
-                          );
-                        },
-                      ).toList(),
-                      inputDecorationTheme: const InputDecorationTheme(
-                        border: InputBorder.none,
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 15,
                       ),
                     ),
                   ],
@@ -247,7 +229,15 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                                   false;
                               oscilloscopeStateProvider.isAudioInputSelected =
                                   false;
+                              oscilloscopeStateProvider.setTimebaseDivisions(8);
                             } else {
+                              if (value == true) {
+                                oscilloscopeStateProvider
+                                    .setTimebaseDivisions(6);
+                              } else {
+                                oscilloscopeStateProvider
+                                    .setTimebaseDivisions(8);
+                              }
                               oscilloscopeStateProvider.isAudioInputSelected =
                                   true;
                               oscilloscopeStateProvider.isInBuiltMICSelected =
