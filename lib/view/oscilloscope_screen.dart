@@ -37,7 +37,9 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<OscilloscopeStateProvider>(context, listen: false).initialize();
+    OscilloscopeStateProvider oscilloscopeStateProvider =
+        Provider.of<OscilloscopeStateProvider>(context, listen: false);
+    oscilloscopeStateProvider.initialize();
     return SafeArea(
       child: CommonScaffold(
         title: 'Oscilloscope',

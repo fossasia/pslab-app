@@ -64,17 +64,32 @@ class CommunicationHandler {
 
   Future<int> read(Uint8List dest, int bytesToRead, int timeoutMillis) async {
     int numBytesRead = 0;
-    await for (Uint8List receivedData
-        in mPort!.inputStream!.timeout(Duration(milliseconds: timeoutMillis))) {
-      numBytesRead += receivedData.length;
-      dest.setRange(0, receivedData.length, receivedData);
-      if (receivedData.length == bytesToRead) {
-        print("Read: $bytesToRead");
-      } else {
-        print("Read Error: ${bytesToRead - numBytesRead}");
+    int bytesToBeReadTemp = bytesToRead;
+
+    try {
+      await for (Uint8List receivedData in mPort!.inputStream!
+          .timeout(Duration(milliseconds: timeoutMillis))) {
+        int readNow = receivedData.length;
+
+        if (readNow == 0) {
+          print("Read Error: $bytesToBeReadTemp");
+          return numBytesRead;
+        } else {
+          int readLength = readNow.clamp(0, bytesToBeReadTemp);
+          dest.setRange(numBytesRead, numBytesRead + readLength, receivedData);
+          numBytesRead += readLength;
+          bytesToBeReadTemp -= readLength;
+        }
+
+        if (numBytesRead >= bytesToRead) {
+          break;
+        }
       }
-      return numBytesRead;
+    } catch (e) {
+      print("Exception during read: $e");
     }
+
+    print("Bytes Read: $numBytesRead");
     return numBytesRead;
   }
 

@@ -79,6 +79,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
   double timebaseSlider = 0;
 
+  bool _isProcessing = false;
+
   Future<void> initialize() async {
     _channelIndexMap = <String, int>{};
     _channelIndexMap[CHANNEL.CH1.toString()] = 1;
@@ -115,12 +117,17 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
   Future<void> monitor() async {
     Timer.periodic(
-      const Duration(milliseconds: 1),
+      Duration.zero,
       (timer) async {
         if (!_monitor) {
           timer.cancel();
           return;
         }
+
+        if (_isProcessing) {
+          return;
+        }
+        _isProcessing = true;
 
         if (_isRunning) {
           if (isInBuiltMICSelected && _audioJack == null) {
@@ -157,6 +164,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             _audioJack = null;
           }
         }
+        _isProcessing = false;
       },
     );
   }
@@ -180,7 +188,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       List<List<String>> yDataString = [];
       List<String> xDataString = [];
       _maxAmp = 0;
-      _scienceLab.captureTraces(4, samples!, timeGap!, channel, false, null);
+      await _scienceLab.captureTraces(
+          4, samples!, timeGap!, channel, false, null);
       await Future.delayed(
           Duration(milliseconds: (samples! * timeGap! * 1e-3).toInt()));
       for (int i = 0; i < noOfChannels; i++) {
