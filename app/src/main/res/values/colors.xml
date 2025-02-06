@@ -83,4 +83,75 @@
     <color name="category_voltage">#FF4040</color>
     <color name="category_wavegen">#406743</color>
 
+
+    <!-- Pins v6 -->
+    <color name="txd">#FFB380</color>
+    <color name="cen">#FF9955</color>
+    <color name="vcc">#00FF00</color>
+    <color name="gnd">#00FFFF</color>
+    <color name="rxd">#FF7F2A</color>
+    <color name="uart_tx">#EEFFAA</color>
+    <color name="uart_rx">#E5FF80</color>
+    <color name="sine_wave_1">#FFCC00</color>
+    <color name="sine_wave_2">#D4AA00</color>
+    <color name="square_wave_1">#FFAAAA</color>
+    <color name="square_wave_2">#FF8080</color>
+    <color name="square_wave_3">#FF5555</color>
+    <color name="square_wave_4">#FF2A2A</color>
+    <color name="logic_analyzer_1">#D5FFE6</color>
+    <color name="logic_analyzer_2">#AAFFCC</color>
+    <color name="logic_analyzer_3">#80FFB3</color>
+    <color name="logic_analyzer_4">#55FF99</color>
+    <color name="ac_channel">#0000FF</color>
+    <color name="channel_1">#AACCFF</color>
+    <color name="channel_2">#80B3FF</color>
+    <color name="channel_3">#5599FF</color>
+    <color name="ch3_gain_set">#2A7FFF</color>
+    <color name="microphone">#0066FF</color>
+    <color name="frequency">#0055D4</color>
+    <color name="capacitance">#0044AA</color>
+    <color name="resistance">#003380</color>
+    <color name="voltage">#002255</color>
+    <color name="chip_select">#E3DBDE</color>
+    <color name="sdi">#C8B7BE</color>
+    <color name="sclk">#AC939D</color>
+    <color name="sdo">#916F7C</color>
+    <color name="vdd">#800080</color>
+    <color name="sda">#F4D7E3</color>
+    <color name="scl">#E9AFC6</color>
+    <color name="range_0_to_3_3v">#DE87AA</color>
+    <color name="plus_3_3v">#D35F8D</color>
+    <color name="plus_minus_5v">#C83771</color>
+    <color name="current_3ma">#A02C5A</color>
+    <color name="pgc">#AA0044</color>
+    <color name="pgd">#D40055</color>
+    <color name="mclr">#FF0066</color>
+    <color name="dp">#800066</color>
+    <color name="dm">#AA0088</color>
+    <color name="vusb">#D400AA</color>
+    <color name="cs1">#000080</color>
+    <color name="pv3">#D7EEF4</color>
+    <color name="pv2">#AFDDE9</color>
+    <color name="pv1">#87CDDE</color>
+    <color name="pcs">#5FBCD3</color>
+    <color name="vol">#E5D5FF</color>
+    <color name="res">#CCAAFF</color>
+    <color name="cap">#B380FF</color>
+    <color name="fqy">#9955FF</color>
+    <color name="mic">#7F2AFF</color>
+    <color name="c3g">#6600FF</color>
+    <color name="la4">#55FF99</color>
+    <color name="la3">#80FFB3</color>
+    <color name="la2">#AAFFCC</color>
+    <color name="la1">#D5FFE6</color>
+    <color name="plus_5v">#2B0000</color>
+    <color name="si1">#F4D7EE</color>
+    <color name="si2">#E9AFDD</color>
+    <color name="sq1">#DE87CD</color>
+    <color name="sq2">#D35FBC</color>
+    <color name="sq3">#C837AB</color>
+    <color name="sq4">#A02C89</color>
+
+
+
 </resources>

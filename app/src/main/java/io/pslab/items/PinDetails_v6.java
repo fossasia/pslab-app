@@ -1,20 +1,13 @@
 package io.pslab.items;
 
-/**
- * Created by Padmal on 5/22/18.
- */
-
-public class PinDetails {
-
+public class PinDetails_v6 {
     private final String name;
     private final String description;
-    private final int categoryColor;
     private final int colorID;
 
-    public PinDetails(String name, String description, int categoryColor, int colorID) {
+    public PinDetails_v6(String name, String description, int colorID) {
         this.name = name;
         this.description = description;
-        this.categoryColor = categoryColor;
         this.colorID = colorID;
     }
 
@@ -26,11 +19,9 @@ public class PinDetails {
         return description;
     }
 
-    public int getCategoryColor() {
-        return categoryColor;
-    }
 
     public int getColorID() {
         return colorID;
     }
+
 }

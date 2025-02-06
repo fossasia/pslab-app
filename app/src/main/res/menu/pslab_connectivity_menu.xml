@@ -17,12 +17,20 @@
         android:title="@string/text_disconnected"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/menu_pslab_layout_front"
-        android:title="@string/pslab_pinlayout_front"
+        android:id="@+id/menu_pslab_layout_front_v5"
+        android:title="@string/pslab_pinlayout_front_v5"
         app:showAsAction="never" />
     <item
-        android:id="@+id/menu_pslab_layout_back"
-        android:title="@string/pslab_pinlayout_back"
+        android:id="@+id/menu_pslab_layout_back_v5"
+        android:title="@string/pslab_pinlayout_back_v5"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_pslab_layout_front_v6"
+        android:title="@string/pslab_pinlayout_front_v6"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_pslab_layout_back_v6"
+        android:title="@string/pslab_pinlayout_back_v6"
         app:showAsAction="never" />
 </menu>
 

@@ -52,6 +52,7 @@ import io.pslab.fragment.FAQFragment;
 import io.pslab.fragment.HomeFragment;
 import io.pslab.fragment.InstrumentsFragment;
 import io.pslab.fragment.PSLabPinLayoutFragment;
+import io.pslab.fragment.PSLabPinLayoutFragment_v6;
 import io.pslab.others.CustomSnackBar;
 import io.pslab.others.CustomTabService;
 import io.pslab.others.InitializationVariable;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_INSTRUMENTS = "instruments";
     private static final String TAG_ABOUTUS = "aboutUs";
     private static final String TAG_PINLAYOUT = "pinLayout";
+    private static final String TAG_PINLAYOUT_V6 = "PINLAYOUTV6";
     private static final String TAG_FAQ = "faq";
     private static String CURRENT_TAG = TAG_INSTRUMENTS;
     private String[] activityTitles;
@@ -337,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
                         OssLicensesMenuActivity.setActivityTitle(getString(R.string.third_party_libs));
                         startActivity(new Intent(MainActivity.this, OssLicensesMenuActivity.class));
                         break;
+
                     default:
                         navItemIndex = 0;
                 }
@@ -429,14 +432,23 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_pslab_disconnected:
                 attemptToConnectPSLab();
                 break;
-            case R.id.menu_pslab_layout_front:
+            case R.id.menu_pslab_layout_front_v5:
                 PSLabPinLayoutFragment.frontSide = true;
-                displayPSLabPinLayout();
+                displayPSLabPinLayout(TAG_PINLAYOUT);
                 break;
-            case R.id.menu_pslab_layout_back:
+            case R.id.menu_pslab_layout_back_v5:
                 PSLabPinLayoutFragment.frontSide = false;
-                displayPSLabPinLayout();
+                displayPSLabPinLayout(TAG_PINLAYOUT);
                 break;
+            case R.id.menu_pslab_layout_front_v6:
+                PSLabPinLayoutFragment_v6.topside=true;
+                displayPSLabPinLayout(TAG_PINLAYOUT_V6);
+                break;
+            case R.id.menu_pslab_layout_back_v6:
+                PSLabPinLayoutFragment_v6.topside=false;
+                displayPSLabPinLayout(TAG_PINLAYOUT_V6);
+                break;
+
             default:
                 break;
         }
@@ -465,20 +477,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displayPSLabPinLayout() {
-        CURRENT_TAG = TAG_PINLAYOUT;
+    private void displayPSLabPinLayout(String fragmentTag) {
+        CURRENT_TAG = fragmentTag;
         navigationView.getMenu().getItem(navItemIndex).setChecked(false);
-        setToolbarTitle(getResources().getString(R.string.pslab_pinlayout));
+
+        // Set toolbar title based on the fragment tag
+        if (fragmentTag.equals(TAG_PINLAYOUT)) {
+            setToolbarTitle(getResources().getString(R.string.pslab_pinlayout));
+        } else if (fragmentTag.equals(TAG_PINLAYOUT_V6)) {
+            setToolbarTitle(getResources().getString(R.string.pslab_pinlayout_v6));
+        }
+
         Runnable mPendingRunnable = new Runnable() {
             @Override
             public void run() {
-                Fragment fragment = PSLabPinLayoutFragment.newInstance();
+                Fragment fragment;
+                if (fragmentTag.equals(TAG_PINLAYOUT)) {
+                    fragment = PSLabPinLayoutFragment.newInstance();
+                } else if (fragmentTag.equals(TAG_PINLAYOUT_V6)) {
+                    fragment = PSLabPinLayoutFragment_v6.newInstance();
+                } else {
+                    return; // Exit if no valid tag is provided
+                }
+
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                        .replace(R.id.frame, fragment, TAG_PINLAYOUT)
+                        .replace(R.id.frame, fragment, fragmentTag)
                         .commitAllowingStateLoss();
             }
         };
+
         mHandler.post(mPendingRunnable);
     }
 
@@ -561,7 +589,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -582,7 +609,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
     @Override
     protected void onPostResume() {
         super.onPostResume();
