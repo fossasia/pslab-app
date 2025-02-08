@@ -24,7 +24,7 @@ enum ChannelMeasurements {
 }
 
 class OscilloscopeStateProvider extends ChangeNotifier {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
   int get selectedIndex => _selectedIndex;
 
@@ -37,16 +37,16 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   double? timeGap;
   double? timebase;
   double maxTimebase = 102.4;
-  bool isCH1Selected = false;
-  bool isCH2Selected = false;
-  bool isCH3Selected = false;
-  bool isMICSelected = false;
-  bool isInBuiltMICSelected = false;
-  bool isAudioInputSelected = false;
-  bool isTriggerSelected = false;
-  bool isTriggered = false;
-  bool isFourierTransformSelected = false;
-  bool isXYPlotSelected = false;
+  late bool isCH1Selected;
+  late bool isCH2Selected;
+  late bool isCH3Selected;
+  late bool isMICSelected;
+  late bool isInBuiltMICSelected;
+  late bool isAudioInputSelected;
+  late bool isTriggerSelected;
+  late bool isTriggered;
+  late bool isFourierTransformSelected;
+  late bool isXYPlotSelected;
   late bool sineFit;
   late bool squareFit;
   late String triggerChannel;
@@ -59,29 +59,57 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late ScienceLab _scienceLab;
   AudioJack? _audioJack;
   AnalyticsClass? _analyticsClass;
-  bool _monitor = true;
+  late bool _monitor;
   double? _maxAmp;
   // double? _maxFreq;
-  bool _isRecording = false;
-  bool _isRunning = true;
+  late bool _isRecording;
+  late bool _isRunning;
   // bool _isMeasurementsChecked = false;
   late Map<String, int> _channelIndexMap;
-  String xyPlotAxis1 = 'CH1';
-  String xyPlotAxis2 = 'CH2';
-  List<List<FlSpot>> dataEntries = [];
+  late String xyPlotAxis1;
+  late String xyPlotAxis2;
+  late List<List<FlSpot>> dataEntries;
   late List<String> dataParamsChannels;
 
-  double _yAxisScale = 16;
+  late double _yAxisScale;
   double get yAxisScale => _yAxisScale;
 
-  int _timebaseDivisions = 8;
+  late int _timebaseDivisions;
   int get timebaseDivisions => _timebaseDivisions;
 
-  double timebaseSlider = 0;
+  late double timebaseSlider;
 
-  bool _isProcessing = false;
+  late int oscillscopeRangeSelection;
+
+  late bool _isProcessing;
+
+  late Timer _timer;
 
   Future<void> initialize() async {
+    _selectedIndex = 0;
+
+    isCH1Selected = false;
+    isCH2Selected = false;
+    isCH3Selected = false;
+    isMICSelected = false;
+    isInBuiltMICSelected = false;
+    isAudioInputSelected = false;
+    isTriggerSelected = false;
+    isTriggered = false;
+    isFourierTransformSelected = false;
+    isXYPlotSelected = false;
+    _monitor = true;
+    _isRecording = false;
+    _isRunning = true;
+    xyPlotAxis1 = 'CH1';
+    xyPlotAxis2 = 'CH2';
+    dataEntries = [];
+    _yAxisScale = 16;
+    _timebaseDivisions = 8;
+    timebaseSlider = 0;
+    oscillscopeRangeSelection = 0;
+    _isProcessing = false;
+
     _channelIndexMap = <String, int>{};
     _channelIndexMap[CHANNEL.CH1.toString()] = 1;
     _channelIndexMap[CHANNEL.CH2.toString()] = 2;
@@ -116,7 +144,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   Future<void> monitor() async {
-    Timer.periodic(
+    _timer = Timer.periodic(
       Duration.zero,
       (timer) async {
         if (!_monitor) {
@@ -494,5 +522,15 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         ),
       );
     });
+  }
+
+  void destroy() {
+    _monitor = false;
+    if (_audioJack != null) {
+      _audioJack!.close();
+    }
+    if (_timer.isActive) {
+      _timer.cancel();
+    }
   }
 }

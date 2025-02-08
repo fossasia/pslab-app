@@ -15,7 +15,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
-        Provider.of<OscilloscopeStateProvider>(context);
+        Provider.of<OscilloscopeStateProvider>(context, listen: false);
     return Stack(
       children: [
         Container(
@@ -68,7 +68,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: DropdownMenu<String>(
-                        initialSelection: yAxisRanges[0],
+                        initialSelection: yAxisRanges[oscilloscopeStateProvider
+                            .oscillscopeRangeSelection],
                         width: 140,
                         dropdownMenuEntries: yAxisRanges.map(
                           (String value) {
@@ -115,6 +116,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                               oscilloscopeStateProvider.setYAxisScale(16);
                               break;
                           }
+                          oscilloscopeStateProvider.oscillscopeRangeSelection =
+                              yAxisRanges.indexOf(value);
                         },
                       ),
                     ),

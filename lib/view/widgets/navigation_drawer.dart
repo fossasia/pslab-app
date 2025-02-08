@@ -57,7 +57,6 @@ class _NavDrawerState extends State<NavDrawer> {
               ),
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -89,7 +88,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -110,7 +108,6 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             const Divider(),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -130,7 +127,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -150,7 +146,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -171,7 +166,6 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             const Divider(),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -191,7 +185,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -211,7 +204,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -231,7 +223,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -251,7 +242,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -271,7 +261,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -291,7 +280,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(
@@ -311,7 +299,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              minLeadingWidth: 30,
               focusColor: Colors.grey[350],
               dense: true,
               leading: Icon(

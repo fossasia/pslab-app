@@ -16,7 +16,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
-        Provider.of<OscilloscopeStateProvider>(context);
+        Provider.of<OscilloscopeStateProvider>(context, listen: false);
     return Consumer<OscilloscopeStateProvider>(
       builder: (context, provider, _) {
         return Stack(

@@ -19,6 +19,7 @@ class OscilloscopeScreen extends StatefulWidget {
 }
 
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
+  late OscilloscopeStateProvider oscilloscopeStateProvider;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -26,6 +27,21 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     });
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    oscilloscopeStateProvider =
+        Provider.of<OscilloscopeStateProvider>(context, listen: false);
+    oscilloscopeStateProvider.initialize();
+    super.didChangeDependencies();
+  }
+
+  void _setPortraitOrientation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   void _setLandscapeOrientation() {
@@ -36,10 +52,15 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   }
 
   @override
+  void dispose() {
+    _setPortraitOrientation();
+    oscilloscopeStateProvider.destroy();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    OscilloscopeStateProvider oscilloscopeStateProvider =
-        Provider.of<OscilloscopeStateProvider>(context, listen: false);
-    oscilloscopeStateProvider.initialize();
     return SafeArea(
       child: CommonScaffold(
         title: 'Oscilloscope',
@@ -63,9 +84,11 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                       ),
                       Expanded(
                         flex: 34,
-                        child: Consumer<OscilloscopeStateProvider>(
-                          builder: (context, provider, _) {
-                            switch (provider.selectedIndex) {
+                        child: Selector<OscilloscopeStateProvider, int>(
+                          selector: (context, provider) =>
+                              provider.selectedIndex,
+                          builder: (context, selectedIndex, _) {
+                            switch (selectedIndex) {
                               case 0:
                                 return const ChannelParametersWidget();
                               case 1:
