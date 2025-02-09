@@ -2,25 +2,28 @@ import 'dart:core';
 
 import 'package:data/data.dart';
 import 'package:pslab/communication/analogChannel/analog_constants.dart';
+import 'package:pslab/others/logger_service.dart';
 
 class AnalogInputSource {
   late List<double> _gainValues, _range;
   bool gainEnabled = false, inverted = false, calibrationReady = false;
   double _gain = 0;
-  late int gainPGA, CHOSA;
+  late int gainPGA, chosa;
   final String _channelName;
   late Polynomial calPoly10;
   late Polynomial calPoly12;
   late Polynomial voltToCode10;
   late Polynomial voltToCode12;
-  List<double> _adc_shifts = [];
-  List<Polynomial> _polynomials = [];
+  late List<double> adcShifts;
+  late List<Polynomial> _polynomials;
 
   AnalogInputSource(this._channelName) {
     AnalogConstants analogConstants = AnalogConstants();
+    adcShifts = [];
+    _polynomials = [];
     _range = analogConstants.inputRanges[_channelName]!;
     _gainValues = analogConstants.gains;
-    CHOSA = analogConstants.picADCMultiplex[_channelName]!;
+    chosa = analogConstants.picADCMultiplex[_channelName]!;
 
     calPoly10 = Polynomial.fromCoefficients(DataType.float, [0, 3.3 / 1023, 0]);
     calPoly12 = Polynomial.fromCoefficients(DataType.float, [0, 3.3 / 4095, 0]);
@@ -43,7 +46,7 @@ class AnalogInputSource {
 
   bool setGain(int index) {
     if (!gainEnabled) {
-      print("$_channelName: Analog gain is not available");
+      logger.e("$_channelName: Analog gain is not available");
       return false;
     }
     _gain = _gainValues[index];
@@ -83,7 +86,7 @@ class AnalogInputSource {
     List<double> calcData = List.filled(raw.length, 0.0);
     for (int i = 0; i < raw.length; i++) {
       double avgShifts =
-          (_adc_shifts[raw[i].floor()] + _adc_shifts[raw[i].ceil()]) / 2;
+          (adcShifts[raw[i].floor()] + adcShifts[raw[i].ceil()]) / 2;
       raw[i] -= 4095 * avgShifts / 3.3;
       calcData[i] = _polynomials[_gain as int].evaluate(raw[i]);
     }

@@ -180,6 +180,71 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                                         .setTimebase(value);
                                   },
                                 );
+                                switch (value) {
+                                  case 0:
+                                    oscilloscopeStateProvider.samples = 512;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  case 1:
+                                    oscilloscopeStateProvider.samples = 512;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  case 2:
+                                    oscilloscopeStateProvider.samples = 512;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  case 3:
+                                    oscilloscopeStateProvider.samples = 512;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  case 4:
+                                    oscilloscopeStateProvider.samples = 1024;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  case 5:
+                                    oscilloscopeStateProvider.samples = 1024;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  case 6:
+                                    oscilloscopeStateProvider.samples = 1024;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  case 7:
+                                    oscilloscopeStateProvider.samples = 1024;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                  default:
+                                    oscilloscopeStateProvider.samples = 512;
+                                    oscilloscopeStateProvider.timeGap = (2 *
+                                            oscilloscopeStateProvider
+                                                .timebase) /
+                                        oscilloscopeStateProvider.samples;
+                                    break;
+                                }
                               },
                             ),
                           ),
@@ -188,8 +253,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           width: 80,
                           child: Text(
                             oscilloscopeStateProvider.timebase == 875
-                                ? '${oscilloscopeStateProvider.timebase!.toStringAsFixed(2)} \u00b5s'
-                                : '${oscilloscopeStateProvider.timebase!.toStringAsFixed(2)} ms',
+                                ? '${oscilloscopeStateProvider.timebase.toStringAsFixed(2)} \u00b5s'
+                                : '${(oscilloscopeStateProvider.timebase / 1000).toStringAsFixed(2)} ms',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.normal,

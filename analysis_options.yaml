@@ -20,15 +20,5 @@ linter:
   # or a specific dart file by using the `// ignore: name_of_lint` and
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
-  rules:
-    avoid_print: false
-    constant_identifier_names: false
-    non_constant_identifier_names: false
-    prefer_final_fields: false
-    unnecessary_nullable_for_final_variable_declarations: false
-
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
-analyzer:
-  errors:
-    unused_element: ignore

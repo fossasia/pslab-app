@@ -19,7 +19,6 @@ class OscilloscopeScreen extends StatefulWidget {
 }
 
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
-  late OscilloscopeStateProvider oscilloscopeStateProvider;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -27,14 +26,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     });
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    oscilloscopeStateProvider =
-        Provider.of<OscilloscopeStateProvider>(context, listen: false);
-    oscilloscopeStateProvider.initialize();
-    super.didChangeDependencies();
   }
 
   void _setPortraitOrientation() {
@@ -54,64 +45,70 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   @override
   void dispose() {
     _setPortraitOrientation();
-    oscilloscopeStateProvider.destroy();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: CommonScaffold(
-        title: 'Oscilloscope',
-        body: Container(
-          margin: const EdgeInsets.only(left: 5, top: 5),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 87,
-                child: Container(
-                  margin: const EdgeInsets.only(right: 5),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 66,
-                        child: Container(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          color: Colors.black,
-                          child: const OscilloscopeGraph(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<OscilloscopeStateProvider>(
+          create: (_) => OscilloscopeStateProvider(),
+        ),
+      ],
+      child: SafeArea(
+        child: CommonScaffold(
+          title: 'Oscilloscope',
+          body: Container(
+            margin: const EdgeInsets.only(left: 5, top: 5),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 87,
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 5),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 66,
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            color: Colors.black,
+                            child: const OscilloscopeGraph(),
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 34,
-                        child: Selector<OscilloscopeStateProvider, int>(
-                          selector: (context, provider) =>
-                              provider.selectedIndex,
-                          builder: (context, selectedIndex, _) {
-                            switch (selectedIndex) {
-                              case 0:
-                                return const ChannelParametersWidget();
-                              case 1:
-                                return const TimebaseTriggerWidget();
-                              case 2:
-                                return const DataAnalysisWidget();
-                              case 3:
-                                return const XYPlotWidget();
-                              default:
-                                return const ChannelParametersWidget();
-                            }
-                          },
+                        Expanded(
+                          flex: 34,
+                          child: Selector<OscilloscopeStateProvider, int>(
+                            selector: (context, provider) =>
+                                provider.selectedIndex,
+                            builder: (context, selectedIndex, _) {
+                              switch (selectedIndex) {
+                                case 0:
+                                  return const ChannelParametersWidget();
+                                case 1:
+                                  return const TimebaseTriggerWidget();
+                                case 2:
+                                  return const DataAnalysisWidget();
+                                case 3:
+                                  return const XYPlotWidget();
+                                default:
+                                  return const ChannelParametersWidget();
+                              }
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const Expanded(
-                flex: 13,
-                child: OscilloscopeScreenTabs(),
-              )
-            ],
+                const Expanded(
+                  flex: 13,
+                  child: OscilloscopeScreenTabs(),
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -1,12 +1,12 @@
 import 'dart:collection';
 
 class DigitalChannel {
-  static const int EVERY_EDGE = 1;
-  static const int DISABLED = 0;
-  static const int EVERY_SIXTEENTH_RISING_EDGE = 5;
-  static const int EVERY_FOURTH_RISING_EDGE = 4;
-  static const int EVERY_RISING_EDGE = 3;
-  static const int EVERY_FALLING_EDGE = 2;
+  static const int everyEdge = 1;
+  static const int disabled = 0;
+  static const int everySixteenthRisingEdge = 5;
+  static const int everyFourthRisingEdge = 4;
+  static const int everyRisingEdge = 3;
+  static const int everyFallingEdge = 2;
   static List<String> digitalChannelNames = [
     'LA1',
     'LA2',
@@ -46,7 +46,7 @@ class DigitalChannel {
     maxT = 0;
     maxTime = 0;
     initialStateOverride = 0;
-    mode = EVERY_EDGE;
+    mode = everyEdge;
   }
 
   void loadData(
@@ -55,8 +55,8 @@ class DigitalChannel {
       initialState = (initialStateOverride - 1) == 1;
       initialStateOverride = 0;
     } else {
-      final int? s = initialStates[channelName]!;
-      initialState = s != null && s == 1;
+      final int s = initialStates[channelName]!;
+      initialState = s == 1;
     }
     this.timestamps.setRange(0, timestamps.length, timestamps);
     dLength = timestamps.length;
@@ -86,28 +86,28 @@ class DigitalChannel {
   }
 
   void generateAxes() {
-    int HIGH = 1, LOW = 0, state;
+    int high = 1, low = 0, state;
     if (initialState) {
-      state = LOW;
+      state = low;
     } else {
-      state = HIGH;
+      state = high;
     }
 
-    if (mode == DISABLED) {
+    if (mode == disabled) {
       xAxis[0] = 0;
       yAxis[0] = 0;
       plotLength = 1;
-    } else if (mode == EVERY_EDGE) {
+    } else if (mode == everyEdge) {
       xAxis[0] = 0;
       yAxis[0] = state as double;
       int length = 0;
       for (int i = 1, j = 1; i < dLength; i++, j++) {
         xAxis[j] = timestamps[i];
         yAxis[j] = state as double;
-        if (state == HIGH) {
-          state = LOW;
+        if (state == high) {
+          state = low;
         } else {
-          state = HIGH;
+          state = high;
         }
         j++;
         xAxis[j] = timestamps[i];
@@ -115,50 +115,42 @@ class DigitalChannel {
         length = j;
       }
       plotLength = length;
-    } else if (mode == EVERY_FALLING_EDGE) {
+    } else if (mode == everyFallingEdge) {
       xAxis[0] = 0;
-      yAxis[0] = HIGH as double;
+      yAxis[0] = high as double;
       int length = 0;
       for (int i = 1, j = 1; i < dLength; i++, j++) {
         xAxis[j] = timestamps[i];
-        yAxis[j] = HIGH as double;
+        yAxis[j] = high as double;
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = LOW as double;
+        yAxis[j] = low as double;
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = HIGH as double;
+        yAxis[j] = high as double;
         length = j;
       }
-      state = HIGH;
+      state = high;
       plotLength = length;
-    } else if (mode == EVERY_RISING_EDGE ||
-        mode == EVERY_FOURTH_RISING_EDGE ||
-        mode == EVERY_SIXTEENTH_RISING_EDGE) {
+    } else if (mode == everyRisingEdge ||
+        mode == everyFourthRisingEdge ||
+        mode == everySixteenthRisingEdge) {
       xAxis[0] = 0;
-      yAxis[0] = LOW as double;
+      yAxis[0] = low as double;
       int length = 0;
       for (int i = 1, j = 1; i < dLength; i++, j++) {
         xAxis[j] = timestamps[i];
-        yAxis[j] = LOW as double;
+        yAxis[j] = low as double;
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = HIGH as double;
+        yAxis[j] = high as double;
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = LOW as double;
+        yAxis[j] = low as double;
         length = j;
       }
-      state = LOW;
+      state = low;
       plotLength = length;
-    }
-
-    List<double> getXAxis() {
-      return List.from(xAxis.getRange(0, plotLength));
-    }
-
-    List<double> getYAxis() {
-      return List.from(yAxis.getRange(0, plotLength));
     }
   }
 }

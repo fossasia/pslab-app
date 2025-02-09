@@ -1,4 +1,5 @@
 import 'package:flutter_audio_capture/flutter_audio_capture.dart';
+import 'package:pslab/others/logger_service.dart';
 
 class AudioJack {
   static const int samplingRate = 44100;
@@ -24,10 +25,10 @@ class AudioJack {
   }
 
   void _onError(Object e) {
-    print(e);
+    logger.e(e);
   }
 
-  Future<void> close() async {
+  void close() async {
     await flutterAudioCapture.stop();
   }
 }

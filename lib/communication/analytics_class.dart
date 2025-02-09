@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:data/data.dart';
+import 'package:pslab/others/logger_service.dart';
 
 class AnalyticsClass {
   //---------------------------- Sine Fit ---------------------------------//
@@ -73,7 +74,7 @@ class AnalyticsClass {
     returnOffset = result.parameters[3];
 
     if (frequency < 0) {
-      print("sineFit: Negative frequency");
+      logger.w("sineFit: Negative frequency");
     }
 
     returnOffset += offset;
@@ -186,7 +187,7 @@ class AnalyticsClass {
     returnOffset = result.parameters[4];
 
     if (frequency < 0) {
-      print("squareFit: Negative frequency");
+      logger.w("squareFit: Negative frequency");
     }
 
     returnOffset += offset;

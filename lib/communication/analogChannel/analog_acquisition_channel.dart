@@ -3,7 +3,7 @@ import 'package:pslab/communication/analogChannel/analog_input_source.dart';
 class AnalogAcquisitionChannel {
   late int _resolution;
   late AnalogInputSource _analogInputSource;
-  late double _calibration_ref196;
+  late double calibrationRef196;
   late int length;
   late double _timebase;
   late int bufferIndex;
@@ -11,7 +11,7 @@ class AnalogAcquisitionChannel {
   List<double> yAxis = List.filled(10000, 0.0);
 
   AnalogAcquisitionChannel(String channel) {
-    _calibration_ref196 = 1;
+    calibrationRef196 = 1;
     _resolution = 10;
     length = 100;
     _timebase = 1;
@@ -23,13 +23,13 @@ class AnalogAcquisitionChannel {
     List<double> calcData = List.filled(val.length, 0.0);
     if (_resolution == 12) {
       for (int i = 0; i < val.length; i++) {
-        calcData[i] = _calibration_ref196 *
-            (_analogInputSource.calPoly12.evaluate(val[i]));
+        calcData[i] =
+            calibrationRef196 * (_analogInputSource.calPoly12.evaluate(val[i]));
       }
     } else {
       for (int i = 0; i < val.length; i++) {
-        calcData[i] = _calibration_ref196 *
-            (_analogInputSource.calPoly10.evaluate(val[i]));
+        calcData[i] =
+            calibrationRef196 * (_analogInputSource.calPoly10.evaluate(val[i]));
       }
     }
     return calcData;

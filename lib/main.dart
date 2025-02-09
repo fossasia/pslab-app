@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
-import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
@@ -20,7 +19,6 @@ void main() {
         ChangeNotifierProvider<BoardStateProvider>(
           create: (context) => getIt<BoardStateProvider>(),
         ),
-        ChangeNotifierProvider(create: (_) => OscilloscopeStateProvider()),
       ],
       child: const MyApp(),
     ),

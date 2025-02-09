@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:usb_serial/usb_serial.dart';
 
 class CommunicationHandler {
-  static const int PSLAB_VENDOR_ID_V5 = 1240;
-  static const int PSLAB_PRODUCT_ID_V5 = 223;
-  static const int PSLAB_VENDOR_ID_V6 = 0x10C4;
-  static const int PSLAB_PRODUCT_ID_V6 = 0xEA60;
+  static const int pslabVendorIdV5 = 1240;
+  static const int pslabProductIdV5 = 223;
+  static const int pslabVendorIdV6 = 0x10C4;
+  static const int pslabProductIdV6 = 0xEA60;
   UsbDevice? mDevice;
   UsbPort? mPort;
   bool connected = false;
@@ -16,19 +17,17 @@ class CommunicationHandler {
   Future<void> initialize() async {
     List<UsbDevice> devices = await UsbSerial.listDevices();
     for (UsbDevice device in devices) {
-      if ((device.vid == PSLAB_VENDOR_ID_V5 &&
-              device.pid == PSLAB_PRODUCT_ID_V5) ||
-          (device.vid == PSLAB_VENDOR_ID_V6 &&
-              device.pid == PSLAB_PRODUCT_ID_V6)) {
+      if ((device.vid == pslabVendorIdV5 && device.pid == pslabProductIdV5) ||
+          (device.vid == pslabVendorIdV6 && device.pid == pslabProductIdV6)) {
         mDevice = device;
         deviceFound = true;
         break;
       }
     }
     if (deviceFound) {
-      print("Found PSLab device");
+      logger.d("Found PSLab device");
     } else {
-      print("No drivers found");
+      logger.d("No drivers found");
     }
   }
 
@@ -36,19 +35,19 @@ class CommunicationHandler {
     if (!deviceFound) {
       throw Exception("Device not connected");
     }
-    mPort = await mDevice!.create();
+    mPort = await mDevice?.create();
 
-    bool openResult = await mPort!.open();
-    if (!openResult) {
+    bool? openResult = await mPort?.open();
+    if (!openResult!) {
       throw Exception("Failed to open");
     }
-    await mPort!.setPortParameters(
+    await mPort?.setPortParameters(
       1000000,
       UsbPort.DATABITS_8,
       UsbPort.STOPBITS_1,
       UsbPort.PARITY_NONE,
     );
-    mPort!.inputStream!.listen((_) => ());
+    mPort?.inputStream?.listen((_) => ());
     connected = true;
   }
 
@@ -72,7 +71,7 @@ class CommunicationHandler {
         int readNow = receivedData.length;
 
         if (readNow == 0) {
-          print("Read Error: $bytesToBeReadTemp");
+          logger.e("Read Error: $bytesToBeReadTemp");
           return numBytesRead;
         } else {
           int readLength = readNow.clamp(0, bytesToBeReadTemp);
@@ -86,14 +85,14 @@ class CommunicationHandler {
         }
       }
     } catch (e) {
-      print("Exception during read: $e");
+      logger.e("Exception during read: $e");
     }
 
-    print("Bytes Read: $numBytesRead");
+    logger.d("Bytes Read: $numBytesRead");
     return numBytesRead;
   }
 
   void write(Uint8List src, int timeoutMillis) {
-    mPort!.write(src);
+    mPort?.write(src);
   }
 }

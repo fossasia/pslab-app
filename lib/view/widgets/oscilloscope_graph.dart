@@ -132,7 +132,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
               ),
               maxY: provider.yAxisScale,
               minY: -provider.yAxisScale,
-              maxX: oscilloscopeStateProvider.timebase,
+              maxX: oscilloscopeStateProvider.timebase == 875
+                  ? oscilloscopeStateProvider.timebase
+                  : oscilloscopeStateProvider.timebase / 1000,
               minX: 0,
               clipData: const FlClipData.all(),
               lineBarsData: oscilloscopeStateProvider.createLineBarsData(),

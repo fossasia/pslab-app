@@ -1,8 +1,9 @@
 import 'package:pslab/communication/communication_handler.dart';
 import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/others/logger_service.dart';
 
 class ScienceLabCommon {
-  static ScienceLab? scienceLab;
+  static late ScienceLab scienceLab;
   bool connected = false;
 
   ScienceLabCommon._privateConstructor();
@@ -14,9 +15,9 @@ class ScienceLabCommon {
 
   Future<bool> openDevice(CommunicationHandler communicationHandler) async {
     scienceLab = ScienceLab(communicationHandler);
-    await scienceLab!.connect();
-    if (!scienceLab!.isConnected()) {
-      print("Error in connection");
+    await scienceLab.connect();
+    if (!scienceLab.isConnected()) {
+      logger.d("Error in connection");
       return false;
     }
     connected = true;

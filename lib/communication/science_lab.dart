@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/communication_handler.dart';
 import 'package:pslab/communication/packet_handler.dart';
+import 'package:pslab/others/logger_service.dart';
 
 import 'analogChannel/analog_acquisition_channel.dart';
 import 'analogChannel/analog_constants.dart';
@@ -10,8 +11,8 @@ import 'analogChannel/analog_input_source.dart';
 import 'digitalChannel/digital_channel.dart';
 
 class ScienceLab {
-  late int DDS_CLOCK,
-      MAX_SAMPLES,
+  late int ddsClock,
+      maxSamples,
       samples,
       triggerLevel,
       triggerChannel,
@@ -21,7 +22,7 @@ class ScienceLab {
       dataSplitting;
   late double sin1Frequency, sin2Frequency;
   late List<double> currents, currentScalars, gainValues, buffer;
-  late double SOCKET_CAPACITANCE, resistanceScaling, timebase;
+  late double socketCapacitance, resistanceScaling, timebase;
   late bool streaming, calibrated = false;
   late List<String> allAnalogChannels, allDigitalChannels;
   Map<String, AnalogInputSource> analogInputSources = {};
@@ -48,7 +49,7 @@ class ScienceLab {
         await mCommunicationHandler.open();
         mPacketHandler = PacketHandler(500, mCommunicationHandler);
       } catch (e) {
-        print(e);
+        logger.e(e);
       }
     }
     if (isConnected()) {
@@ -73,10 +74,10 @@ class ScienceLab {
   }
 
   Future<void> _initializeVariables() async {
-    DDS_CLOCK = 0;
+    ddsClock = 0;
     timebase = 40;
-    MAX_SAMPLES = mCommandsProto.MAX_SAMPLES;
-    samples = MAX_SAMPLES;
+    maxSamples = mCommandsProto.maxSamples;
+    samples = maxSamples;
     triggerChannel = 0;
     triggerLevel = 550;
     errorCount = 0;
@@ -84,7 +85,7 @@ class ScienceLab {
     digitalChannelsInBuffer = 0;
     currents = [0.55e-3, 0.55e-6, 0.55e-5, 0.55e-4];
     currentScalars = [1.0, 1.0, 1.0, 1.0];
-    dataSplitting = mCommandsProto.DATA_SPLITTING;
+    dataSplitting = mCommandsProto.dataSplitting;
     allAnalogChannels = mAnalogConstants.allAnalogChannels;
     for (String aChannel in allAnalogChannels) {
       analogInputSources[aChannel] = AnalogInputSource(aChannel);
@@ -103,7 +104,7 @@ class ScienceLab {
 
   Future<void> runInitSequence(bool loadCalibrationData) async {
     if (!isConnected()) {
-      print("Check hardware connections. Not connected");
+      logger.d("Check hardware connections. Not connected");
     }
     streaming = false;
     for (String aChannel in mAnalogConstants.biPolars) {
@@ -111,7 +112,7 @@ class ScienceLab {
     }
     gainValues = mAnalogConstants.gains;
     buffer = List.filled(10000, 0);
-    SOCKET_CAPACITANCE = 5e-11;
+    socketCapacitance = 5e-11;
     resistanceScaling = 1;
     allDigitalChannels = DigitalChannel.digitalChannelNames;
     gains['CH1'] = 0;
@@ -131,59 +132,59 @@ class ScienceLab {
   }
 
   Future<void> captureTraces(int number, int samples, double timeGap,
-      String? channelOneInput, bool trigger, int? CH123SA) async {
-    CH123SA ??= 0;
+      String? channelOneInput, bool trigger, int? ch123sa) async {
+    ch123sa ??= 0;
     channelOneInput ??= 'CH1';
     timebase = timeGap;
     timebase = timebase.toInt().toDouble();
     if (!analogInputSources.containsKey(channelOneInput)) {
-      print("Invalid channel: $channelOneInput");
+      logger.e("Invalid channel: $channelOneInput");
       return;
     }
-    int CHOSA = analogInputSources[channelOneInput]!.CHOSA;
+    int chosa = analogInputSources[channelOneInput]!.chosa;
     aChannels[0].setParams(channelOneInput, samples, 0, timebase, 10,
         analogInputSources[channelOneInput], null);
     try {
-      mPacketHandler.sendByte(mCommandsProto.ADC);
+      mPacketHandler.sendByte(mCommandsProto.adc);
       if (number == 1) {
         if (timeGap < 0.5) {
           timebase = 0.5;
         }
-        if (samples > MAX_SAMPLES) {
-          samples = MAX_SAMPLES;
+        if (samples > maxSamples) {
+          samples = maxSamples;
         }
         if (trigger) {
           if (timeGap < 0.75) {
             timebase = 0.75;
           }
-          mPacketHandler.sendByte(mCommandsProto.CAPTURE_ONE);
-          mPacketHandler.sendByte(CHOSA | 0x80);
+          mPacketHandler.sendByte(mCommandsProto.captureOne);
+          mPacketHandler.sendByte(chosa | 0x80);
         } else if (timeGap > 1) {
           aChannels[0].setParams(channelOneInput, samples, 0, timebase, 12,
               analogInputSources[channelOneInput], null);
-          mPacketHandler.sendByte(mCommandsProto.CAPTURE_DMASPEED);
-          mPacketHandler.sendByte(CHOSA | 0x80);
+          mPacketHandler.sendByte(mCommandsProto.captureDmaSpeed);
+          mPacketHandler.sendByte(chosa | 0x80);
         } else {
-          mPacketHandler.sendByte(mCommandsProto.CAPTURE_DMASPEED);
-          mPacketHandler.sendByte(CHOSA);
+          mPacketHandler.sendByte(mCommandsProto.captureDmaSpeed);
+          mPacketHandler.sendByte(chosa);
         }
       } else if (number == 2) {
         if (timeGap < 0.875) {
           timebase = 0.875;
         }
-        if (samples > MAX_SAMPLES / 2) {
-          samples = (MAX_SAMPLES / 2).toInt();
+        if (samples > maxSamples / 2) {
+          samples = (maxSamples / 2).toInt();
         }
         aChannels[1].setParams('CH2', samples, samples, timebase, 10,
             analogInputSources['CH2'], null);
-        mPacketHandler.sendByte(mCommandsProto.CAPTURE_TWO);
-        mPacketHandler.sendByte(CHOSA | (0x80 * (trigger ? 1 : 0)));
+        mPacketHandler.sendByte(mCommandsProto.captureTwo);
+        mPacketHandler.sendByte(chosa | (0x80 * (trigger ? 1 : 0)));
       } else {
         if (timeGap < 1.75) {
           timebase = 1.75;
         }
-        if (samples > MAX_SAMPLES / 4) {
-          samples = (MAX_SAMPLES / 4).toInt();
+        if (samples > maxSamples / 4) {
+          samples = (maxSamples / 4).toInt();
         }
         int i = 1;
         for (String temp in ['CH2', 'CH3', 'MIC']) {
@@ -191,9 +192,9 @@ class ScienceLab {
               analogInputSources[temp], null);
           i++;
         }
-        mPacketHandler.sendByte(mCommandsProto.CAPTURE_FOUR);
+        mPacketHandler.sendByte(mCommandsProto.captureFour);
         mPacketHandler
-            .sendByte(CHOSA | (CH123SA << 4) | (0x80 * (trigger ? 1 : 0)));
+            .sendByte(chosa | (ch123sa << 4) | (0x80 * (trigger ? 1 : 0)));
       }
       this.samples = samples;
       mPacketHandler.sendInt(samples);
@@ -201,7 +202,7 @@ class ScienceLab {
       await mPacketHandler.getAcknowledgement();
       channelsInBuffer = number;
     } catch (e) {
-      print(e);
+      logger.e(e);
     }
   }
 
@@ -216,16 +217,16 @@ class ScienceLab {
   Future<bool> fetchData(int channelNumber) async {
     int samples = aChannels[channelNumber - 1].length;
     if (channelNumber > channelsInBuffer) {
-      print("Channel Unavailable");
+      logger.e("Channel Unavailable");
       return false;
     }
-    print("Samples: $samples");
-    print("Data Splitting: $dataSplitting");
+    logger.d("Samples: $samples");
+    logger.d("Data Splitting: $dataSplitting");
     List<int> listData = [];
     try {
       for (int i = 0; i < samples / dataSplitting; i++) {
-        mPacketHandler.sendByte(mCommandsProto.COMMON);
-        mPacketHandler.sendByte(mCommandsProto.RETRIEVE_BUFFER);
+        mPacketHandler.sendByte(mCommandsProto.common);
+        mPacketHandler.sendByte(mCommandsProto.retrieveBuffer);
         mPacketHandler.sendInt(
             aChannels[channelNumber - 1].bufferIndex + (i * dataSplitting));
         mPacketHandler.sendInt(dataSplitting);
@@ -236,8 +237,8 @@ class ScienceLab {
         }
       }
       if ((samples % dataSplitting) != 0) {
-        mPacketHandler.sendByte(mCommandsProto.COMMON);
-        mPacketHandler.sendByte(mCommandsProto.RETRIEVE_BUFFER);
+        mPacketHandler.sendByte(mCommandsProto.common);
+        mPacketHandler.sendByte(mCommandsProto.retrieveBuffer);
         mPacketHandler.sendInt(aChannels[channelNumber - 1].bufferIndex +
             samples -
             samples % dataSplitting);
@@ -249,7 +250,7 @@ class ScienceLab {
         }
       }
     } catch (e) {
-      print(e);
+      logger.e(e);
     }
 
     for (int i = 0; i < listData.length / 2; i++) {
@@ -259,7 +260,7 @@ class ScienceLab {
       }
     }
 
-    print("RAW DATA: ${buffer.sublist(0, samples).toString()}");
+    logger.d("RAW DATA: ${buffer.sublist(0, samples).toString()}");
 
     aChannels[channelNumber - 1].yAxis =
         aChannels[channelNumber - 1].fixValue(buffer.sublist(0, samples));
@@ -269,11 +270,11 @@ class ScienceLab {
   Future<double> setGain(String channel, int gain, bool? force) async {
     force ??= false;
     if (gain < 0 || gain > 8) {
-      print("Invalid gain parameter. 0-7 only.");
+      logger.e("Invalid gain parameter. 0-7 only.");
       return 0;
     }
-    if (analogInputSources[channel]!.gainPGA == -1) {
-      print("No amplifier exists on this channel: $channel");
+    if (analogInputSources[channel]?.gainPGA == -1) {
+      logger.e("No amplifier exists on this channel: $channel");
       return 0;
     }
     bool refresh = false;
@@ -282,19 +283,19 @@ class ScienceLab {
       refresh = true;
     }
     if (refresh || force) {
-      analogInputSources[channel]!.setGain(gain);
+      analogInputSources[channel]?.setGain(gain);
       if (gain > 7) {
         gain = 0;
       }
       try {
-        mPacketHandler.sendByte(mCommandsProto.ADC);
-        mPacketHandler.sendByte(mCommandsProto.SET_PGA_GAIN);
+        mPacketHandler.sendByte(mCommandsProto.adc);
+        mPacketHandler.sendByte(mCommandsProto.setPgaGain);
         mPacketHandler.sendByte(analogInputSources[channel]!.gainPGA);
         mPacketHandler.sendByte(gain);
         await mPacketHandler.getAcknowledgement();
         return gainValues[gain];
       } catch (e) {
-        print(e);
+        logger.e(e);
       }
     }
     return 0;
@@ -343,13 +344,13 @@ class ScienceLab {
     if (channels.contains(channel)) {
       num = channels.indexOf(channel) + 1;
     } else {
-      print("Channel doesn't exist. Try SI1 or SI2");
+      logger.e("Channel doesn't exist. Try SI1 or SI2");
       return;
     }
     if (amp == -1) {
       amp = 0.95;
     }
-    double LARGE_MAX = 511 * amp, SMALL_MAX = 63 * amp;
+    double largeMax = 511 * amp, smallMax = 63 * amp;
     double minimum = y.reduce(min);
     for (int i = 0; i < y.length; i++) {
       y[i] = y[i] - minimum;
@@ -358,7 +359,7 @@ class ScienceLab {
     List<int> yMod1 = [];
     for (int i = 0; i < y.length; i++) {
       double temp = 1 - (y[i] / maximum);
-      yMod1.add((LARGE_MAX - LARGE_MAX * temp).round());
+      yMod1.add((largeMax - largeMax * temp).round());
     }
     y = [];
     for (int i = 0; i < points.length; i += 16) {
@@ -372,17 +373,17 @@ class ScienceLab {
     List<int> yMod2 = [];
     for (int i = 0; i < y.length; i++) {
       double temp = 1 - (y[i] / maximum);
-      yMod2.add((SMALL_MAX - SMALL_MAX * temp).round());
+      yMod2.add((smallMax - smallMax * temp).round());
     }
 
     try {
-      mPacketHandler.sendByte(mCommandsProto.WAVEGEN);
+      mPacketHandler.sendByte(mCommandsProto.wavegen);
       switch (num) {
         case 1:
-          mPacketHandler.sendByte(mCommandsProto.LOAD_WAVEFORM1);
+          mPacketHandler.sendByte(mCommandsProto.loadWaveform1);
           break;
         case 2:
-          mPacketHandler.sendByte(mCommandsProto.LOAD_WAVEFORM2);
+          mPacketHandler.sendByte(mCommandsProto.loadWaveform2);
           break;
       }
       for (int a in yMod1) {
@@ -393,7 +394,7 @@ class ScienceLab {
       }
       await mPacketHandler.getAcknowledgement();
     } catch (e) {
-      print(e);
+      logger.e(e);
     }
   }
 }
