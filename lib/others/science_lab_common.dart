@@ -1,4 +1,4 @@
-import 'package:pslab/communication/communication_handler.dart';
+import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/logger_service.dart';
 

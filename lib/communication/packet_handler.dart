@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
-import 'package:pslab/communication/communication_handler.dart';
+import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/others/logger_service.dart';
 
 class PacketHandler {

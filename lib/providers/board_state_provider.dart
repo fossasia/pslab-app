@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:pslab/communication/communication_handler.dart';
+import 'package:get_it/get_it.dart';
+import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:usb_serial/usb_serial.dart';
 
@@ -15,7 +16,7 @@ class BoardStateProvider extends ChangeNotifier {
 
   Future<void> initialize() async {
     scienceLabCommon = ScienceLabCommon();
-    communicationHandler = CommunicationHandler();
+    communicationHandler = GetIt.instance.get<CommunicationHandler>();
     await communicationHandler.initialize();
     pslabIsConnected = await scienceLabCommon.openDevice(communicationHandler);
     setPSLabVersionIDs();

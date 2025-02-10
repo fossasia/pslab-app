@@ -57,10 +57,11 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
           create: (_) => OscilloscopeStateProvider(),
         ),
       ],
-      child: SafeArea(
-        child: CommonScaffold(
-          title: 'Oscilloscope',
-          body: Container(
+      child: CommonScaffold(
+        title: 'Oscilloscope',
+        body: SafeArea(
+          minimum: const EdgeInsets.only(right: 0, bottom: 0),
+          child: Container(
             margin: const EdgeInsets.only(left: 5, top: 5),
             child: Row(
               children: [

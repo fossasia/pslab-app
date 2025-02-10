@@ -1,19 +1,25 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:usb_serial/usb_serial.dart';
 
-class CommunicationHandler {
+class AndroidUSBCommunicationHandler implements CommunicationHandler {
   static const int pslabVendorIdV5 = 1240;
   static const int pslabProductIdV5 = 223;
   static const int pslabVendorIdV6 = 0x10C4;
   static const int pslabProductIdV6 = 0xEA60;
   UsbDevice? mDevice;
   UsbPort? mPort;
+
+  @override
   bool connected = false;
+
+  @override
   bool deviceFound = false;
 
+  @override
   Future<void> initialize() async {
     List<UsbDevice> devices = await UsbSerial.listDevices();
     for (UsbDevice device in devices) {
@@ -31,6 +37,7 @@ class CommunicationHandler {
     }
   }
 
+  @override
   Future<void> open() async {
     if (!deviceFound) {
       throw Exception("Device not connected");
@@ -51,16 +58,20 @@ class CommunicationHandler {
     connected = true;
   }
 
+  @override
   bool isDeviceFound() => deviceFound;
 
+  @override
   bool isConnected() => connected;
 
+  @override
   void close() {
     if (!connected || mPort == null) return;
     mPort?.close();
     connected = false;
   }
 
+  @override
   Future<int> read(Uint8List dest, int bytesToRead, int timeoutMillis) async {
     int numBytesRead = 0;
     int bytesToBeReadTemp = bytesToRead;
@@ -92,6 +103,7 @@ class CommunicationHandler {
     return numBytesRead;
   }
 
+  @override
   void write(Uint8List src, int timeoutMillis) {
     mPort?.write(src);
   }
