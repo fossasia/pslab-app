@@ -6,8 +6,8 @@ class ScienceLabCommon {
   static late ScienceLab _scienceLab;
   static late CommunicationHandler communicationHandler;
 
-  ScienceLabCommon(CommunicationHandler communicationHandler) {
-    communicationHandler = communicationHandler;
+  ScienceLabCommon(CommunicationHandler mCommunicationHandler) {
+    communicationHandler = mCommunicationHandler;
     _scienceLab = ScienceLab(communicationHandler);
   }
 
