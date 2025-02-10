@@ -3,24 +3,40 @@ import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/logger_service.dart';
 
 class ScienceLabCommon {
-  static late ScienceLab scienceLab;
-  bool connected = false;
+  static late ScienceLab _scienceLab;
+  static late CommunicationHandler communicationHandler;
 
-  ScienceLabCommon._privateConstructor();
+  ScienceLabCommon(CommunicationHandler communicationHandler) {
+    communicationHandler = communicationHandler;
+    _scienceLab = ScienceLab(communicationHandler);
+  }
 
-  static final ScienceLabCommon _instance =
-      ScienceLabCommon._privateConstructor();
+  ScienceLab getScienceLab() {
+    return _scienceLab;
+  }
 
-  factory ScienceLabCommon() => _instance;
-
-  Future<bool> openDevice(CommunicationHandler communicationHandler) async {
-    scienceLab = ScienceLab(communicationHandler);
-    await scienceLab.connect();
-    if (!scienceLab.isConnected()) {
+  Future<bool> openDevice() async {
+    await _scienceLab.connect();
+    if (!_scienceLab.isConnected()) {
       logger.d("Error in connection");
       return false;
     }
-    connected = true;
     return true;
+  }
+
+  Future<void> initialize() {
+    return communicationHandler.initialize();
+  }
+
+  void setConnected() {
+    communicationHandler.connected = true;
+  }
+
+  bool isConnected() {
+    return communicationHandler.isConnected();
+  }
+
+  bool isDeviceFound() {
+    return communicationHandler.isDeviceFound();
   }
 }

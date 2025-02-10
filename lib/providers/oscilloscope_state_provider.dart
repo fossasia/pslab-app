@@ -6,7 +6,7 @@ import 'package:data/data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/others/logger_service.dart';
-import 'package:pslab/others/science_lab_common.dart';
+import 'package:pslab/providers/locator.dart';
 
 import '../communication/analytics_class.dart';
 import '../communication/science_lab.dart';
@@ -118,7 +118,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     _channelIndexMap[CHANNEL.ch3.toString()] = 3;
     _channelIndexMap[CHANNEL.mic.toString()] = 4;
 
-    _scienceLab = ScienceLabCommon.scienceLab;
+    _scienceLab = getIt.get<ScienceLab>();
     triggerChannel = CHANNEL.ch1.toString();
     _trigger = 0;
     timebase = 875;
