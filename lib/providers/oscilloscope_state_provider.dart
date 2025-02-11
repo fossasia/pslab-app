@@ -24,9 +24,8 @@ enum ChannelMeasurements {
   negativePeak
 }
 
-AudioJack? _audioJack;
-
 class OscilloscopeStateProvider extends ChangeNotifier {
+  late AudioJack _audioJack;
   late int _selectedIndex;
 
   int get selectedIndex => _selectedIndex;
@@ -88,6 +87,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late Timer _timer;
 
   OscilloscopeStateProvider() {
+    _audioJack = AudioJack();
     _selectedIndex = 0;
 
     isCH1Selected = false;
@@ -160,9 +160,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         _isProcessing = true;
 
         if (_isRunning) {
-          if (isInBuiltMICSelected && _audioJack == null) {
-            _audioJack = AudioJack();
-            await _audioJack?.configure();
+          if (isInBuiltMICSelected && !_audioJack.isListening()) {
+            await _audioJack.initialize();
+            await _audioJack.start();
           }
 
           List<String> channels = [];
@@ -190,6 +190,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             } else {
               dataEntries = [];
             }
+          }
+          if (!isInBuiltMICSelected && _audioJack.isListening()) {
+            await _audioJack.close();
           }
         }
         _isProcessing = false;
@@ -348,8 +351,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         noOfChannels++;
         isTriggered = false;
         entries.add([]);
-        _audioJack ??= AudioJack();
-        List<double> buffer = _audioJack!.read();
+        List<double> buffer = _audioJack.read();
         xDataString = List.filled(buffer.length, '');
         yDataString.add(List.filled(buffer.length, ''));
 
@@ -513,17 +515,20 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       Colors.white,
       Colors.deepPurple
     ];
-    return List<LineChartBarData>.generate(dataEntries.length, (index) {
-      return LineChartBarData(
-        spots: dataEntries[index],
-        isCurved: true,
-        color: colors[index % colors.length],
-        barWidth: 1,
-        dotData: const FlDotData(
-          show: false,
-        ),
-      );
-    });
+    return List<LineChartBarData>.generate(
+      dataEntries.length,
+      (index) {
+        return LineChartBarData(
+          spots: dataEntries[index],
+          isCurved: true,
+          color: colors[index % colors.length],
+          barWidth: 1,
+          dotData: const FlDotData(
+            show: false,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -532,6 +537,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (_timer.isActive) {
       _timer.cancel();
     }
+    _audioJack.close();
     super.dispose();
   }
 }

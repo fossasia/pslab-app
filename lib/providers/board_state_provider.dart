@@ -21,19 +21,21 @@ class BoardStateProvider extends ChangeNotifier {
     await scienceLabCommon.initialize();
     pslabIsConnected = await scienceLabCommon.openDevice();
     setPSLabVersionIDs();
-    UsbSerial.usbEventStream?.listen((UsbEvent usbEvent) async {
-      if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
-        if (await attemptToConnectPSLab()) {
-          pslabIsConnected = await scienceLabCommon.openDevice();
-          setPSLabVersionIDs();
+    UsbSerial.usbEventStream?.listen(
+      (UsbEvent usbEvent) async {
+        if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
+          if (await attemptToConnectPSLab()) {
+            pslabIsConnected = await scienceLabCommon.openDevice();
+            setPSLabVersionIDs();
+          }
+        } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED) {
+          scienceLabCommon.setConnected(false);
+          pslabIsConnected = false;
+          pslabVersionID = 'Not Connected';
+          notifyListeners();
         }
-      } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED) {
-        scienceLabCommon.setConnected();
-        pslabIsConnected = false;
-        pslabVersionID = 'Not Connected';
-        notifyListeners();
-      }
-    });
+      },
+    );
   }
 
   Future<void> setPSLabVersionIDs() async {

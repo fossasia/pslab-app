@@ -28,8 +28,8 @@ class ScienceLabCommon {
     return communicationHandler.initialize();
   }
 
-  void setConnected() {
-    communicationHandler.connected = true;
+  void setConnected(bool connected) {
+    communicationHandler.connected = connected;
   }
 
   bool isConnected() {
