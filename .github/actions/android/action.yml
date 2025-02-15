@@ -47,6 +47,7 @@ runs:
         VERSION_CODE: ${{inputs.VERSION_CODE}}
       run: |
         flutter build apk --debug --build-name $VERSION_NAME --build-number $VERSION_CODE
+        flutter build apk --profile --build-name $VERSION_NAME --build-number $VERSION_CODE
         flutter build apk --build-name $VERSION_NAME --build-number $VERSION_CODE
         flutter build appbundle --build-name $VERSION_NAME --build-number $VERSION_CODE
 
@@ -55,4 +56,4 @@ runs:
       with:
         name: apk-files
         path: |
-          build/app/outputs/flutter-apk/app-debug.apk
+          build/app/outputs/flutter-apk/app-profile.apk
