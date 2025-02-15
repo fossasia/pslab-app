@@ -30,6 +30,7 @@ class AnalyticsClass {
 
     complex = fft(yReal2.map((x) => Complex(x)).toList());
     yHat = fftToRfft(complex);
+    yHatSquare = List<double>.filled(yHat.length, 0);
     for (int i = 0; i < yHat.length; i++) {
       yHatSquare[i] = pow(yHat[i], 2).toDouble();
       if (yHatSquare[i] > maximum) {
@@ -125,7 +126,7 @@ class AnalyticsClass {
     }
 
     double amplitude = (sumGreaterThanOffset / n1) - (sumLesserThanOffset / n2);
-    List<bool> bools = [];
+    List<bool> bools = List.filled(yTmp.length - 1, false);
     double tmp;
     for (int i = 0; i < yTmp.length - 1; i++) {
       tmp = yTmp[i + 1] - yTmp[i];

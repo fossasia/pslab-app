@@ -86,34 +86,44 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
                             case 0:
-                              oscilloscopeStateProvider.setYAxisScale(16);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(16);
                               break;
                             case 1:
-                              oscilloscopeStateProvider.setYAxisScale(8);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(8);
                               break;
                             case 2:
-                              oscilloscopeStateProvider.setYAxisScale(4);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(4);
                               break;
                             case 3:
-                              oscilloscopeStateProvider.setYAxisScale(3);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(3);
                               break;
                             case 4:
-                              oscilloscopeStateProvider.setYAxisScale(2);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(2);
                               break;
                             case 5:
-                              oscilloscopeStateProvider.setYAxisScale(1.5);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(1.5);
                               break;
                             case 6:
-                              oscilloscopeStateProvider.setYAxisScale(1);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(1);
                               break;
                             case 7:
-                              oscilloscopeStateProvider.setYAxisScale(0.5);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(0.5);
                               break;
                             case 8:
-                              oscilloscopeStateProvider.setYAxisScale(160);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(160);
                               break;
                             default:
-                              oscilloscopeStateProvider.setYAxisScale(16);
+                              oscilloscopeStateProvider.oscillscopeAxesScale
+                                  .setYAxisScale(16);
                               break;
                           }
                           oscilloscopeStateProvider.oscillscopeRangeSelection =
