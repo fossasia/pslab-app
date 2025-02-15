@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
+import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 class XYPlotWidget extends StatefulWidget {
   const XYPlotWidget({super.key});
@@ -8,10 +11,10 @@ class XYPlotWidget extends StatefulWidget {
 }
 
 class _XYPlotState extends State<XYPlotWidget> {
-  bool? isXYPlotSelected = false;
-
   @override
   Widget build(BuildContext context) {
+    OscilloscopeStateProvider oscilloscopeStateProvider =
+        Provider.of<OscilloscopeStateProvider>(context, listen: false);
     return Stack(
       children: [
         Container(
@@ -32,11 +35,11 @@ class _XYPlotState extends State<XYPlotWidget> {
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       activeColor: const Color(0xFFCE525F),
-                      value: isXYPlotSelected,
+                      value: oscilloscopeStateProvider.isXYPlotSelected,
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            isXYPlotSelected = value;
+                            oscilloscopeStateProvider.isXYPlotSelected = value!;
                           },
                         );
                       },
@@ -60,14 +63,9 @@ class _XYPlotState extends State<XYPlotWidget> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     DropdownMenu<String>(
-                      width: 90,
-                      initialSelection: 'CH1',
-                      dropdownMenuEntries: <String>[
-                        'CH1',
-                        'CH2',
-                        'CH3',
-                        'MIC',
-                      ].map(
+                      width: 95,
+                      initialSelection: oscilloscopeStateProvider.xyPlotAxis1,
+                      dropdownMenuEntries: channelEntries.map(
                         (String value) {
                           return DropdownMenuEntry<String>(
                             label: value,
@@ -81,16 +79,14 @@ class _XYPlotState extends State<XYPlotWidget> {
                       textStyle: const TextStyle(
                         fontSize: 15,
                       ),
+                      onSelected: (String? value) {
+                        oscilloscopeStateProvider.xyPlotAxis1 = value!;
+                      },
                     ),
                     DropdownMenu<String>(
-                      width: 90,
-                      initialSelection: 'CH2',
-                      dropdownMenuEntries: <String>[
-                        'CH1',
-                        'CH2',
-                        'CH3',
-                        'MIC',
-                      ].map(
+                      width: 95,
+                      initialSelection: oscilloscopeStateProvider.xyPlotAxis2,
+                      dropdownMenuEntries: channelEntries.map(
                         (String value) {
                           return DropdownMenuEntry<String>(
                             label: value,
@@ -104,6 +100,9 @@ class _XYPlotState extends State<XYPlotWidget> {
                       textStyle: const TextStyle(
                         fontSize: 15,
                       ),
+                      onSelected: (String? value) {
+                        oscilloscopeStateProvider.xyPlotAxis2 = value!;
+                      },
                     ),
                   ],
                 ),

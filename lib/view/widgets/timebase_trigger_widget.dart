@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 class TimebaseTriggerWidget extends StatefulWidget {
@@ -10,9 +11,6 @@ class TimebaseTriggerWidget extends StatefulWidget {
 }
 
 class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
-  double triggerValue = 0;
-  bool? isTriggerChecked = false;
-
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
@@ -36,11 +34,12 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       activeColor: const Color(0xFFCE525F),
-                      value: isTriggerChecked,
+                      value: oscilloscopeStateProvider.isTriggerSelected,
                       onChanged: (bool? value) {
                         setState(
                           () {
-                            isTriggerChecked = value;
+                            oscilloscopeStateProvider.isTriggerSelected =
+                                value!;
                           },
                         );
                       },
@@ -56,14 +55,10 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: DropdownMenu<String>(
-                        width: 90,
-                        initialSelection: 'CH1',
-                        dropdownMenuEntries: <String>[
-                          'CH1',
-                          'CH2',
-                          'CH3',
-                          'MIC',
-                        ].map(
+                        width: 95,
+                        initialSelection:
+                            oscilloscopeStateProvider.triggerChannel,
+                        dropdownMenuEntries: channelEntries.map(
                           (String value) {
                             return DropdownMenuEntry<String>(
                               label: value,
@@ -77,6 +72,9 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         textStyle: const TextStyle(
                           fontSize: 15,
                         ),
+                        onSelected: (String? value) {
+                          oscilloscopeStateProvider.triggerChannel = value!;
+                        },
                       ),
                     ),
                     Expanded(
@@ -87,17 +85,19 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                               RoundSliderThumbShape(enabledThumbRadius: 6),
                         ),
                         child: Selector<OscilloscopeStateProvider, double>(
-                          selector: (context, provider) => provider.yAxisScale,
+                          selector: (context, provider) =>
+                              provider.oscillscopeAxesScale.yAxisScale,
                           builder: (context, yAxisScale, _) {
                             return Slider(
                               activeColor: const Color(0xFFCE525F),
                               min: -yAxisScale,
                               max: yAxisScale,
-                              value: triggerValue,
+                              value: oscilloscopeStateProvider.trigger
+                                  .clamp(-yAxisScale, yAxisScale),
                               onChanged: (double value) {
                                 setState(
                                   () {
-                                    triggerValue = value;
+                                    oscilloscopeStateProvider.trigger = value;
                                   },
                                 );
                               },
@@ -107,7 +107,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       ),
                     ),
                     Text(
-                      '${triggerValue.toStringAsFixed(1)} V',
+                      '${oscilloscopeStateProvider.trigger.toStringAsFixed(1)} V',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.normal,
@@ -117,8 +117,15 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 32),
                       child: DropdownMenu<String>(
-                        width: 150,
-                        initialSelection: 'Rising Edge',
+                        width: 155,
+                        initialSelection:
+                            oscilloscopeStateProvider.triggerMode ==
+                                    MODE.rising.toString()
+                                ? 'Rising Edge'
+                                : oscilloscopeStateProvider.triggerMode ==
+                                        MODE.falling.toString()
+                                    ? 'Falling Edge'
+                                    : 'Dual Edge',
                         dropdownMenuEntries: <String>[
                           'Rising Edge',
                           'Falling Edge',
@@ -137,6 +144,22 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         textStyle: const TextStyle(
                           fontSize: 14,
                         ),
+                        onSelected: (String? value) {
+                          switch (value) {
+                            case 'Rising Edge':
+                              oscilloscopeStateProvider.triggerMode =
+                                  MODE.rising.toString();
+                              break;
+                            case 'Falling Edge':
+                              oscilloscopeStateProvider.triggerMode =
+                                  MODE.falling.toString();
+                              break;
+                            case 'Dual Edge':
+                              oscilloscopeStateProvider.triggerMode =
+                                  MODE.dual.toString();
+                              break;
+                          }
+                        },
                       ),
                     ),
                   ],
@@ -172,7 +195,10 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                               .toDouble(),
                           divisions:
                               oscilloscopeStateProvider.timebaseDivisions,
-                          value: oscilloscopeStateProvider.timebaseSlider,
+                          value: oscilloscopeStateProvider.timebaseSlider.clamp(
+                              0,
+                              oscilloscopeStateProvider.timebaseDivisions
+                                  .toDouble()),
                           onChanged: (double value) {
                             setState(
                               () {

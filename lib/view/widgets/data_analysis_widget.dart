@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 class DataAnalysisWidget extends StatefulWidget {
   const DataAnalysisWidget({super.key});
@@ -8,12 +10,10 @@ class DataAnalysisWidget extends StatefulWidget {
 }
 
 class _DataAnalysisState extends State<DataAnalysisWidget> {
-  bool? isFourierTransformSelected = false;
-  double horizontalOffset = 0;
-  double verticalOffset = 0;
-
   @override
   Widget build(BuildContext context) {
+    OscilloscopeStateProvider oscilloscopeStateProvider =
+        Provider.of<OscilloscopeStateProvider>(context, listen: false);
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -39,11 +39,13 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
                             activeColor: const Color(0xFFCE525F),
-                            value: isFourierTransformSelected,
+                            value: oscilloscopeStateProvider
+                                .isFourierTransformSelected,
                             onChanged: (bool? value) {
                               setState(
                                 () {
-                                  isFourierTransformSelected = value;
+                                  oscilloscopeStateProvider
+                                      .isFourierTransformSelected = value!;
                                 },
                               );
                             },
@@ -68,7 +70,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         children: [
                           DropdownMenu<String>(
                             width: 150,
-                            initialSelection: 'Sine Fit',
+                            initialSelection: oscilloscopeStateProvider.sineFit
+                                ? 'Sine Fit'
+                                : 'Square Fit',
                             dropdownMenuEntries: <String>[
                               'Sine Fit',
                               'Square Fit',
@@ -86,6 +90,15 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             textStyle: const TextStyle(
                               fontSize: 15,
                             ),
+                            onSelected: (String? value) {
+                              if (value == 'Sine Fit') {
+                                oscilloscopeStateProvider.sineFit = true;
+                                oscilloscopeStateProvider.squareFit = false;
+                              } else {
+                                oscilloscopeStateProvider.sineFit = false;
+                                oscilloscopeStateProvider.squareFit = true;
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -94,8 +107,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                       top: -2,
                       right: 0,
                       child: DropdownMenu<String>(
-                        width: 90,
-                        initialSelection: '',
+                        width: 95,
+                        initialSelection:
+                            oscilloscopeStateProvider.curveFittingChannel1,
                         dropdownMenuEntries: <String>[
                           '',
                           'CH1',
@@ -116,14 +130,23 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         textStyle: const TextStyle(
                           fontSize: 15,
                         ),
+                        onSelected: (value) {
+                          setState(
+                            () {
+                              oscilloscopeStateProvider.curveFittingChannel1 =
+                                  value!;
+                            },
+                          );
+                        },
                       ),
                     ),
                     Positioned(
                       bottom: -6,
                       right: 0,
                       child: DropdownMenu<String>(
-                        width: 90,
-                        initialSelection: '',
+                        width: 95,
+                        initialSelection:
+                            oscilloscopeStateProvider.curveFittingChannel2,
                         dropdownMenuEntries: <String>[
                           '',
                           'CH1',
@@ -144,6 +167,14 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         textStyle: const TextStyle(
                           fontSize: 15,
                         ),
+                        onSelected: (value) {
+                          setState(
+                            () {
+                              oscilloscopeStateProvider.curveFittingChannel2 =
+                                  value!;
+                            },
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -190,8 +221,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                       left: 12,
                       child: Center(
                         child: DropdownMenu<String>(
-                          width: 90,
-                          initialSelection: 'CH1',
+                          width: 95,
+                          initialSelection:
+                              oscilloscopeStateProvider.selectedChannelOffset,
                           dropdownMenuEntries: <String>[
                             'CH1',
                             'CH2',
@@ -211,6 +243,14 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           textStyle: const TextStyle(
                             fontSize: 15,
                           ),
+                          onSelected: (value) => {
+                            setState(
+                              () {
+                                oscilloscopeStateProvider
+                                    .selectedChannelOffset = value!;
+                              },
+                            )
+                          },
                         ),
                       ),
                     ),
@@ -229,13 +269,24 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               ),
                               child: Slider(
                                 activeColor: const Color(0xFFCE525F),
-                                min: -16,
-                                max: 16,
-                                value: verticalOffset,
+                                min: -oscilloscopeStateProvider
+                                    .oscillscopeAxesScale.yAxisScale,
+                                max: oscilloscopeStateProvider
+                                    .oscillscopeAxesScale.yAxisScale,
+                                value: oscilloscopeStateProvider.yOffsets[
+                                        oscilloscopeStateProvider
+                                            .selectedChannelOffset]!
+                                    .clamp(
+                                        -oscilloscopeStateProvider
+                                            .oscillscopeAxesScale.yAxisScale,
+                                        oscilloscopeStateProvider
+                                            .oscillscopeAxesScale.yAxisScale),
                                 onChanged: (double value) {
                                   setState(
                                     () {
-                                      verticalOffset = value;
+                                      oscilloscopeStateProvider.yOffsets[
+                                          oscilloscopeStateProvider
+                                              .selectedChannelOffset] = value;
                                     },
                                   );
                                 },
@@ -243,7 +294,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             ),
                           ),
                           Text(
-                            '${verticalOffset.toStringAsFixed(2)} V',
+                            '${oscilloscopeStateProvider.yOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} V',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.normal,
@@ -269,12 +320,41 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               child: Slider(
                                 activeColor: const Color(0xFFCE525F),
                                 min: 0,
-                                max: 1,
-                                value: horizontalOffset,
+                                max: oscilloscopeStateProvider.timebase / 1000,
+                                value: oscilloscopeStateProvider
+                                            .oscillscopeAxesScale.xAxisScale ==
+                                        875
+                                    ? (oscilloscopeStateProvider.xOffsets[
+                                                oscilloscopeStateProvider
+                                                    .selectedChannelOffset]! /
+                                            1000)
+                                        .clamp(
+                                            0,
+                                            oscilloscopeStateProvider.timebase /
+                                                1000)
+                                    : oscilloscopeStateProvider.xOffsets[
+                                            oscilloscopeStateProvider
+                                                .selectedChannelOffset]!
+                                        .clamp(
+                                            0,
+                                            oscilloscopeStateProvider.timebase /
+                                                1000),
                                 onChanged: (double value) {
                                   setState(
                                     () {
-                                      horizontalOffset = value;
+                                      if (oscilloscopeStateProvider
+                                              .oscillscopeAxesScale
+                                              .xAxisScale ==
+                                          875) {
+                                        oscilloscopeStateProvider.xOffsets[
+                                                oscilloscopeStateProvider
+                                                    .selectedChannelOffset] =
+                                            value * 1000;
+                                      } else {
+                                        oscilloscopeStateProvider.xOffsets[
+                                            oscilloscopeStateProvider
+                                                .selectedChannelOffset] = value;
+                                      }
                                     },
                                   );
                                 },
@@ -282,7 +362,11 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             ),
                           ),
                           Text(
-                            '${horizontalOffset.toStringAsFixed(2)} ms',
+                            oscilloscopeStateProvider
+                                        .oscillscopeAxesScale.xAxisScale ==
+                                    875
+                                ? '${(oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]! / 1000).toStringAsFixed(2)} ms'
+                                : '${oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} ms',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.normal,
