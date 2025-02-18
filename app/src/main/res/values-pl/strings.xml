@@ -449,7 +449,6 @@
 
     <string name="voltage_unit">(V)</string>
     <string name="volts">wolty</string>
-    <string name="seconds">(s)</string>
     <string name="lux">Lx</string>
     <string name="pressure2">Kliknij.</string>
     <string name="plot_altitude">Wykres - Wysokość</string>

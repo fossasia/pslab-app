@@ -449,7 +449,7 @@
 
     <string name="voltage_unit">(V)</string>
     <string name="volts">වෝල්ට්</string>
-    <string name="seconds">(s)</string>
+
     <string name="lux">Lx</string>
     <string name="pressure2">පීඩන.</string>
     <string name="plot_altitude">සලකුණ - අක්ෂාංශ</string>

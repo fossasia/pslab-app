@@ -445,7 +445,6 @@
 
     <string name="voltage_unit">(V)</string>
     <string name="volts">فولت</string>
-    <string name="seconds">(س)</string>
     <string name="lux">LX</string>
     <string name="pressure2">صحافة.</string>
     <string name="plot_altitude">المؤامرة - الارتفاع</string>

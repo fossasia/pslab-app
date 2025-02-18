@@ -452,7 +452,6 @@
 
     <string name="voltage_unit">(V)</string>
     <string name="volts">Вольт</string>
-    <string name="seconds">(с)</string>
     <string name="lux">Lx</string>
     <string name="pressure2">Нажмите.</string>
         <string name="plot_altitude">Участко - высота над уровнем моря</string>
