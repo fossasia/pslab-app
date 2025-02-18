@@ -188,24 +188,11 @@
                             android:layout_gravity="center_vertical|center_horizontal|center"
                             android:foregroundGravity="center_vertical"
                             android:gravity="center_vertical|center_horizontal|center"
-                            android:text="@string/time_space"
+                            android:text="@string/time"
                             android:textColor="#ffff"
                             android:textSize="@dimen/text_size_9sp"
                             android:textStyle="normal|bold"
                             tools:layout_editor_absoluteX="288dp"
-                            tools:layout_editor_absoluteY="0dp" />
-
-                        <TextView
-                            android:id="@+id/tv_unit_xaxis_hmc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/tv_graph_label_xaxis_hmc"
-                            android:text="@string/seconds"
-                            android:textColor="#ffff"
-                            android:textSize="@dimen/text_size_9sp"
-                            android:textStyle="normal|bold"
-                            app:layout_constraintLeft_toRightOf="@+id/tv_graph_label_xaxis_hmc"
                             tools:layout_editor_absoluteY="0dp" />
 
                     </RelativeLayout>

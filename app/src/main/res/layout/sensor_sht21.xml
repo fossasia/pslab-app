@@ -165,7 +165,6 @@
                             android:id="@+id/tv_graph_label_xaxis_temperature_sht21"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
                             android:layout_gravity="center_vertical|center_horizontal|center"
                             android:foregroundGravity="center_vertical"
@@ -175,19 +174,6 @@
                             android:textSize="@dimen/text_size_9sp"
                             android:textStyle="normal|bold"
                             tools:layout_editor_absoluteX="288dp"
-                            tools:layout_editor_absoluteY="0dp" />
-
-                        <TextView
-                            android:id="@+id/tv_unit_xaxis_temperature_sht21"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/tv_graph_label_xaxis_temperature_sht21"
-                            android:text="@string/seconds"
-                            android:textColor="#ffff"
-                            android:textSize="@dimen/text_size_9sp"
-                            android:textStyle="normal|bold"
-                            app:layout_constraintLeft_toRightOf="@+id/tv_graph_label_xaxis_temperature_sht21"
                             tools:layout_editor_absoluteY="0dp" />
 
                     </RelativeLayout>
@@ -298,19 +284,6 @@
                             android:textSize="@dimen/text_size_9sp"
                             android:textStyle="normal|bold"
                             tools:layout_editor_absoluteX="288dp"
-                            tools:layout_editor_absoluteY="0dp" />
-
-                        <TextView
-                            android:id="@+id/tv_unit_xaxis_humidity_sht21"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@+id/tv_graph_label_xaxis_humidity_sht21"
-                            android:text="@string/seconds"
-                            android:textColor="#ffff"
-                            android:textSize="@dimen/text_size_9sp"
-                            android:textStyle="normal|bold"
-                            app:layout_constraintLeft_toRightOf="@+id/tv_graph_label_xaxis_humidity_sht21"
                             tools:layout_editor_absoluteY="0dp" />
 
                     </RelativeLayout>
