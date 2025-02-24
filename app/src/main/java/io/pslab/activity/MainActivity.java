@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_INSTRUMENTS = "instruments";
     private static final String TAG_ABOUTUS = "aboutUs";
     private static final String TAG_PINLAYOUT = "pinLayout";
-    private static final String TAG_PINLAYOUT_V6 = "PINLAYOUTV6";
+    private static final String TAG_PINLAYOUT_V6 = "pinlayoutv6";
     private static final String TAG_FAQ = "faq";
     private static String CURRENT_TAG = TAG_INSTRUMENTS;
     private String[] activityTitles;
@@ -441,11 +441,11 @@ public class MainActivity extends AppCompatActivity {
                 displayPSLabPinLayout(TAG_PINLAYOUT);
                 break;
             case R.id.menu_pslab_layout_front_v6:
-                PSLabPinLayoutFragment_v6.topside=true;
+                PSLabPinLayoutFragment_v6.topside = true;
                 displayPSLabPinLayout(TAG_PINLAYOUT_V6);
                 break;
             case R.id.menu_pslab_layout_back_v6:
-                PSLabPinLayoutFragment_v6.topside=false;
+                PSLabPinLayoutFragment_v6.topside = false;
                 displayPSLabPinLayout(TAG_PINLAYOUT_V6);
                 break;
 
@@ -589,6 +589,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -609,6 +610,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onPostResume() {
         super.onPostResume();

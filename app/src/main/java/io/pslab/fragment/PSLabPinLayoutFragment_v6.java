@@ -66,9 +66,9 @@ public class PSLabPinLayoutFragment_v6 extends Fragment implements View.OnTouchL
     public void onResume() {
         super.onResume();
         imgLayout.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                topside ? R.drawable.pslab_v6_bottom : R.drawable.pslab_v6_top, null));
+                topside ? R.drawable.pslab_v6_top : R.drawable.pslab_v6_bottom, null));
         colorMap.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
-                topside ? R.drawable.pslab_v6_bottom_colormap : R.drawable.pslab_v6_top_colormap, null));
+                topside ? R.drawable.pslab_v6_top_colormap : R.drawable.pslab_v6_bottom_colormap, null));
         imgLayout.setOnTouchListener(this);
         populatePinDetails();
     }
@@ -119,7 +119,7 @@ public class PSLabPinLayoutFragment_v6 extends Fragment implements View.OnTouchL
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.pv1), getString(R.string.pv1_description), getColor(R.color.pv1)));
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.pv2), getString(R.string.pv2_description), getColor(R.color.pv2)));
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.pv3), getString(R.string.pv3_description), getColor(R.color.pv3)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.pcs),getString(R.string.pcs_description),getColor(R.color.pcs)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.pcs), getString(R.string.pcs_description), getColor(R.color.pcs)));
 
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.chip_select), getString(R.string.chip_select_description), getColor(R.color.chip_select)));
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.cs1), getString(R.string.cs1_description), getColor(R.color.cs1)));
@@ -133,9 +133,9 @@ public class PSLabPinLayoutFragment_v6 extends Fragment implements View.OnTouchL
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.pin_vdd_name), getString(R.string.pin_vdd_description), getColor(R.color.vdd)));
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.current_3ma), getString(R.string.current_3ma_description), getColor(R.color.current_3ma)));
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.plus_5v), getString(R.string.plus_5v_description), getColor(R.color.plus_5v)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.voltage_plus_minus_5_0v),getString(R.string.voltage_plus_minus_5_0v_description),getColor(R.color.plus_minus_5v)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.voltage_plus_3_3v),getString(R.string.voltage_plus_3_3v_description),getColor(R.color.plus_3_3v)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.voltage_0_3_3v),getString(R.string.voltage_0_3_3v_description),getColor(R.color.range_0_to_3_3v)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.voltage_plus_minus_5_0v), getString(R.string.voltage_plus_minus_5_0v_description), getColor(R.color.plus_minus_5v)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.voltage_plus_3_3v), getString(R.string.voltage_plus_3_3v_description), getColor(R.color.plus_3_3v)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.voltage_0_3_3v), getString(R.string.voltage_0_3_3v_description), getColor(R.color.range_0_to_3_3v)));
 
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.pgc), getString(R.string.pgc_description), getColor(R.color.pgc)));
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.pgd), getString(R.string.pgd_description), getColor(R.color.pgd)));
@@ -149,19 +149,20 @@ public class PSLabPinLayoutFragment_v6 extends Fragment implements View.OnTouchL
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.si1), getString(R.string.pin_si1_description), getColor(R.color.si1)));
         pinDetails_v6.add(new PinDetails_v6(getString(R.string.si2), getString(R.string.pin_si2_description), getColor(R.color.si2)));
 
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.vol),getString(R.string.vol_description),getColor(R.color.vol)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.res),getString(R.string.res_description),getColor(R.color.res)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.cap),getString(R.string.cap_v6_description),getColor(R.color.cap)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.frequency),getString(R.string.frequency_v6_description),getColor(R.color.fqy)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.mic),getString(R.string.mic_description),getColor(R.color.mic)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.c3g),getString(R.string.c3g_description),getColor(R.color.c3g)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.vol), getString(R.string.vol_description), getColor(R.color.vol)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.res), getString(R.string.res_description), getColor(R.color.res)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.cap), getString(R.string.cap_v6_description), getColor(R.color.cap)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.frequency), getString(R.string.frequency_v6_description), getColor(R.color.fqy)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.mic), getString(R.string.mic_description), getColor(R.color.mic)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.c3g), getString(R.string.c3g_description), getColor(R.color.c3g)));
 
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq1),getString(R.string.sq1_description),getColor(R.color.sq1)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq2),getString(R.string.sq2_description),getColor(R.color.sq2)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq3),getString(R.string.sq3_description),getColor(R.color.sq3)));
-        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq4),getString(R.string.sq4_description),getColor(R.color.sq4)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq1), getString(R.string.sq1_description), getColor(R.color.sq1)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq2), getString(R.string.sq2_description), getColor(R.color.sq2)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq3), getString(R.string.sq3_description), getColor(R.color.sq3)));
+        pinDetails_v6.add(new PinDetails_v6(getString(R.string.sq4), getString(R.string.sq4_description), getColor(R.color.sq4)));
 
     }
+
     private int getColor(int colorId) {
         final Context context = getContext();
         return context == null ? 0 : context.getColor(colorId);

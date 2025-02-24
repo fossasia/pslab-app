@@ -70,7 +70,7 @@
     <color name="pin_pgd">#724fff</color>
     <color name="pin_nrf">#ffa64f</color>
     <color name="pin_usb">#ff2b4f</color>
-    <color name="pin_vcc">#6b6500</color>   
+    <color name="pin_vcc">#6b6500</color>
     <color name="pin_pl5">#765f40</color>
     <color name="pin_dpl">#681654</color>
     <color name="pin_dmi">#a68b47</color>
@@ -151,7 +151,4 @@
     <color name="sq2">#D35FBC</color>
     <color name="sq3">#C837AB</color>
     <color name="sq4">#A02C89</color>
-
-
-
 </resources>

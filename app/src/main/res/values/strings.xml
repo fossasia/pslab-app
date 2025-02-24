@@ -17,10 +17,10 @@
     <string name="nav_share">Share App</string>
     <string name="nav_config">Generate Config File</string>
     <string name="pslab_pinlayout">PinLayout</string>
-    <string name="pslab_pinlayout_front_v5">Pin Layout Front v5</string>
-    <string name="pslab_pinlayout_back_v5">Pin Layout Back v5</string>
-    <string name="pslab_pinlayout_front_v6">Pin Layout Front v6</string>
-    <string name="pslab_pinlayout_back_v6">Pin Layout Back v6</string>
+    <string name="pslab_pinlayout_front_v5">Pin Layout Front (V5)</string>
+    <string name="pslab_pinlayout_back_v5">Pin Layout Back (V5)</string>
+    <string name="pslab_pinlayout_front_v6">Pin Layout Front (V6)</string>
+    <string name="pslab_pinlayout_back_v6">Pin Layout Back (V6)</string>
     <string name="bluetooth_connect_menu">Bluetooth Connection</string>
     <string name="bluetooth_wifi_connect_option">Connect using Bluetooth or Wi-Fi</string>
     <string name="bluetooth">Bluetooth</string>
@@ -1287,7 +1287,7 @@
 
     <!-- UART Pins -->
     <string name="txd_description" translatable="false">Transmit data pin for UART communication.</string>
-    <string name="cen_description" translatable="false">Central pin for UART control.</string>
+    <string name="cen_description" translatable="false">Chip Enable pin for UART control.</string>
     <string name="vcc_description" translatable="false">Voltage supply pin (+5V or +3.3V).</string>
     <string name="gnd_description" translatable="false">Ground pin for system reference.</string>
     <string name="rxd_description" translatable="false">Receive data pin for UART communication.</string>
@@ -1320,9 +1320,9 @@
 
     <!-- Measurement Channels -->
     <string name="ac_channel_description" translatable="false">AC measurement channel.</string>
-    <string name="channel_1_description" translatable="false">Measurement channel 1.</string>
-    <string name="channel_2_description" translatable="false">Measurement channel 2.</string>
-    <string name="channel_3_description" translatable="false">Measurement channel 3.</string>
+    <string name="channel_1_description" translatable="false">Oscilloscope Channel 1.</string>
+    <string name="channel_2_description" translatable="false">Oscilloscope Channel 2.</string>
+    <string name="channel_3_description" translatable="false">Oscilloscope Channel 3.</string>
     <string name="ch3_gain_set_description" translatable="false">Channel 3 gain setting.</string>
     <string name="microphone_description" translatable="false">Microphone input pin.</string>
     <string name="frequency_v6_description" translatable="false">Frequency measurement pin.</string>
@@ -1355,9 +1355,9 @@
 
     <!-- Voltage Levels -->
     <string name="vdd_3_3v_description" translatable="false">VDD (+3.3V) power supply pin.</string>
-    <string name="voltage_0_3_3v_description" translatable="false">Voltage level pin (0-3.3V).</string>
-    <string name="voltage_plus_3_3v_description" translatable="false">Positive voltage level (+3.3V).</string>
-    <string name="voltage_plus_minus_5_0v_description" translatable="false">Dual voltage supply (±5.0V).</string>
+    <string name="voltage_0_3_3v_description" translatable="false">Variable voltage pin (0-3.3V).</string>
+    <string name="voltage_plus_3_3v_description" translatable="false">Variable voltage pin (±3.3V)</string>
+    <string name="voltage_plus_minus_5_0v_description" translatable="false">Variable voltage (±5.0V).</string>
     <string name="current_3ma_description" translatable="false">Current pin (3mA).</string>
     <string name="plus_5v_description" translatable="false">5V power supply pin.</string>
 
@@ -1375,12 +1375,12 @@
     <!-- Additional Pins -->
     <string name="si1_description" translatable="false">Signal Input 1 pin.</string>
     <string name="si2_description" translatable="false">Signal Input 2 pin.</string>
-    <string name="pcs_description" translatable="false">Power Control Signal pin.</string>
+    <string name="pcs_description" translatable="false">Current Source pin.</string>
     <string name="vol_description" translatable="false">Voltage measurement pin.</string>
     <string name="res_description" translatable="false">Resistance measurement pin.</string>
     <string name="cap_v6_description" translatable="false">Capacitance measurement pin (v6).</string>
     <string name="fqy_description" translatable="false">Frequency measurement pin (v6).</string>
     <string name="mic_description" translatable="false">Microphone input pin (v6).</string>
-    <string name="c3g_description" translatable="false">Capacitor 3 Ground pin.</string>
+    <string name="c3g_description" translatable="false">Channel 3 Gain Setting.</string>
 
 </resources>
