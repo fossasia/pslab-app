@@ -51,9 +51,9 @@ jobs:
           git checkout --orphan temporary
           git add --all .
           git commit -am "[Auto] Update metadata for versionCode: ${{ steps.download-assets.outputs.VERSION_CODE }} ($(date +%Y-%m-%d.%H:%M:%S))"
-          git branch -D fastlane
-          git branch -m fastlane
-          git push --force origin fastlane
+          git branch -D fastlane-android
+          git branch -m fastlane-android
+          git push --force origin fastlane-android
 
       - name: Push version to production
         run: |
