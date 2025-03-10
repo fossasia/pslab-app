@@ -2,9 +2,12 @@ package io.pslab.fragment;
 
 import static io.pslab.others.ScienceLabCommon.scienceLab;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.pslab.R;
 import io.pslab.activity.MainActivity;
+import io.pslab.communication.SocketClient;
 import io.pslab.others.CustomSnackBar;
 import io.pslab.others.InitializationVariable;
 import io.pslab.others.PSLabPermission;
@@ -105,8 +109,7 @@ public class HomeFragment extends Fragment {
             }
             imgViewDeviceStatus.setImageResource(R.drawable.icons8_usb_connected_100);
             tvDeviceStatus.setText(getString(R.string.device_connected_successfully));
-        }
-        else if (!deviceFound && deviceConnected) {
+        } else if (!deviceFound && deviceConnected) {
             tvConnectMsg.setVisibility(View.GONE);
             try {
                 tvVersion.setText(scienceLab.getVersion());
@@ -119,8 +122,7 @@ public class HomeFragment extends Fragment {
             requireActivity().invalidateOptionsMenu();
             CustomSnackBar.showSnackBar(requireActivity().findViewById(android.R.id.content),
                     getString(R.string.device_connected_successfully), null, null, Snackbar.LENGTH_SHORT);
-        }
-        else {
+        } else {
             imgViewDeviceStatus.setImageResource(R.drawable.icons_usb_disconnected_100);
             tvDeviceStatus.setText(getString(R.string.device_not_found));
         }
@@ -207,12 +209,48 @@ public class HomeFragment extends Fragment {
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ESPFragment espFragment = new ESPFragment();
-                espFragment.show(getActivity().getSupportFragmentManager(), "wifi");
-                espFragment.setCancelable(true);
+                new ESPTask().execute();
             }
         });
         return view;
+    }
+
+    private class ESPTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            /**/
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                SocketClient socketClient = SocketClient.getInstance();
+                socketClient.openConnection("192.168.4.1", 80);
+                if (socketClient.isConnected()) {
+                    ScienceLabCommon.setIsWifiConnected(true);
+                    ScienceLabCommon.setEspBaseIP("192.168.4.1");
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            Activity activity;
+            if (!result && ((activity = getActivity()) != null)) {
+                CustomSnackBar.showSnackBar(activity.findViewById(android.R.id.content),
+                        getString(R.string.incorrect_IP_address_message), null, null, Snackbar.LENGTH_SHORT);
+            } else {
+                Log.v("ESPFragment", "ESP Connection Successful");
+                ScienceLabCommon.getInstance().openDevice(null);
+                ScienceLabCommon.isWifiConnected = true;
+                getParentFragmentManager().beginTransaction().replace(R.id.frame, HomeFragment.newInstance(true, false)).commitAllowingStateLoss();
+            }
+        }
     }
 
     public void hideWebView() {
