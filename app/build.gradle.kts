@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("com.google.android.gms.oss-licenses-plugin")
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 apply(plugin = "realm-android")
@@ -124,6 +124,5 @@ dependencies {
     implementation("com.github.realm:realm-android-adapters:v4.0.0")
 
     // OSS license plugin
-    implementation("com.google.android.gms:play-services-oss-licenses:17.1.0")
-
+    implementation("com.mikepenz:aboutlibraries:11.6.3")
 }

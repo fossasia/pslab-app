@@ -5,11 +5,10 @@ buildscript {
     }
     dependencies {
         classpath("io.realm:realm-gradle-plugin:10.19.0")
-        classpath("com.google.android.gms:oss-licenses-plugin:0.10.6")
-
     }
 }
 
 plugins {
     id("com.android.application") version "8.8.2" apply false
+    id("com.mikepenz.aboutlibraries.plugin") version "11.6.3"
 }

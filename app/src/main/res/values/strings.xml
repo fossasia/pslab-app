@@ -1095,6 +1095,10 @@
     <string name="distance">Distance</string>
     <string name="distance_unit">(mm)</string>
 
+    <string name="aboutLibraries_description_showIcon">true</string>
+    <string name="aboutLibraries_description_showVersion">true</string>
+    <string name="aboutLibraries_description_text">Below is a list of the third-party open source software libraries used in the PSLab app.</string>
+
     <string name="legacy_title">Legacy Firmware Detected</string>
     <string name="legacy_message">We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.</string>
     <string name="pin_esp_name" translatable="false">ESP</string>
