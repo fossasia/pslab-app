@@ -1087,7 +1087,7 @@
     <string name="unit_volts">\u0020V</string>
     <string name="no_playback_data">No data to display</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="third_party_libs">Open Source Licenses</string>
+    <string name="software_licenses">Software Licenses</string>
     <string name="auto_scale_error">No input found</string>
     <string name="auto_scale">Auto</string>
     <string name="control_stop">Stop</string>
@@ -1097,7 +1097,7 @@
 
     <string name="aboutLibraries_description_showIcon">true</string>
     <string name="aboutLibraries_description_showVersion">true</string>
-    <string name="aboutLibraries_description_text">Below is a list of the third-party open source software libraries used in the PSLab app.</string>
+    <string name="aboutLibraries_description_text">The PSLab app is licensed under the Apache License 2.0.&lt;br /&gt;&lt;br /&gt;Below is a list of the third-party open source software libraries used in the PSLab app.</string>
 
     <string name="legacy_title">Legacy Firmware Detected</string>
     <string name="legacy_message">We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.</string>

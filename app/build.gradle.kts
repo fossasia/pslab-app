@@ -58,6 +58,11 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    aboutLibraries {
+        excludeFields = arrayOf("generated")
+        duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
+        duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+    }
 }
 
 
