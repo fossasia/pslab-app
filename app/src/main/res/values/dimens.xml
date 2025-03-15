@@ -421,4 +421,7 @@
     <dimen name="text_size_osc">13sp</dimen>
     <dimen name="text_size_9sp">9sp</dimen>
 
+    <dimen name="gyroscope_fragment_height">300dp</dimen>
+    <dimen name="gyroscope_fragment_margin">5dp</dimen>
+
 </resources>

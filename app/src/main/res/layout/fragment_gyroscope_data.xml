@@ -17,24 +17,24 @@
             android:id="@+id/gyroscope_x_axis_fragment"
             android:name="io.pslab.fragment.GyroscopeViewFragment"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="5dp"
+            android:layout_height="@dimen/gyroscope_fragment_height"
+            android:layout_margin="@dimen/gyroscope_fragment_margin"
             tools:layout="@layout/gyroscope_list_item" />
 
         <fragment
             android:id="@+id/gyroscope_y_axis_fragment"
             android:name="io.pslab.fragment.GyroscopeViewFragment"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="5dp"
+            android:layout_height="@dimen/gyroscope_fragment_height"
+            android:layout_margin="@dimen/gyroscope_fragment_margin"
             tools:layout="@layout/gyroscope_list_item" />
 
         <fragment
             android:id="@+id/gyroscope_z_axis_fragment"
             android:name="io.pslab.fragment.GyroscopeViewFragment"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="5dp"
+            android:layout_height="@dimen/gyroscope_fragment_height"
+            android:layout_margin="@dimen/gyroscope_fragment_margin"
             tools:layout="@layout/gyroscope_list_item" />
 
     </LinearLayout>
