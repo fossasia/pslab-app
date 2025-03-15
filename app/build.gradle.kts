@@ -82,7 +82,7 @@ dependencies {
     implementation("com.github.medyo:android-about-page:1.3")
     implementation("com.github.tiagohm.MarkdownView:library:0.19.0")
     implementation("com.github.mirrajabi:search-dialog:1.2.4")
-    implementation(files("../libs/croller-release.aar"))
+    implementation("cn.denghanxi:android-croller:1.1.2")
     implementation("com.github.BeppiMenozzi:Knob:1.9.0")
     implementation("com.github.warkiz:IndicatorSeekBar:2.1.1")
     implementation("com.github.Vatican-Cameos:CarouselPicker:1.2")
