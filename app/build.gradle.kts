@@ -18,7 +18,9 @@ android {
         targetSdk = 35
         versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 1
         versionName = System.getenv("VERSION_NAME") ?: "1.0.0"
-        resourceConfigurations += setOf("en", "ru", "ar", "si", "pl")
+        androidResources {
+            localeFilters.addAll(listOf("en", "ru", "ar", "si", "pl"))
+        }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
