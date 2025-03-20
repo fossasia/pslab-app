@@ -435,9 +435,7 @@ public class GyroscopeDataFragment extends Fragment implements OperationCallback
                 fragment.setPreviousTimeElapsed(timeElapsed);
                 fragment.addEntry(new Entry((float) timeElapsed, fragment.getCurrentValue()));
 
-                String label = fragment.getContext() != null ? fragment.getContext().getString(R.string.gyroscope) : "Gyroscope";
-
-                LineDataSet dataSet = new LineDataSet(fragment.getEntries(), label);
+                LineDataSet dataSet = new LineDataSet(fragment.getEntries(), getString(R.string.gyroscope));
                 dataSet.setDrawCircles(false);
                 dataSet.setDrawValues(false);
                 dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
