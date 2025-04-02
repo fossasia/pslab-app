@@ -425,8 +425,11 @@ public class GyroscopeDataFragment extends Fragment implements OperationCallback
     }
 
     private void visualizeData() {
+        if (!isAdded()) return;
         for (int i = 0; i < gyroscopeViewFragments.size(); i++) {
             GyroscopeViewFragment fragment = gyroscopeViewFragments.get(i);
+            if (!fragment.isAdded()) continue;
+
             long timeElapsed = (System.currentTimeMillis() - startTime) / 1000;
             if (timeElapsed != fragment.getPreviousTimeElapsed()) {
                 fragment.setPreviousTimeElapsed(timeElapsed);
