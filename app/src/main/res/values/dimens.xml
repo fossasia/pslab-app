@@ -422,6 +422,7 @@
     <dimen name="text_size_9sp">9sp</dimen>
 
     <dimen name="accelerometer_fragment_height">200dp</dimen>
+    <dimen name="accelerometer_fragment_margint">5dp</dimen>
 
     <dimen name="gyroscope_fragment_height">300dp</dimen>
     <dimen name="gyroscope_fragment_margin">5dp</dimen>
