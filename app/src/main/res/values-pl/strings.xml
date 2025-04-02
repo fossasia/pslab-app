@@ -10,6 +10,7 @@
     <string name="nav_device">Połącz urządzenie</string>
     <string name="nav_instruments">Narzędzia</string>
     <string name="nav_settings">Ustawienia</string>
+    <string name="nav_documentation">Dokumentacja</string>
     <string name="nav_about_us">O nas </string>
     <string name="nav_buy_pslab">Kup PSLab</string>
     <string name="nav_report">Opinie &amp; Błędy</string>
@@ -287,6 +288,18 @@
     <string name="gx">Gx</string>
     <string name="gy">Gy</string>
     <string name="gz">Gz</string>
+    <string name="red">Czerwony</string>
+    <string name="green">Zielony</string>
+    <string name="blue">Niebieski</string>
+    <string name="clear">Wyczyść</string>
+    <string name="gesture">Gest</string>
+    <string name="eCO2">eCO2</string>
+    <string name="eTVOC">TVOC</string>
+    <string name="plot_lux">Wykres - Natężenie światła</string>
+    <string name="plot_proximity">Wykres - Bliskość</string>
+    <string name="proximity">Bliskość</string>
+    <string name="lux_unit">lx</string>
+    <string name="light_lux">Luks</string>
     <string name="temp">Temp</string>
     <string name="luminosity">Luminancja</string>
     <string name="humidity">Wilgotność</string>
