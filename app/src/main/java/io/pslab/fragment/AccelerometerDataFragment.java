@@ -419,6 +419,7 @@ public class AccelerometerDataFragment extends Fragment implements OperationCall
     }
 
     private void visualizeData() {
+        if (!isAdded()) return;
         for (int i = 0; i < accelerometerViewFragments.size(); i++) {
             AccelerometerViewFragment fragment = accelerometerViewFragments.get(i);
             long timeElapsed = (System.currentTimeMillis() - startTime) / 1000;
