@@ -25,7 +25,7 @@ public class MPU6050 {
     private int GR = 3;
     private int NUMPLOTS = 7;
     public String[] PLOTNAMES = {"Ax", "Ay", "Az,'Temp", "Gx", "Gy", "Gz"};
-    private int ADDRESS = 0x68;
+    private int ADDRESS = 0x69;
     private String name = "Accel/gyro";
     private ArrayList<KalmanFilter> K = new ArrayList<>();          //K is the list of KalmanFilter object
     private I2C i2c;

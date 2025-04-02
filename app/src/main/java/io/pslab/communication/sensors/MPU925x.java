@@ -27,7 +27,7 @@ public class MPU925x {
     private int GR = 3;
     private int NUMPLOTS = 7;
     public String[] PLOTNAMES = new String[]{"Ax", "Ay", "Az", "Temp", "Gx", "Gy", "Gz"};
-    private int ADDRESS = 0x68;
+    private int ADDRESS = 0x69;
     private int AK8963_ADDRESS = 0x0C;
     private int AK8963_CNTL = 0x0A;
     public String name = "Accel/gyro";

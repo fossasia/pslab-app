@@ -149,7 +149,7 @@ public class SensorDataLoggerActivity extends AppCompatActivity {
         sensorAddress.put(0x77, "BMP180");
         sensorAddress.put(0x5A, "MLX90614");
         sensorAddress.put(0x1E, "HMC5883L");
-        sensorAddress.put(0x68, "MPU6050");
+        sensorAddress.put(0x69, "MPU6050");
         sensorAddress.put(0x40, "SHT21");
         sensorAddress.put(0x39, "TSL2561");
     }

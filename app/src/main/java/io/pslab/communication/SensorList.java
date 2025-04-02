@@ -25,7 +25,7 @@ public class SensorList {
         sensorList.put(0x5A, new String[]{"MLX90614 PIR temperature"});
         sensorList.put(0x1E, new String[]{"HMC5883L magnetometer", "LSM303 magnetometer"});
         sensorList.put(0x77, new String[]{"BMP180/GY-68 altimeter", "MS5607", "MS5611"});
-        sensorList.put(0x68, new String[]{"MPU-6050/GY-521 accel+gyro+temp", "ITG3200", "DS1307", "DS3231"});
+        sensorList.put(0x69, new String[]{"MPU-6050/GY-521 accel+gyro+temp", "ITG3200", "DS1307", "DS3231"});
         sensorList.put(0x69, new String[]{"ITG3200"});
         sensorList.put(0x76, new String[]{"MS5607", "MS5611"});
         sensorList.put(0x6B, new String[]{"LSM9DSO gyro"});

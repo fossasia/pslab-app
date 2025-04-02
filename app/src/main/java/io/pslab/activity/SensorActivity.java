@@ -78,7 +78,7 @@ public class SensorActivity extends GuideActivity {
         sensorAddr.put(0x77, "BMP180");
         sensorAddr.put(0x5A, "MLX90614");
         sensorAddr.put(0x1E, "HMC5883L");
-        sensorAddr.put(0x68, "MPU6050");
+        sensorAddr.put(0x69, "MPU6050");
         sensorAddr.put(0x40, "SHT21");
         sensorAddr.put(0x39, "TSL2561");
         sensorAddr.put(0x69, "MPU925x");
