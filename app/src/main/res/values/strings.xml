@@ -258,14 +258,8 @@
     <string name="device_connected_successfully">Device Connected Successfully</string>
     <string name="device_not_found">No USB Device Found</string>
     <string name="sensor_not_connected_tls">Sensor not connected</string>
-
     <string name="time_unit_la">Time (ms)</string>
     <string name="view">VIEW</string>
-
-    <!-- Experiment Headers -->
-    <!-- Experiments -->
-
-
     <string name="hmc5883l">hmc5883l</string>
     <string name="mpu6050">mpu6050</string>
     <string name="sht21">sht21</string>
@@ -277,7 +271,6 @@
     <string name="vl53l0x">VL53L0X</string>
     <string name="ccs811">CCS811</string>
     <string name="apds9960">APDS9960</string>
-
     <string name="raw_data">Raw Data</string>
     <string name="configure">Configure</string>
     <string name="plot">Plot</string>
@@ -339,12 +332,10 @@
     <string name="alt">Alt.</string>
     <string name="meter">(m)</string>
     <string name="pascal">(Pa)</string>
-
     <string name="up">UP</string>
     <string name="down">DOWN</string>
     <string name="left">LEFT</string>
     <string name="right">RIGHT</string>
-
     <string-array name="apds9960_spinner">
         <item>Color, Proximity and Ambient Light</item>
         <item>Gesture</item>

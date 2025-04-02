@@ -6,11 +6,11 @@
 
     <string name="Toast_double_tap">اضغط مرة أخرى لإغلاق PSLab</string>
     <string name="Toast_magnetic_not_present">"المستشعرات المطلوبة لهذا الجهاز غير موجودة في جهازك"</string>
-
     <string name="nav_device">توصيل الجهاز</string>
     <string name="nav_instruments">الادوات</string>
     <string name="nav_settings">الإعدادات</string>
     <string name="nav_about_us">معلومات عنا</string>
+    <string name="nav_documentation">الوثائق</string>
     <string name="nav_buy_pslab">شراء PSLab</string>
     <string name="nav_report">ردود الفعل</string>
     <string name="nav_help_feedback">التعليمات</string>
@@ -260,7 +260,6 @@
 
     <string name="time_unit_la">الوقت (مللي ثانية)</string>
     <string name="view">رأي</string>
-
     <string name="hmc5883l">hmc5883l</string>
     <string name="mpu6050">mpu6050</string>
     <string name="sht21">sht21</string>
@@ -269,7 +268,9 @@
     <string name="mlx90614">mlx90614</string>
     <string name="bmp180">bmp180</string>
     <string name="mpu925x">mpu925x</string>
-
+    <string name="vl53l0x">VL53L0X</string>
+    <string name="ccs811">CCS811</string>
+    <string name="apds9960">APDS9960</string>
     <string name="raw_data">مسودة بيانات</string>
     <string name="configure">تهيئة</string>
     <string name="plot">قطعة</string>
@@ -284,6 +285,18 @@
     <string name="gx">GX</string>
     <string name="gy">Gy</string>
     <string name="gz">Gz</string>
+    <string name="red">أحمر</string>
+    <string name="green">أخضر</string>
+    <string name="blue">أزرق</string>
+    <string name="clear">واضح</string>
+    <string name="gesture">අංග සංකේතය</string>
+    <string name="eCO2">eCO2</string>
+    <string name="eTVOC">TVOC</string>
+    <string name="plot_lux">Plot - Light Lux</string>
+    <string name="plot_proximity">Plot - Proximity</string>
+    <string name="proximity">Prox</string>
+    <string name="lux_unit">(lx)</string>
+    <string name="light_lux">Lux</string>
     <string name="temp">مؤقت</string>
     <string name="luminosity">لمعان</string>
     <string name="humidity">رطوبة</string>
@@ -305,7 +318,11 @@
     <string name="set_rate">تحديد السعر</string>
     <string name="plot_accelerometer">المؤامرة - التسارع</string>
     <string name="plot_gyroscope">مؤامرة - الجيروسكوب</string>
+    <string name="plot_eCO2">Plot - eCO2</string>
+    <string name="plot_eTVOC">Plot - TVOC</string>
     <string name="rad">(rad)</string>
+    <string name="ppm">(ppm)</string>
+    <string name="ppb">(ppb)</string>
     <string name="angle">زاوية</string>
     <string name="time">الوقت (ثانية)</string>
     <string name="infinite_symbol">∞</string>
@@ -315,7 +332,10 @@
     <string name="alt">كل شيء.</string>
     <string name="meter">(م)</string>
     <string name="pascal">(باسكال)</string>
-
+    <string name="up">أعلى</string>
+    <string name="down">أسفل</string>
+    <string name="left">يسار</string>
+    <string name="right">يمين</string>
     <string-array name="tsl2561_gain_spinner">
         <item>لا ربح</item>
         <item>1X</item>
