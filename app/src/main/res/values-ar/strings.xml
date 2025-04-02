@@ -10,6 +10,7 @@
     <string name="nav_device">توصيل الجهاز</string>
     <string name="nav_instruments">الادوات</string>
     <string name="nav_settings">الإعدادات</string>
+    <string name="nav_documentation">التوثيق</string>
     <string name="nav_about_us">معلومات عنا</string>
     <string name="nav_buy_pslab">شراء PSLab</string>
     <string name="nav_report">ردود الفعل</string>
@@ -48,6 +49,7 @@
     <string name="control_item_1">مراقبة</string>
     <string name="control_item_2">اقرأ</string>
     <string name="control_item_3">المتقدمة</string>
+    <string name="nav_documentation">توثيق</string>
 
     <string name="about_us_description">الهدف من PSLab هو إنشاء جهاز مفتوح المصدر (مفتوح على جميع الطبقات) يمكن استخدامه للتجارب من قبل المعلمين والطلاب وعلماء المواطنين. يوفر مختبر الجيب الصغير الخاص بنا مجموعة من المستشعرات لإجراء التجارب العلمية والهندسية. إنه يوفر وظائف أجهزة قياس عديدة بما في ذلك الذبذبات ، مولد الموجي ، عداد التردد ، الجهد القابل للبرمجة ، المصدر الحالي وكمسجل بيانات.</string>
 
@@ -284,6 +286,18 @@
     <string name="gx">GX</string>
     <string name="gy">Gy</string>
     <string name="gz">Gz</string>
+    <string name="red">أحمر</string>
+    <string name="green">أخضر</string>
+    <string name="blue">أزرق</string>
+    <string name="clear">مسح</string>
+    <string name="gesture">إيماءة</string>
+    <string name="eCO2">ثاني أكسيد الكربون المكافئ</string>
+    <string name="eTVOC">المركبات العضوية المتطايرة الكلية</string>
+    <string name="plot_lux">مخطط - ضوء لوكس</string>
+    <string name="plot_proximity">مخطط - القرب</string>
+    <string name="proximity">القرب</string>
+    <string name="lux_unit">لوكس</string>
+    <string name="light_lux">لوكس</string>
     <string name="temp">مؤقت</string>
     <string name="luminosity">لمعان</string>
     <string name="humidity">رطوبة</string>
