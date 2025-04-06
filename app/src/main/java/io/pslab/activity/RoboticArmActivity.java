@@ -354,26 +354,8 @@ public class RoboticArmActivity extends GuideActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 removeStatusBar();
-                int previousDegree = degree;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String degreeText = degreeText1.getText().toString().trim();
-                    if (degreeText.isEmpty()) {
-                        if (degree == 0) {
-                            degree = (int) (seekArc1.getProgress() * 3.6);
-                        } else {
-                            degree = previousDegree;
-                        }
-                    } else {
-                        degree = Integer.parseInt(degreeText1.getText().toString());
-                    }
-                    if (degree > 360 || degree < 0) {
-                        degreeText1.setText(getResources().getString(R.string.zero));
-                        seekArc1.setProgress(0);
-                        toastInvalidValueMessage();
-                    } else {
-                        seekArc1.setProgress((int) (degree / 3.6));
-                        editEnter = true;
-                    }
+                    processDegreeInput(degreeText1, seekArc1);
                 }
                 return false;
             }
@@ -390,26 +372,8 @@ public class RoboticArmActivity extends GuideActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 removeStatusBar();
-                int previousDegree = degree;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String degreeText = degreeText2.getText().toString().trim();
-                    if (degreeText.isEmpty()) {
-                        if (degree == 0) {
-                            degree = (int) (seekArc2.getProgress() * 3.6);
-                        } else {
-                            degree = previousDegree;
-                        }
-                    } else {
-                        degree = Integer.parseInt(degreeText2.getText().toString());
-                    }
-                    if (degree > 360 || degree < 0) {
-                        degreeText2.setText(getResources().getString(R.string.zero));
-                        seekArc2.setProgress(0);
-                        toastInvalidValueMessage();
-                    } else {
-                        seekArc2.setProgress((int) (degree / 3.6));
-                        editEnter = true;
-                    }
+                    processDegreeInput(degreeText2, seekArc2);
                 }
                 return false;
             }
@@ -426,26 +390,8 @@ public class RoboticArmActivity extends GuideActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 removeStatusBar();
-                int previousDegree = degree;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String degreeText = degreeText3.getText().toString().trim();
-                    if (degreeText.isEmpty()) {
-                        if (degree == 0) {
-                            degree = (int) (seekArc3.getProgress() * 3.6);
-                        } else {
-                            degree = previousDegree;
-                        }
-                    } else {
-                        degree = Integer.parseInt(degreeText3.getText().toString());
-                    }
-                    if (degree > 360 || degree < 0) {
-                        degreeText3.setText(getResources().getString(R.string.zero));
-                        seekArc3.setProgress(0);
-                        toastInvalidValueMessage();
-                    } else {
-                        seekArc3.setProgress((int) (degree / 3.6));
-                        editEnter = true;
-                    }
+                    processDegreeInput(degreeText3, seekArc3);
                 }
                 return false;
             }
@@ -462,26 +408,8 @@ public class RoboticArmActivity extends GuideActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 removeStatusBar();
-                int previousDegree = degree;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String degreeText = degreeText4.getText().toString().trim();
-                    if (degreeText.isEmpty()) {
-                        if (degree == 0) {
-                            degree = (int) (seekArc4.getProgress() * 3.6);
-                        } else {
-                            degree = previousDegree;
-                        }
-                    } else {
-                        degree = Integer.parseInt(degreeText4.getText().toString());
-                    }
-                    if (degree > 360 || degree < 0) {
-                        degreeText4.setText(getResources().getString(R.string.zero));
-                        seekArc4.setProgress(0);
-                        toastInvalidValueMessage();
-                    } else {
-                        seekArc4.setProgress((int) (degree / 3.6));
-                        editEnter = true;
-                    }
+                    processDegreeInput(degreeText4, seekArc4);
                 }
                 return false;
             }
@@ -550,6 +478,33 @@ public class RoboticArmActivity extends GuideActivity {
             ((TextView) servo4TimeLine.getChildAt(i).findViewById(R.id.timeline_box_degree_text)).setText(servoData.getDegree4() + getResources().getString(R.string.robotic_arm_degree_symbol));
         }
     }
+    private void processDegreeInput(EditText degreeText, SeekArc seekArc) {
+        int previousDegree = degree;
+        String degreeStr = degreeText.getText().toString().trim();
+
+        if (degreeStr.isEmpty()) {
+            degree = (degree == 0) ? (int) (seekArc.getProgress() * 3.6) : previousDegree;
+        } else {
+            try {
+                degree = Integer.parseInt(degreeStr);
+            } catch (NumberFormatException e) {
+                degreeText.setText(getResources().getString(R.string.zero));
+                seekArc.setProgress(0);
+                toastInvalidValueMessage();
+                return;
+            }
+        }
+
+        if (degree > 360 || degree < 0) {
+            degreeText.setText(getResources().getString(R.string.zero));
+            seekArc.setProgress(0);
+            toastInvalidValueMessage();
+        } else {
+            seekArc.setProgress((int) (degree / 3.6));
+            editEnter = true;
+        }
+    }
+
 
     private void saveTimeline() {
         long block = System.currentTimeMillis();

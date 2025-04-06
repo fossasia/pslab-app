@@ -295,7 +295,7 @@
     <string name="plot_lux">Plot - Light Lux</string>
     <string name="plot_proximity">Plot - Proximity</string>
     <string name="proximity">Prox</string>
-    <string name="lux_unit">(lx)</string>
+    <string name="lux_unit">lx</string>
     <string name="light_lux">Lux</string>
     <string name="temp">Temp</string>
     <string name="luminosity">Luminosity</string>
