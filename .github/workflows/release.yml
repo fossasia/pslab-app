@@ -32,17 +32,12 @@ jobs:
           read -r version_code < versionCode.txt
           echo "VERSION_CODE=$version_code" >> $GITHUB_OUTPUT
 
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Android Screenshot Workflow
-        uses: ./.github/actions/screenshot-android
-        with:
-          ANDROID_EMULATOR_API: ${{ env.ANDROID_EMULATOR_API }}
-          ANDROID_EMULATOR_ARCH: ${{ env.ANDROID_EMULATOR_ARCH }}
-
       - name: Add Changelogs to fastlane branch
         run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
+
           cd fastlane
           
           echo "${{ github.event.release.body }}" > metadata/android/en-US/changelogs/${{ steps.download-assets.outputs.VERSION_CODE }}.txt
