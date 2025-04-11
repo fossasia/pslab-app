@@ -52,7 +52,7 @@ jobs:
 
       - name: Push version to production
         run: |
-          bundle exec fastlane promoteToProduction version_code:${{ steps.download-assets.outputs.VERSION_CODE }}
+          fastlane promoteToProduction version_code:${{ steps.download-assets.outputs.VERSION_CODE }}
           if [[ $? -ne 0 ]]; then
               exit 1
           fi
