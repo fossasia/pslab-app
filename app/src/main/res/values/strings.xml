@@ -1072,6 +1072,8 @@
 
     <string name="developers">Developers</string>
     <string name="github_developers_link">https://github.com/fossasia/pslab-android/graphs/contributors</string>
+    <string name="follow_us_on_x">Follow us on X</string>
+    <string name="x_profile_link">https://x.com/pslabio</string>
     <string name="limit_dangerous">\"Dangerous\"</string>
     <string name="limit_average">Average</string>
     <string name="unit_milliseconds">\u0020ms</string>
