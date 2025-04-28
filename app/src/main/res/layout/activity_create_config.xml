@@ -63,11 +63,10 @@
                 app:cardCornerRadius="@dimen/accel_card_radius"
                 app:cardElevation="@dimen/card_elevation">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/create_config_margin1"
-                    android:orientation="horizontal">
+                    android:layout_marginStart="@dimen/create_config_margin1">
 
                     <TextView
                         android:id="@+id/time_interval_title"
@@ -76,26 +75,40 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/time_interval_title"
-                        android:textSize="@dimen/text_size_of_label" />
+                        android:textSize="@dimen/text_size_of_label"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+            />
 
                     <EditText
                         android:id="@+id/interval_edit_text"
                         android:layout_width="@dimen/width_zero"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight="@dimen/weight_three"
-                        android:hint="@string/time_interval_hint"
-                        android:imeOptions="actionDone"
-                        android:inputType="number"
-                        android:textAlignment="center" />
+                      android:hint="@string/time_interval_hint"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:textAlignment="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/time_interval_title"
+                    app:layout_constraintEnd_toStartOf="@id/interval_unit_spinner"
+                    app:layout_constraintHorizontal_weight="@dimen/weight_four" />
 
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/interval_unit_spinner"
-                        android:layout_width="@dimen/width_zero"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="@dimen/weight_one" />
-                </LinearLayout>
+                        android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/interval_edit_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_weight="@dimen/weight_two" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.cardview.widget.CardView>
 
             <TextView
