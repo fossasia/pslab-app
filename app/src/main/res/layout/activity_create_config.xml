@@ -81,7 +81,7 @@
 
                     <EditText
                         android:id="@+id/interval_edit_text"
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/dimen_zero_dp"
                         android:layout_height="wrap_content"
                         android:hint="@string/time_interval_hint"
                         android:imeOptions="actionDone"
