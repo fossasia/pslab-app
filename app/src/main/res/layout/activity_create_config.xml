@@ -76,36 +76,35 @@
                         android:layout_gravity="center"
                         android:text="@string/time_interval_title"
                         android:textSize="@dimen/text_size_of_label"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-            />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <EditText
                         android:id="@+id/interval_edit_text"
                         android:layout_width="@dimen/width_zero"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                      android:hint="@string/time_interval_hint"
-                    android:imeOptions="actionDone"
-                    android:inputType="number"
-                    android:textAlignment="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/time_interval_title"
-                    app:layout_constraintEnd_toStartOf="@id/interval_unit_spinner"
-                    app:layout_constraintHorizontal_weight="@dimen/weight_four" />
+                        android:hint="@string/time_interval_hint"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/interval_unit_spinner"
+                        app:layout_constraintHorizontal_weight="@dimen/weight_four"
+                        app:layout_constraintStart_toEndOf="@id/time_interval_title"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/interval_unit_spinner"
                         android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/interval_edit_text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_weight="@dimen/weight_two" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_weight="@dimen/weight_two"
+                        app:layout_constraintStart_toEndOf="@id/interval_edit_text"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
