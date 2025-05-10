@@ -22,6 +22,7 @@ public class SocketClient {
     }
 
     public void openConnection(String ip, int port) throws IOException {
+        Log.v(TAG, "Connecting to " + ip + ":" + port);
         socket = new Socket(ip, port);
         outputStream = socket.getOutputStream();
         inputStream = socket.getInputStream();
@@ -54,11 +55,14 @@ public class SocketClient {
     public synchronized int read(int bytesToBeRead) throws IOException {
         int numBytesRead = 0;
         int readNow;
-        Log.v(TAG, "To read : " + bytesToBeRead);
+        final long start = System.currentTimeMillis();
+        Log.v(TAG, "Bytes to read : " + bytesToBeRead);
         int bytesToBeReadTemp = bytesToBeRead;
         receivedData = new byte[bytesToBeRead];
         while (numBytesRead < bytesToBeRead) {
+            final long start2 = System.currentTimeMillis();
             readNow = inputStream.read(receivedData, numBytesRead, bytesToBeReadTemp);
+            Log.v(TAG, "Bytes read: " + readNow + " in " + (System.currentTimeMillis() - start2) + " ms");
             if (readNow <= 0) {
                 Log.e(TAG, "Read Error: " + bytesToBeReadTemp);
                 return numBytesRead;
@@ -67,7 +71,7 @@ public class SocketClient {
                 bytesToBeReadTemp -= readNow;
             }
         }
-        Log.v("Bytes Read", "" + numBytesRead);
+        Log.v(TAG, "Total bytes read: " + numBytesRead + " in " + (System.currentTimeMillis() - start) + " ms");
         return numBytesRead;
     }
 
@@ -84,7 +88,7 @@ public class SocketClient {
                 isConnected = false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error closing connection", e);
         }
     }
 }
