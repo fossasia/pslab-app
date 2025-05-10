@@ -9,16 +9,12 @@ import java.net.Socket;
 
 public class SocketClient {
 
-    public static final String TAG = "SocketClient";
-    private static SocketClient socketClient = null;
+    private static final String TAG = SocketClient.class.getSimpleName();
+    private static SocketClient socketClient;
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
     private boolean isConnected = false;
-
-    public static final int DEFAULT_READ_BUFFER_SIZE = 32 * 1024;
-
-    private byte[] buffer = new byte[DEFAULT_READ_BUFFER_SIZE];
 
     private byte[] receivedData;
 
@@ -60,14 +56,13 @@ public class SocketClient {
         int readNow;
         Log.v(TAG, "To read : " + bytesToBeRead);
         int bytesToBeReadTemp = bytesToBeRead;
-        receivedData = new byte[DEFAULT_READ_BUFFER_SIZE];
+        receivedData = new byte[bytesToBeRead];
         while (numBytesRead < bytesToBeRead) {
-            readNow = inputStream.read(buffer, 0, bytesToBeReadTemp);
+            readNow = inputStream.read(receivedData, numBytesRead, bytesToBeReadTemp);
             if (readNow <= 0) {
                 Log.e(TAG, "Read Error: " + bytesToBeReadTemp);
                 return numBytesRead;
             } else {
-                System.arraycopy(buffer, 0, receivedData, numBytesRead, readNow);
                 numBytesRead += readNow;
                 bytesToBeReadTemp -= readNow;
             }
