@@ -131,5 +131,5 @@ dependencies {
     implementation("com.github.realm:realm-android-adapters:v4.0.0")
 
     // OSS license plugin
-    implementation("com.mikepenz:aboutlibraries:12.1.0")
+    implementation("com.mikepenz:aboutlibraries:12.1.2")
 }
