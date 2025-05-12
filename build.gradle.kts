@@ -10,5 +10,5 @@ buildscript {
 
 plugins {
     id("com.android.application") version "8.9.2" apply false
-    id("com.mikepenz.aboutlibraries.plugin") version "12.1.0-exp01"
+    id("com.mikepenz.aboutlibraries.plugin") version "12.1.2"
 }
