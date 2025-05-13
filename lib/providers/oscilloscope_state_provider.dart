@@ -84,7 +84,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
   late Timer _timer;
 
-  late OscillscopeAxesScale oscillscopeAxesScale;
+  late OscilloscopeAxesScale oscilloscopeAxesScale;
 
   OscilloscopeStateProvider() {
     _audioJack = AudioJack();
@@ -107,7 +107,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     xyPlotAxis1 = 'CH1';
     xyPlotAxis2 = 'CH2';
     dataEntries = [];
-    dataEntriesXYPlot = [[]];
+    dataEntriesXYPlot = [];
     dataEntriesCurveFit = [];
     _timebaseDivisions = 8;
     timebaseSlider = 0;
@@ -144,7 +144,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     curveFittingChannel1 = '';
     curveFittingChannel2 = '';
     _analyticsClass = AnalyticsClass();
-    oscillscopeAxesScale = OscillscopeAxesScale();
+    oscilloscopeAxesScale = OscilloscopeAxesScale();
 
     monitor();
   }
@@ -192,6 +192,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             if (channels.isNotEmpty) {
               await captureTask(channels);
             } else {
+              resetGraph();
               dataEntries = [];
             }
           }
@@ -308,7 +309,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             if (isTriggerSelected && triggerChannel == channel) {
               if (currY > prevY) {
                 increasing = true;
-              } else if (currY < prevY && increasing) {
+              } else if ((currY < prevY) && increasing) {
                 increasing = false;
               }
               if (isTriggered) {
@@ -321,12 +322,14 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                   prevY < trigger &&
                   currY >= trigger &&
                   increasing) {
+                logger.d('prevY: $prevY, currY: $currY');
                 isTriggered = true;
               } else if (triggerMode == MODE.falling.toString() &&
                   prevY > trigger &&
                   currY <= trigger &&
                   !increasing) {
                 isTriggered = true;
+                logger.d('prevY: $prevY, currY: $currY');
               } else if (triggerMode == MODE.dual.toString() &&
                       (prevY < trigger && currY >= trigger && increasing) ||
                   (prevY > trigger && currY <= trigger && !increasing)) {
@@ -334,7 +337,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
               }
               prevY = currY;
             } else {
-              entries[i].add(FlSpot(xData[j] + xOffsets[channels[i]]!,
+              entries[i].add(FlSpot(xData[j] - xOffsets[channels[i]]!,
                   yData[j] + yOffsets[channels[i]]!));
             }
           } else {
@@ -363,8 +366,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           for (int j = 0; j < 500; j++) {
             double x = j * max / 500;
             double y = offset +
-                amp * sin((freq * (2 * pi)).abs()) * x +
-                phase * pi / 180;
+                amp * sin(((freq * (2 * pi)).abs()) * x + phase * pi / 180);
             curveFitEntries[curveFitEntries.length - 1].add(FlSpot(x, y));
           }
         }
@@ -458,13 +460,13 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                 double k = ((xDataPoint / AudioJack.samplingRate) * 1000000.0);
                 k = k / ((timebase == 875) ? 1 : 1000);
                 entries[entries.length - 1].add(FlSpot(
-                    k + xOffsets['MIC']!, audioValue + yOffsets['MIC']!));
+                    k - xOffsets['MIC']!, audioValue + yOffsets['MIC']!));
                 xDataPoint++;
               }
               prevY = currY;
             } else {
               entries[entries.length - 1].add(
-                  FlSpot(j + xOffsets['MIC']!, audioValue + yOffsets['MIC']!));
+                  FlSpot(j - xOffsets['MIC']!, audioValue + yOffsets['MIC']!));
             }
           } else {
             if (i < n / 2) {
@@ -488,13 +490,15 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       dataEntriesCurveFit = List.from(curveFitEntries);
       dataParamsChannels = List.from(paramsChannels);
       if (isFourierTransformSelected) {
-        oscillscopeAxesScale.setYAxisScaleMax(_maxAmp);
-        oscillscopeAxesScale.setYAxisScaleMin(0);
-        oscillscopeAxesScale.setXAxisScale(_maxFreq * 1000);
+        oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
+        oscilloscopeAxesScale.setYAxisScaleMin(0);
+        oscilloscopeAxesScale.setXAxisScale(_maxFreq * 1000);
       } else {
-        oscillscopeAxesScale.setYAxisScaleMax(oscillscopeAxesScale.yAxisScale);
-        oscillscopeAxesScale.setYAxisScaleMin(-oscillscopeAxesScale.yAxisScale);
-        oscillscopeAxesScale.setXAxisScale(timebase);
+        oscilloscopeAxesScale
+            .setYAxisScaleMax(oscilloscopeAxesScale.yAxisScale);
+        oscilloscopeAxesScale
+            .setYAxisScaleMin(-oscilloscopeAxesScale.yAxisScale);
+        oscilloscopeAxesScale.setXAxisScale(timebase);
       }
       notifyListeners();
     } catch (e) {
@@ -540,6 +544,12 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         timebase = 875.00;
         break;
     }
+    oscilloscopeAxesScale.setXAxisScale(timebase);
+    notifyListeners();
+  }
+
+  void setYAxisScale(double value) {
+    oscilloscopeAxesScale.setYAxisScale(value);
     notifyListeners();
   }
 
@@ -603,6 +613,15 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         );
       },
     );
+  }
+
+  void resetGraph() {
+    oscilloscopeAxesScale.setYAxisScaleMax(oscilloscopeAxesScale.yAxisScale);
+    oscilloscopeAxesScale.setYAxisScaleMin(-oscilloscopeAxesScale.yAxisScale);
+    oscilloscopeAxesScale.setXAxisScale(timebase);
+    dataEntries = [];
+    dataEntriesXYPlot = [];
+    dataEntriesCurveFit = [];
   }
 
   @override

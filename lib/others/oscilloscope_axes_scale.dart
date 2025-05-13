@@ -1,10 +1,10 @@
-class OscillscopeAxesScale {
+class OscilloscopeAxesScale {
   late double _yAxisScale;
   late double _yAxisScaleMin;
   late double _yAxisScaleMax;
   late double _xAxisScale;
 
-  OscillscopeAxesScale() {
+  OscilloscopeAxesScale() {
     _yAxisScale = 16;
     _yAxisScaleMin = -16;
     _yAxisScaleMax = 16;

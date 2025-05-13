@@ -270,17 +270,17 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               child: Slider(
                                 activeColor: const Color(0xFFCE525F),
                                 min: -oscilloscopeStateProvider
-                                    .oscillscopeAxesScale.yAxisScale,
+                                    .oscilloscopeAxesScale.yAxisScale,
                                 max: oscilloscopeStateProvider
-                                    .oscillscopeAxesScale.yAxisScale,
+                                    .oscilloscopeAxesScale.yAxisScale,
                                 value: oscilloscopeStateProvider.yOffsets[
                                         oscilloscopeStateProvider
                                             .selectedChannelOffset]!
                                     .clamp(
                                         -oscilloscopeStateProvider
-                                            .oscillscopeAxesScale.yAxisScale,
+                                            .oscilloscopeAxesScale.yAxisScale,
                                         oscilloscopeStateProvider
-                                            .oscillscopeAxesScale.yAxisScale),
+                                            .oscilloscopeAxesScale.yAxisScale),
                                 onChanged: (double value) {
                                   setState(
                                     () {
@@ -293,12 +293,43 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               ),
                             ),
                           ),
-                          Text(
-                            '${oscilloscopeStateProvider.yOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} V',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              fontStyle: FontStyle.normal,
+                          SizedBox(
+                            width: 50,
+                            child: TextField(
+                              controller: TextEditingController(
+                                text:
+                                    '${oscilloscopeStateProvider.yOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} V',
+                              ),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                fontStyle: FontStyle.normal,
+                              ),
+                              onSubmitted: (value) {
+                                String triggerValue =
+                                    value.replaceAll("V", "").trim();
+                                double parsedValue =
+                                    double.tryParse(triggerValue) ?? 0.0;
+                                if (parsedValue >
+                                    oscilloscopeStateProvider
+                                        .oscilloscopeAxesScale.yAxisScaleMax) {
+                                  parsedValue = oscilloscopeStateProvider
+                                      .oscilloscopeAxesScale.yAxisScaleMax;
+                                } else if (parsedValue <
+                                    oscilloscopeStateProvider
+                                        .oscilloscopeAxesScale.yAxisScaleMin) {
+                                  parsedValue = oscilloscopeStateProvider
+                                      .oscilloscopeAxesScale.yAxisScaleMin;
+                                }
+                                setState(() {
+                                  oscilloscopeStateProvider.yOffsets[
+                                      oscilloscopeStateProvider
+                                          .selectedChannelOffset] = parsedValue;
+                                });
+                              },
                             ),
                           ),
                         ],
@@ -322,7 +353,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                 min: 0,
                                 max: oscilloscopeStateProvider.timebase / 1000,
                                 value: oscilloscopeStateProvider
-                                            .oscillscopeAxesScale.xAxisScale ==
+                                            .oscilloscopeAxesScale.xAxisScale ==
                                         875
                                     ? (oscilloscopeStateProvider.xOffsets[
                                                 oscilloscopeStateProvider
@@ -343,7 +374,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                   setState(
                                     () {
                                       if (oscilloscopeStateProvider
-                                              .oscillscopeAxesScale
+                                              .oscilloscopeAxesScale
                                               .xAxisScale ==
                                           875) {
                                         oscilloscopeStateProvider.xOffsets[
@@ -361,16 +392,53 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               ),
                             ),
                           ),
-                          Text(
-                            oscilloscopeStateProvider
-                                        .oscillscopeAxesScale.xAxisScale ==
-                                    875
-                                ? '${(oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]! / 1000).toStringAsFixed(2)} ms'
-                                : '${oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} ms',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              fontStyle: FontStyle.normal,
+                          SizedBox(
+                            width: 60,
+                            child: TextField(
+                              controller: TextEditingController(
+                                text: oscilloscopeStateProvider
+                                            .oscilloscopeAxesScale.xAxisScale ==
+                                        875
+                                    ? '${(oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]! / 1000).toStringAsFixed(2)} ms'
+                                    : '${oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} ms',
+                              ),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                fontStyle: FontStyle.normal,
+                              ),
+                              onSubmitted: (value) {
+                                String triggerValue = value
+                                    .replaceAll(RegExp(r'[ms]'), "")
+                                    .trim();
+                                double parsedValue =
+                                    double.tryParse(triggerValue) ?? 0.0;
+                                if (parsedValue >
+                                    (oscilloscopeStateProvider
+                                            .oscilloscopeAxesScale.xAxisScale /
+                                        1000)) {
+                                  parsedValue = oscilloscopeStateProvider
+                                          .oscilloscopeAxesScale.xAxisScale /
+                                      1000;
+                                } else if (parsedValue < 0.0) {
+                                  parsedValue = 0.0;
+                                }
+                                setState(() {
+                                  if (oscilloscopeStateProvider
+                                          .oscilloscopeAxesScale.xAxisScale ==
+                                      875) {
+                                    oscilloscopeStateProvider.xOffsets[
+                                            oscilloscopeStateProvider
+                                                .selectedChannelOffset] =
+                                        parsedValue * 1000;
+                                  } else {
+                                    oscilloscopeStateProvider.xOffsets[
+                                            oscilloscopeStateProvider
+                                                .selectedChannelOffset] =
+                                        parsedValue;
+                                  }
+                                });
+                              },
                             ),
                           ),
                         ],
