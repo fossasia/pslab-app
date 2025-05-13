@@ -24,7 +24,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         systemOverlayStyle:
             const SystemUiOverlayStyle(statusBarColor: Color(0xFFD32F2F)),

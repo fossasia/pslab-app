@@ -86,7 +86,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         ),
                         child: Selector<OscilloscopeStateProvider, double>(
                           selector: (context, provider) =>
-                              provider.oscillscopeAxesScale.yAxisScale,
+                              provider.oscilloscopeAxesScale.yAxisScale,
                           builder: (context, yAxisScale, _) {
                             return Slider(
                               activeColor: const Color(0xFFCE525F),
@@ -106,12 +106,41 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         ),
                       ),
                     ),
-                    Text(
-                      '${oscilloscopeStateProvider.trigger.toStringAsFixed(1)} V',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                        fontStyle: FontStyle.normal,
+                    SizedBox(
+                      width: 50,
+                      child: TextField(
+                        controller: TextEditingController(
+                          text:
+                              "${oscilloscopeStateProvider.trigger.toStringAsFixed(1)} V",
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.normal,
+                        ),
+                        onSubmitted: (value) {
+                          String triggerValue =
+                              value.replaceAll("V", "").trim();
+                          double parsedValue =
+                              double.tryParse(triggerValue) ?? 0.0;
+                          if (parsedValue >
+                              oscilloscopeStateProvider
+                                  .oscilloscopeAxesScale.yAxisScaleMax) {
+                            parsedValue = oscilloscopeStateProvider
+                                .oscilloscopeAxesScale.yAxisScaleMax;
+                          } else if (parsedValue <
+                              oscilloscopeStateProvider
+                                  .oscilloscopeAxesScale.yAxisScaleMin) {
+                            parsedValue = oscilloscopeStateProvider
+                                .oscilloscopeAxesScale.yAxisScaleMin;
+                          }
+                          setState(() {
+                            oscilloscopeStateProvider.trigger = parsedValue;
+                          });
+                        },
                       ),
                     ),
                     Padding(

@@ -62,7 +62,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   topTitles: AxisTitles(
                     axisNameWidget: Text(
                       oscilloscopeStateProvider
-                                  .oscillscopeAxesScale.xAxisScale ==
+                                  .oscilloscopeAxesScale.xAxisScale ==
                               875
                           ? 'Time (\u00b5s)'
                           : 'Time (ms)',
@@ -74,7 +74,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                     ),
                     sideTitles: SideTitles(
                       maxIncluded: false,
-                      interval: oscilloscopeStateProvider.oscillscopeAxesScale
+                      interval: oscilloscopeStateProvider.oscilloscopeAxesScale
                           .getTimebaseInterval(),
                       reservedSize: 20,
                       showTitles: true,
@@ -93,7 +93,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                       ),
                     ),
                     sideTitles: SideTitles(
-                      interval: provider.oscillscopeAxesScale.yAxisScaleMax / 4,
+                      interval:
+                          provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
                       reservedSize: 30,
                       showTitles: true,
                       getTitlesWidget: sideTitleWidgets,
@@ -109,7 +110,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                       ),
                     ),
                     sideTitles: SideTitles(
-                      interval: provider.oscillscopeAxesScale.yAxisScaleMax / 4,
+                      interval:
+                          provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
                       reservedSize: 30,
                       showTitles: true,
                       getTitlesWidget: sideTitleWidgets,
@@ -121,9 +123,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   drawHorizontalLine: true,
                   drawVerticalLine: true,
                   horizontalInterval:
-                      provider.oscillscopeAxesScale.yAxisScaleMax / 4,
+                      provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
                   verticalInterval: oscilloscopeStateProvider
-                      .oscillscopeAxesScale
+                      .oscilloscopeAxesScale
                       .getTimebaseInterval(),
                 ),
                 borderData: FlBorderData(
@@ -143,14 +145,14 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                     ),
                   ),
                 ),
-                maxY: provider.oscillscopeAxesScale.yAxisScaleMax,
-                minY: provider.oscillscopeAxesScale.yAxisScaleMin,
+                maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
+                minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
                 maxX: oscilloscopeStateProvider
-                            .oscillscopeAxesScale.xAxisScale ==
+                            .oscilloscopeAxesScale.xAxisScale ==
                         875
-                    ? oscilloscopeStateProvider.oscillscopeAxesScale.xAxisScale
+                    ? oscilloscopeStateProvider.oscilloscopeAxesScale.xAxisScale
                     : oscilloscopeStateProvider
-                            .oscillscopeAxesScale.xAxisScale /
+                            .oscilloscopeAxesScale.xAxisScale /
                         1000,
                 minX: 0,
                 clipData: const FlClipData.all(),
