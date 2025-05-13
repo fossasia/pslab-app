@@ -322,14 +322,12 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                   prevY < trigger &&
                   currY >= trigger &&
                   increasing) {
-                logger.d('prevY: $prevY, currY: $currY');
                 isTriggered = true;
               } else if (triggerMode == MODE.falling.toString() &&
                   prevY > trigger &&
                   currY <= trigger &&
                   !increasing) {
                 isTriggered = true;
-                logger.d('prevY: $prevY, currY: $currY');
               } else if (triggerMode == MODE.dual.toString() &&
                       (prevY < trigger && currY >= trigger && increasing) ||
                   (prevY > trigger && currY <= trigger && !increasing)) {
