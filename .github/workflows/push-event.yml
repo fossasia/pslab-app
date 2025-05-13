@@ -141,6 +141,11 @@ jobs:
     needs: common
     runs-on: macos-latest
     steps:
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest
+          
       - uses: actions/checkout@v4
 
       - name: Prepare Build Keys
