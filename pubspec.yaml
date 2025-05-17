@@ -51,6 +51,7 @@ dependencies:
   data: ^0.13.0
   permission_handler: ^11.3.1
   logger: ^2.5.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

@@ -85,3 +85,18 @@ List<String> channelEntries = [
   'CH3',
   'MIC',
 ];
+
+String connectDevice = 'Connect Device';
+String deviceConnected = 'Device Connected Successfully';
+String noDeviceFound = 'No USB Device Found';
+List<String> stepsToConnect = [
+  'Steps to connect the PSLab Device',
+  '1. Connect a micro USB(Mini B) to PSLab',
+  '2. Connect the other end of the micro USB cable to a OTG',
+  '3. Connect the OTG to the phone'
+];
+String bluetoothWifiConnection = 'Connect using Bluetooth or Wi-Fi';
+String bluetooth = 'BLUETOOTH';
+String wifi = 'WIFI';
+String whatisPslab = 'What is PSLab Device?';
+String pslabUrl = 'https://pslab.io';
