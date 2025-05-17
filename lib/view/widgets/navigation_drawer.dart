@@ -123,7 +123,17 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
               onTap: () {
-                /**/
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name == '/connectDevice') {
+                  Navigator.popUntil(
+                      context, ModalRoute.withName('/connectDevice'));
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/connectDevice',
+                    (route) => route.isFirst,
+                  );
+                }
               },
             ),
             ListTile(
