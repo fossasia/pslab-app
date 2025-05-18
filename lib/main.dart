@@ -6,6 +6,7 @@ import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
+import 'package:pslab/view/about_us_screen.dart';
 
 import 'constants.dart';
 
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/oscilloscope': (context) => const OscilloscopeScreen(),
         '/connectDevice': (context) => const ConnectDeviceScreen(),
         '/faq': (context) => const FAQScreen(),
+        '/aboutUs': (context) => const AboutUsScreen(),
       },
     );
   }

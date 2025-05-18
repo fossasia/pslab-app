@@ -100,3 +100,27 @@ String bluetooth = 'BLUETOOTH';
 String wifi = 'WIFI';
 String whatisPslab = 'What is PSLab Device?';
 String pslabUrl = 'https://pslab.io';
+
+String aboutUs = 'About Us';
+String pslabDescription =
+    'The goal of PSLab is to create an Open Source hardware device (open on all layers) that can be used for experiments by teachers, students and citizen scientists. Our tiny pocket lab provides an array of sensors for doing science and engineering experiments. It provides functions of numerous measurement devices including an oscilloscope, a waveform generator, a frequency generator, a frequency counter, a programmable voltage, current source and as a data logger.';
+String feedbackNBugs = 'Feedback & Bugs';
+String feedbackForm = 'https://goo.gl/forms/sHlmRAPFmzcGQ27u2';
+String website = 'https://pslab.io/';
+String github = 'https://github.com/fossasia/';
+String facebook = 'https://www.facebook.com/pslabio/';
+String x = 'https://x.com/pslabio/';
+String youtube = 'https://www.youtube.com/channel/UCQprMsG-raCIMlBudm20iLQ/';
+String mail = 'pslab-fossasia@googlegroups.com';
+String developers =
+    'https://github.com/fossasia/pslab-android/graphs/contributors';
+List<String> connectWithUs = [
+  'Connect with us',
+  'Contact us',
+  'Visit our website',
+  'Fork us on GitHub',
+  'Like us on Facebook',
+  'Follow us on X',
+  'Watch us on Youtube',
+  'Developers'
+];
