@@ -9,16 +9,12 @@ import java.net.Socket;
 
 public class SocketClient {
 
-    public static final String TAG = "SocketClient";
-    private static SocketClient socketClient = null;
+    private static final String TAG = SocketClient.class.getSimpleName();
+    private static SocketClient socketClient;
     private Socket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
     private boolean isConnected = false;
-
-    public static final int DEFAULT_READ_BUFFER_SIZE = 32 * 1024;
-
-    private byte[] buffer = new byte[DEFAULT_READ_BUFFER_SIZE];
 
     private byte[] receivedData;
 
@@ -26,6 +22,7 @@ public class SocketClient {
     }
 
     public void openConnection(String ip, int port) throws IOException {
+        Log.v(TAG, "Connecting to " + ip + ":" + port);
         socket = new Socket(ip, port);
         outputStream = socket.getOutputStream();
         inputStream = socket.getInputStream();
@@ -58,21 +55,23 @@ public class SocketClient {
     public synchronized int read(int bytesToBeRead) throws IOException {
         int numBytesRead = 0;
         int readNow;
-        Log.v(TAG, "To read : " + bytesToBeRead);
+        final long start = System.currentTimeMillis();
+        Log.v(TAG, "Bytes to read : " + bytesToBeRead);
         int bytesToBeReadTemp = bytesToBeRead;
-        receivedData = new byte[DEFAULT_READ_BUFFER_SIZE];
+        receivedData = new byte[bytesToBeRead];
         while (numBytesRead < bytesToBeRead) {
-            readNow = inputStream.read(buffer, 0, bytesToBeReadTemp);
+            final long start2 = System.currentTimeMillis();
+            readNow = inputStream.read(receivedData, numBytesRead, bytesToBeReadTemp);
+            Log.v(TAG, "Bytes read: " + readNow + " in " + (System.currentTimeMillis() - start2) + " ms");
             if (readNow <= 0) {
                 Log.e(TAG, "Read Error: " + bytesToBeReadTemp);
                 return numBytesRead;
             } else {
-                System.arraycopy(buffer, 0, receivedData, numBytesRead, readNow);
                 numBytesRead += readNow;
                 bytesToBeReadTemp -= readNow;
             }
         }
-        Log.v("Bytes Read", "" + numBytesRead);
+        Log.v(TAG, "Total bytes read: " + numBytesRead + " in " + (System.currentTimeMillis() - start) + " ms");
         return numBytesRead;
     }
 
@@ -89,7 +88,7 @@ public class SocketClient {
                 isConnected = false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error closing connection", e);
         }
     }
 }

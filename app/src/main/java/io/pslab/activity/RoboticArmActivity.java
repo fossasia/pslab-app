@@ -486,7 +486,6 @@ public class RoboticArmActivity extends GuideActivity {
     }
     private void processDegreeInput(EditText degreeText, SeekArc seekArc) {
         String degreeStr = degreeText.getText().toString().trim();
-
         if (degreeStr.isEmpty()) {
             degree =  Math.round(seekArc.getProgress() * 3.6f);
         } else {

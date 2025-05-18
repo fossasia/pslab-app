@@ -6,10 +6,10 @@
 
     <string name="Toast_double_tap">Нажмите еще раз, чтобы закрыть PSLab</string>
     <string name="Toast_magnetic_not_present">"Датчик, необходимый для этого инструмента, отсутствует в вашем устройстве"</string>
-
     <string name="nav_device">Подключение устройства</string>
     <string name="nav_instruments">Инструменты</string>
     <string name="nav_settings">Settings</string>
+    <string name="nav_documentation">Документация</string>
     <string name="nav_about_us">О нас</string>
     <string name="nav_buy_pslab">Купить PSLab</string>
     <string name="nav_report">Обратная связь</string>
@@ -260,11 +260,6 @@
 
     <string name="time_unit_la">Время (мс)</string>
     <string name="view">Смотреть</string>
-
-    <!-- Experiment Headers -->
-    <!-- Experiments -->
-
-
     <string name="hmc5883l">hmc5883l</string>
     <string name="mpu6050">mpu6050</string>
     <string name="sht21">sht21</string>
@@ -273,7 +268,9 @@
     <string name="mlx90614">mlx90614</string>
     <string name="bmp180">bmp180</string>
     <string name="mpu925x">mpu925x</string>
-
+    <string name="vl53l0x">VL53L0X</string>
+    <string name="ccs811">CCS811</string>
+    <string name="apds9960">APDS9960</string>
     <string name = "raw_data">Необработанные данные</string>
     <string name = "configure">Настройка</string>
     <string name = "plot">Участок</string>
@@ -288,6 +285,18 @@
     <string name="gx">Gx</string>
     <string name="gy">Gy</string>
     <string name="gz">Gz</string>
+    <string name="red">Красный</string>
+    <string name="green">Зелёный</string>
+    <string name="blue">Синий</string>
+    <string name="clear">Очистить</string>
+    <string name="gesture">Жест</string>
+    <string name="eCO2">eCO2</string>
+    <string name="eTVOC">TVOC</string>
+    <string name="plot_lux">График - Освещённость (Lux)</string>
+    <string name="plot_proximity">График - Близость</string>
+    <string name="proximity">Близость</string>
+    <string name="lux_unit">lx</string>
+    <string name="light_lux">Люкс</string>
     <string name="temp">Температуры</string>
     <string name="luminosity">Светимость</string>
     <string name="humidity">Влажность</string>
@@ -309,7 +318,11 @@
     <string name="set_rate">Установить скорость</string>
     <string name="plot_accelerometer">Учатное - Акселерометр</string>
     <string name="plot_gyroscope">Учатное - Гироскоп</string>
+    <string name="plot_eCO2">Plot - eCO2</string>
+    <string name="plot_eTVOC">Plot - TVOC</string>
     <string name="rad">(рад)</string>
+    <string name="ppm">(ppm)</string>
+    <string name="ppb">(ppb)</string>
     <string name="angle">Угол</string>
     <string name="time">Время (сек)</string>
     <string name="infinite_symbol">∞</string>
@@ -319,7 +332,10 @@
     <string name="alt">Alt.</string>
     <string name="meter">(м)</string>
     <string name="pascal">(Pa)</string>
-
+    <string name="up">Вверх</string>
+    <string name="down">Вниз</string>
+    <string name="left">Влево</string>
+    <string name="right">Вправо</string>
     <string-array name="tsl2561_gain_spinner">
         <item>Нет усиления</item>
         <item>1x</item>

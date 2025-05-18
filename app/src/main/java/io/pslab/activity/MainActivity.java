@@ -335,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_third_party_libs:
                         new LibsBuilder()
-                                .withActivityTitle(getString(R.string.third_party_libs))
+                                .withActivityTitle(getString(R.string.software_licenses))
                                 .start(MainActivity.this);
                         break;
                     default:

@@ -258,14 +258,8 @@
     <string name="device_connected_successfully">Device Connected Successfully</string>
     <string name="device_not_found">No USB Device Found</string>
     <string name="sensor_not_connected_tls">Sensor not connected</string>
-
     <string name="time_unit_la">Time (ms)</string>
     <string name="view">VIEW</string>
-
-    <!-- Experiment Headers -->
-    <!-- Experiments -->
-
-
     <string name="hmc5883l">hmc5883l</string>
     <string name="mpu6050">mpu6050</string>
     <string name="sht21">sht21</string>
@@ -277,7 +271,6 @@
     <string name="vl53l0x">VL53L0X</string>
     <string name="ccs811">CCS811</string>
     <string name="apds9960">APDS9960</string>
-
     <string name="raw_data">Raw Data</string>
     <string name="configure">Configure</string>
     <string name="plot">Plot</string>
@@ -302,7 +295,7 @@
     <string name="plot_lux">Plot - Light Lux</string>
     <string name="plot_proximity">Plot - Proximity</string>
     <string name="proximity">Prox</string>
-    <string name="lux_unit">(lx)</string>
+    <string name="lux_unit">lx</string>
     <string name="light_lux">Lux</string>
     <string name="temp">Temp</string>
     <string name="luminosity">Luminosity</string>
@@ -339,12 +332,10 @@
     <string name="alt">Alt.</string>
     <string name="meter">(m)</string>
     <string name="pascal">(Pa)</string>
-
     <string name="up">UP</string>
     <string name="down">DOWN</string>
     <string name="left">LEFT</string>
     <string name="right">RIGHT</string>
-
     <string-array name="apds9960_spinner">
         <item>Color, Proximity and Ambient Light</item>
         <item>Gesture</item>
@@ -1081,13 +1072,15 @@
 
     <string name="developers">Developers</string>
     <string name="github_developers_link">https://github.com/fossasia/pslab-android/graphs/contributors</string>
+    <string name="follow_us_on_x">Follow us on X</string>
+    <string name="x_profile_link">https://x.com/pslabio</string>
     <string name="limit_dangerous">\"Dangerous\"</string>
     <string name="limit_average">Average</string>
     <string name="unit_milliseconds">\u0020ms</string>
     <string name="unit_volts">\u0020V</string>
     <string name="no_playback_data">No data to display</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="third_party_libs">Open Source Licenses</string>
+    <string name="software_licenses">Software Licenses</string>
     <string name="auto_scale_error">No input found</string>
     <string name="auto_scale">Auto</string>
     <string name="control_stop">Stop</string>
@@ -1097,7 +1090,7 @@
 
     <string name="aboutLibraries_description_showIcon">true</string>
     <string name="aboutLibraries_description_showVersion">true</string>
-    <string name="aboutLibraries_description_text">Below is a list of the third-party open source software libraries used in the PSLab app.</string>
+    <string name="aboutLibraries_description_text">The PSLab app is licensed under the Apache License 2.0.&lt;br /&gt;&lt;br /&gt;Below is a list of the third-party open source software libraries used in the PSLab app.</string>
 
     <string name="legacy_title">Legacy Firmware Detected</string>
     <string name="legacy_message">We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.</string>

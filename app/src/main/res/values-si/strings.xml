@@ -6,10 +6,10 @@
 
     <string name="Toast_double_tap">PSLab වසා දැමීමට නැවත ඔබන්න</string>
     <string name="Toast_magnetic_not_present">"මෙම උපකරණය සඳහා අවශ්‍ය සංවේදකය ඔබගේ උපාංගයේ නොමැත"</string>
-
     <string name="nav_device">උපාංගය සම්බන්ධ කරන්න</string>
     <string name="nav_instruments">උපකරණ</string>
     <string name="nav_settings">සැකසුම්</string>
+    <string name="nav_documentation">ලේඛන ගබඩාව</string>
     <string name="nav_about_us">අප ගැන</string>
     <string name="nav_buy_pslab">PSLab මිලදී ගන්න</string>
     <string name="nav_report">දෝෂ හා ප්‍රතිචාර</string>
@@ -260,11 +260,6 @@
 
     <string name="time_unit_la">කාලය (ms)</string>
     <string name="view">දර්ශණය කරන්න</string>
-
-    <!-- Experiment Headers -->
-    <!-- Experiments -->
-
-
     <string name="hmc5883l">hmc5883l</string>
     <string name="mpu6050">mpu6050</string>
     <string name="sht21">sht21</string>
@@ -273,7 +268,9 @@
     <string name="mlx90614">mlx90614</string>
     <string name="bmp180">bmp180</string>
     <string name="mpu925x">mpu925x</string>
-
+    <string name="vl53l0x">VL53L0X</string>
+    <string name="ccs811">CCS811</string>
+    <string name="apds9960">APDS9960</string>
     <string name="raw_data">අමු දත්ත</string>
     <string name="configure">Configure</string>
     <string name="plot">Plot</string>
@@ -288,6 +285,18 @@
     <string name="gx">Gx</string>
     <string name="gy">Gy</string>
     <string name="gz">Gz</string>
+    <string name="red">රතු</string>
+    <string name="green">කොළ</string>
+    <string name="blue">නීල</string>
+    <string name="clear">මකන්න</string>
+    <string name="gesture">ඉඟිය</string>
+    <string name="eCO2">eCO2</string>
+    <string name="eTVOC">TVOC</string>
+    <string name="plot_lux">ප්ලොට් - ආලෝක ලක්ෂ</string>
+    <string name="plot_proximity">ප්ලොට් - සමීපත්වය</string>
+    <string name="proximity">සමීපත්වය</string>
+    <string name="lux_unit">lx</string>
+    <string name="light_lux">ලක්ස්</string>
     <string name="temp">උෂ්ණත්වය</string>
     <string name="luminosity">ආලෝක තීව්‍රතාවය</string>
     <string name="humidity">ආර්ද්‍රතාවය</string>
@@ -309,7 +318,11 @@
     <string name="set_rate">ප්‍රමාණය</string>
     <string name="plot_accelerometer">ලකුණු කරන්න - ත්වරණමානය</string>
     <string name="plot_gyroscope">Plot - Gyroscope</string>
+    <string name="plot_eCO2">Plot - eCO2</string>
+    <string name="plot_eTVOC">Plot - TVOC</string>
     <string name="rad">(රේඩියන)</string>
+    <string name="ppm">(ppm)</string>
+    <string name="ppb">(ppb)</string>
     <string name="angle">කෝණය</string>
     <string name="time">කාලය (තත්පර)</string>
     <string name="infinite_symbol">∞</string>
@@ -319,7 +332,10 @@
     <string name="alt">Alt.</string>
     <string name="meter">(මීටර)</string>
     <string name="pascal">(පැස්කල්)</string>
-
+    <string name="up">ඉහළ</string>
+    <string name="down">පහළ</string>
+    <string name="left">වම</string>
+    <string name="right">දකුණ</string>
     <string-array name="tsl2561_gain_spinner">
         <item>No gain</item>
         <item>1x</item>

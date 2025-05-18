@@ -18,7 +18,9 @@ android {
         targetSdk = 35
         versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 1
         versionName = System.getenv("VERSION_NAME") ?: "1.0.0"
-        resourceConfigurations += setOf("en", "ru", "ar", "si", "pl")
+        androidResources {
+            localeFilters.addAll(listOf("en", "ru", "ar", "si", "pl"))
+        }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,6 +60,11 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    aboutLibraries {
+        excludeFields = arrayOf("generated")
+        duplicationMode = com.mikepenz.aboutlibraries.plugin.DuplicateMode.MERGE
+        duplicationRule = com.mikepenz.aboutlibraries.plugin.DuplicateRule.SIMPLE
+    }
 }
 
 
@@ -78,11 +85,11 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.devlight:navigationtabstrip:1.0.4")
     implementation("com.afollestad.material-dialogs", "commons", "0.9.6.0")
-    implementation("com.github.mik3y:usb-serial-for-android:3.8.1")
+    implementation("com.github.mik3y:usb-serial-for-android:3.9.0")
     implementation("com.github.medyo:android-about-page:1.3")
     implementation("com.github.tiagohm.MarkdownView:library:0.19.0")
     implementation("com.github.mirrajabi:search-dialog:1.2.4")
-    implementation(files("../libs/croller-release.aar"))
+    implementation("cn.denghanxi:android-croller:1.1.2")
     implementation("com.github.BeppiMenozzi:Knob:1.9.0")
     implementation("com.github.warkiz:IndicatorSeekBar:2.1.1")
     implementation("com.github.Vatican-Cameos:CarouselPicker:1.2")
@@ -124,5 +131,5 @@ dependencies {
     implementation("com.github.realm:realm-android-adapters:v4.0.0")
 
     // OSS license plugin
-    implementation("com.mikepenz:aboutlibraries:11.6.3")
+    implementation("com.mikepenz:aboutlibraries:12.1.2")
 }

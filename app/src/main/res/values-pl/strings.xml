@@ -6,10 +6,10 @@
 
     <string name="Toast_double_tap">Naciśnij jeszcze raz by zamknąć PSLab</string>
     <string name="Toast_magnetic_not_present">"Czujnik jest wymagany do tego przyrządu nie jest obecny w twoim urządzeniu"</string>
-
     <string name="nav_device">Połącz urządzenie</string>
     <string name="nav_instruments">Narzędzia</string>
     <string name="nav_settings">Ustawienia</string>
+    <string name="nav_documentation">Dokumentacja</string>
     <string name="nav_about_us">O nas </string>
     <string name="nav_buy_pslab">Kup PSLab</string>
     <string name="nav_report">Opinie &amp; Błędy</string>
@@ -260,10 +260,6 @@
 
     <string name="time_unit_la">Czas (ms)</string>
     <string name="view">WIDOK</string>
-
-    <!-- Experiment Headers -->
-    <!-- Experiments -->
-
     <string name="hmc5883l">hmc5883l</string>
     <string name="mpu6050">mpu6050</string>
     <string name="sht21">sht21</string>
@@ -272,7 +268,9 @@
     <string name="mlx90614">mlx90614</string>
     <string name="bmp180">bmp180</string>
     <string name="mpu925x">mpu925x</string>
-
+    <string name="vl53l0x">VL53L0X</string>
+    <string name="ccs811">CCS811</string>
+    <string name="apds9960">APDS9960</string>
     <string name="raw_data">Nieprzetworzone dane</string>
     <string name="configure">Konfiguruj</string>
     <string name="plot">Wykres</string>
@@ -287,6 +285,18 @@
     <string name="gx">Gx</string>
     <string name="gy">Gy</string>
     <string name="gz">Gz</string>
+    <string name="red">Czerwony</string>
+    <string name="green">Zielony</string>
+    <string name="blue">Niebieski</string>
+    <string name="clear">Wyczyść</string>
+    <string name="gesture">Gest</string>
+    <string name="eCO2">eCO2</string>
+    <string name="eTVOC">TVOC</string>
+    <string name="plot_lux">Wykres - Natężenie światła</string>
+    <string name="plot_proximity">Wykres - Bliskość</string>
+    <string name="proximity">Bliskość</string>
+    <string name="lux_unit">lx</string>
+    <string name="light_lux">Luks</string>
     <string name="temp">Temp</string>
     <string name="luminosity">Luminancja</string>
     <string name="humidity">Wilgotność</string>
@@ -308,7 +318,11 @@
     <string name="set_rate">Ustaw tempo</string>
     <string name="plot_accelerometer">Wykres - Akcelerometr</string>
     <string name="plot_gyroscope">Wykres - Żyroskop</string>
+    <string name="plot_eCO2">Plot - eCO2</string>
+    <string name="plot_eTVOC">Plot - TVOC</string>
     <string name="rad">(rad)</string>
+    <string name="ppm">(ppm)</string>
+    <string name="ppb">(ppb)</string>
     <string name="angle">Kąt</string>
     <string name="time">Czas (sek)</string>
     <string name="infinite_symbol">∞</string>
@@ -318,7 +332,10 @@
     <string name="alt">Alt.</string>
     <string name="meter">(m)</string>
     <string name="pascal">(Pa)</string>
-
+    <string name="up">Góra</string>
+    <string name="down">Dół</string>
+    <string name="left">Lewo</string>
+    <string name="right">Prawo</string>
     <string-array name="tsl2561_gain_spinner">
         <item>No gain</item>
         <item>1x</item>

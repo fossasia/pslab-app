@@ -68,6 +68,6 @@
         <item
             android:id="@+id/nav_third_party_libs"
             android:icon="@drawable/baseline_attribution_24"
-            android:title="@string/third_party_libs" />
+            android:title="@string/software_licenses" />
     </group>
 </menu>

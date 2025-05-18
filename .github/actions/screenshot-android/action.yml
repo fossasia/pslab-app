@@ -82,6 +82,23 @@ runs:
         disable-animations: true
         script: |
           bundle exec fastlane screengrab || exit 1
+    
+    - name: Update Fastlane Metadata
+      if: ${{ github.event_name == 'push' }}
+      shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+        cd fastlane
+
+        # Force push to fastlane branch
+        git checkout --orphan temporary
+        git add --all .
+        git commit -am "[Auto] Update screenshots ($(date +%Y-%m-%d.%H:%M:%S))"
+        git branch -D fastlane-android
+        git branch -m fastlane-android
+        git push --force origin fastlane-android
           
     - name: Upload Screenshots
       uses: actions/upload-artifact@v4

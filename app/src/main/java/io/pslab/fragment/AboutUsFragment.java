@@ -53,7 +53,7 @@ public class AboutUsFragment extends Fragment {
                 .addWebsite("https://pslab.io/")
                 .addGitHub("fossasia?utf8=✓&q=pslab")
                 .addFacebook("pslabio")
-                .addTwitter("pslabio")
+                .addItem(addX())
                 .addYoutube("UCQprMsG-raCIMlBudm20iLQ")
                 .addItem(addDevelopers())
                 .create();
@@ -100,5 +100,18 @@ public class AboutUsFragment extends Fragment {
         });
         return developersElement;
     }
+
+    private Element addX() {
+        Element xElement = new Element();
+        xElement.setTitle(getString(R.string.follow_us_on_x));
+        xElement.setIconDrawable(R.drawable.x_logo);
+        xElement.setOnClickListener(v -> {
+            String url = getString(R.string.x_profile_link);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        });
+        return xElement;
+    }
+
 
 }
