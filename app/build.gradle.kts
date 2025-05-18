@@ -95,7 +95,7 @@ dependencies {
     implementation("com.github.Vatican-Cameos:CarouselPicker:1.2")
     implementation("com.github.anastr:speedviewlib:1.6.1")
     implementation("com.github.GoodieBag:ProtractorView:v1.2")
-    implementation("com.github.Triggertrap:SeekArc:v1.1")
+    implementation("com.github.rahul31124:CustomSeekArc:1.2")
 
     // Apache commons
     implementation("org.apache.commons:commons-math3:3.6.1")

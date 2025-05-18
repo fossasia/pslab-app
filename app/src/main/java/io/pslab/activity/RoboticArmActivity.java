@@ -2,6 +2,7 @@ package io.pslab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
@@ -133,6 +134,10 @@ public class RoboticArmActivity extends GuideActivity {
         seekArc2 = servo2Layout.findViewById(R.id.seek_arc);
         seekArc3 = servo3Layout.findViewById(R.id.seek_arc);
         seekArc4 = servo4Layout.findViewById(R.id.seek_arc);
+        seekArc1.setProgressColor(Color.RED);
+        seekArc2.setProgressColor(Color.RED);
+        seekArc3.setProgressColor(Color.RED);
+        seekArc4.setProgressColor(Color.RED);
         servo1TimeLine = findViewById(R.id.servo1_timeline);
         servo2TimeLine = findViewById(R.id.servo2_timeline);
         servo3TimeLine = findViewById(R.id.servo3_timeline);
@@ -224,93 +229,94 @@ public class RoboticArmActivity extends GuideActivity {
 
         seekArc1.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
-            public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+            public void onProgressChanged(SeekArc seekArc, float progress, boolean b) {
                 if (editEnter) {
                     degreeText1.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
-                    degreeText1.setText(String.valueOf((int) (i * 3.6)));
+                    degreeText1.setText(String.valueOf(Math.round(progress * 3.6f)));
                 }
                 degreeText1.setCursorVisible(false);
             }
 
             @Override
             public void onStartTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
 
             @Override
             public void onStopTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
         });
 
         seekArc2.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
-            public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+            public void onProgressChanged(SeekArc seekArc, float progress, boolean b) {
                 if (editEnter) {
                     degreeText2.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
-                    degreeText2.setText(String.valueOf((int) (i * 3.6)));
+                    degreeText2.setText(String.valueOf(Math.round(progress * 3.6f)));
                 }
                 degreeText2.setCursorVisible(false);
             }
 
             @Override
             public void onStartTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
 
             @Override
             public void onStopTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
         });
 
         seekArc3.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
+
             @Override
-            public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+            public void onProgressChanged(SeekArc seekArc, float progress, boolean b) {
                 if (editEnter) {
                     degreeText3.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
-                    degreeText3.setText(String.valueOf((int) (i * 3.6)));
+                    degreeText3.setText(String.valueOf(Math.round(progress * 3.6f)));
                 }
                 degreeText3.setCursorVisible(false);
             }
 
             @Override
             public void onStartTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
 
             @Override
             public void onStopTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
         });
 
         seekArc4.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
-            public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+            public void onProgressChanged(SeekArc seekArc, float progress, boolean b) {
                 if (editEnter) {
                     degreeText4.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
-                    degreeText4.setText(String.valueOf((int) (i * 3.6)));
+                    degreeText4.setText(String.valueOf(Math.round(progress * 3.6f)));
                 }
                 degreeText4.setCursorVisible(false);
             }
 
             @Override
             public void onStartTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
 
             @Override
             public void onStopTrackingTouch(SeekArc seekArc) {
-
+                // TODO: Implement this method if needed
             }
         });
 
@@ -479,11 +485,9 @@ public class RoboticArmActivity extends GuideActivity {
         }
     }
     private void processDegreeInput(EditText degreeText, SeekArc seekArc) {
-        int previousDegree = degree;
         String degreeStr = degreeText.getText().toString().trim();
-
         if (degreeStr.isEmpty()) {
-            degree = (degree == 0) ? (int) (seekArc.getProgress() * 3.6) : previousDegree;
+            degree =  Math.round(seekArc.getProgress() * 3.6f);
         } else {
             try {
                 degree = Integer.parseInt(degreeStr);
@@ -500,7 +504,7 @@ public class RoboticArmActivity extends GuideActivity {
             seekArc.setProgress(0);
             toastInvalidValueMessage();
         } else {
-            seekArc.setProgress((int) (degree / 3.6));
+            seekArc.setProgress((float) (degree/3.6));
             editEnter = true;
         }
     }
