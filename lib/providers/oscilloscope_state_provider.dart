@@ -329,8 +329,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                   !increasing) {
                 isTriggered = true;
               } else if (triggerMode == MODE.dual.toString() &&
-                      (prevY < trigger && currY >= trigger && increasing) ||
-                  (prevY > trigger && currY <= trigger && !increasing)) {
+                  ((prevY < trigger && currY >= trigger && increasing) ||
+                      (prevY > trigger && currY <= trigger && !increasing))) {
                 isTriggered = true;
               }
               prevY = currY;
@@ -450,8 +450,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                   !increasing) {
                 isTriggered = true;
               } else if (triggerMode == MODE.dual.toString() &&
-                      (prevY < trigger && currY >= trigger && increasing) ||
-                  (prevY > trigger && currY <= trigger && !increasing)) {
+                  ((prevY < trigger && currY >= trigger && increasing) ||
+                      (prevY > trigger && currY <= trigger && !increasing))) {
                 isTriggered = true;
               }
               if (isTriggered) {

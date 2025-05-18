@@ -64,16 +64,18 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         margin: const EdgeInsets.only(
                             left: 40, right: 40, bottom: 20),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              stepsToConnect[0],
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Center(
+                              child: Text(
+                                stepsToConnect[0],
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 20),
