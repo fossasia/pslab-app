@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:pslab/colors.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:pslab/constants.dart';
@@ -34,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(txtFormat),
               value: true,
               groupValue: isTxtFormatSelected,
-              activeColor: const Color(0xFFD32F2F),
+              activeColor: primaryRed,
               onChanged: (bool? value) {
                 setState(
                   () {
@@ -51,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text(csvFormat),
               value: true,
               groupValue: isCsvFormatSelected,
-              activeColor: const Color(0xFFD32F2F),
+              activeColor: primaryRed,
               onChanged: (bool? value) {
                 setState(
                   () {
@@ -103,13 +104,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   GetIt.instance.get<BoardStateProvider>().autoStart = value!;
                 });
               },
-              activeColor: const Color(0xFFD32F2F),
+              activeColor: primaryRed,
             ),
             const SizedBox(height: 10),
             ListTile(
               title: Text(export),
-              subtitle: Text(
-                  'Current format is ${GetIt.instance.get<BoardStateProvider>().exportFormat}'),
+              subtitle: Text(currentFormat +
+                  GetIt.instance.get<BoardStateProvider>().exportFormat),
               onTap: () {
                 _showExportFormatDialog();
               },

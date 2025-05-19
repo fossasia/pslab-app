@@ -108,3 +108,4 @@ String export = 'Export Data Format';
 String txtFormat = 'TXT Format';
 String csvFormat = 'CSV Format';
 String cancel = 'CANCEL';
+String currentFormat = 'Current format is ';
