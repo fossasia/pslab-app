@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/constants.dart';
-import 'package:pslab/view/widgets/build_contact_list.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,6 +10,33 @@ class AboutUsScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _AboutUsScreenState();
+}
+
+Widget buildContactList(List<Map<String, dynamic>> items) {
+  return ListView.separated(
+    physics: const NeverScrollableScrollPhysics(),
+    shrinkWrap: true,
+    itemCount: items.length,
+    separatorBuilder: (_, __) => const Divider(thickness: 0.5, height: 1),
+    itemBuilder: (context, index) {
+      final item = items[index];
+      return ListTile(
+        leading: item['icon'] as Icon,
+        title: Text(
+          item['title'],
+          style: const TextStyle(fontSize: 15),
+        ),
+        onTap: () async {
+          final uri = Uri.parse(item['url']);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          } else {
+            debugPrint('Could not launch ${item['url']}');
+          }
+        },
+      );
+    },
+  );
 }
 
 class _AboutUsScreenState extends State<AboutUsScreen> {
