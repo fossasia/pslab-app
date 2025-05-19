@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/constants.dart';
+import 'package:pslab/view/widgets/build_contact_list.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,12 +8,46 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutUsScreen extends StatefulWidget {
   const AboutUsScreen({super.key});
+
   @override
-  State<StatefulWidget> createState() => _HomeScreenState();
+  State<StatefulWidget> createState() => _AboutUsScreenState();
 }
 
-class _HomeScreenState extends State<AboutUsScreen> {
-  String get iconAboutUs => 'assets/icons/icon.png';
+class _AboutUsScreenState extends State<AboutUsScreen> {
+  String get iconAboutUs => 'assets/images/logo.png';
+  final List<Map<String, dynamic>> contactItems = [
+    {
+      'icon': const Icon(Icons.mail),
+      'title': connectWithUs[1],
+      'url': 'mailto:$mail'
+    },
+    {'icon': const Icon(Icons.link), 'title': connectWithUs[2], 'url': website},
+    {
+      'icon': const Icon(FontAwesomeIcons.github, size: 20),
+      'title': connectWithUs[3],
+      'url': github
+    },
+    {
+      'icon': const Icon(Icons.facebook_sharp),
+      'title': connectWithUs[4],
+      'url': facebook
+    },
+    {
+      'icon': const Icon(FontAwesomeIcons.xTwitter, size: 20),
+      'title': connectWithUs[5],
+      'url': x
+    },
+    {
+      'icon': const Icon(FontAwesomeIcons.youtube, size: 20),
+      'title': connectWithUs[6],
+      'url': youtube
+    },
+    {
+      'icon': const Icon(Icons.person),
+      'title': connectWithUs[7],
+      'url': developers
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +61,13 @@ class _HomeScreenState extends State<AboutUsScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(
-              height: 20,
+              height: 30,
             ),
             Center(
               child: Image.asset(
                 iconAboutUs,
-                width: 120,
-                height: 120,
+                width: 250,
+                height: 250,
               ),
             ),
             Center(
@@ -42,7 +77,7 @@ class _HomeScreenState extends State<AboutUsScreen> {
                   pslabDescription,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                   ),
                 ),
               ),
@@ -55,7 +90,7 @@ class _HomeScreenState extends State<AboutUsScreen> {
                   leading: const Icon(Icons.link),
                   title: Text(feedbackNBugs,
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                       )),
                   onTap: () async {
                     await launchUrl(Uri.parse(feedbackForm));
@@ -75,14 +110,14 @@ class _HomeScreenState extends State<AboutUsScreen> {
                           return Text(
                             snapshot.data!.version,
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           );
                         } else {
                           return const Text(
                             'Loading...',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           );
                         }
@@ -101,115 +136,7 @@ class _HomeScreenState extends State<AboutUsScreen> {
                 ),
               ),
             ),
-            ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.mail),
-                  title: Text(connectWithUs[1],
-                      style: const TextStyle(
-                        fontSize: 14,
-                      )),
-                  onTap: () async {
-                    await launchUrl(Uri.parse('mailto:$mail'));
-                  },
-                ),
-                const Divider(
-                  thickness: 0.5,
-                  height: 1,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.link),
-                  title: Text(connectWithUs[2],
-                      style: const TextStyle(
-                        fontSize: 14,
-                      )),
-                  onTap: () async {
-                    await launchUrl(Uri.parse(website));
-                  },
-                ),
-                const Divider(
-                  thickness: 0.5,
-                  height: 1,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    FontAwesomeIcons.github,
-                    size: 20,
-                  ),
-                  title: Text(connectWithUs[3],
-                      style: const TextStyle(
-                        fontSize: 14,
-                      )),
-                  onTap: () async {
-                    await launchUrl(Uri.parse(github));
-                  },
-                ),
-                const Divider(
-                  thickness: 0.5,
-                  height: 1,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.facebook_sharp),
-                  title: Text(connectWithUs[4],
-                      style: const TextStyle(
-                        fontSize: 14,
-                      )),
-                  onTap: () async {
-                    await launchUrl(Uri.parse(facebook));
-                  },
-                ),
-                const Divider(
-                  thickness: 0.5,
-                  height: 1,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    FontAwesomeIcons.xTwitter,
-                    size: 20,
-                  ),
-                  title: Text(connectWithUs[5],
-                      style: const TextStyle(
-                        fontSize: 14,
-                      )),
-                  onTap: () async {
-                    await launchUrl(Uri.parse(x));
-                  },
-                ),
-                const Divider(
-                  thickness: 0.5,
-                  height: 1,
-                ),
-                ListTile(
-                  leading: const Icon(
-                    FontAwesomeIcons.youtube,
-                    size: 20,
-                  ),
-                  title: Text(connectWithUs[6],
-                      style: const TextStyle(
-                        fontSize: 14,
-                      )),
-                  onTap: () async {
-                    await launchUrl(Uri.parse(youtube));
-                  },
-                ),
-                const Divider(
-                  thickness: 0.5,
-                  height: 1,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  title: Text(connectWithUs[7],
-                      style: const TextStyle(
-                        fontSize: 14,
-                      )),
-                  onTap: () async {
-                    await launchUrl(Uri.parse(developers));
-                  },
-                )
-              ],
-            )
+            buildContactList(contactItems)
           ],
         ),
       ))),
