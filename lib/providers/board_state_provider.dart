@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:usb_serial/usb_serial.dart';
@@ -12,6 +13,8 @@ class BoardStateProvider extends ChangeNotifier {
   bool hasPermission = false;
   late ScienceLabCommon scienceLabCommon;
   String pslabVersionID = 'Not Connected';
+  String exportFormat = txtFormat;
+  bool autoStart = true;
 
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
@@ -21,21 +24,23 @@ class BoardStateProvider extends ChangeNotifier {
     await scienceLabCommon.initialize();
     pslabIsConnected = await scienceLabCommon.openDevice();
     setPSLabVersionIDs();
-    UsbSerial.usbEventStream?.listen(
-      (UsbEvent usbEvent) async {
-        if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
-          if (await attemptToConnectPSLab()) {
-            pslabIsConnected = await scienceLabCommon.openDevice();
-            setPSLabVersionIDs();
+    if (autoStart) {
+      UsbSerial.usbEventStream?.listen(
+        (UsbEvent usbEvent) async {
+          if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
+            if (await attemptToConnectPSLab()) {
+              pslabIsConnected = await scienceLabCommon.openDevice();
+              setPSLabVersionIDs();
+            }
+          } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED) {
+            scienceLabCommon.setConnected(false);
+            pslabIsConnected = false;
+            pslabVersionID = 'Not Connected';
+            notifyListeners();
           }
-        } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED) {
-          scienceLabCommon.setConnected(false);
-          pslabIsConnected = false;
-          pslabVersionID = 'Not Connected';
-          notifyListeners();
-        }
-      },
-    );
+        },
+      );
+    }
   }
 
   Future<void> setPSLabVersionIDs() async {

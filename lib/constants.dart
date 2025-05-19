@@ -100,3 +100,11 @@ String bluetooth = 'BLUETOOTH';
 String wifi = 'WIFI';
 String whatisPslab = 'What is PSLab Device?';
 String pslabUrl = 'https://pslab.io';
+
+String settings = 'Settings';
+String start = 'Auto Start';
+String autoStartText = 'Auto start app when PSLab device is connected';
+String export = 'Export Data Format';
+String txtFormat = 'TXT Format';
+String csvFormat = 'CSV Format';
+String cancel = 'CANCEL';
