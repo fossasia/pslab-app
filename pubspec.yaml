@@ -52,6 +52,9 @@ dependencies:
   permission_handler: ^11.3.1
   logger: ^2.5.0
   url_launcher: ^6.3.1
+  font_awesome_flutter: ^10.8.0
+  package_info_plus: ^8.3.0
+
 
 dev_dependencies:
   flutter_test:
