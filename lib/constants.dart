@@ -132,3 +132,4 @@ List<String> connectWithUs = [
   'Watch us on Youtube',
   'Developers'
 ];
+String softwareLicenses = 'Software Licenses';

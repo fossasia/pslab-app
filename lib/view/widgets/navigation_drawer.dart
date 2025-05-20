@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 
 class NavDrawer extends StatefulWidget {
@@ -334,7 +335,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 color: widget.selectedIndex == 12 ? Colors.red : Colors.grey,
               ),
               title: Text(
-                'Open Source Licenses',
+                softwareLicenses,
                 style: TextStyle(
                   color: widget.selectedIndex == 12 ? Colors.red : Colors.black,
                   fontWeight: FontWeight.bold,
@@ -342,7 +343,18 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
               onTap: () {
-                /**/
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name ==
+                        '/softwareLicenses') {
+                  Navigator.popUntil(
+                      context, ModalRoute.withName('/softwareLicenses'));
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/softwareLicenses',
+                    (route) => route.isFirst,
+                  );
+                }
               },
             ),
           ],
