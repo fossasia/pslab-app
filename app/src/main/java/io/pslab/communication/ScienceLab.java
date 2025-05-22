@@ -2450,12 +2450,9 @@ public class ScienceLab {
         loadTable(channel, y, waveType.get(channel), -1);
     }
 
-    private void loadTable(String channel, ArrayList<Double> y, String mode, double amp) {
+    private void loadTable(final String channel, final List<Double> y, final String mode, double amp) {
         waveType.put(channel, mode);
-        ArrayList<String> channels = new ArrayList<>();
-        ArrayList<Double> points = y;
-        channels.add("SI1");
-        channels.add("SI2");
+        List<String> channels = List.of("SI1", "SI2");
         int num;
         if (channels.contains(channel)) {
             num = channels.indexOf(channel) + 1;
@@ -2476,20 +2473,19 @@ public class ScienceLab {
             double temp = 1 - (y.get(i) / max);
             yMod1.add((int) Math.round(LARGE_MAX - LARGE_MAX * temp));
         }
-        y = new ArrayList<>();
 
-
-        for (int i = 0; i < points.size(); i += 16) {
-            y.add(points.get(i));
+        List<Double> points = new ArrayList<>();
+        for (int i = 0; i < y.size(); i += 16) {
+            points.add(y.get(i));
         }
-        min = Collections.min(y);
-        for (int i = 0; i < y.size(); i++) {
-            y.set(i, y.get(i) - min);
+        min = Collections.min(points);
+        for (int i = 0; i < points.size(); i++) {
+            points.set(i, points.get(i) - min);
         }
-        max = Collections.max(y);
-        ArrayList<Integer> yMod2 = new ArrayList<>();
-        for (int i = 0; i < y.size(); i++) {
-            double temp = 1 - (y.get(i) / max);
+        max = Collections.max(points);
+        List<Integer> yMod2 = new ArrayList<>();
+        for (int i = 0; i < points.size(); i++) {
+            double temp = 1 - (points.get(i) / max);
             yMod2.add((int) Math.round(SMALL_MAX - SMALL_MAX * temp));
         }
 
