@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
@@ -38,13 +37,9 @@ import io.pslab.fragment.HomeFragment;
 import io.pslab.others.InitializationVariable;
 import io.pslab.others.ScienceLabCommon;
 
-/**
- * Created by viveksb007 on 28/3/17.
- */
-
 public class ScienceLab {
 
-    private static final String TAG = "ScienceLab";
+    private static final String TAG = ScienceLab.class.getSimpleName();
     public static Thread initialisationThread;
     public int DDS_CLOCK, MAX_SAMPLES, samples, triggerLevel, triggerChannel, errorCount,
             channelsInBuffer, digitalChannelsInBuffer, dataSplitting;
@@ -56,19 +51,19 @@ public class ScienceLab {
     private static final int CTMU_CHANNEL = 0b11110;
     public boolean streaming;
     String[] allAnalogChannels, allDigitalChannels;
-    HashMap<String, AnalogInputSource> analogInputSources = new HashMap<>();
-    HashMap<String, Double> squareWaveFrequency = new HashMap<>();
-    HashMap<String, Integer> gains = new HashMap<>();
-    HashMap<String, String> waveType = new HashMap<>();
-    ArrayList<AnalogAquisitionChannel> aChannels = new ArrayList<>();
-    ArrayList<DigitalChannel> dChannels = new ArrayList<>();
-    public Map<String, DACChannel> dacChannels = new LinkedHashMap<>();
-    private Map<String, Double> values = new LinkedHashMap<>();
+    final HashMap<String, AnalogInputSource> analogInputSources = new HashMap<>();
+    final HashMap<String, Double> squareWaveFrequency = new HashMap<>();
+    final HashMap<String, Integer> gains = new HashMap<>();
+    final HashMap<String, String> waveType = new HashMap<>();
+    final ArrayList<AnalogAquisitionChannel> aChannels = new ArrayList<>();
+    final ArrayList<DigitalChannel> dChannels = new ArrayList<>();
+    public final Map<String, DACChannel> dacChannels = new LinkedHashMap<>();
+    private final Map<String, Double> values = new LinkedHashMap<>();
 
     private CommunicationHandler mCommunicationHandler;
     private PacketHandler mPacketHandler;
-    private CommandsProto mCommandsProto;
-    private AnalogConstants mAnalogConstants;
+    private final CommandsProto mCommandsProto;
+    private final AnalogConstants mAnalogConstants;
     private int LAChannelFrequency;
     public I2C i2c;
 
@@ -88,7 +83,7 @@ public class ScienceLab {
                     //Thread.sleep(200);
                     mPacketHandler = new PacketHandler(50, mCommunicationHandler);
                 } catch (IOException | NullPointerException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Error opening connection", e);
                 }
             }
         } else {
@@ -106,7 +101,7 @@ public class ScienceLab {
                             try {
                                 runInitSequence();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "Error in initialisation", e);
                             }
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
@@ -262,7 +257,7 @@ public class ScienceLab {
             mPacketHandler.sendInt((int) timeGap * 8);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -328,7 +323,7 @@ public class ScienceLab {
             retData.put("y", Arrays.copyOfRange(buffer, 0, samples));
             return retData;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return null;
     }
@@ -401,7 +396,7 @@ public class ScienceLab {
             mPacketHandler.getAcknowledgement();
             this.channelsInBuffer = number;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
 
     }
@@ -441,7 +436,7 @@ public class ScienceLab {
             samples = mPacketHandler.getInt();
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return new int[]{conversionDone, samples};
     }
@@ -479,7 +474,7 @@ public class ScienceLab {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
             return false;
         }
 
@@ -530,7 +525,7 @@ public class ScienceLab {
             mPacketHandler.sendInt((int) level);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -568,7 +563,7 @@ public class ScienceLab {
                 mPacketHandler.getAcknowledgement();
                 return this.gainValues[gain];
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Error sending data", e);
             }
         }
         return 0;
@@ -655,8 +650,7 @@ public class ScienceLab {
             int vSum = mPacketHandler.getVoltageSummation();
             return vSum / 16.0;
         } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error in getRawAverageVoltage");
+            Log.e(TAG, "Error in getRawAverageVoltage", e);
         }
         return 0;
     }
@@ -680,8 +674,7 @@ public class ScienceLab {
             }
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error in fetching buffer");
+            Log.e(TAG, "Error in fetching buffer", e);
         }
     }
 
@@ -699,8 +692,7 @@ public class ScienceLab {
             mPacketHandler.sendInt(totalPoints);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error in clearing buffer");
+            Log.e(TAG, "Error in clearing buffer", e);
         }
     }
 
@@ -721,8 +713,7 @@ public class ScienceLab {
             }
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error in filling Buffer");
+            Log.e(TAG, "Error in filling Buffer", e);
         }
 
     }
@@ -774,7 +765,7 @@ public class ScienceLab {
             mPacketHandler.getAcknowledgement();
             return scale * value / 1.0e-1;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return null;
     }
@@ -805,7 +796,7 @@ public class ScienceLab {
             mPacketHandler.getAcknowledgement();
             return scale * value / 1.0e-1;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return null;
     }
@@ -978,7 +969,7 @@ public class ScienceLab {
 
             return (B - A + 20) / 64e6;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return null;
     }
@@ -1154,7 +1145,7 @@ public class ScienceLab {
             retData.put("CHANNEL2", B1);
             return retData;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return null;
     }
@@ -1238,7 +1229,7 @@ public class ScienceLab {
                 dChan.mode = DigitalChannel.EVERY_EDGE;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -1286,7 +1277,7 @@ public class ScienceLab {
                 this.dChannels.get(0).initialStateOverride = 1;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error starting logic analyzer", e);
         }
     }
 
@@ -1348,7 +1339,7 @@ public class ScienceLab {
             }
             this.digitalChannelsInBuffer = 2;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error starting logic analyzer", e);
         }
     }
 
@@ -1408,7 +1399,7 @@ public class ScienceLab {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error starting logic analyzer", e);
         }
     }
 
@@ -1477,7 +1468,7 @@ public class ScienceLab {
                 i++;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error starting logic analyzer", e);
         }
     }
 
@@ -1546,7 +1537,7 @@ public class ScienceLab {
 
             return retData;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting logic analyzer initial state", e);
         }
         return null;
     }
@@ -1560,7 +1551,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(mCommandsProto.STOP_LA);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error stopping logic analyzer", e);
         }
     }
 
@@ -1603,11 +1594,11 @@ public class ScienceLab {
             }
             if (!l.isEmpty()) {
                 StringBuilder stringBuilder = new StringBuilder();
-                long[] timeStamps = new long[(int) bytes + 1];
-                for (int i = 0; i < (int) (bytes); i++) {
+                long[] timeStamps = new long[bytes + 1];
+                for (int i = 0; i < bytes; i++) {
                     int t = (l.get(i * 2) | (l.get(i * 2 + 1) << 8));
                     timeStamps[i + 1] = t;
-                    stringBuilder.append(String.valueOf(t));
+                    stringBuilder.append(t);
                     stringBuilder.append(" ");
                 }
                 Log.v("Fetched points : ", stringBuilder.toString());
@@ -1621,7 +1612,7 @@ public class ScienceLab {
                 return temp;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading data from logic analyzer", e);
         }
         return null;
     }
@@ -1664,7 +1655,7 @@ public class ScienceLab {
             }
             return Arrays.copyOfRange(data, markerA, markerB + 1);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading data from logic analyzer", e);
         }
         return null;
     }
@@ -1767,7 +1758,7 @@ public class ScienceLab {
             states.put("LA4", ((state & 8) != 0));
             return states;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading logic analyzer state", e);
         }
         return null;
     }
@@ -1810,7 +1801,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(data);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error reading digital output state", e);
         }
 
     }
@@ -1828,7 +1819,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(this.calculateDigitalChannel(channel));
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -1844,7 +1835,7 @@ public class ScienceLab {
             int count = mPacketHandler.getVoltageSummation();
             return 10 * count;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting pulse count", e);
         }
         return -1;
     }
@@ -1857,14 +1848,14 @@ public class ScienceLab {
             mPacketHandler.sendInt(t);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting capacitor state", e);
         }
     }
 
     public double[] captureCapacitance(int samples, int timeGap) {
         AnalyticsClass analyticsClass = new AnalyticsClass();
         this.setCapacitorState(1, 50000);
-        Map<String, double[]> data = this.captureFullSpeedHr("CAP", samples, timeGap, Arrays.asList("READ_CAP"));
+        Map<String, double[]> data = this.captureFullSpeedHr("CAP", samples, timeGap, List.of("READ_CAP"));
         double[] x = data.get("x");
         double[] y = data.get("y");
         for (int i = 0; i < x.length; i++) {
@@ -1910,7 +1901,7 @@ public class ScienceLab {
             double c = -cTime * 1e-6 / 1e4 / Math.log(1 - v / 3.3);
             return new double[]{v, c};
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting capacitor range", e);
         }
         return null;
     }
@@ -2031,7 +2022,7 @@ public class ScienceLab {
             }
             return new double[]{v, c};
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting capacitance", e);
         }
         return null;
     }
@@ -2085,7 +2076,7 @@ public class ScienceLab {
             double resolution = 12;
             return (max_voltage * raw_voltage / (pow(2, resolution) - 1));
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting CTMU voltage", e);
         }
         return -1;
     }
@@ -2102,7 +2093,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(trim);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting CTMU voltage", e);
         }
     }
 
@@ -2116,7 +2107,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(mCommandsProto.STOP_CTMU);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error getting CTMU voltage", e);
         }
     }
 
@@ -2128,7 +2119,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(mCommandsProto.COMMON);
             mPacketHandler.sendByte(mCommandsProto.RESTORE_STANDALONE);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error resetting device", e);
         }
     }
 
@@ -2225,7 +2216,7 @@ public class ScienceLab {
 
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error using RGB LED", e);
         }
     }
 
@@ -2292,7 +2283,7 @@ public class ScienceLab {
             this.sin1Frequency = frequency;
             return this.sin1Frequency;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error setting SI1", e);
         }
         return -1;
     }
@@ -2340,7 +2331,7 @@ public class ScienceLab {
             this.sin2Frequency = frequency;
             return this.sin2Frequency;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error setting SI2", e);
         }
         return -1;
     }
@@ -2423,7 +2414,7 @@ public class ScienceLab {
             this.sin2Frequency = retFrequency2;
             return retFrequency;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error setting waves", e);
         }
         return -1;
     }
@@ -2485,7 +2476,7 @@ public class ScienceLab {
             double temp = 1 - (y.get(i) / max);
             yMod1.add((int) Math.round(LARGE_MAX - LARGE_MAX * temp));
         }
-        y = new ArrayList<Double>();
+        y = new ArrayList<>();
 
 
         for (int i = 0; i < points.size(); i += 16) {
@@ -2521,7 +2512,7 @@ public class ScienceLab {
             // sleep for 0.01
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error loading table", e);
         }
     }
 
@@ -2560,7 +2551,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(prescalar);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         this.squareWaveFrequency.put("SQR1", 64e6 / wavelength / p[prescalar & 0x3]);
         return this.squareWaveFrequency.get("SQR1");
@@ -2588,7 +2579,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(prescalar);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         this.squareWaveFrequency.put("SQR2", 64e6 / wavelength / p[prescalar & 0x3]);
         return this.squareWaveFrequency.get("SQR2");
@@ -2606,7 +2597,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(prescalar);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -2657,7 +2648,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(prescalar);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         for (String channel : new String[]{"SQR1", "SQR2", "SQR3", "SQR4"}) {
             this.squareWaveFrequency.put(channel, 64e6 / wavelength / p[prescalar & 0x3]);
@@ -2682,7 +2673,7 @@ public class ScienceLab {
             }
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -2698,7 +2689,7 @@ public class ScienceLab {
             mPacketHandler.sendInt(v);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         values.put(channel, (double) voltage);
     }
@@ -2713,7 +2704,7 @@ public class ScienceLab {
             mPacketHandler.sendInt(v);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         values.put("PCS", (double) current);
     }
@@ -2783,7 +2774,7 @@ public class ScienceLab {
             mPacketHandler.getAcknowledgement();
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return -1;
     }
@@ -2804,7 +2795,7 @@ public class ScienceLab {
             mPacketHandler.getAcknowledgement();
             return data;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return -1;
     }
@@ -2825,7 +2816,7 @@ public class ScienceLab {
             mPacketHandler.sendInt(value);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -2864,7 +2855,7 @@ public class ScienceLab {
             mPacketHandler.read(junk, 100);
             // Log junk to see :D
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -2886,7 +2877,7 @@ public class ScienceLab {
             mPacketHandler.sendByte(params);
             mPacketHandler.getAcknowledgement();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
     }
 
@@ -2901,13 +2892,15 @@ public class ScienceLab {
             mPacketHandler.sendByte(mCommandsProto.COMMON);
             mPacketHandler.sendByte(mCommandsProto.READ_LOG);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending data", e);
         }
         return mPacketHandler.readLine();
     }
 
     public void disconnect() throws IOException {
-        mCommunicationHandler.close();
+        if (mCommunicationHandler != null) {
+            mCommunicationHandler.close();
+        }
         PacketHandler.version = "";
     }
 }
