@@ -38,11 +38,14 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   void _filterInstruments(String query) {
     setState(() {
       if (query.isEmpty) {
-        _filteredIndices = List.generate(instrumentHeadings.length, (index) => index);
+        _filteredIndices =
+            List.generate(instrumentHeadings.length, (index) => index);
       } else {
         _filteredIndices = [];
         for (int i = 0; i < instrumentHeadings.length; i++) {
-          if (instrumentHeadings[i].toLowerCase().contains(query.toLowerCase())) {
+          if (instrumentHeadings[i]
+              .toLowerCase()
+              .contains(query.toLowerCase())) {
             _filteredIndices.add(i);
           }
         }
@@ -52,7 +55,8 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
 
   @override
   void initState() {
-    _filteredIndices = List.generate(instrumentHeadings.length, (index) => index);
+    _filteredIndices =
+        List.generate(instrumentHeadings.length, (index) => index);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -101,23 +105,32 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                   decoration: InputDecoration(
                     hintText: 'Search instruments...',
                     hintStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
                     ),
                     prefixIcon: Icon(
                       Icons.search,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                     ),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                      icon: Icon(
-                        Icons.clear,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                      ),
-                      onPressed: () {
-                        _searchController.clear();
-                        _filterInstruments('');
-                      },
-                    )
+                            icon: Icon(
+                              Icons.clear,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.7),
+                            ),
+                            onPressed: () {
+                              _searchController.clear();
+                              _filterInstruments('');
+                            },
+                          )
                         : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
@@ -150,48 +163,63 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
             Expanded(
               child: _filteredIndices.isEmpty
                   ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search_off,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No instruments found',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search_off,
+                            size: 64,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.5),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No instruments found',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.7),
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Try a different search term',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withOpacity(0.5),
+                                ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Try a different search term',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                      ),
-                    ),
-                  ],
-                ),
-              )
+                    )
                   : ScrollConfiguration(
-                behavior: const ScrollBehavior(),
-                child: ListView.builder(
-                  itemCount: _filteredIndices.length,
-                  itemBuilder: (context, index) {
-                    final originalIndex = _filteredIndices[index];
-                    return GestureDetector(
-                      onTap: () => _onItemTapped(originalIndex),
-                      child: ApplicationsListItem(
-                        heading: instrumentHeadings[originalIndex],
-                        description: instrumentDesc[originalIndex],
-                        instrumentIcon: instrumentIcons[originalIndex],
+                      behavior: const ScrollBehavior(),
+                      child: ListView.builder(
+                        itemCount: _filteredIndices.length,
+                        itemBuilder: (context, index) {
+                          final originalIndex = _filteredIndices[index];
+                          return GestureDetector(
+                            onTap: () => _onItemTapped(originalIndex),
+                            child: ApplicationsListItem(
+                              heading: instrumentHeadings[originalIndex],
+                              description: instrumentDesc[originalIndex],
+                              instrumentIcon: instrumentIcons[originalIndex],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
             ),
           ],
         ),
