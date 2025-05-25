@@ -97,12 +97,14 @@
     <dimen name="multimeter_symol_width">25dp</dimen>
     <dimen name="multimeter_symbol_height">20dp</dimen>
     <dimen name="multimeter_textsize">24sp</dimen>
+    <dimen name="multimeter_landscape_textsize">15sp</dimen>
     <dimen name="multimeter_textbox_height_80">80dp</dimen>
     <dimen name="multimeter_bottombutton_textsize">18sp</dimen>
-    <dimen name="multimeter_measure_textsize">14sp</dimen>
+    <dimen name="multimeter_landscape_measure_textsize">12sp</dimen>
     <dimen name="multimeter_button_text_padding">4dp</dimen>
     <dimen name="multimeter_heading_ll_text_size">16sp</dimen>
     <dimen name="multimeter_textbox_height">110dp</dimen>
+    <dimen name="multimeter_landscape_textbox_height">65dp</dimen>
     <dimen name="multimeter_textbox_margin_top">10dp</dimen>
     <dimen name="multimeter_button_width">0dp</dimen>
     <dimen name="multimeter_button_height">40dp</dimen>
@@ -113,6 +115,7 @@
     <dimen name="multimeter_right_button_margin_right">5dp</dimen>
     <dimen name="multimeter_right_button_margin_bottom">5dp</dimen>
     <dimen name="multimeter_quantity_dimen">50sp</dimen>
+    <dimen name="multimeter_landscape_quantity_dimen">26sp</dimen>
     <dimen name="multimeter_constraint_1">8dp</dimen>
     <dimen name="multimeter_constraint_2">16dp</dimen>
     <dimen name="multimeter_constraint_3">24dp</dimen>
@@ -130,6 +133,9 @@
     <dimen name="multimeter_knobcircle_radius_2_xhdpi">249dp</dimen>
     <dimen name="multimeter_knobcircle_radius_1_xhdpi">253dp</dimen>
     <dimen name="multimeter_knobcircle_radius_3_xhdpi">255dp</dimen>
+    <dimen name="multimeter_landscape_knobcircle_radius_1">92dp</dimen>
+    <dimen name="multimeter_landscape_knobcircle_radius_2">90dp</dimen>
+    <dimen name="multimeter_landscape_knobcircle_radius_3">88dp</dimen>
     <dimen name="multimeter_left_box_endmargin">4dp</dimen>
     <dimen name="multimeter_end_box_rightmargin">12dp</dimen>
     <dimen name="multimeter_layout_margin_2">10dp</dimen>
@@ -137,6 +143,7 @@
     <dimen name="multimeter_constraint_4">10dp</dimen>
     <dimen name="multimeter_constraint_5">37dp</dimen>
     <dimen name="multimeter_length_0">0dp</dimen>
+    <dimen name="multimeter_length_10">10dp</dimen>
     <dimen name="multimeter_knob_width_xhdpi">192dp</dimen>
     <dimen name="multimeter_knob_height_xhdpi">190dp</dimen>
 
