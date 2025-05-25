@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/colors.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -65,7 +64,7 @@ class FAQScreen extends StatelessWidget {
     ),
   ];
 
-  const FAQScreen({Key? key}) : super(key: key);
+  const FAQScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +85,8 @@ class FAQScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: ExpansionTile(
         tilePadding: EdgeInsets.zero,
-        shape: Border(),
-        collapsedShape: Border(),
+        shape: const Border(),
+        collapsedShape: const Border(),
         title: Padding(
           padding: const EdgeInsets.only(bottom: 0),
           child: Row(children: [
@@ -97,12 +96,12 @@ class FAQScreen extends StatelessWidget {
                 color: primaryRed,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Flexible(
               child: Text(
-                '${faq.question}',
+                faq.question,
                 style: TextStyle(
                   color: primaryRed,
                 ),
@@ -117,19 +116,19 @@ class FAQScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 0), // Space before answer
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
+              const Text(
                 'A:',
                 style: TextStyle(
                   color: Colors.black,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Flexible(
                 child: Text(
-                  '${faq.answer}',
-                  style: TextStyle(
+                  faq.answer,
+                  style: const TextStyle(
                     color: Colors.black,
                   ),
                 ),
@@ -143,7 +142,7 @@ class FAQScreen extends StatelessWidget {
                 onTap: () => _launchURL(faq.linkUrl!),
                 child: Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 25,
                     ),
                     Text(
