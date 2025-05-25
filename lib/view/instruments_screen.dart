@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pslab/colors.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/view/widgets/applications_list_item.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
-import 'package:pslab/colors.dart';
 
 class InstrumentsScreen extends StatefulWidget {
   const InstrumentsScreen({super.key});
@@ -15,7 +15,7 @@ class InstrumentsScreen extends StatefulWidget {
 
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<int> _filteredIndices = [];
+  List<int> _filteredIndices = <int>[];
   void _onItemTapped(int index) {
     switch (index) {
       case 0:
@@ -39,7 +39,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     setState(() {
       if (query.isEmpty) {
         _filteredIndices =
-            List.generate(instrumentHeadings.length, (index) => index);
+            List<int>.generate(instrumentHeadings.length, (index) => index);
       } else {
         _filteredIndices = [];
         for (int i = 0; i < instrumentHeadings.length; i++) {
@@ -55,18 +55,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
 
   @override
   void initState() {
+    super.initState();
     _filteredIndices =
-        List.generate(instrumentHeadings.length, (index) => index);
+        List<int>.generate(instrumentHeadings.length, (index) => index);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
-    super.initState();
     Permission.microphone.request();
   }
 
   void _setOrientation() {
-    SystemChrome.setPreferredOrientations([
+    SystemChrome.setPreferredOrientations(<DeviceOrientation>[
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
@@ -85,17 +85,17 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
       title: 'Instruments',
       body: SafeArea(
         child: Column(
-          children: [
+          children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30.0),
-                  boxShadow: [
+                  boxShadow: const <BoxShadow>[
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Color.fromRGBO(0, 0, 0, 0.1),
                       blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
@@ -108,14 +108,14 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.6),
+                          .withAlpha(153),
                     ),
                     prefixIcon: Icon(
                       Icons.search,
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withAlpha(179),
                     ),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
@@ -124,7 +124,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7),
+                                  .withAlpha(179),
                             ),
                             onPressed: () {
                               _searchController.clear();
@@ -165,14 +165,14 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                        children: <Widget>[
                           Icon(
                             Icons.search_off,
                             size: 64,
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.5),
+                                .withAlpha(128),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -184,7 +184,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
-                                      .withOpacity(0.7),
+                                      .withAlpha(179),
                                 ),
                           ),
                           const SizedBox(height: 8),
@@ -197,7 +197,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
-                                      .withOpacity(0.5),
+                                      .withAlpha(128),
                                 ),
                           ),
                         ],
@@ -208,7 +208,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                       child: ListView.builder(
                         itemCount: _filteredIndices.length,
                         itemBuilder: (context, index) {
-                          final originalIndex = _filteredIndices[index];
+                          final int originalIndex = _filteredIndices[index];
                           return GestureDetector(
                             onTap: () => _onItemTapped(originalIndex),
                             child: ApplicationsListItem(
