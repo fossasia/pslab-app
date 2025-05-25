@@ -30,6 +30,7 @@
     <dimen name="control_margin_medium">15dp</dimen>
     <dimen name="control_card_radius">18dp</dimen>
     <dimen name="control_textsize_tiny">12sp</dimen>
+    <dimen name="control_landscape_textsize_tiny">10sp</dimen>
     <dimen name="control_textsize_small">16sp</dimen>
     <dimen name="control_textsize_medium">18sp</dimen>
     <dimen name="textsize_edittext">12sp</dimen>
@@ -95,11 +96,14 @@
     <dimen name="multimeter_layout_margin">20dp</dimen>
     <dimen name="multimeter_line_width">1dp</dimen>
     <dimen name="multimeter_symol_width">25dp</dimen>
+    <dimen name="multimeterl_landscape_symol_width">18dp</dimen>
     <dimen name="multimeter_symbol_height">20dp</dimen>
+    <dimen name="multimeter_landscape_symbol_height">18dp</dimen>
     <dimen name="multimeter_textsize">24sp</dimen>
     <dimen name="multimeter_landscape_textsize">15sp</dimen>
     <dimen name="multimeter_textbox_height_80">80dp</dimen>
     <dimen name="multimeter_bottombutton_textsize">18sp</dimen>
+    <dimen name="multimeter_measure_textsize">14sp</dimen>
     <dimen name="multimeter_landscape_measure_textsize">12sp</dimen>
     <dimen name="multimeter_button_text_padding">4dp</dimen>
     <dimen name="multimeter_heading_ll_text_size">16sp</dimen>
