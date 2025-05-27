@@ -41,14 +41,11 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
         _filteredIndices =
             List<int>.generate(instrumentHeadings.length, (index) => index);
       } else {
-        _filteredIndices = [];
-        for (int i = 0; i < instrumentHeadings.length; i++) {
-          if (instrumentHeadings[i]
-              .toLowerCase()
-              .contains(query.toLowerCase())) {
-            _filteredIndices.add(i);
-          }
-        }
+        _filteredIndices = List.generate(instrumentHeadings.length, (i) => i)
+            .where((i) => instrumentHeadings[i]
+                .toLowerCase()
+                .contains(query.toLowerCase()))
+            .toList();
       }
     });
   }
@@ -82,12 +79,12 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   Widget build(BuildContext context) {
     return MainScaffold(
       index: 0,
-      title: 'Instruments',
+      title: instrumentsTitle,
       body: SafeArea(
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 16.0),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30.0),
@@ -103,7 +100,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                   controller: _searchController,
                   onChanged: _filterInstruments,
                   decoration: InputDecoration(
-                    hintText: 'Search instruments...',
+                    hintText: searchInstrumentsHint,
                     hintStyle: TextStyle(
                       color: Theme.of(context)
                           .colorScheme
@@ -176,7 +173,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No instruments found',
+                            noInstrumentsFoundMessage,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -189,7 +186,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Try a different search term',
+                            tryDifferentSearchSuggestion,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium

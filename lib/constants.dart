@@ -133,3 +133,7 @@ List<String> connectWithUs = [
   'Developers'
 ];
 String softwareLicenses = 'Software Licenses';
+String tryDifferentSearchSuggestion = 'Try a different search term';
+String noInstrumentsFoundMessage = 'No instruments found';
+String searchInstrumentsHint = 'Search instruments...';
+String instrumentsTitle = 'Instruments';
