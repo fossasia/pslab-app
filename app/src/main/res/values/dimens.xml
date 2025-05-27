@@ -99,6 +99,10 @@
     <dimen name="multimeterl_landscape_symol_width">18dp</dimen>
     <dimen name="multimeter_symbol_height">20dp</dimen>
     <dimen name="multimeter_landscape_symbol_height">18dp</dimen>
+    <dimen name="multimeter_potrait_knob_height">206dp</dimen>
+    <dimen name="multimeter_potrait_knob_width">208dp</dimen>
+    <dimen name="multimeter_landscape_knob_height">155dp</dimen>
+    <dimen name="multimeter_landscape_knob_width">155dp</dimen>
     <dimen name="multimeter_textsize">24sp</dimen>
     <dimen name="multimeter_landscape_textsize">15sp</dimen>
     <dimen name="multimeter_textbox_height_80">80dp</dimen>
