@@ -140,7 +140,7 @@
                 android:layout_marginRight="@dimen/multimeter_constraint_1"
                 android:layout_marginBottom="@dimen/multimeter_length_10"
                 android:visibility="invisible"
-                app:layout_constraintBottom_toTopOf="@+id/id4"
+                app:layout_constraintBottom_toTopOf="@+id/la4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -169,7 +169,7 @@
                 android:background="@drawable/rectangle_border_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/id1"
+                app:layout_constraintStart_toEndOf="@+id/la1"
                 app:layout_constraintTop_toTopOf="@+id/lower_line" />
 
             <it.beppi.knoblibrary.Knob
@@ -247,8 +247,8 @@
 
             <View
                 android:id="@+id/knob_marker"
-                android:layout_width="155dp"
-                android:layout_height="155dp"
+                android:layout_width="@dimen/multimeter_landscape_knob_width"
+                android:layout_height="@dimen/multimeter_landscape_knob_height"
                 android:layout_marginStart="@dimen/multimeter_constraint_1"
                 android:layout_marginLeft="@dimen/multimeter_constraint_1"
                 android:layout_marginTop="28dp"
@@ -349,7 +349,7 @@
                 app:layout_constraintCircleRadius="@dimen/multimeter_landscape_knobcircle_radius_2" />
 
             <TextView
-                android:id="@+id/id4"
+                android:id="@+id/la4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -388,7 +388,7 @@
                 app:layout_constraintCircleRadius="@dimen/multimeter_landscape_knobcircle_radius_3" />
 
             <TextView
-                android:id="@+id/id1"
+                android:id="@+id/la1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
