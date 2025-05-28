@@ -117,7 +117,7 @@
                 android:padding="3dp">
 
                 <TextView
-                    android:id="@+id/card_title"
+                    android:id="@+id/card_title_1"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_gravity="start"
@@ -358,7 +358,7 @@
                 android:padding="3dp">
 
                 <TextView
-                    android:id="@+id/card_title"
+                    android:id="@+id/card_title_2"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_gravity="start"
