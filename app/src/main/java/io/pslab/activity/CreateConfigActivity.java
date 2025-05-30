@@ -159,7 +159,12 @@ public class CreateConfigActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            finish();rea
+        }else if (item.getItemId() == R.id.compass_help_icon) {
+            
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://your-documentation-link.com"));
+            startActivity(browserIntent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

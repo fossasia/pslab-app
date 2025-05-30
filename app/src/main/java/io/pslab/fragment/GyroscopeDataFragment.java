@@ -423,6 +423,9 @@ public class GyroscopeDataFragment extends Fragment implements OperationCallback
             gyroSensor.writeHeaderToFile = true;
         }
     }
+    public LineChart getChart() {
+        return chart; // Make sure your LineChart variable is named 'chart'
+    }
 
     private void visualizeData() {
         for (int i = 0; i < gyroscopeViewFragments.size(); i++) {
@@ -441,7 +444,17 @@ public class GyroscopeDataFragment extends Fragment implements OperationCallback
                 LineData data = new LineData(dataSet);
 
                 fragment.setChartData(data);
-                fragment.setYaxis(highLimit);
+                // REMOVE this line as it is forcing fixed Y-axis:
+                // fragment.setYaxis(highLimit);
+                
+                // NEW: Enable auto-scaling
+                LineChart chart = fragment.getChart();
+                chart.setAutoScaleMinMaxEnabled(true);
+                chart.getAxisLeft().resetAxisMaximum();
+                chart.getAxisLeft().resetAxisMinimum();
+                
+                chart.notifyDataSetChanged();
+                chart.invalidate();
             }
         }
         Long currentTime = System.currentTimeMillis();

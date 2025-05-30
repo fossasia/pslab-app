@@ -112,8 +112,6 @@ public class BaroMeterDataFragment extends Fragment implements OperationCallback
     private ArrayList<Entry> altitudeEntries;
     private ArrayList<BaroData> recordedBaroArray;
     private BaroData sensorData;
-    private float currentMin = 2;
-    private float currentMax = 0.5f;
     private YAxis y;
     private YAxis y2;
     private Unbinder unbinder;
@@ -166,12 +164,18 @@ public class BaroMeterDataFragment extends Fragment implements OperationCallback
             updateGraphs();
             sum = 0;
             count = 0;
-            currentMin = 2;
-            currentMax = 0.5f;
+            // REMOVE these fixed axis values to allow auto-scaling
+            // currentMin = 2;
+            // currentMax = 0.5f;
             pressureEntries.clear();
             altitudeEntries.clear();
             mChart.clear();
             mChart.invalidate();
+            // Auto-scaling: reset min/max if using MPAndroidChart
+            mChart.getAxisLeft().resetAxisMinimum();
+            mChart.getAxisLeft().resetAxisMaximum();
+            mChart.getAxisRight().resetAxisMinimum();
+            mChart.getAxisRight().resetAxisMaximum();
             initiateBaroSensor(sensorType);
         } else if (returningFromPause) {
             updateGraphs();

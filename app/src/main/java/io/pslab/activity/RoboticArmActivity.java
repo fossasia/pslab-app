@@ -225,13 +225,20 @@ public class RoboticArmActivity extends GuideActivity {
         seekArc1.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
             public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+                int angle;
                 if (editEnter) {
+                    angle = degree;
                     degreeText1.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
+                    angle = (int) (i * 3.6);
                     degreeText1.setText(String.valueOf((int) (i * 3.6)));
                 }
                 degreeText1.setCursorVisible(false);
+
+                if (scienceLab != null && scienceLab.isConnected()) {
+                    scienceLab.servoWrite(0, angle); 
+                }
             }
 
             @Override
@@ -248,13 +255,19 @@ public class RoboticArmActivity extends GuideActivity {
         seekArc2.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
             public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+                int angle;
                 if (editEnter) {
+                    angle = degree;
                     degreeText2.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
+                    angle = (int) (i * 3.6);
                     degreeText2.setText(String.valueOf((int) (i * 3.6)));
                 }
                 degreeText2.setCursorVisible(false);
+                if (scienceLab != null && scienceLab.isConnected()) {
+                    scienceLab.servoWrite(1, angle); 
+                }
             }
 
             @Override
@@ -271,13 +284,19 @@ public class RoboticArmActivity extends GuideActivity {
         seekArc3.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
             public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+                int angle;
                 if (editEnter) {
+                    angle = degree;
                     degreeText3.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
+                    angle = (int) (i * 3.6);
                     degreeText3.setText(String.valueOf((int) (i * 3.6)));
                 }
                 degreeText3.setCursorVisible(false);
+                if (scienceLab != null && scienceLab.isConnected()) {
+                    scienceLab.servoWrite(2, angle);
+                }
             }
 
             @Override
@@ -294,13 +313,19 @@ public class RoboticArmActivity extends GuideActivity {
         seekArc4.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
             public void onProgressChanged(SeekArc seekArc, int i, boolean b) {
+                int angle;
                 if (editEnter) {
+                    angle = degree;
                     degreeText4.setText(String.valueOf(degree));
                     editEnter = false;
                 } else {
+                    angle = (int) (i * 3.6);
                     degreeText4.setText(String.valueOf((int) (i * 3.6)));
                 }
                 degreeText4.setCursorVisible(false);
+                if (scienceLab != null && scienceLab.isConnected()) {
+                    scienceLab.servoWrite(3, angle); 
+                }
             }
 
             @Override

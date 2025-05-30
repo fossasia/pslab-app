@@ -108,8 +108,6 @@ public class ThermometerDataFragment extends Fragment implements OperationCallba
     private ArrayList<Entry> entries;
     private ArrayList<ThermometerData> recordedThermoArray;
     private ThermometerData sensorData;
-    private float currentMin = 125;
-    private float currentMax = -40;
     private YAxis y;
     private Unbinder unbinder;
     private long previousTimeElapsed = (System.currentTimeMillis() - startTime) / updatePeriod;
@@ -166,6 +164,13 @@ public class ThermometerDataFragment extends Fragment implements OperationCallba
             entries.clear();
             mChart.clear();
             mChart.invalidate();
+            // Auto-scaling: reset min/max if using MPAndroidChart
+            mChart.getAxisLeft().resetAxisMinimum();
+            mChart.getAxisLeft().resetAxisMaximum();
+            mChart.getAxisRight().resetAxisMinimum();
+            mChart.getAxisRight().resetAxisMaximum();
+            initiateBaroSensor(sensorType);
+            initiateLuxSensor(sensorType);
             initiateThermoSensor(sensorType);
         } else if (returningFromPause) {
             updateGraphs();

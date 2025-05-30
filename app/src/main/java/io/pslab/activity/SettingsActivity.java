@@ -57,6 +57,14 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setTitle(title);
         }
 
+        Button myButton = findViewById(R.id.myButton);
+    myButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(CompassActivity.this, "Button clicked!", Toast.LENGTH_SHORT).show();
+        }
+    });
+
         Fragment fragment;
         switch (title) {
             case PSLabSensor.LUXMETER_CONFIGURATIONS:
@@ -95,12 +103,29 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.content, fragment).commit();
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_compass_help_menu, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-        }
+        int id = item.getItemId();
+
+    if (id == android.R.id.home) {
+        finish();
+        return true;
+    } else if (id == R.id.compass_record_data) {
+      
+        Toast.makeText(this, "Recording current compass data...", Toast.LENGTH_SHORT).show();
+        return true;
+    } else if (id == R.id.compass_help_icon) {
+       
+        Toast.makeText(this, "Opening compass help...", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+        
         return super.onOptionsItemSelected(item);
     }
 

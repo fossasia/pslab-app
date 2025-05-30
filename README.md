@@ -124,6 +124,50 @@ Sign up for the latest updates and test new features early by joining our beta p
 | Gas Sensor             | Detects gases, including NH3, NOx, alcohol, benzene, smoke and CO2| :heavy_check_mark: |
 | Robotic Arm Controller | Allows to control 4 servo motors of the robotic arm independently | :heavy_check_mark: |
 
+## Robotic Arm Control
+
+The Robotic Arm feature in the PSLab Android app allows users to control a servo-based robotic arm using the Pocket Science Lab hardware. This is ideal for educational robotics, DIY automation, and remote experiments.
+
+# Key Capabilities
+
+-Manual control of servo motors using sliders.
+
+-Set angles precisely for each servo.
+
+-Create custom movement profiles (position sets).
+
+-Save/load profiles from local storage using internal database.
+
+-Export/import profiles in JSON format.
+
+-Replay saved profiles for automation.
+
+# How to Use the Robotic Arm Screen
+
+-Connect the PSLab device via USB.
+
+-Go to Instruments > Robotic Arm.
+
+-Use the sliders to move each servo (e.g., Base, Shoulder, Elbow, Gripper).
+
+-Set desired positions for all servos.
+
+-Tap Save Profile to store the current servo positions.
+
+-Use Load Profile to retrieve saved movements.
+
+-Tap Play to replay the selected profile.
+
+# Saving and Loading Profiles
+
+-Save: Stores the current servo angles into a named profile in local database.
+
+-Load: Loads the servo angles from a selected profile and updates the UI.
+
+-Export: Saves profile(s) to a .json file.
+
+-Import: Load external JSON files to restore or share profiles.
+
 ## How to set up the Android app in your development environment
 
 ### Application Flavors

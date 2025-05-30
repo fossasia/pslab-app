@@ -109,8 +109,6 @@ public class LuxMeterDataFragment extends Fragment implements OperationCallback 
     private ArrayList<Entry> entries;
     private ArrayList<LuxData> recordedLuxArray;
     private LuxData sensorData;
-    private float currentMin = 10000;
-    private float currentMax = 0;
     private YAxis y;
     private Unbinder unbinder;
     private long previousTimeElapsed = (System.currentTimeMillis() - startTime) / updatePeriod;
@@ -162,11 +160,18 @@ public class LuxMeterDataFragment extends Fragment implements OperationCallback 
             updateGraphs();
             sum = 0;
             count = 0;
-            currentMin = 10000;
-            currentMax = 0;
+            // REMOVE these fixed axis values to allow auto-scaling
+            // currentMin = 10000;
+            // currentMax = 0;
             entries.clear();
             mChart.clear();
             mChart.invalidate();
+             // Auto-scaling: reset min/max if using MPAndroidChart
+             mChart.getAxisLeft().resetAxisMinimum();
+             mChart.getAxisLeft().resetAxisMaximum();
+             mChart.getAxisRight().resetAxisMinimum();
+             mChart.getAxisRight().resetAxisMaximum();
+             initiateBaroSensor(sensorType);
             initiateLuxSensor(sensorType);
         } else if (returningFromPause) {
             updateGraphs();

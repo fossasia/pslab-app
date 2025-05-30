@@ -417,6 +417,9 @@ public class AccelerometerDataFragment extends Fragment implements OperationCall
             accelerometerSensor.writeHeaderToFile = true;
         }
     }
+    public LineChart getChart() {
+        return chart; 
+    }
 
     private void visualizeData() {
         for (int i = 0; i < accelerometerViewFragments.size(); i++) {
@@ -435,7 +438,16 @@ public class AccelerometerDataFragment extends Fragment implements OperationCall
                 LineData data = new LineData(dataSet);
 
                 fragment.setChartData(data);
+
                 fragment.setYaxis(highLimit);
+                // ✅ Auto-scaling Y-axis
+                LineChart chart = fragment.getChart(); // Assuming you have this getter method
+                chart.setAutoScaleMinMaxEnabled(true);
+                chart.getAxisLeft().resetAxisMaximum();
+                chart.getAxisLeft().resetAxisMinimum();
+
+                chart.notifyDataSetChanged();
+                chart.invalidate();
             }
         }
         Long currentTime = System.currentTimeMillis();
