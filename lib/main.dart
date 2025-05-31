@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const SettingsScreen(),
         '/aboutUs': (context) => const AboutUsScreen(),
         '/softwareLicenses': (context) => const SoftwareLicensesScreen(),
+        '/accelerometer': (context) => const AccelerometerScreen(),
       },
     );
   }
