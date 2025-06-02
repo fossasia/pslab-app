@@ -3,6 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pslab/others/logger_service.dart';
+
+import '../constants.dart';
 
 class CompassProvider extends ChangeNotifier {
   MagnetometerEvent _magnetometerEvent =
@@ -31,7 +34,7 @@ class CompassProvider extends ChangeNotifier {
         notifyListeners();
       },
       onError: (error) {
-        debugPrint("Magnetometer error: $error");
+        logger.e("$magnetometerError: $error");
       },
       cancelOnError: true,
     );
@@ -43,7 +46,7 @@ class CompassProvider extends ChangeNotifier {
         notifyListeners();
       },
       onError: (error) {
-        debugPrint("Accelerometer error: $error");
+        logger.e("$accelerometerError: $error");
       },
       cancelOnError: true,
     );

@@ -133,3 +133,7 @@ List<String> connectWithUs = [
   'Developers'
 ];
 String softwareLicenses = 'Software Licenses';
+String magnetometerError = 'Magnetometer error:';
+String accelerometerError = 'Accelerometer error:';
+String compassTitle = 'Compass';
+String parallelToGround = 'Select axes parallel to ground';
