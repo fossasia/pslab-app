@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/accelerometer_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/accelerometer_card.dart';
 
@@ -12,15 +14,25 @@ class AccelerometerScreen extends StatefulWidget {
 class _AccelerometerScreenState extends State<AccelerometerScreen> {
   @override
   Widget build(BuildContext context) {
-    return const CommonScaffold(
-        title: 'Accelerometer',
-        body: SafeArea(
-            child: Column(
-          children: [
-            Expanded(child: AccelerometerCard(color: Colors.yellow, axis: 'x')),
-            Expanded(child: AccelerometerCard(color: Colors.purple, axis: 'y')),
-            Expanded(child: AccelerometerCard(color: Colors.green, axis: 'z')),
-          ],
-        )));
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AccelerometerStateProvider>(
+          create: (_) => AccelerometerStateProvider()..initializeSensors(),
+        ),
+      ],
+      child: const CommonScaffold(
+          title: 'Accelerometer',
+          body: SafeArea(
+              child: Column(
+            children: [
+              Expanded(
+                  child: AccelerometerCard(color: Colors.yellow, axis: 'x')),
+              Expanded(
+                  child: AccelerometerCard(color: Colors.purple, axis: 'y')),
+              Expanded(
+                  child: AccelerometerCard(color: Colors.green, axis: 'z')),
+            ],
+          ))),
+    );
   }
 }

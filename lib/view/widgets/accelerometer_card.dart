@@ -1,11 +1,13 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:sensors_plus/sensors_plus.dart';
+import 'package:pslab/providers/accelerometer_state_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
 class AccelerometerCard extends StatefulWidget {
   final String axis;
   final Color color;
+  //final List<FlSpot> spots;
+
   const AccelerometerCard({required this.axis, required this.color, super.key});
 
   @override
@@ -13,50 +15,6 @@ class AccelerometerCard extends StatefulWidget {
 }
 
 class _AccelerometerCardState extends State<AccelerometerCard> {
-  List<FlSpot> spots = [];
-  int time = 0;
-  double minVal = double.infinity;
-  double maxVal = double.negativeInfinity;
-  double currVal = 0.0;
-  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _accelerometerSubscription = accelerometerEventStream().listen((event) {
-      double val = 0.0;
-      switch (widget.axis) {
-        case 'x':
-          val = event.x;
-          break;
-        case 'y':
-          val = event.y;
-          break;
-        case 'z':
-          val = event.z;
-          break;
-      }
-      setState(() {
-        currVal = val;
-        minVal = val < minVal ? val : minVal;
-        maxVal = val > maxVal ? val : maxVal;
-
-        spots.add(FlSpot(time.toDouble(), currVal));
-        if (spots.length > 50) {
-          spots.removeAt(0);
-        }
-        time++;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _accelerometerSubscription?.cancel();
-    super.dispose();
-  }
-
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       color: Colors.white,
@@ -89,6 +47,13 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AccelerometerStateProvider>(context);
+    final List<FlSpot> spots = provider.getAxisData(widget.axis);
+    final currVal = provider.getCurrent(widget.axis);
+    final minVal = provider.getMin(widget.axis);
+    final maxVal = provider.getMax(widget.axis);
+    final dataLength = provider.getDataLength(widget.axis);
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       shape: RoundedRectangleBorder(
@@ -120,14 +85,16 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.all(4),
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
                     "Min ${minVal.toStringAsFixed(1)} (m/s²)",
                     style: const TextStyle(fontSize: 10),
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.all(4),
+                  alignment: Alignment.topLeft,
+                  margin: const EdgeInsets.only(left: 8, top: 2),
                   child: Text(
                     "Max ${maxVal.toStringAsFixed(1)} (m/s²)",
                     style: const TextStyle(fontSize: 10),
@@ -202,9 +169,20 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                     ),
                     minY: -20,
                     maxY: 20,
-                    maxX: 10,
+                    maxX: dataLength > 50 ? 50 : dataLength.toDouble(),
                     minX: 0,
                     clipData: const FlClipData.all(),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: spots,
+                        isCurved: true,
+                        color: widget.color,
+                        barWidth: 2,
+                        isStrokeCapRound: true,
+                        dotData: const FlDotData(show: false),
+                        belowBarData: BarAreaData(show: false),
+                      ),
+                    ],
                   ),
                 ),
               ),
