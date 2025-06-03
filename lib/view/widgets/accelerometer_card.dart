@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/providers/accelerometer_state_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,6 @@ import 'package:provider/provider.dart';
 class AccelerometerCard extends StatefulWidget {
   final String axis;
   final Color color;
-  //final List<FlSpot> spots;
 
   const AccelerometerCard({required this.axis, required this.color, super.key});
 
@@ -30,29 +30,16 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     );
   }
 
-  Widget topTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
-      fontSize: 9,
-    );
-    return SideTitleWidget(
-      meta: meta,
-      child: Text(
-        maxLines: 1,
-        meta.formattedValue,
-        style: style,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AccelerometerStateProvider>(context);
-    final List<FlSpot> spots = provider.getAxisData(widget.axis);
-    final currVal = provider.getCurrent(widget.axis);
-    final minVal = provider.getMin(widget.axis);
-    final maxVal = provider.getMax(widget.axis);
-    final dataLength = provider.getDataLength(widget.axis);
+    AccelerometerStateProvider provider =
+        Provider.of<AccelerometerStateProvider>(context);
+    List<FlSpot> spots = provider.getAxisData(widget.axis);
+    double currVal = provider.getCurrent(widget.axis);
+    double minVal = provider.getMin(widget.axis);
+    double maxVal = provider.getMax(widget.axis);
+    int dataLength = provider.getDataLength(widget.axis);
+    String axisImage = 'assets/images/phone_${widget.axis}_axis.png';
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -61,7 +48,6 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
       ),
       elevation: 2,
       child: Container(
-        height: 200,
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(5)),
         child: Row(
@@ -72,7 +58,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                 Container(
                   margin: const EdgeInsets.all(15),
                   child: Image.asset(
-                    'assets/images/phone_${widget.axis}_axis.png',
+                    axisImage,
                     width: 50,
                     height: 50,
                   ),
@@ -80,7 +66,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                 Container(
                   margin: const EdgeInsets.only(top: 8, bottom: 12),
                   child: Text(
-                    "${currVal.toStringAsFixed(1)} (m/s²)",
+                    "${currVal.toStringAsFixed(1)} $accelerationAxisLabel",
                     style: const TextStyle(fontSize: 14),
                   ),
                 ),
@@ -88,7 +74,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   alignment: Alignment.topLeft,
                   margin: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
-                    "Min ${minVal.toStringAsFixed(1)} (m/s²)",
+                    "$minValue ${minVal.toStringAsFixed(1)} $accelerationAxisLabel",
                     style: const TextStyle(fontSize: 10),
                   ),
                 ),
@@ -96,7 +82,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   alignment: Alignment.topLeft,
                   margin: const EdgeInsets.only(left: 8, top: 2),
                   child: Text(
-                    "Max ${maxVal.toStringAsFixed(1)} (m/s²)",
+                    "$maxValue ${maxVal.toStringAsFixed(1)} $accelerationAxisLabel",
                     style: const TextStyle(fontSize: 10),
                   ),
                 ),
@@ -112,23 +98,26 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                     backgroundColor: Colors.black,
                     titlesData: FlTitlesData(
                       show: true,
-                      topTitles: const AxisTitles(
-                        axisNameWidget: Text(
-                          'Time(s)',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                      topTitles: AxisTitles(
+                        axisNameWidget: Padding(
+                          padding: const EdgeInsets.only(left: 25),
+                          child: Text(
+                            timeAxisLabel,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        axisNameSize: 30,
+                        axisNameSize: 20,
                       ),
                       bottomTitles: const AxisTitles(
                           sideTitles: SideTitles(showTitles: false)),
                       leftTitles: AxisTitles(
-                        axisNameWidget: const Text(
-                          'm/s²',
-                          style: TextStyle(
+                        axisNameWidget: Text(
+                          accelerationAxisLabel,
+                          style: const TextStyle(
                             fontSize: 10,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

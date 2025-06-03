@@ -133,3 +133,11 @@ List<String> connectWithUs = [
   'Developers'
 ];
 String softwareLicenses = 'Software Licenses';
+String accelerometer = 'Accelerometer';
+String xAxis = 'x';
+String yAxis = 'y';
+String zAxis = 'z';
+String timeAxisLabel = 'Time(s)';
+String accelerationAxisLabel = 'm/s²';
+String minValue = 'Min: ';
+String maxValue = 'Max: ';

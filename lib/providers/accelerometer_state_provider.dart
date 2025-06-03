@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/foundation.dart';
 
@@ -30,7 +31,9 @@ class AccelerometerStateProvider extends ChangeNotifier {
         notifyListeners();
       },
       onError: (error) {
-        debugPrint("Accelerometer error: $error");
+        logger.e(
+          "Accelerometer error: $error",
+        );
       },
       cancelOnError: true,
     );
