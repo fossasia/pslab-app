@@ -143,4 +143,4 @@ String minValue = 'Min: ';
 String maxValue = 'Max: ';
 String gyroscopeTitle = "Gyroscope";
 String gyroscopeAxisLabel = 'rad/s';
-String noData = 'No data availabl';
+String noData = 'No data available';
