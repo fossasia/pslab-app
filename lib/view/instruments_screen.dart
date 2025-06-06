@@ -37,7 +37,6 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
             (route) => route.isFirst,
           );
         }
-        break;
       case 10:
         if (Navigator.canPop(context) &&
             ModalRoute.of(context)?.settings.name == '/gyroscope') {
@@ -46,6 +45,17 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/gyroscope',
+            (route) => route.isFirst,
+          );
+        }
+      case 12:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/roboticArm') {
+          Navigator.popUntil(context, ModalRoute.withName('/roboticArm'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/roboticArm',
             (route) => route.isFirst,
           );
         }
