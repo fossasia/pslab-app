@@ -72,7 +72,6 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   decoration: TextDecoration.underline,
-                                  color: Colors.black,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -83,21 +82,18 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                               stepsToConnect[1],
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
                               ),
                             ),
                             Text(
                               stepsToConnect[2],
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
                               ),
                             ),
                             Text(
                               stepsToConnect[3],
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -110,7 +106,6 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         child: Text(
                           bluetoothWifiConnection,
                           style: const TextStyle(
-                            color: Colors.black,
                             fontSize: 14,
                           ),
                         ),

@@ -11,7 +11,7 @@ import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
-
+import 'package:pslab/others/theme.dart';
 import 'constants.dart';
 
 void main() {
@@ -38,10 +38,9 @@ class MyApp extends StatelessWidget {
     _preCacheImages(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: Colors.white,
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       initialRoute: '/',
       routes: {
         '/': (context) => const InstrumentsScreen(),
