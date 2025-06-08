@@ -159,6 +159,7 @@ String showGuide = 'Show Guide';
 String showLoggedDataKey = 'show_logged_data';
 String showLoggedData = 'Show Logged Data';
 String setAngle = 'Set angle for Servo';
+String angleDialog = 'AngleDialog';
 List<String> servoLabels = [
   'Servo 1',
   'Servo 2',
