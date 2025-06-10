@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         '/softwareLicenses': (context) => const SoftwareLicensesScreen(),
         '/accelerometer': (context) => const AccelerometerScreen(),
         '/gyroscope': (context) => const GyroscopeScreen(),
-        '/luxmeter': (context) => LuxMeterScreen(),
+        '/luxmeter': (context) => const LuxMeterScreen(),
       },
     );
   }
