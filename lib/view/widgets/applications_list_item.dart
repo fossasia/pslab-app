@@ -40,7 +40,7 @@ class ApplicationsListItem extends StatelessWidget {
                       verticalBarsIcon,
                       width: 100,
                       fit: BoxFit.fill,
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(
@@ -61,7 +61,7 @@ class ApplicationsListItem extends StatelessWidget {
                       horizontalBarsIcon,
                       height: 100,
                       fit: BoxFit.fill,
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Colors.white,
                     ),
                   ),
                   SizedBox(
@@ -70,7 +70,7 @@ class ApplicationsListItem extends StatelessWidget {
                     child: Image.asset(
                       instrumentIcon,
                       fit: BoxFit.fill,
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Colors.white,
                     ),
                   )
                 ],
