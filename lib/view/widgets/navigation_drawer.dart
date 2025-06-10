@@ -24,7 +24,7 @@ class _NavDrawerState extends State<NavDrawer> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
       ),
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: ScrollConfiguration(
         behavior: const ScrollBehavior(),
         child: ListView(
@@ -37,10 +37,9 @@ class _NavDrawerState extends State<NavDrawer> {
                   SizedBox(
                     height: 80,
                     width: 80,
-                    child: Image.asset(
-                      navHeaderLogo,
-                      fit: BoxFit.contain,
-                    ),
+                    child: Image.asset(navHeaderLogo,
+                        fit: BoxFit.contain,
+                        color: Theme.of(context).colorScheme.onSurface),
                   ),
                   Consumer<BoardStateProvider>(
                     builder: (context, provider, _) {
@@ -67,7 +66,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Instruments',
                 style: TextStyle(
-                  color: widget.selectedIndex == 0 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 0
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -98,7 +99,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Logged Data',
                 style: TextStyle(
-                  color: widget.selectedIndex == 1 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 1
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -118,7 +121,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Connect Device',
                 style: TextStyle(
-                  color: widget.selectedIndex == 2 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 2
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -147,7 +152,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Generate Config File',
                 style: TextStyle(
-                  color: widget.selectedIndex == 3 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 3
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -166,7 +173,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Settings',
                 style: TextStyle(
-                  color: widget.selectedIndex == 4 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 4
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -195,7 +204,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'About Us',
                 style: TextStyle(
-                  color: widget.selectedIndex == 5 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 5
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -223,7 +234,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Documentation',
                 style: TextStyle(
-                  color: widget.selectedIndex == 6 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 6
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -242,7 +255,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Rate App',
                 style: TextStyle(
-                  color: widget.selectedIndex == 7 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 7
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -261,7 +276,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Buy PSLab',
                 style: TextStyle(
-                  color: widget.selectedIndex == 8 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 8
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -280,7 +297,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'FAQ',
                 style: TextStyle(
-                  color: widget.selectedIndex == 9 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 9
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -299,7 +318,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Share App',
                 style: TextStyle(
-                  color: widget.selectedIndex == 10 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 10
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -318,7 +339,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 'Privacy Policy',
                 style: TextStyle(
-                  color: widget.selectedIndex == 11 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 11
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -337,7 +360,9 @@ class _NavDrawerState extends State<NavDrawer> {
               title: Text(
                 softwareLicenses,
                 style: TextStyle(
-                  color: widget.selectedIndex == 12 ? Colors.red : Colors.black,
+                  color: widget.selectedIndex == 12
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
