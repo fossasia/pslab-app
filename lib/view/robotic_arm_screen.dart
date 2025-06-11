@@ -109,11 +109,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                             TextButton(
                                 onPressed: () => Navigator.pop(context),
                                 child: Text(cancel)),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryRed,
-                                minimumSize: const Size(50, 32),
-                              ),
+                            TextButton(
                               onPressed: () {
                                 final value = double.tryParse(controller.text);
                                 if (value != null &&
@@ -158,8 +154,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
         builder: (context, provider, _) {
           final screenWidth = MediaQuery.of(context).size.width;
           final screenHeight = MediaQuery.of(context).size.height;
-          final servoWidth = (screenWidth / 4) - 7;
-          final servoHeight = (screenHeight / 2.9);
+          final servoHeight = (screenHeight / 2.7);
 
           return CommonScaffold(
             title: roboticArm,
@@ -226,26 +221,31 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(4, (index) {
-                          return SizedBox(
-                            width: servoWidth,
-                            height: servoHeight,
-                            child: ServoCard(
-                              value: provider.servoValues[index],
-                              label: servoLabels[index],
-                              servoId: index,
-                              onChanged: (val) {
-                                setState(() {
-                                  provider.updateServoValue(index, val);
-                                });
-                              },
-                              onTap: () =>
-                                  _showAngleInputDialog(context, index),
+                          return Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
+                              child: SizedBox(
+                                height: servoHeight,
+                                child: ServoCard(
+                                  value: provider.servoValues[index],
+                                  label: servoLabels[index],
+                                  servoId: index,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      provider.updateServoValue(index, val);
+                                    });
+                                  },
+                                  onTap: () =>
+                                      _showAngleInputDialog(context, index),
+                                ),
+                              ),
                             ),
                           );
                         }),
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 3),
                     Expanded(
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,

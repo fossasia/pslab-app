@@ -23,8 +23,6 @@ class ServoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 120,
-      height: 180,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
