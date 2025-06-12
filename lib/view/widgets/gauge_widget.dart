@@ -7,13 +7,23 @@ class GaugeWidget extends StatelessWidget {
   final double gaugeSize;
   final double currentValue;
   final double currentValueFontSize;
+  final double minValue;
+  final double maxValue;
+  final String unit;
   const GaugeWidget(
       {super.key,
       required this.gaugeSize,
       required this.currentValue,
+      required this.maxValue,
+      required this.minValue,
+      required this.unit,
       required this.currentValueFontSize});
   @override
   Widget build(BuildContext context) {
+    double range = maxValue - minValue;
+    double normalizedValue = (currentValue - minValue) / range;
+    double gaugeValue = normalizedValue * 100;
+    gaugeValue = gaugeValue.clamp(0.0, 100.0);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -40,7 +50,7 @@ class GaugeWidget extends StatelessWidget {
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.elasticOut,
                       radius: gaugeSize * 0.45,
-                      value: currentValue > 10000 ? 100 : (currentValue / 100),
+                      value: gaugeValue,
                       axis: GaugeAxis(
                         min: 0,
                         max: 100,
@@ -75,14 +85,14 @@ class GaugeWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      '${currentValue.toStringAsFixed(1)} $lx',
+                      '${currentValue.toStringAsFixed(1)} $unit',
                       style: TextStyle(
                         fontSize: currentValueFontSize * 1.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
-                    if (currentValue > 10000)
+                    if (currentValue > maxValue)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(

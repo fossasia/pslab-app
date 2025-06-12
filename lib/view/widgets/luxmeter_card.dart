@@ -4,6 +4,7 @@ import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/view/widgets/instrumentStats.dart';
 
 class LuxMeterCard extends StatefulWidget {
   const LuxMeterCard({super.key});
@@ -85,35 +86,27 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
                 padding: EdgeInsets.all(cardPadding),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    if (screenWidth < 350) {
-                      return Column(
-                        children: [
-                          Expanded(
-                            child: _buildStatsSection(titleFontSize,
-                                statFontSize, maxLux, minLux, avgLux),
-                          ),
-                          const SizedBox(height: 16),
-                          Expanded(
-                            child: GaugeWidget(
-                                gaugeSize: gaugeSize,
-                                currentValue: currentLux,
-                                currentValueFontSize: luxValueFontSize),
-                          ),
-                        ],
-                      );
-                    }
                     return Row(
                       children: [
                         Expanded(
                           flex: screenWidth < 500 ? 40 : 35,
-                          child: _buildStatsSection(titleFontSize, statFontSize,
-                              maxLux, minLux, avgLux),
+                          child: Instrumentstats(
+                            titleFontSize: titleFontSize,
+                            statFontSize: statFontSize,
+                            maxValue: maxLux,
+                            minValue: minLux,
+                            avgValue: avgLux,
+                            unit: 'Lx',
+                          ),
                         ),
                         Expanded(
                           flex: screenWidth < 500 ? 60 : 65,
                           child: GaugeWidget(
                               gaugeSize: gaugeSize,
                               currentValue: currentLux,
+                              minValue: 0,
+                              maxValue: 10000,
+                              unit: 'Lx',
                               currentValueFontSize: luxValueFontSize),
                         ),
                       ],
@@ -139,38 +132,6 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildStatsSection(double titleFontSize, double statFontSize,
-      double maxLux, double minLux, double avgLux) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: Text(
-            builtIn,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: titleFontSize,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatItem('Max (Lx)', maxLux, statFontSize),
-                _buildStatItem('Min (Lx)', minLux, statFontSize),
-                _buildStatItem('Avg (Lx)', avgLux, statFontSize),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -272,48 +233,6 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(show: false),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String label, double value, double fontSize) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final valueFontSize = screenWidth < 400 ? 14.0 : 16.0;
-    final padding = screenWidth < 400 ? 15.0 : 20.0;
-    return Flexible(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: fontSize,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Center(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: padding, vertical: 3),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.pink.shade200),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                value.toStringAsFixed(2),
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: valueFontSize,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
           ),
         ],
       ),
