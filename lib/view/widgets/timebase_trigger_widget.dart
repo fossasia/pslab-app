@@ -81,11 +81,11 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     ),
                     Expanded(
                       child: SliderTheme(
-                        data: const SliderThemeData(
-                          inactiveTrackColor: Colors.black,
+                        data: SliderThemeData(
+                          inactiveTrackColor: Colors.blueGrey[100],
                           trackHeight: 1,
-                          thumbShape:
-                              RoundSliderThumbShape(enabledThumbRadius: 6),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 6),
                         ),
                         child: Selector<OscilloscopeStateProvider, double>(
                           selector: (context, provider) =>
@@ -218,11 +218,11 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     ),
                     Expanded(
                       child: SliderTheme(
-                        data: const SliderThemeData(
-                          inactiveTrackColor: Colors.black,
+                        data: SliderThemeData(
+                          inactiveTrackColor: Colors.blueGrey[100],
                           trackHeight: 1,
-                          thumbShape:
-                              RoundSliderThumbShape(enabledThumbRadius: 6),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 6),
                         ),
                         child: Slider(
                           activeColor: const Color(0xFFCE525F),
