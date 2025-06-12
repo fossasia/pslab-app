@@ -4,7 +4,7 @@ import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/view/widgets/instrumentStats.dart';
+import 'package:pslab/view/widgets/instruments_stats.dart';
 
 class LuxMeterCard extends StatefulWidget {
   const LuxMeterCard({super.key});
