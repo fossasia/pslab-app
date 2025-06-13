@@ -55,7 +55,8 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   package_info_plus: ^8.3.0
   sensors_plus: ^6.1.1
-
+  gauge_indicator: ^0.4.3
+  light: ^4.1.0
 
 
 dev_dependencies:
