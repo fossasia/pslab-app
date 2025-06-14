@@ -101,7 +101,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   margin: const EdgeInsets.only(top: 8, bottom: 12),
                   child: Text(
                     "${currVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(color: Colors.black, fontSize: 14),
                   ),
                 ),
                 Container(
@@ -109,7 +109,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   margin: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
                     "$minValue ${minVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
-                    style: const TextStyle(fontSize: 10),
+                    style: const TextStyle(color: Colors.black, fontSize: 10),
                   ),
                 ),
                 Container(
@@ -117,7 +117,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   margin: const EdgeInsets.only(left: 8, top: 2),
                   child: Text(
                     "$maxValue ${maxVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
-                    style: const TextStyle(fontSize: 10),
+                    style: const TextStyle(color: Colors.black, fontSize: 10),
                   ),
                 ),
               ]),

@@ -44,9 +44,10 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         );
                       },
                     ),
-                    const Text(
-                      'Trigger',
-                      style: TextStyle(
+                    Text(
+                      trigger,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
@@ -70,6 +71,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           border: InputBorder.none,
                         ),
                         textStyle: const TextStyle(
+                          color: Colors.black,
                           fontSize: 15,
                         ),
                         onSelected: (String? value) {
@@ -79,10 +81,11 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     ),
                     Expanded(
                       child: SliderTheme(
-                        data: const SliderThemeData(
+                        data: SliderThemeData(
+                          inactiveTrackColor: Colors.blueGrey[100],
                           trackHeight: 1,
-                          thumbShape:
-                              RoundSliderThumbShape(enabledThumbRadius: 6),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 6),
                         ),
                         child: Selector<OscilloscopeStateProvider, double>(
                           selector: (context, provider) =>
@@ -117,6 +120,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           border: InputBorder.none,
                         ),
                         style: const TextStyle(
+                          color: Colors.black,
                           fontSize: 14,
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
@@ -171,6 +175,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           border: InputBorder.none,
                         ),
                         textStyle: const TextStyle(
+                          color: Colors.black,
                           fontSize: 14,
                         ),
                         onSelected: (String? value) {
@@ -202,9 +207,10 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Timebase',
-                      style: TextStyle(
+                    Text(
+                      timeBase,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
@@ -212,10 +218,11 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     ),
                     Expanded(
                       child: SliderTheme(
-                        data: const SliderThemeData(
+                        data: SliderThemeData(
+                          inactiveTrackColor: Colors.blueGrey[100],
                           trackHeight: 1,
-                          thumbShape:
-                              RoundSliderThumbShape(enabledThumbRadius: 6),
+                          thumbShape: const RoundSliderThumbShape(
+                              enabledThumbRadius: 6),
                         ),
                         child: Slider(
                           activeColor: const Color(0xFFCE525F),
@@ -303,6 +310,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                             ? '${oscilloscopeStateProvider.timebase.toStringAsFixed(2)} \u00b5s'
                             : '${(oscilloscopeStateProvider.timebase / 1000).toStringAsFixed(2)} ms',
                         style: const TextStyle(
+                          color: Colors.black,
                           fontSize: 14,
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
@@ -324,9 +332,9 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: const BoxDecoration(color: Colors.white),
-              child: const Text(
-                'Timebase & Trigger',
-                style: TextStyle(
+              child: Text(
+                timeBaseAndTrigger,
+                style: const TextStyle(
                   color: Color(0xFFC72C2C),
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,

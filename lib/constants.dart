@@ -166,3 +166,25 @@ List<String> servoLabels = [
   'Servo 3',
   'Servo 4',
 ];
+String xyPlot = 'XY Plot';
+String enablePlot = 'Enable XY Plot';
+String trigger = 'Trigger';
+String timeBase = 'Timebase';
+String timeBaseAndTrigger = 'Timebase & Trigger';
+String offsets = 'Offsets';
+String dataAnalysis = 'Data Analysis';
+String fourierAnalysis = 'Fourier Analysis';
+String channels = 'Channels';
+String pslabMic = 'PSLab MIC';
+String inBuiltMic = 'In-Built MIC';
+String ch3Range = 'CH3 (+/- 3.3V)';
+String rangeValue = '+/-16V';
+String range = 'Range';
+String ch2 = 'CH2';
+String ch1 = 'CH1';
+String luxMeterTitle = 'Lux Meter';
+String builtIn = 'Built-In';
+String lx = 'Lx';
+String maxScaleError = 'Max Scale';
+String lightSensorError = 'Light sensor error:';
+String lightSensorInitialError = 'Failed to initialize light sensor:';

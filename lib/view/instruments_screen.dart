@@ -7,7 +7,6 @@ import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 
 class InstrumentsScreen extends StatefulWidget {
   const InstrumentsScreen({super.key});
-
   @override
   State<StatefulWidget> createState() => _InstrumentsScreenState();
 }
@@ -34,6 +33,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/accelerometer',
+            (route) => route.isFirst,
+          );
+        }
+        break;
+      case 6:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/luxmeter') {
+          Navigator.popUntil(context, ModalRoute.withName('/luxmeter'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/luxmeter',
             (route) => route.isFirst,
           );
         }

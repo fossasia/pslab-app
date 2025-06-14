@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
+import 'package:pslab/constants.dart';
 
 class DataAnalysisWidget extends StatefulWidget {
   const DataAnalysisWidget({super.key});
@@ -50,9 +51,10 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               );
                             },
                           ),
-                          const Text(
-                            'Fourier Analysis',
-                            style: TextStyle(
+                          Text(
+                            fourierAnalysis,
+                            style: const TextStyle(
+                              color: Colors.black,
                               fontSize: 15,
                               fontWeight: FontWeight.normal,
                               fontStyle: FontStyle.normal,
@@ -88,6 +90,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               border: InputBorder.none,
                             ),
                             textStyle: const TextStyle(
+                              color: Colors.black,
                               fontSize: 15,
                             ),
                             onSelected: (String? value) {
@@ -128,6 +131,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           border: InputBorder.none,
                         ),
                         textStyle: const TextStyle(
+                          color: Colors.black,
                           fontSize: 15,
                         ),
                         onSelected: (value) {
@@ -165,6 +169,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           border: InputBorder.none,
                         ),
                         textStyle: const TextStyle(
+                          color: Colors.black,
                           fontSize: 15,
                         ),
                         onSelected: (value) {
@@ -189,9 +194,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: const BoxDecoration(color: Colors.white),
-                    child: const Text(
-                      'Data Analysis',
-                      style: TextStyle(
+                    child: Text(
+                      dataAnalysis,
+                      style: const TextStyle(
                         color: Color(0xFFC72C2C),
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
@@ -241,6 +246,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             border: InputBorder.none,
                           ),
                           textStyle: const TextStyle(
+                            color: Colors.black,
                             fontSize: 15,
                           ),
                           onSelected: (value) => {
@@ -262,9 +268,10 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         children: [
                           Expanded(
                             child: SliderTheme(
-                              data: const SliderThemeData(
+                              data: SliderThemeData(
+                                inactiveTrackColor: Colors.blueGrey[100],
                                 trackHeight: 1,
-                                thumbShape: RoundSliderThumbShape(
+                                thumbShape: const RoundSliderThumbShape(
                                     enabledThumbRadius: 6),
                               ),
                               child: Slider(
@@ -304,6 +311,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                 border: InputBorder.none,
                               ),
                               style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal,
                                 fontStyle: FontStyle.normal,
@@ -343,9 +351,10 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         children: [
                           Expanded(
                             child: SliderTheme(
-                              data: const SliderThemeData(
+                              data: SliderThemeData(
+                                inactiveTrackColor: Colors.blueGrey[100],
                                 trackHeight: 1,
-                                thumbShape: RoundSliderThumbShape(
+                                thumbShape: const RoundSliderThumbShape(
                                     enabledThumbRadius: 6),
                               ),
                               child: Slider(
@@ -403,6 +412,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                     : '${oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} ms',
                               ),
                               style: const TextStyle(
+                                color: Colors.black,
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal,
                                 fontStyle: FontStyle.normal,
@@ -456,9 +466,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
                     decoration: const BoxDecoration(color: Colors.white),
-                    child: const Text(
-                      'Offsets',
-                      style: TextStyle(
+                    child: Text(
+                      offsets,
+                      style: const TextStyle(
                         color: Color(0xFFC72C2C),
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,

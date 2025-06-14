@@ -56,6 +56,8 @@ dependencies:
   package_info_plus: ^8.3.0
   sensors_plus: ^6.1.1
   sleek_circular_slider: ^2.1.0
+  gauge_indicator: ^0.4.3
+  light: ^4.1.0
 
 
 dev_dependencies:
