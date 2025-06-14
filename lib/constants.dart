@@ -166,3 +166,8 @@ String lx = 'Lx';
 String maxScaleError = 'Max Scale';
 String lightSensorError = 'Light sensor error:';
 String lightSensorInitialError = 'Failed to initialize light sensor:';
+const String barometerTitle = 'Barometer';
+const String atm = 'atm';
+const String barometerSensorError = 'Barometer sensor error:';
+const String barometerSensorInitialError =
+    'Failed to initialize barometer sensor:';
