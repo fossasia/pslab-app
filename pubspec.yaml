@@ -57,6 +57,7 @@ dependencies:
   sensors_plus: ^6.1.1
   gauge_indicator: ^0.4.3
   light: ^4.1.0
+  connectivity_plus: ^6.1.4
 
 
 dev_dependencies:

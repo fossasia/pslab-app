@@ -13,6 +13,7 @@ class MainScaffold extends StatefulWidget {
   final List<Widget>? actions;
   final String icUsbDisconnected = 'assets/icons/ic_usb_disconnected.png';
   final String icUsbConnected = 'assets/icons/ic_usb_connected.png';
+  final String icWiFiConnected = 'assets/icons/ic_wifi_connected.png';
 
   const MainScaffold(
       {super.key,
@@ -61,7 +62,9 @@ class _MainScaffoldState extends State<MainScaffold> {
               return IconButton(
                 icon: Image.asset(
                   provider.pslabIsConnected
-                      ? widget.icUsbConnected
+                      ? (provider.scienceLabCommon.isWiFiConnected()
+                          ? widget.icWiFiConnected
+                          : widget.icUsbConnected)
                       : widget.icUsbDisconnected,
                   width: 24,
                   height: 24,
