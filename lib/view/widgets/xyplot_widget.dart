@@ -44,9 +44,10 @@ class _XYPlotState extends State<XYPlotWidget> {
                         );
                       },
                     ),
-                    const Text(
-                      'Enable XY Plot',
-                      style: TextStyle(
+                    Text(
+                      enablePlot,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.normal,
                         fontStyle: FontStyle.normal,
@@ -77,6 +78,7 @@ class _XYPlotState extends State<XYPlotWidget> {
                         border: InputBorder.none,
                       ),
                       textStyle: const TextStyle(
+                        color: Colors.black,
                         fontSize: 15,
                       ),
                       onSelected: (String? value) {
@@ -98,6 +100,7 @@ class _XYPlotState extends State<XYPlotWidget> {
                         border: InputBorder.none,
                       ),
                       textStyle: const TextStyle(
+                        color: Colors.black,
                         fontSize: 15,
                       ),
                       onSelected: (String? value) {
@@ -119,9 +122,9 @@ class _XYPlotState extends State<XYPlotWidget> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: const BoxDecoration(color: Colors.white),
-              child: const Text(
-                'XY Plot',
-                style: TextStyle(
+              child: Text(
+                xyPlot,
+                style: const TextStyle(
                   color: Color(0xFFC72C2C),
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,

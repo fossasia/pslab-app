@@ -26,7 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(export,
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),

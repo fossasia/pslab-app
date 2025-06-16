@@ -94,6 +94,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 iconAboutUs,
                 width: 250,
                 height: 250,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             Center(
