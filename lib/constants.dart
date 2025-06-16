@@ -172,4 +172,4 @@ String barometerSensorInitialError = 'Failed to initialize barometer sensor:';
 String barometerSensorError = 'Barometer sensor error occurred';
 String barometerNotAvailable = 'Barometer sensor not available on this device';
 String meterUnit = 'm';
-String altitude = 'Altitude';
+String altitudeLabel = 'Altitude';

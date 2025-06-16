@@ -89,7 +89,7 @@ class _BarometerCardState extends State<BarometerCard> {
     );
   }
 
-  Widget _buildAltitudeTile(double altitude, double fontSize) {
+  Widget _buildAltitudeTile(double currentAltitude, double fontSize) {
     final screenWidth = MediaQuery.of(context).size.width;
     final padding = screenWidth < 400 ? 15.0 : 20.0;
 
@@ -99,7 +99,7 @@ class _BarometerCardState extends State<BarometerCard> {
       children: [
         Center(
           child: Text(
-            '$altitude ($meterUnit)',
+            '$altitudeLabel ($meterUnit)',
             style: TextStyle(
               color: Colors.black,
               fontSize: fontSize,
@@ -116,7 +116,7 @@ class _BarometerCardState extends State<BarometerCard> {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              altitude.toStringAsFixed(2),
+              currentAltitude.toStringAsFixed(2),
               style: TextStyle(
                 color: Colors.black,
                 fontSize: fontSize,
