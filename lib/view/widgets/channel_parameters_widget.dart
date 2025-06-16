@@ -45,19 +45,20 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         );
                       },
                     ),
-                    const Text(
-                      'CH1',
-                      style: TextStyle(
+                    Text(
+                      ch1,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                         fontSize: 15,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
                       child: Text(
-                        'Range',
-                        style: TextStyle(
+                        range,
+                        style: const TextStyle(
                           color: Color(0xFF424242),
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
@@ -82,7 +83,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(fontSize: 15),
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 15),
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
                             case 0:
@@ -143,19 +145,20 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         );
                       },
                     ),
-                    const Text(
-                      'CH2',
-                      style: TextStyle(
+                    Text(
+                      ch2,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                         fontSize: 15,
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
                       child: Text(
-                        'Range',
-                        style: TextStyle(
+                        range,
+                        style: const TextStyle(
                           color: Color(0xFF424242),
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
@@ -163,13 +166,14 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         ),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
                       child: SizedBox(
                         width: 120,
                         child: Text(
-                          '+/-16V',
-                          style: TextStyle(
+                          rangeValue,
+                          style: const TextStyle(
+                            color: Colors.black,
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.normal,
                             fontSize: 15,
@@ -199,9 +203,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         );
                       },
                     ),
-                    const Text(
-                      'CH3 (+/- 3.3V)',
-                      style: TextStyle(
+                    Text(
+                      ch3Range,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                         fontSize: 15,
@@ -251,9 +256,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         );
                       },
                     ),
-                    const Text(
-                      'In-Built MIC',
-                      style: TextStyle(
+                    Text(
+                      inBuiltMic,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
@@ -283,9 +289,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         );
                       },
                     ),
-                    const Text(
-                      'PSLab MIC',
-                      style: TextStyle(
+                    Text(
+                      pslabMic,
+                      style: const TextStyle(
+                        color: Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
@@ -306,9 +313,9 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: const BoxDecoration(color: Colors.white),
-              child: const Text(
-                'Channels',
-                style: TextStyle(
+              child: Text(
+                channels,
+                style: const TextStyle(
                   color: Color(0xFFC72C2C),
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,

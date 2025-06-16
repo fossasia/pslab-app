@@ -133,6 +133,7 @@ List<String> connectWithUs = [
   'Developers'
 ];
 String softwareLicenses = 'Software Licenses';
+
 String faqTitle = 'FAQs';
 String launchError = 'Could not launch';
 String Q = 'Q:';
@@ -192,3 +193,37 @@ class FAQConstants {
   static const String compatibleSensorsAnswer =
       "In our apps we use the industry standard I²C (Wikipedia). You can get the data from sensors that are connected to the device through the USB port using an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. For the transfer we use UART (universal asynchronous receiver-transmitter, Wikipedia). Many sensors can be used with specific instruments, e.g. Barometer, Thermometer, Gyroscope etc. You can access the configuration for sensors in the instrument settings on the top right burger menu of each instrument. All sensors using the I²C standard are compatible with the device. There are connection pins for analogue and digital sensors. You find the description of the pins on the back of the device. Even if there is no specific instrument in one of our apps yet, you can still view and store the raw data using the Oscilloscope instrument component. There is a page with a list of recommended sensors on the website.";
 }
+
+String accelerometer = 'Accelerometer';
+String xAxis = 'x';
+String yAxis = 'y';
+String zAxis = 'z';
+String timeAxisLabel = 'Time(s)';
+String accelerationAxisLabel = 'm/s²';
+String minValue = 'Min: ';
+String maxValue = 'Max: ';
+String gyroscopeTitle = "Gyroscope";
+String gyroscopeAxisLabel = 'rad/s';
+String noData = 'No data available';
+String xyPlot = 'XY Plot';
+String enablePlot = 'Enable XY Plot';
+String trigger = 'Trigger';
+String timeBase = 'Timebase';
+String timeBaseAndTrigger = 'Timebase & Trigger';
+String offsets = 'Offsets';
+String dataAnalysis = 'Data Analysis';
+String fourierAnalysis = 'Fourier Analysis';
+String channels = 'Channels';
+String pslabMic = 'PSLab MIC';
+String inBuiltMic = 'In-Built MIC';
+String ch3Range = 'CH3 (+/- 3.3V)';
+String rangeValue = '+/-16V';
+String range = 'Range';
+String ch2 = 'CH2';
+String ch1 = 'CH1';
+String luxMeterTitle = 'Lux Meter';
+String builtIn = 'Built-In';
+String lx = 'Lx';
+String maxScaleError = 'Max Scale';
+String lightSensorError = 'Light sensor error:';
+String lightSensorInitialError = 'Failed to initialize light sensor:';
