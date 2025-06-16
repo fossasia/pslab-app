@@ -48,7 +48,7 @@ dependencies:
     git:
       url: https://github.com/AsCress/flutter_audio_capture.git
       ref: master
-  data: ^0.13.0
+  data: ^0.14.0
   permission_handler: ^12.0.0+1
   logger: ^2.5.0
   url_launcher: ^6.3.1
