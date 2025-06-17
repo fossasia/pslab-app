@@ -35,10 +35,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_svg: ^2.0.17
+  flutter_svg: ^2.2.0
   google_fonts: ^6.2.1
-  fl_chart: ^0.70.1
-  provider: ^6.1.2
+  fl_chart: ^1.0.0
+  provider: ^6.1.5
   usb_serial:
     git:
       url: https://github.com/AsCress/usbserial.git
@@ -48,8 +48,8 @@ dependencies:
     git:
       url: https://github.com/AsCress/flutter_audio_capture.git
       ref: master
-  data: ^0.13.0
-  permission_handler: ^11.3.1
+  data: ^0.14.0
+  permission_handler: ^12.0.0+1
   logger: ^2.5.0
   url_launcher: ^6.3.1
   font_awesome_flutter: ^10.8.0
@@ -57,6 +57,7 @@ dependencies:
   sensors_plus: ^6.1.1
   gauge_indicator: ^0.4.3
   light: ^4.1.0
+  connectivity_plus: ^6.1.4
 
 
 dev_dependencies:
@@ -68,7 +69,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   flutter_oss_licenses: ^3.0.4
 
 # For information on the generic Dart part of this file, see the

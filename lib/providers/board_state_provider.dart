@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
@@ -32,7 +33,8 @@ class BoardStateProvider extends ChangeNotifier {
               pslabIsConnected = await scienceLabCommon.openDevice();
               setPSLabVersionIDs();
             }
-          } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED) {
+          } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
+              !scienceLabCommon.isWiFiConnected()) {
             scienceLabCommon.setConnected(false);
             pslabIsConnected = false;
             pslabVersionID = 'Not Connected';
@@ -40,6 +42,24 @@ class BoardStateProvider extends ChangeNotifier {
           }
         },
       );
+
+      Connectivity()
+          .onConnectivityChanged
+          .listen((List<ConnectivityResult> results) {
+        if (results.contains(ConnectivityResult.none)) {
+          scienceLabCommon.setWiFiConnected(false);
+          pslabIsConnected = false;
+          pslabVersionID = 'Not Connected';
+          notifyListeners();
+        }
+      });
+    }
+  }
+
+  Future<void> initializeWiFi() async {
+    if (!pslabIsConnected) {
+      pslabIsConnected = await scienceLabCommon.openWiFiDevice();
+      setPSLabVersionIDs();
     }
   }
 
