@@ -227,3 +227,7 @@ String lx = 'Lx';
 String maxScaleError = 'Max Scale';
 String lightSensorError = 'Light sensor error:';
 String lightSensorInitialError = 'Failed to initialize light sensor:';
+String soundMeterError = 'Sound sensor error:';
+String soundMeterInitialError = 'Sound sensor initialization error:';
+String db = 'dB';
+String soundMeterTitle = 'Sound Meter';

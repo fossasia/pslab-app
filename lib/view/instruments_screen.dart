@@ -61,6 +61,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           );
         }
         break;
+      case 15:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/soundmeter') {
+          Navigator.popUntil(context, ModalRoute.withName('/soundmeter'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/soundmeter',
+            (route) => route.isFirst,
+          );
+        }
+        break;
       default:
         break;
     }
