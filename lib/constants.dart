@@ -235,5 +235,5 @@ String luxMeterIOSError = "App doesn't have access to the light sensor";
 String luxMeterDesktopError = "Light sensor not supported on desktop";
 String luxMeterWebError = "Light sensor not supported on web";
 String luxMeterPlatformError = "Light sensor not supported on this platform";
-String noLightSensor = "Device does not have light sensor";
+String noLightSensor = "Device does not have a light sensor";
 String lightSensorErrorDetails = "Light sensor error details:";
