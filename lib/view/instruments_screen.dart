@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pslab/colors.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/view/widgets/applications_list_item.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -13,9 +12,8 @@ class InstrumentsScreen extends StatefulWidget {
 }
 
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
-  bool _showSearch = false;
-  final TextEditingController _searchController = TextEditingController();
   List<int> _filteredIndices = <int>[];
+
   void _onItemTapped(int index) {
     switch (index) {
       case 0:
@@ -117,185 +115,68 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: MainScaffold(
-        index: 0,
-        title: instrumentsTitle,
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: _showSearch
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            boxShadow: const <BoxShadow>[
-                              BoxShadow(
-                                color: Color.fromRGBO(0, 0, 0, 0.1),
-                                blurRadius: 8,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
+    return MainScaffold(
+      index: 0,
+      title: instrumentsTitle,
+      showSearch: true,
+      onSearchChanged: _filterInstruments,
+      searchHint: searchInstrumentsHint,
+      body: SafeArea(
+        child: _filteredIndices.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.search_off,
+                      size: 64,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withAlpha(128),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      noInstrumentsFoundMessage,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(179),
                           ),
-                          child: TextField(
-                            controller: _searchController,
-                            onChanged: _filterInstruments,
-                            decoration: InputDecoration(
-                              hintText: searchInstrumentsHint,
-                              hintStyle: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withAlpha(153),
-                              ),
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withAlpha(179),
-                              ),
-                              suffixIcon: _searchController.text.isNotEmpty
-                                  ? IconButton(
-                                      icon: Icon(
-                                        Icons.clear,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withAlpha(179),
-                                      ),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        _filterInstruments('');
-                                      },
-                                    )
-                                  : null,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide.none,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(
-                                  color: primaryRed,
-                                  width: 1.5,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(
-                                  color: primaryRed,
-                                  width: 2.5,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Theme.of(context).colorScheme.surface,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                                vertical: 16.0,
-                              ),
-                            ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      tryDifferentSearchSuggestion,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(128),
                           ),
-                        ),
-                      )
-                    : const SizedBox.shrink(key: ValueKey('empty_space')),
-              ),
-              Expanded(
-                child: _filteredIndices.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.search_off,
-                              size: 64,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withAlpha(128),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              noInstrumentsFoundMessage,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withAlpha(179),
-                                  ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              tryDifferentSearchSuggestion,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withAlpha(128),
-                                  ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ScrollConfiguration(
-                        behavior: const ScrollBehavior(),
-                        child: ListView.builder(
-                          itemCount: _filteredIndices.length,
-                          itemBuilder: (context, index) {
-                            final int originalIndex = _filteredIndices[index];
-                            return GestureDetector(
-                              onTap: () => _onItemTapped(originalIndex),
-                              child: ApplicationsListItem(
-                                heading: instrumentHeadings[originalIndex],
-                                description: instrumentDesc[originalIndex],
-                                instrumentIcon: instrumentIcons[originalIndex],
-                              ),
-                            );
-                          },
-                        ),
+                    ),
+                  ],
+                ),
+              )
+            : ScrollConfiguration(
+                behavior: const ScrollBehavior(),
+                child: ListView.builder(
+                  itemCount: _filteredIndices.length,
+                  itemBuilder: (context, index) {
+                    final int originalIndex = _filteredIndices[index];
+                    return GestureDetector(
+                      onTap: () => _onItemTapped(originalIndex),
+                      child: ApplicationsListItem(
+                        heading: instrumentHeadings[originalIndex],
+                        description: instrumentDesc[originalIndex],
+                        instrumentIcon: instrumentIcons[originalIndex],
                       ),
+                    );
+                  },
+                ),
               ),
-            ],
-          ),
-        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _showSearch = !_showSearch;
-            if (!_showSearch) {
-              _searchController.clear();
-              _filterInstruments('');
-            }
-          });
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
-        backgroundColor: Colors.white,
-        child: Icon(
-          _showSearch ? Icons.close : Icons.search,
-          color: primaryRed,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
