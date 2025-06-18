@@ -129,8 +129,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
     );
   }
 
-  Widget altitudeTitleWidgets(
-      double value, TitleMeta meta, double maxPressure) {
+  Widget altitudeTitleWidgets(double value, TitleMeta meta) {
     final screenWidth = MediaQuery.of(context).size.width;
     final fontSize = screenWidth < 400
         ? 7.0
@@ -261,7 +260,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
               reservedSize: reservedSizeRight,
               showTitles: true,
               getTitlesWidget: (value, meta) =>
-                  altitudeTitleWidgets(value, meta, maxPressure),
+                  altitudeTitleWidgets(value, meta),
               interval: maxPressure > 0 ? (maxPressure / 5) : 0.2,
             ),
           ),

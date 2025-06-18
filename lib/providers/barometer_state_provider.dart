@@ -137,9 +137,9 @@ class BarometerStateProvider extends ChangeNotifier {
 
   double getCurrentAltitude() => _pressureToAltitude(_currentPressure);
   double getMinAltitude() =>
-      _pressureMin > 0 ? _pressureToAltitude(_pressureMax) : 0.0;
+      _pressureMin > 0 ? _pressureToAltitude(_pressureMin) : 0.0;
   double getMaxAltitude() =>
-      _pressureMax > 0 ? _pressureToAltitude(_pressureMin) : 0.0;
+      _pressureMax > 0 ? _pressureToAltitude(_pressureMax) : 0.0;
   double getAverageAltitude() => _pressureToAltitude(getAveragePressure());
 
   double getMaxAltitudeForChart() =>
