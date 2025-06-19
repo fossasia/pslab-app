@@ -38,7 +38,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
       });
 
       _audioTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        if (_audioJack!.isListening()) {
+        if (_audioJack != null && _audioJack!.isListening()) {
           final audioData = _audioJack!.read();
           if (audioData.isNotEmpty) {
             _currentDb = _calculateDecibels(audioData);
@@ -70,9 +70,10 @@ class SoundMeterStateProvider extends ChangeNotifier {
   }
 
   void disposeSensors() async {
-    await _audioJack?.close();
     _timeTimer?.cancel();
     _audioTimer?.cancel();
+    await _audioJack?.close();
+    _audioJack = null;
   }
 
   @override
