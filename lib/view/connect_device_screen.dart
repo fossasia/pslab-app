@@ -10,6 +10,7 @@ class ConnectDeviceScreen extends StatefulWidget {
   final String iconUsbDisconnected =
       'assets/icons/icons_usb_disconnected_100.png';
   final String iconUsbConnected = 'assets/icons/icons8_usb_connected_100.png';
+  final String iconWifiConnected = 'assets/icons/icons8_wifi_connected_100.png';
 
   @override
   State<StatefulWidget> createState() => _HomeScreenState();
@@ -35,7 +36,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     Center(
                       child: Image.asset(
                         provider.pslabIsConnected
-                            ? widget.iconUsbConnected
+                            ? (provider.scienceLabCommon.isWiFiConnected()
+                                ? widget.iconWifiConnected
+                                : widget.iconUsbConnected)
                             : widget.iconUsbDisconnected,
                         width: 80,
                         height: 80,
@@ -145,7 +148,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 backgroundColor: const Color(0xFFD32F2F),
                                 foregroundColor: Colors.white,
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                await provider.initializeWiFi();
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(

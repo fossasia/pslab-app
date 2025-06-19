@@ -133,6 +133,70 @@ List<String> connectWithUs = [
   'Developers'
 ];
 String softwareLicenses = 'Software Licenses';
+String tryDifferentSearchSuggestion = 'Try a different search term';
+String noInstrumentsFoundMessage = 'No instruments found';
+String searchInstrumentsHint = 'Search instruments...';
+String instrumentsTitle = 'Instruments';
+String faqTitle = 'FAQs';
+String launchError = 'Could not launch';
+String Q = 'Q:';
+String A = 'A:';
+
+class FAQConstants {
+  static const String whatIsPslab =
+      "What is Pocket Science Lab? What can I do with it?";
+  static const String whereToBuy = "Where can I buy a Pocket Science Lab?";
+  static const String downloadAndroidApp =
+      "Where can I download the Android App for Pocket Science Lab?";
+  static const String downloadDesktopApp =
+      "Where can I download the desktop app for Pocket Science Lab for Windows, Linux and Mac?";
+  static const String howToConnect =
+      "How can I connect to the device? What kind of USB cable do I need? What is an OTG USB cable?";
+  static const String reportBug =
+      "I found a bug in one of your apps or hardware. What to do? Where should I report it?";
+  static const String recordData =
+      "Can I record or save data in the apps and export or import it?";
+  static const String usePhoneSensors =
+      "My Android phone already has some sensors, can I use them with the PSLab app as well?";
+  static const String compatibleSensors =
+      "Which external sensors can I use with a PSLab device and the apps? Which ones are compatible?";
+
+  static const String whatIsPslabAnswer =
+      "Pocket Science Lab (PSLab) is a small USB powered hardware board that can be used for measurements and experiments. It works as an extension for Android phones or PCs. PSLab comes with a built-in Oscilloscope, Multimeter, Wave Generator, Logic Analyzer, Power Source, and many more instruments. It can also be used as a robotics control app. And, we are constantly adding more digital instruments. PSLab is many devices in one. Simply connect two wires to the relevant pins (description is on the back of the PSLab board) and start measuring. You can use our Open Source Android or desktop app to view and collect the data. You can also plug in hundreds of compatible I²C standard sensors to the PSLab pin slots. It works without the need for programming. So, what experiments you do is just limited to your imagination!";
+
+  static const String whereToBuyAnswer =
+      "There is an overview page for shops where you can buy a Pocket Science Lab device in different regions on the website at ";
+  static const String whereToBuyLinkText = "https://pslab.io/shop/";
+  static const String whereToBuyLinkUrl = "https://pslab.io/shop/";
+
+  static const String downloadAndroidAppAnswer =
+      "The app can be downloaded from F-Droid or Play Store. Simply click on the links to be directed over!";
+  static const String downloadAndroidAppLinkText = "Playstore";
+  static const String downloadAndroidAppLinkUrl =
+      "https://play.google.com/store/apps/details?id=io.pslab&hl=en_IN";
+
+  static const String downloadDesktopAppAnswer =
+      "We are developing a desktop app for Windows, Linux and Mac in our desktop Git repository. You can find it in the install branch of the project here. The app is still under development. We are using technologies like Electron and Python, that work on all platforms. However, to make the final installer work everywhere requires some tweaks and improvements here and there. So, please expect some glitches. You can use the tracker in the repository to submit issues, bugs and feature requests.";
+
+  static const String howToConnectAnswer =
+      "To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip or a Bluetooth chip and communicate through these gateways using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.";
+
+  static const String reportBugAnswer =
+      "We have issue trackers in all our projects. They are currently hosted on GitHub. In order to submit a bug or feature request you need to login to the service.";
+  static const String reportBugLinkText =
+      "A list of our PSLab repositories is here";
+  static const String reportBugLinkUrl = "https://github.com/fossasia";
+
+  static const String recordDataAnswer =
+      "Yes, we have implemented a record and play function or a way to save and open configurations in the instruments on the Android and desktop app. Data you record can be imported into the apps and viewed. This feature is still under heavy development, but works well in most places. You can find it in the top bar of the apps. There are buttons to record, play, save and open data.";
+
+  static const String usePhoneSensorsAnswer =
+      "Yes, absolutely. You can install the PSLab Android app (Play Store, Fdroid) on your phone and use it with devices such as Luxmeter or Compass. We are adding support for more built-in sensors step by step.";
+
+  static const String compatibleSensorsAnswer =
+      "In our apps we use the industry standard I²C (Wikipedia). You can get the data from sensors that are connected to the device through the USB port using an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. For the transfer we use UART (universal asynchronous receiver-transmitter, Wikipedia). Many sensors can be used with specific instruments, e.g. Barometer, Thermometer, Gyroscope etc. You can access the configuration for sensors in the instrument settings on the top right burger menu of each instrument. All sensors using the I²C standard are compatible with the device. There are connection pins for analogue and digital sensors. You find the description of the pins on the back of the device. Even if there is no specific instrument in one of our apps yet, you can still view and store the raw data using the Oscilloscope instrument component. There is a page with a list of recommended sensors on the website.";
+}
+
 String accelerometer = 'Accelerometer';
 String xAxis = 'x';
 String yAxis = 'y';
@@ -188,3 +252,7 @@ String lx = 'Lx';
 String maxScaleError = 'Max Scale';
 String lightSensorError = 'Light sensor error:';
 String lightSensorInitialError = 'Failed to initialize light sensor:';
+String soundMeterError = 'Sound sensor error:';
+String soundMeterInitialError = 'Sound sensor initialization error:';
+String db = 'dB';
+String soundMeterTitle = 'Sound Meter';

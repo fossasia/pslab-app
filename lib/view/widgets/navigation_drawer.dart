@@ -305,7 +305,16 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
               onTap: () {
-                /**/
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name == '/faq') {
+                  Navigator.popUntil(context, ModalRoute.withName('/faq'));
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/faq',
+                    (route) => route.isFirst,
+                  );
+                }
               },
             ),
             ListTile(

@@ -14,6 +14,7 @@ import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
 import 'package:pslab/others/theme.dart';
+import 'package:pslab/view/soundmeter_screen.dart';
 import 'constants.dart';
 
 void main() {
@@ -34,6 +35,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     _preCacheImages(context);
@@ -55,6 +57,7 @@ class MyApp extends StatelessWidget {
         '/gyroscope': (context) => const GyroscopeScreen(),
         '/roboticArm': (context) => const RoboticArmScreen(),
         '/luxmeter': (context) => const LuxMeterScreen(),
+        '/soundmeter': (context) => const SoundMeterScreen(),
       },
     );
   }

@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/packet_handler.dart';
+import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/providers/locator.dart';
 
 import 'analogChannel/analog_acquisition_channel.dart';
 import 'analogChannel/analog_constants.dart';
@@ -33,12 +35,14 @@ class ScienceLab {
   List<DigitalChannel> dChannels = [];
 
   late CommunicationHandler mCommunicationHandler;
+  late SocketClient mSocketClient;
   late PacketHandler mPacketHandler;
   late CommandsProto mCommandsProto;
   late AnalogConstants mAnalogConstants;
 
   ScienceLab(CommunicationHandler communicationHandler) {
     mCommunicationHandler = communicationHandler;
+    mSocketClient = getIt.get<SocketClient>();
     mCommandsProto = CommandsProto();
     mAnalogConstants = AnalogConstants();
   }
@@ -57,8 +61,20 @@ class ScienceLab {
     }
   }
 
+  Future<void> connectWiFi() async {
+    try {
+      await mSocketClient.openConnection("192.168.4.1", 80);
+      mPacketHandler = PacketHandler(500, mCommunicationHandler);
+    } catch (e) {
+      logger.e(e);
+    }
+    if (isConnected()) {
+      await _initializeVariables();
+    }
+  }
+
   bool isConnected() {
-    return mCommunicationHandler.isConnected();
+    return (mSocketClient.isConnected() || mCommunicationHandler.isConnected());
   }
 
   bool isDeviceFound() {

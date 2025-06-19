@@ -3,12 +3,16 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
+import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/others/science_lab_common.dart';
+import 'package:pslab/providers/locator.dart';
 
 class PacketHandler {
   late Uint8List _buffer;
   late bool _connected;
   late CommunicationHandler _mCommunicationHandler;
+  late SocketClient _socketClient;
   static String version = '';
   late CommandsProto _mCommandsProto;
   int _timeout = 500, versionStringLength = 8;
@@ -18,12 +22,15 @@ class PacketHandler {
     _timeout = timeout;
     _mCommandsProto = CommandsProto();
     _mCommunicationHandler = communicationHandler;
-    _connected = (_mCommunicationHandler.isConnected());
+    _socketClient = getIt.get<SocketClient>();
+    _connected = (getIt.get<ScienceLabCommon>().isWiFiConnected() ||
+        _mCommunicationHandler.isConnected());
     _buffer = Uint8List(10000);
   }
 
   bool isConnected() {
-    _connected = (_mCommunicationHandler.isConnected());
+    _connected = (getIt.get<ScienceLabCommon>().isWiFiConnected() ||
+        _mCommunicationHandler.isConnected());
     return _connected;
   }
 
@@ -145,6 +152,8 @@ class PacketHandler {
     if (_mCommunicationHandler.isConnected()) {
       bytesRead[0] =
           await _mCommunicationHandler.read(_buffer, bytesToRead, _timeout);
+    } else if (getIt.get<ScienceLabCommon>().isWiFiConnected()) {
+      bytesRead[0] = await _socketClient.read(_buffer, bytesToRead, _timeout);
     }
     return bytesRead[0];
   }
@@ -152,6 +161,8 @@ class PacketHandler {
   void _commonWrite(Uint8List data) {
     if (_mCommunicationHandler.isConnected()) {
       _mCommunicationHandler.write(data, _timeout);
+    } else if (getIt.get<ScienceLabCommon>().isWiFiConnected()) {
+      _socketClient.write(data, _timeout);
     }
   }
 }

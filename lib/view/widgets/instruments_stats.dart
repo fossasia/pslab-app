@@ -40,11 +40,17 @@ class Instrumentstats extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 StatItem(
-                    label: 'Max (Lx)', value: maxValue, fontSize: statFontSize),
+                    label: 'Max ($unit)',
+                    value: maxValue,
+                    fontSize: statFontSize),
                 StatItem(
-                    label: 'Min (Lx)', value: minValue, fontSize: statFontSize),
+                    label: 'Min ($unit)',
+                    value: minValue,
+                    fontSize: statFontSize),
                 StatItem(
-                    label: 'Avg (Lx)', value: avgValue, fontSize: statFontSize),
+                    label: 'Avg ($unit)',
+                    value: avgValue,
+                    fontSize: statFontSize),
               ],
             ),
           ),
