@@ -413,4 +413,44 @@ class ScienceLab {
       logger.e(e);
     }
   }
+
+  Future<void> servo4(
+      double angle1, double angle2, double angle3, double angle4) async {
+    const int period = 10000;
+    const int base = 750;
+    const int range = 1900;
+    const int params = (1 << 5) | 2;
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.wavegen);
+
+      mPacketHandler.sendByte(mCommandsProto.sqr4);
+
+      mPacketHandler.sendInt(period);
+
+      int pulse1 = base + (angle1 * range ~/ 180);
+      mPacketHandler.sendInt(pulse1);
+
+      mPacketHandler.sendInt(0);
+
+      int pulse2 = base + (angle2 * range ~/ 180);
+      mPacketHandler.sendInt(pulse2);
+
+      mPacketHandler.sendInt(0);
+
+      int pulse3 = base + (angle3 * range ~/ 180);
+      mPacketHandler.sendInt(pulse3);
+
+      mPacketHandler.sendInt(0);
+
+      int pulse4 = base + (angle4 * range ~/ 180);
+      mPacketHandler.sendInt(pulse4);
+
+      mPacketHandler.sendByte(params);
+
+      await mPacketHandler.getAcknowledgement();
+    } catch (e) {
+      logger.e("Error in servo4(): $e");
+    }
+  }
 }

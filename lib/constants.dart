@@ -208,6 +208,28 @@ String maxValue = 'Max: ';
 String gyroscopeTitle = "Gyroscope";
 String gyroscopeAxisLabel = 'rad/s';
 String noData = 'No data available';
+String degreeSymbol = '°';
+String enterAngleRange = 'Enter angle (0 - 360)';
+String errorCannotBeEmpty = 'Cannot be empty';
+String servoValidNumberRange = 'Please enter a valid number between 0 and 360';
+String ok = 'Ok';
+String roboticArm = 'Robotic Arm';
+String play = 'Play';
+String pause = 'Pause';
+String stop = 'Stop';
+String controls = 'Controls';
+String saveData = 'Save Data';
+String showGuide = 'Show Guide';
+String showLoggedDataKey = 'show_logged_data';
+String showLoggedData = 'Show Logged Data';
+String setAngle = 'Set angle for Servo';
+String angleDialog = 'AngleDialog';
+List<String> servoLabels = [
+  'Servo 1',
+  'Servo 2',
+  'Servo 3',
+  'Servo 4',
+];
 String xyPlot = 'XY Plot';
 String enablePlot = 'Enable XY Plot';
 String trigger = 'Trigger';
