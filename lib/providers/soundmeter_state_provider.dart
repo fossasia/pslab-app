@@ -2,17 +2,18 @@ import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/others/logger_service.dart';
-import 'package:flutter_audio_capture/flutter_audio_capture.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/constants.dart';
+import 'package:pslab/others/audio_jack.dart';
 
 class SoundMeterStateProvider extends ChangeNotifier {
   double _currentDb = 0.0;
   Timer? _timeTimer;
+  Timer? _audioTimer;
   final List<double> _dbData = [];
   final List<double> _timeData = [];
   final List<FlSpot> dbChartData = [];
-  FlutterAudioCapture? _audioCapture;
+  AudioJack? _audioJack;
   double _startTime = 0;
   double _currentTime = 0;
   final int _maxLength = 50;
@@ -23,11 +24,12 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
   void initializeSensors() async {
     try {
-      _audioCapture = FlutterAudioCapture();
-
-      await _audioCapture!.init();
+      _audioJack = AudioJack();
+      await _audioJack!.initialize();
+      await _audioJack!.start();
 
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+
       _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         _currentTime =
             (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
@@ -35,25 +37,21 @@ class SoundMeterStateProvider extends ChangeNotifier {
         notifyListeners();
       });
 
-      await _audioCapture!.start(
-        (Float32List audioData) {
-          _currentDb = _calculateDecibels(audioData);
-          notifyListeners();
-        },
-        (error) {
-          logger.e(
-            "$soundMeterError $error",
-          );
-        },
-        sampleRate: 44100,
-        bufferSize: 4096,
-      );
+      _audioTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        if (_audioJack != null && _audioJack!.isListening()) {
+          final audioData = _audioJack!.read();
+          if (audioData.isNotEmpty) {
+            _currentDb = _calculateDecibels(audioData);
+            notifyListeners();
+          }
+        }
+      });
     } catch (e) {
       logger.e("$soundMeterInitialError $e");
     }
   }
 
-  double _calculateDecibels(Float32List audioData) {
+  double _calculateDecibels(List<double> audioData) {
     if (audioData.isEmpty) return 0.0;
 
     double sum = 0;
@@ -71,9 +69,11 @@ class SoundMeterStateProvider extends ChangeNotifier {
     return dbSPL.clamp(20.0, 120.0);
   }
 
-  void disposeSensors() {
-    _audioCapture?.stop();
+  void disposeSensors() async {
     _timeTimer?.cancel();
+    _audioTimer?.cancel();
+    await _audioJack?.close();
+    _audioJack = null;
   }
 
   @override
