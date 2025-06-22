@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
+import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
+import 'package:pslab/view/luxmeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
+import 'package:pslab/view/robotic_arm_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
 import 'package:pslab/view/compass_screen.dart';
+import 'package:pslab/others/theme.dart';
+import 'package:pslab/view/soundmeter_screen.dart';
 import 'constants.dart';
 
 void main() {
@@ -36,10 +42,9 @@ class MyApp extends StatelessWidget {
     _preCacheImages(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: Colors.white,
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       initialRoute: '/',
       routes: {
         '/': (context) => const InstrumentsScreen(),
@@ -50,6 +55,11 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const SettingsScreen(),
         '/aboutUs': (context) => const AboutUsScreen(),
         '/softwareLicenses': (context) => const SoftwareLicensesScreen(),
+        '/accelerometer': (context) => const AccelerometerScreen(),
+        '/gyroscope': (context) => const GyroscopeScreen(),
+        '/roboticArm': (context) => const RoboticArmScreen(),
+        '/luxmeter': (context) => const LuxMeterScreen(),
+        '/soundmeter': (context) => const SoundMeterScreen(),
       },
     );
   }

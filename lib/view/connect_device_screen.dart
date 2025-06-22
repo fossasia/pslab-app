@@ -10,6 +10,7 @@ class ConnectDeviceScreen extends StatefulWidget {
   final String iconUsbDisconnected =
       'assets/icons/icons_usb_disconnected_100.png';
   final String iconUsbConnected = 'assets/icons/icons8_usb_connected_100.png';
+  final String iconWifiConnected = 'assets/icons/icons8_wifi_connected_100.png';
 
   @override
   State<StatefulWidget> createState() => _HomeScreenState();
@@ -35,7 +36,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     Center(
                       child: Image.asset(
                         provider.pslabIsConnected
-                            ? widget.iconUsbConnected
+                            ? (provider.scienceLabCommon.isWiFiConnected()
+                                ? widget.iconWifiConnected
+                                : widget.iconUsbConnected)
                             : widget.iconUsbDisconnected,
                         width: 80,
                         height: 80,
@@ -72,7 +75,6 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   decoration: TextDecoration.underline,
-                                  color: Colors.black,
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -83,21 +85,18 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                               stepsToConnect[1],
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
                               ),
                             ),
                             Text(
                               stepsToConnect[2],
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
                               ),
                             ),
                             Text(
                               stepsToConnect[3],
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -110,7 +109,6 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         child: Text(
                           bluetoothWifiConnection,
                           style: const TextStyle(
-                            color: Colors.black,
                             fontSize: 14,
                           ),
                         ),
@@ -150,7 +148,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 backgroundColor: const Color(0xFFD32F2F),
                                 foregroundColor: Colors.white,
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                await provider.initializeWiFi();
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(

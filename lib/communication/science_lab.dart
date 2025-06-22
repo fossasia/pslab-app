@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/packet_handler.dart';
+import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/providers/locator.dart';
 
 import 'analogChannel/analog_acquisition_channel.dart';
 import 'analogChannel/analog_constants.dart';
@@ -33,12 +35,14 @@ class ScienceLab {
   List<DigitalChannel> dChannels = [];
 
   late CommunicationHandler mCommunicationHandler;
+  late SocketClient mSocketClient;
   late PacketHandler mPacketHandler;
   late CommandsProto mCommandsProto;
   late AnalogConstants mAnalogConstants;
 
   ScienceLab(CommunicationHandler communicationHandler) {
     mCommunicationHandler = communicationHandler;
+    mSocketClient = getIt.get<SocketClient>();
     mCommandsProto = CommandsProto();
     mAnalogConstants = AnalogConstants();
   }
@@ -57,8 +61,20 @@ class ScienceLab {
     }
   }
 
+  Future<void> connectWiFi() async {
+    try {
+      await mSocketClient.openConnection("192.168.4.1", 80);
+      mPacketHandler = PacketHandler(500, mCommunicationHandler);
+    } catch (e) {
+      logger.e(e);
+    }
+    if (isConnected()) {
+      await _initializeVariables();
+    }
+  }
+
   bool isConnected() {
-    return mCommunicationHandler.isConnected();
+    return (mSocketClient.isConnected() || mCommunicationHandler.isConnected());
   }
 
   bool isDeviceFound() {
@@ -395,6 +411,46 @@ class ScienceLab {
       await mPacketHandler.getAcknowledgement();
     } catch (e) {
       logger.e(e);
+    }
+  }
+
+  Future<void> servo4(
+      double angle1, double angle2, double angle3, double angle4) async {
+    const int period = 10000;
+    const int base = 750;
+    const int range = 1900;
+    const int params = (1 << 5) | 2;
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.wavegen);
+
+      mPacketHandler.sendByte(mCommandsProto.sqr4);
+
+      mPacketHandler.sendInt(period);
+
+      int pulse1 = base + (angle1 * range ~/ 180);
+      mPacketHandler.sendInt(pulse1);
+
+      mPacketHandler.sendInt(0);
+
+      int pulse2 = base + (angle2 * range ~/ 180);
+      mPacketHandler.sendInt(pulse2);
+
+      mPacketHandler.sendInt(0);
+
+      int pulse3 = base + (angle3 * range ~/ 180);
+      mPacketHandler.sendInt(pulse3);
+
+      mPacketHandler.sendInt(0);
+
+      int pulse4 = base + (angle4 * range ~/ 180);
+      mPacketHandler.sendInt(pulse4);
+
+      mPacketHandler.sendByte(params);
+
+      await mPacketHandler.getAcknowledgement();
+    } catch (e) {
+      logger.e("Error in servo4(): $e");
     }
   }
 }
