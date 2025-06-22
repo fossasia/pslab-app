@@ -219,9 +219,9 @@ class AnalyticsClass {
       voltage[i] = voltage[i] - voltageMean;
     }
     frequency = fftFrequency(voltageLength, samplingInterval)
-        .sublist(0, (voltageLength / 2) as int);
+        .sublist(0, (voltageLength / 2).round());
     complex = fft(voltage.map((x) => Complex(x)).toList());
-    amplitude = List<double>.filled(complex.length / 2 as int, 0);
+    amplitude = List<double>.filled((complex.length / 2).round(), 0);
     for (int i = 0; i < complex.length / 2; i++) {
       // take only the +ive half of the fft result
       amplitude[i] = complex[i].abs() / voltageLength;
@@ -252,9 +252,9 @@ class AnalyticsClass {
       voltage[i] = voltage[i] - voltageMean;
     }
     frequency = fftFrequency(voltageLength, samplingInterval)
-        .sublist(0, (voltageLength / 2) as int);
+        .sublist(0, (voltageLength / 2).round());
     complex = fft(voltage.map((x) => Complex(x)).toList());
-    amplitude = List<double>.filled(complex.length / 2 as int, 0);
+    amplitude = List<double>.filled((complex.length / 2).round(), 0);
     for (int i = 0; i < complex.length / 2; i++) {
       // take only the +ive half of the fft result
       amplitude[i] = complex[i].abs() / voltageLength;
