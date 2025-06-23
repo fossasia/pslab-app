@@ -4,7 +4,6 @@ import 'package:pslab/constants.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
-import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/soundmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -16,6 +15,7 @@ class SoundMeterScreen extends StatefulWidget {
 
 class _SoundMeterScreenState extends State<SoundMeterScreen> {
   bool _showGuide = false;
+  static const imagePath = 'assets/images/bh1750_schematic.png';
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -30,16 +30,14 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
 
   List<Widget> _getSoundMeterContent() {
     return [
-      const InstrumentIntroText(
-        text: 'Sound meter Introduction',
+      InstrumentIntroText(
+        text: soundMeterIntro,
       ),
       const InstrumentImage(
-        imagePath: 'assets/images/bh1750_schematic.png',
-        height: 250.0,
-        caption: 'PSLab device connection diagram',
+        imagePath: imagePath,
       ),
-      const InstrumentIntroText(
-        text: 'To measure the loudness in the environment in decibel(dB)',
+      InstrumentIntroText(
+        text: soundMeterDesc,
       ),
     ];
   }
@@ -74,7 +72,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
           ),
           if (_showGuide)
             InstrumentOverviewDrawer(
-              instrumentName: 'Sound Meter',
+              instrumentName: soundMeterTitle,
               content: _getSoundMeterContent(),
               onHide: _hideInstrumentGuide,
             ),

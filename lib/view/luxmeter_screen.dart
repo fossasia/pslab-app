@@ -15,6 +15,7 @@ class LuxMeterScreen extends StatefulWidget {
 
 class _LuxMeterScreenState extends State<LuxMeterScreen> {
   bool _showGuide = false;
+  static const imagePath = 'assets/images/bh1750_schematic.png';
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -27,19 +28,21 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     });
   }
 
-  List<Widget> _getSoundMeterContent() {
+  List<Widget> _getLuxMeterContent() {
     return [
-      const InstrumentIntroText(
-        text: 'Sound meter Introduction',
+      InstrumentBulletPoint(
+        text: luxMeterDesc,
+      ),
+      InstrumentBulletPoint(
+        text: luxMeterSensorIntro,
       ),
       const InstrumentImage(
-        imagePath: 'assets/images/bh1750_schematic.png',
-        height: 250.0,
-        caption: 'PSLab device connection diagram',
+        imagePath: imagePath,
       ),
-      const InstrumentIntroText(
-        text: 'To measure the loudness in the environment in decibel(dB)',
+      InstrumentBulletPoint(
+        text: luxMeterBulletPoint1,
       ),
+      InstrumentBulletPoint(text: luxMeterBulletPoint2),
     ];
   }
 
@@ -72,8 +75,8 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         ),
         if (_showGuide)
           InstrumentOverviewDrawer(
-            instrumentName: 'Sound Meter',
-            content: _getSoundMeterContent(),
+            instrumentName: luxMeterTitle,
+            content: _getLuxMeterContent(),
             onHide: _hideInstrumentGuide,
           ),
       ]),

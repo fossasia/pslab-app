@@ -15,6 +15,7 @@ class GyroscopeScreen extends StatefulWidget {
 
 class _GyroscopeScreenState extends State<GyroscopeScreen> {
   bool _showGuide = false;
+  static const imagePath = 'assets/images/gyroscope_axes_orientation.png';
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -27,18 +28,17 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
     });
   }
 
-  List<Widget> _getSoundMeterContent() {
+  List<Widget> _getGyroscopeContent() {
     return [
-      const InstrumentIntroText(
-        text: 'Sound meter Introduction',
+      InstrumentIntroText(
+        text: gyroscopeIntro,
       ),
       const InstrumentImage(
-        imagePath: 'assets/images/bh1750_schematic.png',
-        height: 250.0,
-        caption: 'PSLab device connection diagram',
+        imagePath: imagePath,
+        height: 200.0,
       ),
-      const InstrumentIntroText(
-        text: 'To measure the loudness in the environment in decibel(dB)',
+      InstrumentIntroText(
+        text: gyroscopeDesc,
       ),
     ];
   }
@@ -73,8 +73,8 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
         ),
         if (_showGuide)
           InstrumentOverviewDrawer(
-            instrumentName: 'Sound Meter',
-            content: _getSoundMeterContent(),
+            instrumentName: gyroscopeTitle,
+            content: _getGyroscopeContent(),
             onHide: _hideInstrumentGuide,
           ),
       ]),

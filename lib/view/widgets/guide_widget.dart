@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:pslab/colors.dart';
+
+import '../../constants.dart';
 
 class InstrumentOverviewDrawer extends StatefulWidget {
   final String instrumentName;
   final List<Widget> content;
   final VoidCallback? onHide;
   const InstrumentOverviewDrawer({
-    Key? key,
+    super.key,
     required this.instrumentName,
     required this.content,
     this.onHide,
-  }) : super(key: key);
+  });
   @override
   State<InstrumentOverviewDrawer> createState() =>
       _InstrumentOverviewDrawerState();
@@ -67,7 +70,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
       child: GestureDetector(
         onVerticalDragEnd: _onVerticalDragEnd,
         onTap: _hideDrawer,
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: SlideTransition(
@@ -94,48 +97,49 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
+                        height: 50,
                         width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFD32F2F),
-                          borderRadius: BorderRadius.only(
+                        decoration: BoxDecoration(
+                          color: primaryRed,
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(16.0),
                             topRight: Radius.circular(16.0),
                           ),
                         ),
-                        child: SafeArea(
-                          bottom: false,
-                          child: GestureDetector(
-                            onTap: _hideDrawer,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24.0,
-                                vertical: 2.0,
-                              ),
-                              child: Column(
-                                children: const [
-                                  Icon(
-                                    Icons.keyboard_arrow_down,
+                        child: GestureDetector(
+                          onTap: _hideDrawer,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24.0,
+                              vertical: 2.0,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Icon(
+                                  Icons.keyboard_arrow_down,
+                                  color: Colors.white,
+                                  size: 16.0,
+                                ),
+                                const SizedBox(
+                                  height: 2,
+                                ),
+                                Text(
+                                  hideGuide,
+                                  style: const TextStyle(
                                     color: Colors.white,
-                                    size: 20.0,
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  Text(
-                                    'Hide Guide',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                       Flexible(
                         child: LayoutBuilder(builder: (context, constraints) {
-                          final availableHeight =
-                              MediaQuery.of(context).size.height * 0.8 - 100;
                           return SingleChildScrollView(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
@@ -173,20 +177,20 @@ class InstrumentIntroText extends StatelessWidget {
   final String text;
   final TextStyle? style;
   const InstrumentIntroText({
-    Key? key,
+    super.key,
     required this.text,
     this.style,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Text(
         text,
         style: style ??
             const TextStyle(
-              fontSize: 16.0,
-              color: Colors.black87,
+              fontSize: 15.0,
+              color: Colors.black,
               height: 1.5,
             ),
       ),
@@ -198,10 +202,10 @@ class InstrumentBulletPoint extends StatelessWidget {
   final String text;
   final TextStyle? style;
   const InstrumentBulletPoint({
-    Key? key,
+    super.key,
     required this.text,
     this.style,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -222,8 +226,8 @@ class InstrumentBulletPoint extends StatelessWidget {
               text,
               style: style ??
                   const TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.black87,
+                    fontSize: 15.0,
+                    color: Colors.black,
                     height: 1.5,
                   ),
             ),
@@ -240,27 +244,22 @@ class InstrumentImage extends StatelessWidget {
   final double? height;
   final BoxFit fit;
   const InstrumentImage({
-    Key? key,
+    super.key,
     required this.imagePath,
     this.caption,
     this.height,
     this.fit = BoxFit.contain,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: height ?? 200.0,
             width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
               child: Image.asset(
                 imagePath,
                 fit: fit,
@@ -291,37 +290,6 @@ class InstrumentImage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class InstrumentSection extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  const InstrumentSection({
-    Key? key,
-    required this.title,
-    required this.children,
-  }) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 12.0),
-          ...children,
         ],
       ),
     );

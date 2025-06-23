@@ -15,6 +15,7 @@ class AccelerometerScreen extends StatefulWidget {
 
 class _AccelerometerScreenState extends State<AccelerometerScreen> {
   bool _showGuide = false;
+  static const imagePath = 'assets/images/bh1750_schematic.png';
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -27,19 +28,25 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
     });
   }
 
-  List<Widget> _getSoundMeterContent() {
+  List<Widget> _getAccelerometerContent() {
     return [
-      const InstrumentIntroText(
-        text: 'Sound meter Introduction',
+      InstrumentIntroText(
+        text: accelerometerIntro,
       ),
       const InstrumentImage(
-        imagePath: 'assets/images/bh1750_schematic.png',
-        height: 250.0,
-        caption: 'PSLab device connection diagram',
+        imagePath: imagePath,
       ),
-      const InstrumentIntroText(
-        text: 'To measure the loudness in the environment in decibel(dB)',
+      InstrumentIntroText(
+        text: accelerometerImageDesc,
       ),
+      InstrumentIntroText(
+        text: accelerometerSteps,
+      ),
+      InstrumentBulletPoint(text: accelerometerBulletPoint1),
+      InstrumentBulletPoint(text: accelerometerBulletPoint2),
+      InstrumentBulletPoint(text: accelerometerBulletPoint3),
+      InstrumentIntroText(text: accelerometerDesc),
+      InstrumentIntroText(text: accelerometerNote),
     ];
   }
 
@@ -70,8 +77,8 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
             ))),
         if (_showGuide)
           InstrumentOverviewDrawer(
-            instrumentName: 'Sound Meter',
-            content: _getSoundMeterContent(),
+            instrumentName: accelerometer,
+            content: _getAccelerometerContent(),
             onHide: _hideInstrumentGuide,
           ),
       ]),
