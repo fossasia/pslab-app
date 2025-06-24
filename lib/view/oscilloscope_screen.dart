@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/channel_parameters_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/data_analysis_widget.dart';
@@ -75,7 +76,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                           flex: 66,
                           child: Container(
                             padding: const EdgeInsets.only(bottom: 20),
-                            color: Colors.black,
+                            color: chartBackgroundColor,
                             child: const OscilloscopeGraph(),
                           ),
                         ),
