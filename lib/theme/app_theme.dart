@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'colors.dart';
 
 class AppTheme {
   static final lightTheme = ThemeData(
@@ -12,7 +13,7 @@ class AppTheme {
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.selected)) {
-          return const Color(0xFFCE525F);
+          return radioButtonActiveColor;
         }
         return Colors.black;
       }),
@@ -30,7 +31,7 @@ class AppTheme {
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.selected)) {
-          return const Color(0xFFCE525F);
+          return radioButtonActiveColor;
         }
         return Colors.black;
       }),
