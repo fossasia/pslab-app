@@ -4,6 +4,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/providers/gyroscope_state_provider.dart';
 import 'package:pslab/constants.dart';
 
+import '../../theme/colors.dart';
+
 class GyroscopeCard extends StatefulWidget {
   final String axis;
   final Color color;
@@ -16,8 +18,8 @@ class GyroscopeCard extends StatefulWidget {
 
 class _GyroscopeCardState extends State<GyroscopeCard> {
   Widget sideTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
+    final style = TextStyle(
+      color: chartTextColor,
       fontSize: 9,
     );
     return SideTitleWidget(
@@ -54,7 +56,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
       elevation: 2,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            color: cardBackgroundColor, borderRadius: BorderRadius.circular(5)),
         child: Row(
           children: [
             Expanded(
@@ -101,7 +103,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   margin: const EdgeInsets.only(top: 8, bottom: 12),
                   child: Text(
                     "${currVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
-                    style: const TextStyle(color: Colors.black, fontSize: 14),
+                    style: TextStyle(color: cardContentColor, fontSize: 14),
                   ),
                 ),
                 Container(
@@ -109,7 +111,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   margin: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
                     "$minValue ${minVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
-                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                    style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
                 Container(
@@ -117,7 +119,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   margin: const EdgeInsets.only(left: 8, top: 2),
                   child: Text(
                     "$maxValue ${maxVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
-                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                    style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
               ]),
@@ -126,10 +128,10 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
               flex: 70,
               child: Container(
                 padding: const EdgeInsets.only(bottom: 20, top: 10, right: 25),
-                color: Colors.black,
+                color: chartBackgroundColor,
                 child: LineChart(
                   LineChartData(
-                    backgroundColor: Colors.black,
+                    backgroundColor: chartBackgroundColor,
                     titlesData: FlTitlesData(
                       show: true,
                       topTitles: AxisTitles(
@@ -137,9 +139,9 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                           padding: const EdgeInsets.only(left: 25),
                           child: Text(
                             timeAxisLabel,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 10,
-                              color: Colors.white,
+                              color: chartTextColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -151,9 +153,9 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                       leftTitles: AxisTitles(
                         axisNameWidget: Text(
                           gyroscopeAxisLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10,
-                            color: Colors.white,
+                            color: chartTextColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -175,18 +177,18 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                     ),
                     borderData: FlBorderData(
                       show: true,
-                      border: const Border(
+                      border: Border(
                         bottom: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                         left: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                         top: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                         right: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                       ),
                     ),

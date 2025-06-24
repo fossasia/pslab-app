@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 import '../../constants.dart';
+import '../../theme/colors.dart';
 
 class ChannelParametersWidget extends StatefulWidget {
   const ChannelParametersWidget({super.key});
@@ -21,7 +22,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
         Container(
           margin: const EdgeInsets.only(top: 8, bottom: 5),
           decoration: BoxDecoration(
-            border: Border.all(width: 1, color: const Color(0xFFD32F2F)),
+            border: Border.all(width: 1, color: primaryRed),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Stack(
@@ -36,7 +37,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: oscilloscopeStateProvider.isCH1Selected,
-                      activeColor: const Color(0xFFCE525F),
+                      activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
                         setState(
                           () {
@@ -47,8 +48,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     ),
                     Text(
                       ch1,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                         fontSize: 15,
@@ -83,8 +84,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle:
-                            const TextStyle(color: Colors.black, fontSize: 15),
+                        textStyle: TextStyle(
+                            color: oscilloscopeOptionLabelColor, fontSize: 15),
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
                             case 0:
@@ -136,7 +137,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: oscilloscopeStateProvider.isCH2Selected,
-                      activeColor: const Color(0xFFCE525F),
+                      activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
                         setState(
                           () {
@@ -147,8 +148,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     ),
                     Text(
                       ch2,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                         fontSize: 15,
@@ -172,8 +173,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         width: 120,
                         child: Text(
                           rangeValue,
-                          style: const TextStyle(
-                            color: Colors.black,
+                          style: TextStyle(
+                            color: oscilloscopeOptionLabelColor,
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.normal,
                             fontSize: 15,
@@ -194,7 +195,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: oscilloscopeStateProvider.isCH3Selected,
-                      activeColor: const Color(0xFFCE525F),
+                      activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
                         setState(
                           () {
@@ -205,8 +206,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     ),
                     Text(
                       ch3Range,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                         fontSize: 15,
@@ -223,7 +224,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Radio<bool>(
-                      activeColor: const Color(0xFFCE525F),
+                      activeColor: radioButtonActiveColor,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: true,
                       groupValue:
@@ -258,15 +259,15 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     ),
                     Text(
                       inBuiltMic,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                       ),
                     ),
                     Radio<bool>(
-                      activeColor: const Color(0xFFCE525F),
+                      activeColor: radioButtonActiveColor,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       value: true,
                       groupValue: oscilloscopeStateProvider.isMICSelected,
@@ -291,8 +292,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     ),
                     Text(
                       pslabMic,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
@@ -312,11 +313,11 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
             alignment: Alignment.center,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 2),
-              decoration: const BoxDecoration(color: Colors.white),
+              decoration: BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
               child: Text(
                 channels,
-                style: const TextStyle(
-                  color: Color(0xFFC72C2C),
+                style: TextStyle(
+                  color: oscilloscopeOptionTitleColor,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,
                   fontSize: 13,

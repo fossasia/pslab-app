@@ -3,6 +3,7 @@ import 'package:pslab/constants.dart';
 import 'package:pslab/providers/accelerometer_state_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/theme/colors.dart';
 
 class AccelerometerCard extends StatefulWidget {
   final String axis;
@@ -16,8 +17,8 @@ class AccelerometerCard extends StatefulWidget {
 
 class _AccelerometerCardState extends State<AccelerometerCard> {
   Widget sideTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
+    final style = TextStyle(
+      color: chartTextColor,
       fontSize: 9,
     );
     return SideTitleWidget(
@@ -49,7 +50,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
       elevation: 2,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            color: cardBackgroundColor, borderRadius: BorderRadius.circular(5)),
         child: Row(
           children: [
             Expanded(
@@ -67,7 +68,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   margin: const EdgeInsets.only(top: 8, bottom: 12),
                   child: Text(
                     "${currVal.toStringAsFixed(1)} $accelerationAxisLabel",
-                    style: const TextStyle(color: Colors.black, fontSize: 14),
+                    style: TextStyle(color: cardContentColor, fontSize: 14),
                   ),
                 ),
                 Container(
@@ -75,7 +76,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   margin: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
                     "$minValue ${minVal.toStringAsFixed(1)} $accelerationAxisLabel",
-                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                    style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
                 Container(
@@ -83,7 +84,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   margin: const EdgeInsets.only(left: 8, top: 2),
                   child: Text(
                     "$maxValue ${maxVal.toStringAsFixed(1)} $accelerationAxisLabel",
-                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                    style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
               ]),
@@ -92,10 +93,10 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
               flex: 70,
               child: Container(
                 padding: const EdgeInsets.only(bottom: 20, top: 10, right: 25),
-                color: Colors.black,
+                color: chartBackgroundColor,
                 child: LineChart(
                   LineChartData(
-                    backgroundColor: Colors.black,
+                    backgroundColor: chartBackgroundColor,
                     titlesData: FlTitlesData(
                       show: true,
                       topTitles: AxisTitles(
@@ -103,9 +104,9 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                           padding: const EdgeInsets.only(left: 25),
                           child: Text(
                             timeAxisLabel,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 10,
-                              color: Colors.white,
+                              color: chartTextColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -117,9 +118,9 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                       leftTitles: AxisTitles(
                         axisNameWidget: Text(
                           accelerationAxisLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10,
-                            color: Colors.white,
+                            color: chartTextColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -141,18 +142,18 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                     ),
                     borderData: FlBorderData(
                       show: true,
-                      border: const Border(
+                      border: Border(
                         bottom: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                         left: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                         top: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                         right: BorderSide(
-                          color: Colors.white38,
+                          color: chartBorderColor,
                         ),
                       ),
                     ),

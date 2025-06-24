@@ -3,6 +3,8 @@ import 'package:gauge_indicator/gauge_indicator.dart';
 import 'dart:math';
 import 'package:pslab/constants.dart';
 
+import '../../theme/colors.dart';
+
 class GaugeWidget extends StatelessWidget {
   final double gaugeSize;
   final double currentValue;
@@ -40,7 +42,7 @@ class GaugeWidget extends StatelessWidget {
                     maxHeight: MediaQuery.of(context).size.width * 0.5,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.cyanAccent[400],
+                    color: gaugeBackgroundColor,
                     shape: BoxShape.circle,
                   ),
                   child: Padding(
@@ -57,17 +59,17 @@ class GaugeWidget extends StatelessWidget {
                         degrees: 270,
                         style: GaugeAxisStyle(
                           thickness: gaugeSize * 0.05,
-                          background: Colors.cyanAccent[100],
+                          background: gaugeAxisColor,
                           segmentSpacing: 2,
                         ),
-                        progressBar: const GaugeProgressBar.basic(
-                          color: Colors.white,
+                        progressBar: GaugeProgressBar.basic(
+                          color: gaugeProgressColor,
                         ),
                         pointer: GaugePointer.needle(
                           width: gaugeSize * 0.09,
                           height: gaugeSize * 0.35,
                           borderRadius: 12,
-                          color: Colors.white,
+                          color: gaugeNeedleColor,
                         ),
                       ),
                     ),
@@ -89,7 +91,7 @@ class GaugeWidget extends StatelessWidget {
                       style: TextStyle(
                         fontSize: currentValueFontSize * 1.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: blackTextColor,
                       ),
                     ),
                     if (currentValue > maxValue)
@@ -99,7 +101,7 @@ class GaugeWidget extends StatelessWidget {
                           maxScaleError,
                           style: TextStyle(
                             fontSize: currentValueFontSize * 0.4,
-                            color: Colors.red,
+                            color: gaugeMaxScaleLimitColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),

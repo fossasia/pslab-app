@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/colors.dart';
+
 class ApplicationsListItem extends StatelessWidget {
   final String heading;
   final String description;
@@ -25,8 +27,7 @@ class ApplicationsListItem extends StatelessWidget {
       child: Container(
         height: 225,
         decoration: BoxDecoration(
-            color: const Color(0xFFD32F2F),
-            borderRadius: BorderRadius.circular(5)),
+            color: primaryRed, borderRadius: BorderRadius.circular(5)),
         child: Stack(
           children: [
             Positioned(
@@ -40,7 +41,7 @@ class ApplicationsListItem extends StatelessWidget {
                       verticalBarsIcon,
                       width: 100,
                       fit: BoxFit.fill,
-                      color: Colors.white,
+                      color: instrumentCardContentColor,
                     ),
                   ),
                   const SizedBox(
@@ -61,7 +62,7 @@ class ApplicationsListItem extends StatelessWidget {
                       horizontalBarsIcon,
                       height: 100,
                       fit: BoxFit.fill,
-                      color: Colors.white,
+                      color: instrumentCardContentColor,
                     ),
                   ),
                   SizedBox(
@@ -70,7 +71,7 @@ class ApplicationsListItem extends StatelessWidget {
                     child: Image.asset(
                       instrumentIcon,
                       fit: BoxFit.fill,
-                      color: Colors.white,
+                      color: instrumentCardContentColor,
                     ),
                   )
                 ],
@@ -85,18 +86,18 @@ class ApplicationsListItem extends StatelessWidget {
                 children: [
                   Text(
                     heading,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: instrumentCardContentColor,
                     ),
                     textAlign: TextAlign.start,
                   ),
                   Text(
                     description,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white,
+                      color: instrumentCardContentColor,
                     ),
                     textAlign: TextAlign.start,
                   ),
