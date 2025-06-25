@@ -151,7 +151,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                               Radio<String>(
                                 value: duration1Min,
                                 groupValue: provider.selectedDuration,
-                                activeColor: Colors.red,
+                                activeColor: primaryRed,
                                 onChanged: (value) {
                                   provider.setSelectedDuration(value!);
                                 },
@@ -169,7 +169,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                               Radio<String>(
                                 value: duration2Min,
                                 groupValue: provider.selectedDuration,
-                                activeColor: Colors.red,
+                                activeColor: primaryRed,
                                 onChanged: (value) {
                                   provider.setSelectedDuration(value!);
                                 },
@@ -293,7 +293,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                       Radio<String>(
                         value: frequency50Hz,
                         groupValue: provider.selectedFrequency,
-                        activeColor: Colors.red,
+                        activeColor: primaryRed,
                         onChanged: (value) {
                           provider.setSelectedFrequency(value!);
                         },
@@ -306,7 +306,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                       Radio<String>(
                         value: frequency100Hz,
                         groupValue: provider.selectedFrequency,
-                        activeColor: Colors.red,
+                        activeColor: primaryRed,
                         onChanged: (value) {
                           provider.setSelectedFrequency(value!);
                         },
@@ -336,7 +336,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                       Radio<String>(
                         value: angle180,
                         groupValue: provider.selectedMaxAngle,
-                        activeColor: Colors.red,
+                        activeColor: primaryRed,
                         onChanged: (value) {
                           provider.setSelectedMaxAngle(value!);
                         },
@@ -349,7 +349,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                       Radio<String>(
                         value: angle360,
                         groupValue: provider.selectedMaxAngle,
-                        activeColor: Colors.red,
+                        activeColor: primaryRed,
                         onChanged: (value) {
                           provider.setSelectedMaxAngle(value!);
                         },

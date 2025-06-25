@@ -69,7 +69,7 @@ class TimelineScrollView extends StatelessWidget {
                                     child: Text(
                                       timelineDegrees[index][boxIndex] != null
                                           ? '${timelineDegrees[index][boxIndex]!.toStringAsFixed(0)}$degreeSymbol'
-                                          : '--',
+                                          : '',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,

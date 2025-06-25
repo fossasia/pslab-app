@@ -51,19 +51,19 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
           children: [
             Row(
               children: [
-                Expanded(child: Divider(color: Colors.red)),
+                Expanded(child: Divider(color: primaryRed)),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     playBackSummary,
                     style: TextStyle(
-                      color: Colors.red,
+                      color: primaryRed,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
                   ),
                 ),
-                Expanded(child: Divider(color: Colors.red)),
+                Expanded(child: Divider(color: primaryRed)),
               ],
             ),
             const SizedBox(height: 10),
@@ -301,7 +301,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                   return Text(
                                                     low,
                                                     style: TextStyle(
-                                                      color: Colors.redAccent,
+                                                      color: primaryRed,
                                                       fontSize: 8,
                                                     ),
                                                   );

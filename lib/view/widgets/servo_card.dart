@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/colors.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import '../../constants.dart';
@@ -107,7 +108,7 @@ class ServoCard extends StatelessWidget {
                     ),
                     customColors: CustomSliderColors(
                       trackColor: Colors.grey.shade300,
-                      progressBarColor: Colors.lightGreen,
+                      progressBarColor: primaryRed,
                       dotColor: Colors.black38,
                     ),
                     infoProperties: InfoProperties(
