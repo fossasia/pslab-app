@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:io';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:light/light.dart';
@@ -22,38 +21,41 @@ class LuxMeterStateProvider extends ChangeNotifier {
   double _luxMax = 0;
   double _luxSum = 0;
   int _dataCount = 0;
-  bool _sensorAvailable = true;
+  bool _sensorAvailable = false;
 
   Function(String)? onSensorError;
 
   void initializeSensors({Function(String)? onError}) {
     onSensorError = onError;
 
-    if (!_isPlatformSupported()) {
-      _handleUnsupportedPlatform();
-      return;
-    }
-
     try {
       _light = Light();
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-      if (_sensorAvailable) {
-        _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          _currentTime =
-              (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
-          _updateData();
-          notifyListeners();
-        });
-      }
+      _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _currentTime =
+            (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
+        _updateData();
+        notifyListeners();
+      });
+
+      Timer sensorTimeout = Timer(const Duration(seconds: 3), () {
+        if (!_sensorAvailable) {
+          _handleSensorError(lightSensorErrorLog);
+        }
+      });
 
       _lightSubscription = _light!.lightSensorStream.listen(
         (int luxValue) {
           _currentLux = luxValue.toDouble();
-          _sensorAvailable = true;
+          if (!_sensorAvailable) {
+            _sensorAvailable = true;
+            sensorTimeout.cancel();
+          }
           notifyListeners();
         },
         onError: (error) {
           logger.e("$lightSensorError $error");
+          sensorTimeout.cancel();
           _handleSensorError(error);
         },
         cancelOnError: false,
@@ -64,39 +66,10 @@ class LuxMeterStateProvider extends ChangeNotifier {
     }
   }
 
-  bool _isPlatformSupported() {
-    return Platform.isAndroid;
-  }
-
-  void _handleUnsupportedPlatform() {
-    _sensorAvailable = false;
-    if (Platform.isIOS) {
-      onSensorError?.call(luxMeterIOSError);
-    } else if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      onSensorError?.call(luxMeterDesktopError);
-    } else if (kIsWeb) {
-      onSensorError?.call(luxMeterWebError);
-    } else {
-      onSensorError?.call(luxMeterPlatformError);
-    }
-  }
-
   void _handleSensorError(dynamic error) {
     _sensorAvailable = false;
-
-    if (!_isPlatformSupported()) {
-      _handleUnsupportedPlatform();
-      return;
-    }
-
-    _handleSensorNotAvailable();
-
-    logger.e("$lightSensorErrorDetails $error");
-  }
-
-  void _handleSensorNotAvailable() {
-    _sensorAvailable = false;
     onSensorError?.call(noLightSensor);
+    logger.e("$lightSensorErrorDetails $error");
   }
 
   void disposeSensors() {
