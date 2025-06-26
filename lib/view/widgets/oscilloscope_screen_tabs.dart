@@ -70,7 +70,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(
-                        color: oscilloscopeOptionTitleColor,
+                        color: oscilloscopeOptionLabelColor,
                         fontSize: 10,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
