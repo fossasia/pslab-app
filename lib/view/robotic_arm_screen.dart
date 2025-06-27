@@ -72,7 +72,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
         builder: (context, provider, _) {
           final screenHeight = MediaQuery.of(context).size.height;
           final servoHeight = (screenHeight / 2.5);
-
+          final screenWidth = MediaQuery.of(context).size.width;
+          final scrollAmount = (screenWidth / 6);
           return CommonScaffold(
             title: roboticArm,
             actions: [
@@ -93,7 +94,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                 onPressed: () {
                   if (!provider.manualEnabled) {
                     setState(() {
-                      provider.togglePlayPause();
+                      provider.togglePlayPause(
+                          scrollAmountPerTick: scrollAmount);
                     });
                   }
                 },
@@ -215,22 +217,18 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                         thumbVisibility: true,
                         thickness: 8,
                         radius: const Radius.circular(4),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          controller: provider.timelineScrollController,
-                          child: TimelineScrollView(
-                            totalTimelineItems: provider.totalTimelineItems,
-                            screenHeight: screenHeight,
-                            timelinePosition: provider.timelinePosition,
-                            scrollAmountPerTick: provider.scrollAmountPerTick,
-                            timelineDegrees: provider.timelineDegrees,
-                            onUpdate: (index, servo, value) {
-                              setState(() {
-                                provider.updateTimelineDegree(
-                                    index, servo, value);
-                              });
-                            },
-                          ),
+                        child: TimelineScrollView(
+                          totalTimelineItems: provider.totalTimelineItems,
+                          screenHeight: screenHeight,
+                          timelinePosition: provider.timelinePosition,
+                          timelineDegrees: provider.timelineDegrees,
+                          scrollController: provider.timelineScrollController,
+                          onUpdate: (index, servo, value) {
+                            setState(() {
+                              provider.updateTimelineDegree(
+                                  index, servo, value);
+                            });
+                          },
                         ),
                       ),
                     )

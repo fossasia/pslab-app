@@ -7,8 +7,7 @@ import '../../constants.dart';
 class PlaybackSummaryDialog extends StatefulWidget {
   final int frequency;
   final int maxAngle;
-  final Map<String, dynamic> Function(
-      int servoIndex, int frequency, int maxAngle) getSummary;
+  final Map<String, dynamic> Function(int servoIndex, int maxAngle) getSummary;
 
   const PlaybackSummaryDialog({
     super.key,
@@ -28,7 +27,6 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
   Widget build(BuildContext context) {
     final data = widget.getSummary(
       selectedServo,
-      widget.frequency,
       widget.maxAngle,
     );
 
@@ -169,9 +167,10 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                     flex: 3,
                     child: Container(
                       padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.black,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(0),
                         border: Border.all(color: Colors.white24),
                       ),
                       child: Column(
@@ -204,7 +203,6 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                   scrollDirection: Axis.horizontal,
                                   child: SizedBox(
                                     width: chartWidth.toDouble(),
-                                    height: 130,
                                     child: LineChart(
                                       LineChartData(
                                         minX: 0,
@@ -212,7 +210,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                             ? pwmSpots.last.x
                                             : 100,
                                         minY: 0,
-                                        maxY: 1.1,
+                                        maxY: 1.04,
                                         lineTouchData:
                                             const LineTouchData(enabled: false),
                                         gridData: FlGridData(
@@ -255,8 +253,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                     return Text(
                                                       '${data['dutyList'][i].toStringAsFixed(1)}$percentage',
                                                       style: const TextStyle(
-                                                        color: Colors
-                                                            .lightBlueAccent,
+                                                        color: Colors.white70,
                                                         fontSize: 9,
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -293,7 +290,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                   return Text(
                                                     high,
                                                     style: TextStyle(
-                                                      color: Colors.greenAccent,
+                                                      color: Colors.white,
                                                       fontSize: 8,
                                                     ),
                                                   );
@@ -301,7 +298,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                   return Text(
                                                     low,
                                                     style: TextStyle(
-                                                      color: primaryRed,
+                                                      color: Colors.white,
                                                       fontSize: 8,
                                                     ),
                                                   );
@@ -318,17 +315,22 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                         borderData: FlBorderData(
                                           show: true,
                                           border: const Border(
-                                            left: BorderSide(
-                                                color: Colors.white24),
                                             bottom: BorderSide(
-                                                color: Colors.white24),
+                                              color: Colors.white38,
+                                            ),
+                                            left: BorderSide(
+                                              color: Colors.white38,
+                                            ),
+                                            right: BorderSide(
+                                              color: Colors.white38,
+                                            ),
                                           ),
                                         ),
                                         lineBarsData: [
                                           LineChartBarData(
                                             spots: pwmSpots,
                                             isStepLineChart: true,
-                                            color: Colors.white,
+                                            color: Colors.green,
                                             barWidth: 0.6,
                                             belowBarData:
                                                 BarAreaData(show: false),
@@ -343,15 +345,12 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                               },
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 6, top: 6),
-                            child: Text(
-                              timeMillisecond,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 9,
-                              ),
+                          Text(
+                            timeMillisecond,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 8,
                             ),
                           ),
                         ],

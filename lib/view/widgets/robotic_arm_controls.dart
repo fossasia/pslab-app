@@ -29,7 +29,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
         color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: primaryRed, width: 2),
+          side: BorderSide(color: primaryRed, width: 1),
         ),
         child: SizedBox(
           width: 280,
@@ -84,8 +84,16 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                   final newValue = value ?? false;
                                   if (newValue && provider.isPlaying) {
                                     provider.stopScrolling(resetPosition: true);
-                                  }
 
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(playBackStop),
+                                        duration: Duration(seconds: 2),
+                                        behavior: SnackBarBehavior.floating,
+                                        backgroundColor: Colors.black87,
+                                      ),
+                                    );
+                                  }
                                   provider.setManualEnabled(newValue);
                                 },
                                 activeColor: primaryRed,
@@ -295,12 +303,24 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                         groupValue: provider.selectedFrequency,
                         activeColor: primaryRed,
                         onChanged: (value) {
+                          if (provider.isPlaying) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(frequencyChange),
+                                duration: Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor: Colors.black87,
+                              ),
+                            );
+                            return;
+                          }
                           provider.setSelectedFrequency(value!);
                         },
                       ),
                       Text(
                         frequency50Hz,
-                        style: TextStyle(color: Colors.black, fontSize: 12),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 12),
                       ),
                       const SizedBox(width: 16),
                       Radio<String>(
@@ -308,12 +328,24 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                         groupValue: provider.selectedFrequency,
                         activeColor: primaryRed,
                         onChanged: (value) {
+                          if (provider.isPlaying) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(frequencyChange),
+                                duration: Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                                backgroundColor: Colors.black87,
+                              ),
+                            );
+                            return;
+                          }
                           provider.setSelectedFrequency(value!);
                         },
                       ),
                       Text(
                         frequency100Hz,
-                        style: TextStyle(color: Colors.black, fontSize: 12),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 12),
                       ),
                     ],
                   ),

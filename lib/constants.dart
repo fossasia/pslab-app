@@ -288,3 +288,5 @@ String clear = 'Clear';
 String hzSuffix = 'Hz';
 String clearTimelineTooltip = 'Clear Timeline';
 String manualMode = 'Manual Mode';
+String frequencyChange = 'Stop playback to change frequency.';
+String playBackStop = 'Playback stopped';

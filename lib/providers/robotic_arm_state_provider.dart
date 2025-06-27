@@ -10,7 +10,6 @@ import 'package:vibration/vibration.dart';
 
 class RoboticArmStateProvider extends ChangeNotifier {
   final List<double> servoValues = [0, 0, 0, 0];
-  final double scrollAmountPerTick = 120;
   List<List<double?>> timelineDegrees = [];
   List<List<double?>> pwmData = [];
   int timelinePosition = 0;
@@ -142,17 +141,17 @@ class RoboticArmStateProvider extends ChangeNotifier {
     });
   }
 
-  void togglePlayPause() {
+  void togglePlayPause({required double scrollAmountPerTick}) {
     if (isPlaying) {
       _timelineTimer?.cancel();
       isPlaying = false;
       notifyListeners();
     } else {
+      timelineScrollController.jumpTo(timelinePosition * scrollAmountPerTick);
+
       _timelineTimer =
           Timer.periodic(const Duration(seconds: 1), (timer) async {
-        if (manualEnabled) {
-          return;
-        }
+        if (manualEnabled) return;
 
         if (timelinePosition >= totalTimelineItems) {
           stopScrolling(resetPosition: false);
@@ -162,7 +161,7 @@ class RoboticArmStateProvider extends ChangeNotifier {
         final offsetBefore = timelineScrollController.offset;
         timelineScrollController.animateTo(
           offsetBefore + scrollAmountPerTick,
-          duration: const Duration(milliseconds: 50),
+          duration: const Duration(milliseconds: 100),
           curve: Curves.easeInOut,
         );
 
@@ -225,13 +224,13 @@ class RoboticArmStateProvider extends ChangeNotifier {
 
   Map<String, dynamic> generateSummary(
     int servoIndex,
-    int frequency,
     int maxAngle,
   ) {
     const int base = 750;
-    final int range = maxAngle == 360 ? 3800 : 1900;
-    final int period = 1000000 ~/ frequency;
-    final double periodMs = period / 1000;
+    int frequency = selectedFrequency == frequency50Hz ? 50 : 100;
+    int range = maxAngle == 360 ? 3800 : 1900;
+    int period = 1000000 ~/ frequency;
+    double periodMs = period / 1000;
 
     List<FlSpot> spots = [];
     List<double> dutyCycles = [];

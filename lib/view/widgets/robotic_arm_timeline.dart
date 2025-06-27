@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/constants.dart';
-
 import '../../colors.dart';
 
 class TimelineScrollView extends StatelessWidget {
   final int timelinePosition;
   final double screenHeight;
-  final double scrollAmountPerTick;
   final List<List<double?>> timelineDegrees;
   final void Function(int index, int servo, double value) onUpdate;
   final int totalTimelineItems;
+
+  final ScrollController scrollController;
+
   const TimelineScrollView({
     super.key,
     required this.screenHeight,
     required this.timelinePosition,
-    required this.scrollAmountPerTick,
     required this.timelineDegrees,
     required this.onUpdate,
     required this.totalTimelineItems,
+    required this.scrollController,
   });
 
   @override
@@ -31,6 +32,7 @@ class TimelineScrollView extends StatelessWidget {
       height: timeLineHeight,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        controller: scrollController,
         child: Row(
           children: List.generate(totalTimelineItems, (index) {
             bool isCurrent = index == timelinePosition;
