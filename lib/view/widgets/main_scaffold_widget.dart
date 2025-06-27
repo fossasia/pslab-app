@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 
+import '../../theme/colors.dart';
 import 'navigation_drawer.dart';
 
 class MainScaffold extends StatefulWidget {
@@ -84,20 +85,19 @@ class _MainScaffoldState extends State<MainScaffold>
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarColor: Color(0xFFD32F2F)),
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.menu,
-              color: Colors.white,
+              color: appBarContentColor,
             ),
           );
         }),
-        backgroundColor: const Color(0xFFD32F2F),
+        backgroundColor: appBarColor,
         title: AnimatedSwitcher(
           duration: const Duration(milliseconds: 0),
           transitionBuilder: (Widget child, Animation<double> animation) {
@@ -112,14 +112,14 @@ class _MainScaffoldState extends State<MainScaffold>
                   controller: _searchController,
                   onChanged: _onSearchChanged,
                   autofocus: true,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: appBarContentColor,
                     fontSize: 18,
                   ),
                   decoration: InputDecoration(
                     hintText: widget.searchHint,
-                    hintStyle: const TextStyle(
-                      color: Colors.white70,
+                    hintStyle: TextStyle(
+                      color: searchBarHintTextColor,
                       fontSize: 18,
                     ),
                     border: InputBorder.none,
@@ -127,13 +127,13 @@ class _MainScaffoldState extends State<MainScaffold>
                     focusedBorder: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  cursorColor: Colors.white,
+                  cursorColor: appBarContentColor,
                 )
               : Text(
                   key: ValueKey('title_${widget.title}'),
                   widget.title,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: appBarContentColor,
                     fontSize: 18,
                   ),
                 ),
@@ -141,9 +141,9 @@ class _MainScaffoldState extends State<MainScaffold>
         actions: _isSearching
             ? [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.clear,
-                    color: Colors.white,
+                    color: appBarContentColor,
                   ),
                   onPressed: () {
                     if (_searchController.text.isNotEmpty) {
@@ -158,9 +158,9 @@ class _MainScaffoldState extends State<MainScaffold>
             : [
                 if (widget.showSearch)
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.search,
-                      color: Colors.white,
+                      color: appBarContentColor,
                     ),
                     onPressed: _toggleSearch,
                   ),
@@ -183,9 +183,9 @@ class _MainScaffoldState extends State<MainScaffold>
                   },
                 ),
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.more_vert,
-                    color: Colors.white,
+                    color: appBarContentColor,
                   ),
                   onPressed: () {
                     /**/

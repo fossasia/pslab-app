@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../theme/colors.dart';
+
 class CommonScaffold extends StatefulWidget {
   final String title;
   final Widget body;
@@ -23,11 +25,10 @@ class _CommonScaffoldState extends State<CommonScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: scaffoldBackgroundColor,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        systemOverlayStyle:
-            const SystemUiOverlayStyle(statusBarColor: Color(0xFFD32F2F)),
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {
@@ -42,18 +43,18 @@ class _CommonScaffoldState extends State<CommonScaffold> {
                 );
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back,
-              color: Colors.white,
+              color: appBarContentColor,
             ),
           );
         }),
-        backgroundColor: const Color(0xFFD32F2F),
+        backgroundColor: primaryRed,
         title: Text(
           key: widget.scaffoldKey,
           widget.title,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: appBarContentColor,
             fontSize: 15,
           ),
         ),

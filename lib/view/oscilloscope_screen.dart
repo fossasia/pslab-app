@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/channel_parameters_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/data_analysis_widget.dart';

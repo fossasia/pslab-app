@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/colors.dart';
+import 'package:pslab/theme/colors.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import '../../constants.dart';

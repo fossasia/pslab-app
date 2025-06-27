@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/constants.dart';
 
+import '../../theme/colors.dart';
+
 class DataAnalysisWidget extends StatefulWidget {
   const DataAnalysisWidget({super.key});
 
@@ -24,7 +26,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
               Container(
                 margin: const EdgeInsets.only(top: 8, bottom: 5, right: 2.5),
                 decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: const Color(0xFFD32F2F)),
+                  border: Border.all(width: 1, color: primaryRed),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Stack(
@@ -39,7 +41,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           Checkbox(
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
-                            activeColor: const Color(0xFFCE525F),
+                            activeColor: checkBoxActiveColor,
                             value: oscilloscopeStateProvider
                                 .isFourierTransformSelected,
                             onChanged: (bool? value) {
@@ -53,8 +55,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           ),
                           Text(
                             fourierAnalysis,
-                            style: const TextStyle(
-                              color: Colors.black,
+                            style: TextStyle(
+                              color: oscilloscopeOptionLabelColor,
                               fontSize: 15,
                               fontWeight: FontWeight.normal,
                               fontStyle: FontStyle.normal,
@@ -89,8 +91,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             inputDecorationTheme: const InputDecorationTheme(
                               border: InputBorder.none,
                             ),
-                            textStyle: const TextStyle(
-                              color: Colors.black,
+                            textStyle: TextStyle(
+                              color: oscilloscopeOptionLabelColor,
                               fontSize: 15,
                             ),
                             onSelected: (String? value) {
@@ -130,8 +132,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          color: Colors.black,
+                        textStyle: TextStyle(
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 15,
                         ),
                         onSelected: (value) {
@@ -168,8 +170,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          color: Colors.black,
+                        textStyle: TextStyle(
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 15,
                         ),
                         onSelected: (value) {
@@ -193,11 +195,12 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                   alignment: Alignment.center,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
-                    decoration: const BoxDecoration(color: Colors.white),
+                    decoration:
+                        BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
                     child: Text(
                       dataAnalysis,
-                      style: const TextStyle(
-                        color: Color(0xFFC72C2C),
+                      style: TextStyle(
+                        color: oscilloscopeOptionTitleColor,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -215,7 +218,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
               Container(
                 margin: const EdgeInsets.only(top: 8, bottom: 5, left: 2.5),
                 decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: const Color(0xFFD32F2F)),
+                  border: Border.all(width: 1, color: primaryRed),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Stack(
@@ -245,8 +248,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           inputDecorationTheme: const InputDecorationTheme(
                             border: InputBorder.none,
                           ),
-                          textStyle: const TextStyle(
-                            color: Colors.black,
+                          textStyle: TextStyle(
+                            color: oscilloscopeOptionLabelColor,
                             fontSize: 15,
                           ),
                           onSelected: (value) => {
@@ -269,13 +272,13 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           Expanded(
                             child: SliderTheme(
                               data: SliderThemeData(
-                                inactiveTrackColor: Colors.blueGrey[100],
+                                inactiveTrackColor: sliderInActiveColor,
                                 trackHeight: 1,
                                 thumbShape: const RoundSliderThumbShape(
                                     enabledThumbRadius: 6),
                               ),
                               child: Slider(
-                                activeColor: const Color(0xFFCE525F),
+                                activeColor: sliderActiveColor,
                                 min: -oscilloscopeStateProvider
                                     .oscilloscopeAxesScale.yAxisScale,
                                 max: oscilloscopeStateProvider
@@ -310,8 +313,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                               ),
-                              style: const TextStyle(
-                                color: Colors.black,
+                              style: TextStyle(
+                                color: oscilloscopeOptionLabelColor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal,
                                 fontStyle: FontStyle.normal,
@@ -352,13 +355,13 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           Expanded(
                             child: SliderTheme(
                               data: SliderThemeData(
-                                inactiveTrackColor: Colors.blueGrey[100],
+                                inactiveTrackColor: sliderInActiveColor,
                                 trackHeight: 1,
                                 thumbShape: const RoundSliderThumbShape(
                                     enabledThumbRadius: 6),
                               ),
                               child: Slider(
-                                activeColor: const Color(0xFFCE525F),
+                                activeColor: sliderActiveColor,
                                 min: 0,
                                 max: oscilloscopeStateProvider.timebase / 1000,
                                 value: oscilloscopeStateProvider
@@ -411,8 +414,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                     ? '${(oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]! / 1000).toStringAsFixed(2)} ms'
                                     : '${oscilloscopeStateProvider.xOffsets[oscilloscopeStateProvider.selectedChannelOffset]!.toStringAsFixed(2)} ms',
                               ),
-                              style: const TextStyle(
-                                color: Colors.black,
+                              style: TextStyle(
+                                color: oscilloscopeOptionLabelColor,
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal,
                                 fontStyle: FontStyle.normal,
@@ -465,11 +468,12 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                   alignment: Alignment.center,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
-                    decoration: const BoxDecoration(color: Colors.white),
+                    decoration:
+                        BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
                     child: Text(
                       offsets,
-                      style: const TextStyle(
-                        color: Color(0xFFC72C2C),
+                      style: TextStyle(
+                        color: oscilloscopeOptionTitleColor,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,

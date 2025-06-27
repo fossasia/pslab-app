@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/constants.dart';
+import 'package:pslab/theme/colors.dart';
 
 class Instrumentstats extends StatelessWidget {
   final String unit;
@@ -28,7 +29,7 @@ class Instrumentstats extends StatelessWidget {
           child: Text(
             builtIn,
             style: TextStyle(
-              color: Colors.black,
+              color: blackTextColor,
               fontSize: titleFontSize,
               fontWeight: FontWeight.bold,
             ),
@@ -40,15 +41,15 @@ class Instrumentstats extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 StatItem(
-                    label: 'Max ($unit)',
+                    label: '$maxLabel ($unit)',
                     value: maxValue,
                     fontSize: statFontSize),
                 StatItem(
-                    label: 'Min ($unit)',
+                    label: '$minLabel ($unit)',
                     value: minValue,
                     fontSize: statFontSize),
                 StatItem(
-                    label: 'Avg ($unit)',
+                    label: '$avgLabel ($unit)',
                     value: avgValue,
                     fontSize: statFontSize),
               ],
@@ -85,7 +86,7 @@ class StatItem extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                color: Colors.black,
+                color: cardContentColor,
                 fontSize: fontSize,
                 fontWeight: FontWeight.w600,
               ),
@@ -96,13 +97,13 @@ class StatItem extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: padding, vertical: 3),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.pink.shade200),
+                border: Border.all(color: instrumentStatBoxColor),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 value.toStringAsFixed(2),
                 style: TextStyle(
-                  color: Colors.black,
+                  color: cardContentColor,
                   fontSize: valueFontSize,
                   fontWeight: FontWeight.bold,
                 ),

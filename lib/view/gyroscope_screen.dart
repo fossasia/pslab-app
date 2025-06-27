@@ -5,6 +5,8 @@ import 'package:pslab/constants.dart';
 import 'package:pslab/view/widgets/gyroscope_card.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 
+import '../theme/colors.dart';
+
 class GyroscopeScreen extends StatefulWidget {
   const GyroscopeScreen({super.key});
 
@@ -27,13 +29,16 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
           child: Column(
             children: [
               Expanded(
-                child: GyroscopeCard(color: Colors.yellow, axis: xAxis),
+                child: GyroscopeCard(
+                    color: xOrientationChartLineColor, axis: xAxis),
               ),
               Expanded(
-                child: GyroscopeCard(color: Colors.purple, axis: yAxis),
+                child: GyroscopeCard(
+                    color: yOrientationChartLineColor, axis: yAxis),
               ),
               Expanded(
-                child: GyroscopeCard(color: Colors.green, axis: zAxis),
+                child: GyroscopeCard(
+                    color: zOrientationChartLineColor, axis: zAxis),
               ),
             ],
           ),

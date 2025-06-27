@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:pslab/colors.dart';
+import 'package:pslab/theme/colors.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:pslab/constants.dart';

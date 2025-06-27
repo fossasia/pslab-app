@@ -5,6 +5,8 @@ import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../theme/colors.dart';
+
 class ConnectDeviceScreen extends StatefulWidget {
   const ConnectDeviceScreen({super.key});
   final String iconUsbDisconnected =
@@ -55,7 +57,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
-                            color: Colors.blueGrey[600],
+                            color: usbConnectionColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -127,15 +129,15 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero,
                                 ),
-                                backgroundColor: const Color(0xFFD32F2F),
-                                foregroundColor: Colors.white,
+                                backgroundColor: primaryRed,
+                                foregroundColor: buttonForegroundColor,
                               ),
                               onPressed: () {},
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
                                   bluetooth,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(color: buttonTextColor),
                                 ),
                               ),
                             ),
@@ -145,8 +147,8 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero,
                                 ),
-                                backgroundColor: const Color(0xFFD32F2F),
-                                foregroundColor: Colors.white,
+                                backgroundColor: primaryRed,
+                                foregroundColor: buttonForegroundColor,
                               ),
                               onPressed: () async {
                                 await provider.initializeWiFi();
@@ -155,7 +157,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
                                   wifi,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(color: buttonTextColor),
                                 ),
                               ),
                             ),
@@ -166,7 +168,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     Container(
                       margin:
                           const EdgeInsets.only(top: 30, left: 120, right: 120),
-                      child: const Divider(color: Colors.grey, height: 1),
+                      child: Divider(color: dividerColor, height: 1),
                     ),
                     Center(
                       child: Container(
@@ -178,11 +180,11 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                           },
                           child: Text(
                             whatisPslab,
-                            style: const TextStyle(
+                            style: TextStyle(
                               decoration: TextDecoration.underline,
                               decorationThickness: 1,
-                              decorationColor: Color(0xFFD32F2F),
-                              color: Color(0xFFD32F2F),
+                              decorationColor: primaryRed,
+                              color: primaryRed,
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
                             ),
