@@ -103,7 +103,7 @@ class StatItem extends StatelessWidget {
                 value.toStringAsFixed(2),
                 style: TextStyle(
                   color: cardContentColor,
-                  fontSize: valueFontSize,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
