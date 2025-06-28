@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/constants.dart';
 import '../providers/compass_provider.dart';
+import '../theme/colors.dart';
 
 class CompassScreen extends StatelessWidget {
   const CompassScreen({super.key});
@@ -78,7 +79,8 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
                             .getDegreeForAxis(compassProvider.selectedAxis)
                             .round()
                             .toStringAsFixed(1),
-                        style: const TextStyle(
+                        style: TextStyle(
+                          color: blackTextColor,
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
@@ -109,7 +111,8 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
                       const SizedBox(height: 24),
                       Text(
                         parallelToGround,
-                        style: const TextStyle(
+                        style: TextStyle(
+                          color: blackTextColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -140,10 +143,10 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: Colors.grey,
+            color: blackTextColor,
           ),
         ),
         const SizedBox(height: 8),
@@ -156,7 +159,8 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
           ),
           child: Text(
             value.toStringAsFixed(1),
-            style: const TextStyle(
+            style: TextStyle(
+              color: blackTextColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -169,39 +173,31 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
   Widget _buildAxisSelector(BuildContext context, String axis, String label) {
     return Consumer<CompassProvider>(
         builder: (context, compassProvider, child) {
-      bool isSelected = compassProvider.selectedAxis == axis;
-
-      return GestureDetector(
-        onTap: () => compassProvider.onAxisSelected(axis),
+      return Expanded(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? Colors.red : Colors.grey,
-                  width: 2,
-                ),
-                color: isSelected ? Colors.red : Colors.transparent,
-              ),
-              child: isSelected
-                  ? const Icon(
-                      Icons.circle,
-                      size: 10,
-                      color: Colors.white,
-                    )
-                  : null,
+            Radio<String>(
+              value: axis,
+              groupValue: compassProvider.selectedAxis,
+              onChanged: (String? value) {
+                if (value != null) {
+                  compassProvider.onAxisSelected(value);
+                }
+              },
+              activeColor: radioButtonActiveColor,
             ),
-            const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 fontSize: 14,
-                color: isSelected ? Colors.red : Colors.grey[600],
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+                color: compassProvider.selectedAxis == axis
+                    ? radioButtonActiveColor
+                    : blackTextColor,
+                fontWeight: compassProvider.selectedAxis == axis
+                    ? FontWeight.w500
+                    : FontWeight.normal,
               ),
             ),
           ],
