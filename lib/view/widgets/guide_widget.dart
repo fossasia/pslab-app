@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/colors.dart';
+import 'package:pslab/theme/colors.dart';
 
 import '../../constants.dart';
 
@@ -66,7 +66,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.black54,
+      color: guideDrawerHighlightColor,
       child: GestureDetector(
         onVerticalDragEnd: _onVerticalDragEnd,
         onTap: _hideDrawer,
@@ -86,9 +86,9 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                     maxHeight: MediaQuery.of(context).size.height * 0.7,
                     minHeight: 200.0,
                   ),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                    color: guideDrawerBackgroundColor,
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16.0),
                       topRight: Radius.circular(16.0),
                     ),
@@ -117,9 +117,9 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.keyboard_arrow_down,
-                                  color: Colors.white,
+                                  color: appBarContentColor,
                                   size: 16.0,
                                 ),
                                 const SizedBox(
@@ -127,8 +127,8 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                                 ),
                                 Text(
                                   hideGuide,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: appBarContentColor,
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -147,10 +147,10 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                               children: [
                                 Text(
                                   widget.instrumentName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: guideDrawerHeadingColor,
                                   ),
                                 ),
                                 const SizedBox(height: 16.0),
@@ -188,9 +188,9 @@ class InstrumentIntroText extends StatelessWidget {
       child: Text(
         text,
         style: style ??
-            const TextStyle(
+            TextStyle(
               fontSize: 15.0,
-              color: Colors.black,
+              color: blackTextColor,
               height: 1.5,
             ),
       ),
@@ -213,21 +213,21 @@ class InstrumentBulletPoint extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 6.0, right: 8.0),
+          Padding(
+            padding: const EdgeInsets.only(top: 6.0, right: 8.0),
             child: Icon(
               Icons.circle,
               size: 6.0,
-              color: Colors.black54,
+              color: guideDrawerHighlightColor,
             ),
           ),
           Expanded(
             child: Text(
               text,
               style: style ??
-                  const TextStyle(
+                  TextStyle(
                     fontSize: 15.0,
-                    color: Colors.black,
+                    color: blackTextColor,
                     height: 1.5,
                   ),
             ),
@@ -282,9 +282,9 @@ class InstrumentImage extends StatelessWidget {
             const SizedBox(height: 8.0),
             Text(
               caption!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14.0,
-                color: Colors.black54,
+                color: guideDrawerHighlightColor,
                 fontStyle: FontStyle.italic,
               ),
               textAlign: TextAlign.center,
