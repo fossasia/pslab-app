@@ -21,7 +21,7 @@ class BarometerStateProvider extends ChangeNotifier {
   double _pressureMax = 0;
   double _pressureSum = 0;
   int _dataCount = 0;
-  bool _sensorAvailable = true;
+  bool _sensorAvailable = false;
 
   Function(String)? onSensorError;
 
@@ -39,14 +39,24 @@ class BarometerStateProvider extends ChangeNotifier {
         notifyListeners();
       });
 
+      Timer sensorTimeout = Timer(const Duration(seconds: 3), () {
+        if (!_sensorAvailable) {
+          _handleSensorError(barometerSensorError);
+        }
+      });
+
       _barometerSubscription = barometerEventStream().listen(
         (BarometerEvent event) {
           _currentPressure = event.pressure / 1013.25;
-          _sensorAvailable = true;
+          if (!_sensorAvailable) {
+            _sensorAvailable = true;
+            sensorTimeout.cancel();
+          }
           notifyListeners();
         },
         onError: (error) {
           logger.e("$barometerSensorError $error");
+          sensorTimeout.cancel();
           _handleSensorError(error);
         },
         cancelOnError: false,
@@ -59,20 +69,8 @@ class BarometerStateProvider extends ChangeNotifier {
 
   void _handleSensorError(dynamic error) {
     _sensorAvailable = false;
-    String errorString = error.toString().toLowerCase();
-    if (errorString.contains('not available') ||
-        errorString.contains('not supported') ||
-        errorString.contains('sensor not found') ||
-        errorString.contains('no sensor')) {
-      _handleSensorNotAvailable();
-    } else {
-      onSensorError?.call(barometerSensorError);
-    }
-  }
-
-  void _handleSensorNotAvailable() {
-    _sensorAvailable = false;
     onSensorError?.call(barometerNotAvailable);
+    logger.e("$barometerSensorError $error");
   }
 
   void disposeSensors() {

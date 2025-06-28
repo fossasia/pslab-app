@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
 import 'package:pslab/constants.dart';
 
+import '../../theme/colors.dart';
+
 class BarometerCard extends StatefulWidget {
   const BarometerCard({super.key});
   @override
@@ -38,7 +40,7 @@ class _BarometerCardState extends State<BarometerCard> {
       elevation: 1,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardBackgroundColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Container(
@@ -101,7 +103,7 @@ class _BarometerCardState extends State<BarometerCard> {
           child: Text(
             '$altitudeLabel ($meterUnit)',
             style: TextStyle(
-              color: Colors.black,
+              color: cardContentColor,
               fontSize: fontSize,
               fontWeight: FontWeight.w600,
             ),
@@ -112,13 +114,13 @@ class _BarometerCardState extends State<BarometerCard> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: padding, vertical: 3),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.pink.shade200),
+              border: Border.all(color: instrumentStatBoxColor),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               currentAltitude.toStringAsFixed(2),
               style: TextStyle(
-                color: Colors.black,
+                color: cardContentColor,
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
               ),

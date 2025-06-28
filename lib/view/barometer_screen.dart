@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/barometer_state_provider.dart';
+import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/barometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -21,9 +22,9 @@ class _BarometerScreenState extends State<BarometerScreen> {
         SnackBar(
           content: Text(
             message,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: snackBarContentColor),
           ),
-          backgroundColor: Colors.grey[700],
+          backgroundColor: snackBarBackgroundColor,
           duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
         ),
@@ -79,8 +80,8 @@ class _BarometerScreenState extends State<BarometerScreen> {
             margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
             padding: EdgeInsets.all(cardPadding),
             decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(8),
+              color: chartBackgroundColor,
+              borderRadius: BorderRadius.zero,
             ),
             child: _buildChart(
                 screenWidth,
@@ -104,7 +105,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
             ? 8.0
             : 9.0;
     final style = TextStyle(
-      color: Colors.white,
+      color: chartTextColor,
       fontSize: fontSize,
     );
     String timeText;
@@ -137,7 +138,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
             ? 8.0
             : 9.0;
     final style = TextStyle(
-      color: Colors.white,
+      color: chartTextColor,
       fontSize: fontSize,
     );
 
@@ -195,7 +196,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
 
     return LineChart(
       LineChartData(
-        backgroundColor: Colors.black,
+        backgroundColor: chartBackgroundColor,
         titlesData: FlTitlesData(
           show: true,
           topTitles: AxisTitles(
@@ -205,7 +206,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
                 timeAxisLabel,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
-                  color: Colors.white,
+                  color: chartTextColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -225,7 +226,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
               atm,
               style: TextStyle(
                 fontSize: axisNameFontSize,
-                color: Colors.white,
+                color: chartTextColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -238,7 +239,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
                   child: Text(
                     value.toStringAsFixed(2),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: chartTextColor,
                       fontSize: chartFontSize,
                     ),
                   ),
@@ -252,7 +253,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
               meterUnit,
               style: TextStyle(
                 fontSize: axisNameFontSize,
-                color: Colors.white,
+                color: chartTextColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -274,11 +275,11 @@ class _BarometerScreenState extends State<BarometerScreen> {
         ),
         borderData: FlBorderData(
           show: true,
-          border: const Border(
-            bottom: BorderSide(color: Colors.white38),
-            left: BorderSide(color: Colors.white38),
-            top: BorderSide(color: Colors.white38),
-            right: BorderSide(color: Colors.white38),
+          border: Border(
+            bottom: BorderSide(color: chartBorderColor),
+            left: BorderSide(color: chartBorderColor),
+            top: BorderSide(color: chartBorderColor),
+            right: BorderSide(color: chartBorderColor),
           ),
         ),
         minY: 0,
@@ -290,7 +291,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
           LineChartBarData(
             spots: spots,
             isCurved: true,
-            color: Colors.yellow,
+            color: xOrientationChartLineColor,
             barWidth: screenWidth < 400 ? 1.5 : 2.0,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),

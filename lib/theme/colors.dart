@@ -40,3 +40,5 @@ Color selectedMenuColor = Colors.red;
 Color menuColor = Colors.grey;
 Color listTileFocusColor = Colors.grey[350]!;
 Color oscilloscopeOptionLabelColor = Colors.black;
+Color snackBarBackgroundColor = Colors.grey[700]!;
+Color snackBarContentColor = Colors.white;
