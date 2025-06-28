@@ -61,13 +61,16 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
             child: Column(
               children: [
                 Expanded(
-                  child: GyroscopeCard(color: xOrientationChartLineColor, axis: xAxis),
+                  child: GyroscopeCard(
+                      color: xOrientationChartLineColor, axis: xAxis),
                 ),
                 Expanded(
-                  child: GyroscopeCard(color: yOrientationChartLineColor, axis: yAxis),
+                  child: GyroscopeCard(
+                      color: yOrientationChartLineColor, axis: yAxis),
                 ),
                 Expanded(
-                  child: GyroscopeCard(color: zOrientationChartLineColor, axis: zAxis),
+                  child: GyroscopeCard(
+                      color: zOrientationChartLineColor, axis: zAxis),
                 ),
               ],
             ),

@@ -68,13 +68,14 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
                 child: Column(
               children: [
                 Expanded(
-                    child:
-                        AccelerometerCard(color: xOrientationChartLineColor, axis: xAxis)),
+                    child: AccelerometerCard(
+                        color: xOrientationChartLineColor, axis: xAxis)),
                 Expanded(
-                    child:
-                        AccelerometerCard(color: yOrientationChartLineColor, axis: yAxis)),
+                    child: AccelerometerCard(
+                        color: yOrientationChartLineColor, axis: yAxis)),
                 Expanded(
-                    child: AccelerometerCard(color: zOrientationChartLineColor, axis: zAxis)),
+                    child: AccelerometerCard(
+                        color: zOrientationChartLineColor, axis: zAxis)),
               ],
             ))),
         if (_showGuide)
