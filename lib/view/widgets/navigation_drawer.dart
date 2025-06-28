@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 
+import '../../theme/colors.dart';
+
 class NavDrawer extends StatefulWidget {
   final int selectedIndex;
 
@@ -57,17 +59,18 @@ class _NavDrawerState extends State<NavDrawer> {
               ),
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.apps,
-                color: widget.selectedIndex == 0 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 0 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Instruments',
+                instrumentsTitle,
                 style: TextStyle(
                   color: widget.selectedIndex == 0
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -90,17 +93,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.wifi_tethering,
-                color: widget.selectedIndex == 1 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 1 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Logged Data',
+                loggedDataMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 1
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -112,17 +116,18 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             const Divider(),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.developer_board,
-                color: widget.selectedIndex == 2 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 2 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Connect Device',
+                connectDevice,
                 style: TextStyle(
                   color: widget.selectedIndex == 2
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -143,17 +148,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.create_new_folder,
-                color: widget.selectedIndex == 3 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 3 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Generate Config File',
+                configFileMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 3
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -164,17 +170,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.settings,
-                color: widget.selectedIndex == 4 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 4 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Settings',
+                settings,
                 style: TextStyle(
                   color: widget.selectedIndex == 4
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -195,17 +202,18 @@ class _NavDrawerState extends State<NavDrawer> {
             ),
             const Divider(),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.info,
-                color: widget.selectedIndex == 5 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 5 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'About Us',
+                aboutUs,
                 style: TextStyle(
                   color: widget.selectedIndex == 5
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -225,17 +233,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.menu_book,
-                color: widget.selectedIndex == 6 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 6 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Documentation',
+                documentationMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 6
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -246,17 +255,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.star,
-                color: widget.selectedIndex == 7 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 7 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Rate App',
+                rateApp,
                 style: TextStyle(
                   color: widget.selectedIndex == 7
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -267,17 +277,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.shopping_cart,
-                color: widget.selectedIndex == 8 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 8 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Buy PSLab',
+                buyPsLabMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 8
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -288,17 +299,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.feedback,
-                color: widget.selectedIndex == 9 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 9 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'FAQ',
+                faqMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 9
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -318,17 +330,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.share,
-                color: widget.selectedIndex == 10 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 10 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Share App',
+                shareAppMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 10
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -339,17 +352,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.article,
-                color: widget.selectedIndex == 11 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 11 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                'Privacy Policy',
+                privacyPolicyMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 11
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -360,17 +374,18 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: Colors.grey[350],
+              focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.attribution,
-                color: widget.selectedIndex == 12 ? Colors.red : Colors.grey,
+                color:
+                    widget.selectedIndex == 12 ? selectedMenuColor : menuColor,
               ),
               title: Text(
                 softwareLicenses,
                 style: TextStyle(
                   color: widget.selectedIndex == 12
-                      ? Colors.red
+                      ? selectedMenuColor
                       : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,

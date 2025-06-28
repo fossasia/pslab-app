@@ -13,7 +13,7 @@ import 'package:pslab/view/robotic_arm_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
-import 'package:pslab/others/theme.dart';
+import 'package:pslab/theme/app_theme.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import 'constants.dart';
 

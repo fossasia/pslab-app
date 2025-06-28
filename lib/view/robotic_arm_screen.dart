@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/robotic_arm_timeline.dart';
-import '../colors.dart';
+import '../theme/colors.dart';
 import '../providers/robotic_arm_state_provider.dart';
 import 'widgets/servo_card.dart';
 

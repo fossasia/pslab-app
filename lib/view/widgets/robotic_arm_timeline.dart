@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/constants.dart';
 
-import '../../colors.dart';
+import '../../theme/colors.dart';
 
 class TimelineScrollView extends StatelessWidget {
   final ScrollController scrollController;

@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
+import 'package:pslab/theme/colors.dart';
 
 class XYPlotGraph extends StatefulWidget {
   const XYPlotGraph({super.key});
@@ -12,8 +13,8 @@ class XYPlotGraph extends StatefulWidget {
 
 class _XYPlotGraphState extends State<XYPlotGraph> {
   Widget titleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
+    final style = TextStyle(
+      color: chartTextColor,
       fontSize: 9,
     );
     return SideTitleWidget(
@@ -66,7 +67,7 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
       builder: (context, provider, _) {
         return LineChart(
           LineChartData(
-            backgroundColor: Colors.black,
+            backgroundColor: chartBackgroundColor,
             titlesData: FlTitlesData(
               show: true,
               bottomTitles: const AxisTitles(
@@ -75,8 +76,8 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
               rightTitles: AxisTitles(
                 axisNameWidget: Text(
                   '${oscilloscopeStateProvider.xyPlotAxis1} (V)',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: chartTextColor,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -92,8 +93,8 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
               leftTitles: AxisTitles(
                 axisNameWidget: Text(
                   '${oscilloscopeStateProvider.xyPlotAxis1} (V)',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: chartTextColor,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -109,8 +110,8 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
               topTitles: AxisTitles(
                 axisNameWidget: Text(
                   '${oscilloscopeStateProvider.xyPlotAxis2} (V)',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: chartTextColor,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -135,18 +136,18 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
             ),
             borderData: FlBorderData(
               show: true,
-              border: const Border(
+              border: Border(
                 bottom: BorderSide(
-                  color: Colors.white38,
+                  color: chartBorderColor,
                 ),
                 left: BorderSide(
-                  color: Colors.white38,
+                  color: chartBorderColor,
                 ),
                 top: BorderSide(
-                  color: Colors.white38,
+                  color: chartBorderColor,
                 ),
                 right: BorderSide(
-                  color: Colors.white38,
+                  color: chartBorderColor,
                 ),
               ),
             ),

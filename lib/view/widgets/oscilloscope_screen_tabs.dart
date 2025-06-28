@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
+import 'package:pslab/theme/colors.dart';
+
+import '../../constants.dart';
 
 class OscilloscopeScreenTabs extends StatefulWidget {
   final String channelParametersImage = 'assets/images/channel_parameters.gif';
@@ -22,8 +25,8 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
     return Container(
       margin: const EdgeInsets.only(right: 5, bottom: 5),
       decoration: BoxDecoration(
-        border: Border.all(width: 3, color: const Color(0xFFB1BCBE)),
-        color: const Color(0xFF7A7A7A),
+        border: Border.all(width: 3, color: oscilloscopeTabBorderColor),
+        color: oscilloscopeTabOuterBoxColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -47,7 +50,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xF3DBDBDB),
+                        color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
@@ -60,22 +63,22 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                     margin:
                         const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
                     color: oscilloscopeStateProvider.selectedIndex == 0
-                        ? const Color(0xFFC72C2C)
+                        ? oscilloscopeOptionTitleColor
                         : Colors.transparent,
-                    child: const Text(
-                      'Channels',
+                    child: Text(
+                      channels,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(
-                        color: Colors.black,
+                        color: oscilloscopeOptionLabelColor,
                         fontSize: 10,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const Divider(
-                    color: Color(0xFFB1BCBE),
+                  Divider(
+                    color: oscilloscopeTabBorderColor,
                     height: 2,
                   )
                 ],
@@ -99,7 +102,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xF3DBDBDB),
+                        color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
@@ -112,21 +115,21 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       margin: const EdgeInsets.symmetric(
                           vertical: 4, horizontal: 2),
                       color: oscilloscopeStateProvider.selectedIndex == 1
-                          ? const Color(0xFFC72C2C)
+                          ? oscilloscopeOptionTitleColor
                           : Colors.transparent,
-                      child: const Text(
-                        'Timebase',
+                      child: Text(
+                        timeBase,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 10,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.bold,
                         ),
                       )),
-                  const Divider(
-                    color: Color(0xFFB1BCBE),
+                  Divider(
+                    color: oscilloscopeTabBorderColor,
                     height: 2,
                   )
                 ],
@@ -150,7 +153,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xF3DBDBDB),
+                        color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
@@ -163,21 +166,21 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       margin: const EdgeInsets.symmetric(
                           vertical: 4, horizontal: 2),
                       color: oscilloscopeStateProvider.selectedIndex == 2
-                          ? const Color(0xFFC72C2C)
+                          ? oscilloscopeOptionTitleColor
                           : Colors.transparent,
-                      child: const Text(
-                        'Data Analysis',
+                      child: Text(
+                        dataAnalysis,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 10,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.bold,
                         ),
                       )),
-                  const Divider(
-                    color: Color(0xFFB1BCBE),
+                  Divider(
+                    color: oscilloscopeTabBorderColor,
                     height: 2,
                   )
                 ],
@@ -201,7 +204,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 4, horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xF3DBDBDB),
+                        color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
@@ -214,14 +217,14 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                     margin:
                         const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
                     color: oscilloscopeStateProvider.selectedIndex == 3
-                        ? const Color(0xFFC72C2C)
+                        ? oscilloscopeOptionTitleColor
                         : Colors.transparent,
-                    child: const Text(
-                      'XY Plot',
+                    child: Text(
+                      xyPlot,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(
-                        color: Colors.black,
+                        color: oscilloscopeOptionLabelColor,
                         fontSize: 10,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,

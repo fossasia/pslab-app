@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/colors.dart';
+import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:pslab/constants.dart';
@@ -103,9 +103,6 @@ class FAQScreen extends StatelessWidget {
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
                 A,
-                style: const TextStyle(
-                  color: Colors.black,
-                ),
               ),
               const SizedBox(
                 width: 10,
@@ -113,9 +110,6 @@ class FAQScreen extends StatelessWidget {
               Flexible(
                 child: Text(
                   faq.answer,
-                  style: const TextStyle(
-                    color: Colors.black,
-                  ),
                 ),
               ),
             ]),
