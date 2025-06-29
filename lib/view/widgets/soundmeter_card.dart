@@ -1,3 +1,4 @@
+import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/gauge_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
@@ -37,7 +38,7 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
       elevation: 1,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardBackgroundColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Container(

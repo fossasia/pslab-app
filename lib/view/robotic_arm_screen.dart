@@ -6,6 +6,7 @@ import 'package:pslab/view/widgets/robotic_arm_controls.dart';
 import 'package:pslab/view/widgets/robotic_arm_dialog.dart';
 import 'package:pslab/view/widgets/robotic_arm_summary.dart';
 import 'package:pslab/view/widgets/robotic_arm_timeline.dart';
+import '../theme/colors.dart';
 import '../providers/robotic_arm_state_provider.dart';
 import 'widgets/servo_card.dart';
 

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
+
+import '../theme/colors.dart';
 
 class LuxMeterScreen extends StatefulWidget {
   const LuxMeterScreen({super.key});
@@ -13,6 +16,38 @@ class LuxMeterScreen extends StatefulWidget {
 }
 
 class _LuxMeterScreenState extends State<LuxMeterScreen> {
+  bool _showGuide = false;
+  static const imagePath = 'assets/images/bh1750_schematic.png';
+  void _showInstrumentGuide() {
+    setState(() {
+      _showGuide = true;
+    });
+  }
+
+  void _hideInstrumentGuide() {
+    setState(() {
+      _showGuide = false;
+    });
+  }
+
+  List<Widget> _getLuxMeterContent() {
+    return [
+      InstrumentBulletPoint(
+        text: luxMeterDesc,
+      ),
+      InstrumentBulletPoint(
+        text: luxMeterSensorIntro,
+      ),
+      const InstrumentImage(
+        imagePath: imagePath,
+      ),
+      InstrumentBulletPoint(
+        text: luxMeterBulletPoint1,
+      ),
+      InstrumentBulletPoint(text: luxMeterBulletPoint2),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -21,23 +56,32 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           create: (_) => LuxMeterStateProvider()..initializeSensors(),
         ),
       ],
-      child: CommonScaffold(
-        title: luxMeterTitle,
-        body: SafeArea(
-          child: Column(
-            children: [
-              const Expanded(
-                flex: 45,
-                child: LuxMeterCard(),
-              ),
-              Expanded(
-                flex: 55,
-                child: _buildChartSection(),
-              ),
-            ],
+      child: Stack(children: [
+        CommonScaffold(
+          title: luxMeterTitle,
+          onGuidePressed: _showInstrumentGuide,
+          body: SafeArea(
+            child: Column(
+              children: [
+                const Expanded(
+                  flex: 45,
+                  child: LuxMeterCard(),
+                ),
+                Expanded(
+                  flex: 55,
+                  child: _buildChartSection(),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+        if (_showGuide)
+          InstrumentOverviewDrawer(
+            instrumentName: luxMeterTitle,
+            content: _getLuxMeterContent(),
+            onHide: _hideInstrumentGuide,
+          ),
+      ]),
     );
   }
 
@@ -56,7 +100,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
           padding: EdgeInsets.all(cardMargin),
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: chartBackgroundColor,
             borderRadius: BorderRadius.circular(8),
           ),
           child: _buildChart(
@@ -74,7 +118,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             ? 8.0
             : 9.0;
     final style = TextStyle(
-      color: Colors.white,
+      color: chartTextColor,
       fontSize: fontSize,
     );
     String timeText;
@@ -111,7 +155,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     final reservedSizeLeft = screenWidth < 400 ? 20.0 : 25.0;
     return LineChart(
       LineChartData(
-        backgroundColor: Colors.black,
+        backgroundColor: chartBackgroundColor,
         titlesData: FlTitlesData(
           show: true,
           topTitles: AxisTitles(
@@ -121,7 +165,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
                 timeAxisLabel,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
-                  color: Colors.white,
+                  color: chartTextColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -141,7 +185,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
               lx,
               style: TextStyle(
                 fontSize: axisNameFontSize,
-                color: Colors.white,
+                color: chartTextColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -154,7 +198,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
                   child: Text(
                     value.toInt().toString(),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: chartTextColor,
                       fontSize: chartFontSize,
                     ),
                   ),
@@ -176,11 +220,11 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         ),
         borderData: FlBorderData(
           show: true,
-          border: const Border(
-            bottom: BorderSide(color: Colors.white38),
-            left: BorderSide(color: Colors.white38),
-            top: BorderSide(color: Colors.white38),
-            right: BorderSide(color: Colors.white38),
+          border: Border(
+            bottom: BorderSide(color: chartBorderColor),
+            left: BorderSide(color: chartBorderColor),
+            top: BorderSide(color: chartBorderColor),
+            right: BorderSide(color: chartBorderColor),
           ),
         ),
         minY: 0,
@@ -192,7 +236,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           LineChartBarData(
             spots: spots,
             isCurved: true,
-            color: Colors.cyan,
+            color: chartLineColor,
             barWidth: screenWidth < 400 ? 1.5 : 2.0,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),

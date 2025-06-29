@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
+import '../../theme/colors.dart';
+
 class TimebaseTriggerWidget extends StatefulWidget {
   const TimebaseTriggerWidget({super.key});
 
@@ -20,7 +22,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
         Container(
           margin: const EdgeInsets.only(top: 8, bottom: 5),
           decoration: BoxDecoration(
-            border: Border.all(width: 1, color: const Color(0xFFD32F2F)),
+            border: Border.all(width: 1, color: primaryRed),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Stack(
@@ -33,7 +35,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                   children: [
                     Checkbox(
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      activeColor: const Color(0xFFCE525F),
+                      activeColor: checkBoxActiveColor,
                       value: oscilloscopeStateProvider.isTriggerSelected,
                       onChanged: (bool? value) {
                         setState(
@@ -46,8 +48,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     ),
                     Text(
                       trigger,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
@@ -70,8 +72,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          color: Colors.black,
+                        textStyle: TextStyle(
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 15,
                         ),
                         onSelected: (String? value) {
@@ -82,7 +84,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     Expanded(
                       child: SliderTheme(
                         data: SliderThemeData(
-                          inactiveTrackColor: Colors.blueGrey[100],
+                          inactiveTrackColor: sliderInActiveColor,
                           trackHeight: 1,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 6),
@@ -92,7 +94,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                               provider.oscilloscopeAxesScale.yAxisScale,
                           builder: (context, yAxisScale, _) {
                             return Slider(
-                              activeColor: const Color(0xFFCE525F),
+                              activeColor: sliderActiveColor,
                               min: -yAxisScale,
                               max: yAxisScale,
                               value: oscilloscopeStateProvider.trigger
@@ -119,8 +121,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                         ),
-                        style: const TextStyle(
-                          color: Colors.black,
+                        style: TextStyle(
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 14,
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
@@ -174,8 +176,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
-                        textStyle: const TextStyle(
-                          color: Colors.black,
+                        textStyle: TextStyle(
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 14,
                         ),
                         onSelected: (String? value) {
@@ -209,8 +211,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                   children: [
                     Text(
                       timeBase,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
@@ -219,13 +221,13 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                     Expanded(
                       child: SliderTheme(
                         data: SliderThemeData(
-                          inactiveTrackColor: Colors.blueGrey[100],
+                          inactiveTrackColor: sliderInActiveColor,
                           trackHeight: 1,
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 6),
                         ),
                         child: Slider(
-                          activeColor: const Color(0xFFCE525F),
+                          activeColor: sliderActiveColor,
                           min: 0,
                           max: oscilloscopeStateProvider.timebaseDivisions
                               .toDouble(),
@@ -309,8 +311,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         oscilloscopeStateProvider.timebase == 875
                             ? '${oscilloscopeStateProvider.timebase.toStringAsFixed(2)} \u00b5s'
                             : '${(oscilloscopeStateProvider.timebase / 1000).toStringAsFixed(2)} ms',
-                        style: const TextStyle(
-                          color: Colors.black,
+                        style: TextStyle(
+                          color: oscilloscopeOptionLabelColor,
                           fontSize: 14,
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
@@ -331,11 +333,11 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
             alignment: Alignment.center,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 2),
-              decoration: const BoxDecoration(color: Colors.white),
+              decoration: BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
               child: Text(
                 timeBaseAndTrigger,
-                style: const TextStyle(
-                  color: Color(0xFFC72C2C),
+                style: TextStyle(
+                  color: oscilloscopeOptionTitleColor,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,
                   fontSize: 13,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/constants.dart';
-import '../../colors.dart';
+import 'package:pslab/theme/colors.dart';
 
 class TimelineScrollView extends StatelessWidget {
   final int timelinePosition;

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:data/data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:pslab/models/oscilloscope_measurements.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/oscilloscope_axes_scale.dart';
 import 'package:pslab/providers/locator.dart';
@@ -22,6 +23,13 @@ enum ChannelMeasurements {
   positivePeak,
   negativePeak
 }
+
+List<Color> colors = [
+  Colors.cyan,
+  Colors.green,
+  Colors.white,
+  Colors.purpleAccent
+];
 
 class OscilloscopeStateProvider extends ChangeNotifier {
   late AudioJack _audioJack;
@@ -64,8 +72,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late double _maxAmp;
   late double _maxFreq;
   late bool _isRecording;
-  late bool _isRunning;
-  // bool _isMeasurementsChecked = false;
+  late bool isRunning;
+  bool isMeasurementsChecked = false;
   late Map<String, int> _channelIndexMap;
   late String xyPlotAxis1;
   late String xyPlotAxis2;
@@ -103,7 +111,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     isXYPlotSelected = false;
     _monitor = true;
     _isRecording = false;
-    _isRunning = true;
+    isRunning = true;
     xyPlotAxis1 = 'CH1';
     xyPlotAxis2 = 'CH2';
     dataEntries = [];
@@ -113,6 +121,11 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     timebaseSlider = 0;
     oscillscopeRangeSelection = 0;
     _isProcessing = false;
+
+    dataEntries = <List<FlSpot>>[];
+    dataEntriesXYPlot = <List<FlSpot>>[];
+    dataEntriesCurveFit = <List<FlSpot>>[];
+    dataParamsChannels = <String>[];
 
     _channelIndexMap = <String, int>{};
     _channelIndexMap['CH1'] = 1;
@@ -163,7 +176,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         }
         _isProcessing = true;
 
-        if (_isRunning) {
+        if (isRunning) {
           if (isInBuiltMICSelected && !_audioJack.isListening()) {
             await _audioJack.initialize();
             await _audioJack.start();
@@ -484,6 +497,58 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
       if (_isRecording) {}
 
+      if (!isFourierTransformSelected) {
+        for (int i = 0; i < min(entries.length, paramsChannels.length); i++) {
+          String channel = paramsChannels[i];
+          double minY;
+          double maxY;
+          double yRange;
+          List<double> voltage = List.filled(512, 0.0);
+          List<FlSpot> entriesList = entries[i];
+
+          if (entriesList.isEmpty) {
+            minY = 0;
+            maxY = 0;
+          } else {
+            minY = double.maxFinite;
+            maxY = -1 * double.maxFinite;
+
+            for (int j = 0; j < entriesList.length; j++) {
+              FlSpot entry = entriesList[j];
+              if (j < voltage.length - 1) {
+                voltage[j] = entry.y;
+              }
+              if (entry.y > maxY) {
+                maxY = entry.y;
+              }
+              if (entry.y < minY) {
+                minY = entry.y;
+              }
+            }
+          }
+          final double frequency;
+          if (paramsChannels[i] == 'MIC') {
+            frequency = _analyticsClass.findFrequency(
+                voltage, (1 / AudioJack.samplingRate).toDouble());
+          } else {
+            frequency =
+                _analyticsClass.findFrequency(voltage, timeGap / 1000000.0);
+          }
+          double period = (1 / frequency) * 1000.0;
+          yRange = maxY - minY;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.frequency] = frequency;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.period] = period;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.amplitude] = yRange;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.positivePeak] = maxY;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.negativePeak] = minY;
+        }
+      }
+
       dataEntries = List.from(entries);
       dataEntriesCurveFit = List.from(curveFitEntries);
       dataParamsChannels = List.from(paramsChannels);
@@ -491,12 +556,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
         oscilloscopeAxesScale.setYAxisScaleMin(0);
         oscilloscopeAxesScale.setXAxisScale(_maxFreq * 1000);
-      } else {
-        oscilloscopeAxesScale
-            .setYAxisScaleMax(oscilloscopeAxesScale.yAxisScale);
-        oscilloscopeAxesScale
-            .setYAxisScaleMin(-oscilloscopeAxesScale.yAxisScale);
-        oscilloscopeAxesScale.setXAxisScale(timebase);
       }
       notifyListeners();
     } catch (e) {
@@ -551,13 +610,65 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool autoScale() {
+    double minY = double.maxFinite;
+    double maxY = double.minPositive;
+    double maxPeriod = -1 * double.minPositive;
+    double yRange;
+    double yPadding;
+    List<double> voltage = List.filled(512, 0.0);
+    for (int i = 0; i < dataParamsChannels.length; i++) {
+      if (dataEntries.length > i) {
+        List<FlSpot> entryList = dataEntries[i];
+        for (int j = 0; j < entryList.length; j++) {
+          FlSpot entry = entryList[j];
+          if (j < voltage.length - 1) {
+            voltage[j] = entry.y;
+          }
+          if (entry.y > maxY) {
+            maxY = entry.y;
+          }
+          if (entry.y < minY) {
+            minY = entry.y;
+          }
+        }
+        final double frequency;
+        if (dataParamsChannels[i] == 'MIC') {
+          frequency = _analyticsClass.findSignalFrequency(
+              voltage, (1 / AudioJack.samplingRate).toDouble());
+        } else {
+          frequency =
+              _analyticsClass.findSignalFrequency(voltage, timeGap / 1000000.0);
+        }
+        double period = (1 / frequency) * 1000.0;
+        if (period > maxPeriod) {
+          maxPeriod = period;
+        }
+      }
+    }
+    yRange = maxY - minY;
+    yPadding = yRange * 0.1;
+    if (maxPeriod > 0) {
+      double xAxisScale = min((maxPeriod * 5), maxTimebase);
+      double yAxisScale;
+      if (maxY.abs() > minY.abs()) {
+        yAxisScale = maxY + yPadding;
+      } else {
+        yAxisScale = -1 * (minY - yPadding);
+      }
+      samples = 512;
+      timeGap = (2 * xAxisScale * 1000.0) / samples;
+      timebase = xAxisScale * 1000.0;
+      oscilloscopeAxesScale.setXAxisScale(timebase);
+      oscilloscopeAxesScale.setYAxisScale(yAxisScale);
+      notifyListeners();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   List<LineChartBarData> createPlots() {
-    List<Color> colors = [
-      Colors.cyan,
-      Colors.green,
-      Colors.white,
-      Colors.deepPurple
-    ];
     List<Color> curveFitColors = [Colors.yellow];
     List<LineChartBarData> plots = [];
     plots.addAll(

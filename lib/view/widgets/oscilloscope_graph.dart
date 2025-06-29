@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/view/widgets/xyplot_graph.dart';
 
+import '../../theme/colors.dart';
+
 class OscilloscopeGraph extends StatefulWidget {
   const OscilloscopeGraph({super.key});
 
@@ -13,8 +15,8 @@ class OscilloscopeGraph extends StatefulWidget {
 
 class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
   Widget sideTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
+    final style = TextStyle(
+      color: chartTextColor,
       fontSize: 9,
     );
     return SideTitleWidget(
@@ -28,8 +30,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
   }
 
   Widget topTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
+    final style = TextStyle(
+      color: chartTextColor,
       fontSize: 9,
     );
     return SideTitleWidget(
@@ -56,7 +58,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
           return SizedBox(
             child: LineChart(
               LineChartData(
-                backgroundColor: Colors.black,
+                backgroundColor: chartBackgroundColor,
                 titlesData: FlTitlesData(
                   show: true,
                   topTitles: AxisTitles(
@@ -66,9 +68,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                               875
                           ? 'Time (\u00b5s)'
                           : 'Time (ms)',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
-                        color: Colors.white,
+                        color: chartTextColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -84,11 +86,11 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   bottomTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false)),
                   leftTitles: AxisTitles(
-                    axisNameWidget: const Text(
+                    axisNameWidget: Text(
                       'CH1 (V)',
                       style: TextStyle(
                         fontSize: 10,
-                        color: Colors.white,
+                        color: chartTextColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -101,11 +103,11 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                     ),
                   ),
                   rightTitles: AxisTitles(
-                    axisNameWidget: const Text(
+                    axisNameWidget: Text(
                       'CH2 (V)',
                       style: TextStyle(
                         fontSize: 10,
-                        color: Colors.white,
+                        color: chartTextColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -130,18 +132,18 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                 ),
                 borderData: FlBorderData(
                   show: true,
-                  border: const Border(
+                  border: Border(
                     bottom: BorderSide(
-                      color: Colors.white38,
+                      color: chartBorderColor,
                     ),
                     left: BorderSide(
-                      color: Colors.white38,
+                      color: chartBorderColor,
                     ),
                     top: BorderSide(
-                      color: Colors.white38,
+                      color: chartBorderColor,
                     ),
                     right: BorderSide(
-                      color: Colors.white38,
+                      color: chartBorderColor,
                     ),
                   ),
                 ),
