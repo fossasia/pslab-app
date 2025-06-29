@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/colors.dart';
+import 'package:pslab/theme/colors.dart';
 
 import '../../constants.dart';
 import '../../providers/robotic_arm_state_provider.dart';

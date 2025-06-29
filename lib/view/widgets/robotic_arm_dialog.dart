@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../colors.dart';
+import 'package:pslab/theme/colors.dart';
 import '../../constants.dart';
 
 class AngleInputTopDialog extends StatefulWidget {
