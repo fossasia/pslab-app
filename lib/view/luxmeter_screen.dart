@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -16,6 +17,37 @@ class LuxMeterScreen extends StatefulWidget {
 
 class _LuxMeterScreenState extends State<LuxMeterScreen> {
   late LuxMeterStateProvider _provider;
+  bool _showGuide = false;
+  static const imagePath = 'assets/images/bh1750_schematic.png';
+  void _showInstrumentGuide() {
+    setState(() {
+      _showGuide = true;
+    });
+  }
+
+  void _hideInstrumentGuide() {
+    setState(() {
+      _showGuide = false;
+    });
+  }
+
+  List<Widget> _getLuxMeterContent() {
+    return [
+      InstrumentBulletPoint(
+        text: luxMeterDesc,
+      ),
+      InstrumentBulletPoint(
+        text: luxMeterSensorIntro,
+      ),
+      const InstrumentImage(
+        imagePath: imagePath,
+      ),
+      InstrumentBulletPoint(
+        text: luxMeterBulletPoint1,
+      ),
+      InstrumentBulletPoint(text: luxMeterBulletPoint2),
+    ];
+  }
 
   @override
   void initState() {
@@ -55,23 +87,32 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<LuxMeterStateProvider>.value(
       value: _provider,
-      child: CommonScaffold(
-        title: luxMeterTitle,
-        body: SafeArea(
-          child: Column(
-            children: [
-              const Expanded(
-                flex: 45,
-                child: LuxMeterCard(),
-              ),
-              Expanded(
-                flex: 55,
-                child: _buildChartSection(),
-              ),
-            ],
+      child: Stack(children: [
+        CommonScaffold(
+          title: luxMeterTitle,
+          onGuidePressed: _showInstrumentGuide,
+          body: SafeArea(
+            child: Column(
+              children: [
+                const Expanded(
+                  flex: 45,
+                  child: LuxMeterCard(),
+                ),
+                Expanded(
+                  flex: 55,
+                  child: _buildChartSection(),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+        if (_showGuide)
+          InstrumentOverviewDrawer(
+            instrumentName: luxMeterTitle,
+            content: _getLuxMeterContent(),
+            onHide: _hideInstrumentGuide,
+          ),
+      ]),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/soundmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -15,6 +16,34 @@ class SoundMeterScreen extends StatefulWidget {
 }
 
 class _SoundMeterScreenState extends State<SoundMeterScreen> {
+  bool _showGuide = false;
+  static const imagePath = 'assets/images/bh1750_schematic.png';
+  void _showInstrumentGuide() {
+    setState(() {
+      _showGuide = true;
+    });
+  }
+
+  void _hideInstrumentGuide() {
+    setState(() {
+      _showGuide = false;
+    });
+  }
+
+  List<Widget> _getSoundMeterContent() {
+    return [
+      InstrumentIntroText(
+        text: soundMeterIntro,
+      ),
+      const InstrumentImage(
+        imagePath: imagePath,
+      ),
+      InstrumentIntroText(
+        text: soundMeterDesc,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -23,22 +52,33 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
           create: (_) => SoundMeterStateProvider()..initializeSensors(),
         ),
       ],
-      child: CommonScaffold(
-        title: soundMeterTitle,
-        body: SafeArea(
-          child: Column(
-            children: [
-              const Expanded(
-                flex: 45,
-                child: SoundMeterCard(),
+      child: Stack(
+        children: [
+          CommonScaffold(
+            title: soundMeterTitle,
+            onGuidePressed: _showInstrumentGuide,
+            body: SafeArea(
+              child: Column(
+                children: [
+                  const Expanded(
+                    flex: 45,
+                    child: SoundMeterCard(),
+                  ),
+                  Expanded(
+                    flex: 55,
+                    child: _buildChartSection(),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 55,
-                child: _buildChartSection(),
-              ),
-            ],
+            ),
           ),
-        ),
+          if (_showGuide)
+            InstrumentOverviewDrawer(
+              instrumentName: soundMeterTitle,
+              content: _getSoundMeterContent(),
+              onHide: _hideInstrumentGuide,
+            ),
+        ],
       ),
     );
   }
@@ -53,7 +93,6 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
         double maxTime = provider.getMaxTime();
         double minTime = provider.getMinTime();
         double timeInterval = provider.getTimeInterval();
-
         return Container(
           margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
           padding: EdgeInsets.all(cardPadding),
@@ -112,7 +151,6 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeRight = screenWidth < 400 ? 25.0 : 30.0;
-
     return Padding(
       padding: const EdgeInsets.only(right: 20.0),
       child: LineChart(

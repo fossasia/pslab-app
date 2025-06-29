@@ -263,6 +263,37 @@ String noLightSensor = "Device does not have a light sensor";
 String lightSensorErrorDetails = "Light sensor error details:";
 String lightSensorErrorLog =
     "No light sensor data received - sensor may not be available";
+String soundMeterIntro = 'Sound meter Introduction';
+String soundMeterDesc =
+    'To measure the loudness in the environment in decibel(dB)';
+String luxMeterDesc =
+    'The Lux meter can be used to measure the ambient light intensity. This instruments is compatible with either the built-in light sensor on any Android device or the BH-1750 light sensor.';
+String luxMeterSensorIntro =
+    'If you want to use the sensor BH-1750, connect the sensor to PSLab device as shown below';
+String luxMeterBulletPoint1 =
+    'The above pin configuration has to be same except for the pin GND. GND is meant for Ground and any of the PSLab device GND pins can be used since they are common.';
+String luxMeterBulletPoint2 =
+    'Select sensor by going to the Configure tab from the bottom navigation bar and choose BHT-1750 in the drop down menu under Select Sensor.';
+String gyroscopeIntro =
+    'Gyroscope is used to measure rate of rotation of a body along X, Y, and Z axis.';
+String gyroscopeDesc =
+    'Orientation of the positive X, Y, and Z axes. For any positive axis on the device, clockwise rotation outputs negative values, and counterclockwise rotation outputs positive values.';
+String accelerometerIntro =
+    'Accelerometer is used to measure acceleration of a body along the X, Y, and Z axis.';
+String accelerometerImageDesc =
+    'The figure above shows the direction of all the three axis when the mobile is held straight.';
+String accelerometerSteps = 'Steps to measure acceleration in PSLab app:';
+String accelerometerBulletPoint1 =
+    'Hold the device as shown in the above figure.';
+String accelerometerBulletPoint2 =
+    'Accelerate the device along any one or multiple axis.';
+String accelerometerBulletPoint3 =
+    'Observe the values in the cards or the plotted graph of any particular axis.';
+String accelerometerDesc =
+    'The Accelerometer instrument can also be used to measure the acceleration of a moving body by placing the device on/inside the body and then accelerating the body.';
+String accelerometerNote =
+    'NOTE: Don\'t accelerate the body if the device isn\'t properly attached else the device could be damaged.';
+String hideGuide = 'Hide Guide';
 String minLabel = 'Min';
 String maxLabel = 'Max';
 String avgLabel = 'Avg';
