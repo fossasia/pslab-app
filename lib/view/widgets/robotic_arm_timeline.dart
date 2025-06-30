@@ -60,7 +60,6 @@ class TimelineScrollView extends StatelessWidget {
                                 color: isHighlighted
                                     ? Colors.blue.withAlpha((0.3 * 255).round())
                                     : Colors.black,
-                          
                               ),
                               padding: const EdgeInsets.all(5),
                               child: Stack(
