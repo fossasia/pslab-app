@@ -112,10 +112,10 @@ class ServoCard extends StatelessWidget {
                       dotColor: Colors.black38,
                     ),
                     infoProperties: InfoProperties(
-                      mainLabelStyle: GoogleFonts.orbitron(
+                      mainLabelStyle: TextStyle(
                         fontSize: 22,
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                         shadows: [
                           Shadow(
                             blurRadius: 10,
