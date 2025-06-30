@@ -37,7 +37,7 @@ class TimelineScrollView extends StatelessWidget {
           children: List.generate(totalTimelineItems, (index) {
             bool isCurrent = index == timelinePosition;
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 0.5),
               child: Column(
                 children: [
                   Container(
@@ -48,7 +48,7 @@ class TimelineScrollView extends StatelessWidget {
                   const SizedBox(height: 3),
                   ...List.generate(4, (boxIndex) {
                     return Padding(
-                      padding: const EdgeInsets.all(1.0),
+                      padding: const EdgeInsets.all(0.5),
                       child: SizedBox(
                         width: boxWidth,
                         height: boxHeight,
@@ -60,7 +60,7 @@ class TimelineScrollView extends StatelessWidget {
                                 color: isHighlighted
                                     ? Colors.blue.withAlpha((0.3 * 255).round())
                                     : Colors.black,
-                                borderRadius: BorderRadius.circular(4),
+                          
                               ),
                               padding: const EdgeInsets.all(5),
                               child: Stack(
@@ -85,7 +85,7 @@ class TimelineScrollView extends StatelessWidget {
                                       '${index + 1}s',
                                       style: const TextStyle(
                                         color: Colors.white,
-                                        fontSize: 14,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),
