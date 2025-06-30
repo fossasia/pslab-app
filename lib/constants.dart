@@ -301,12 +301,12 @@ String buyPsLabMenu = 'Buy PSLab';
 String faqMenu = 'FAQ';
 String shareAppMenu = 'Share App';
 String privacyPolicyMenu = 'Privacy Policy';
-const String thermometerTitle = 'Thermometer';
-const String thermometerIntro =
-    'Measure ambient temperature using device sensors.';
-const String celsius = '°C';
-const String temperatureSensorError = 'Temperature sensor error:';
-const String temperatureSensorInitialError =
+String thermometerTitle = 'Thermometer';
+String thermometerIntro =
+    'Thermometer instrument is used to measure ambient temprature. It can be measured using inbuilt ambient temprature sensor or through SHT21.';
+String celsius = '°C';
+String temperatureSensorError = 'Temperature sensor error:';
+String temperatureSensorInitialError =
     'Temperature sensor initialization error:';
-const String temperatureSensorUnavailableMessage =
+String temperatureSensorUnavailableMessage =
     'Ambient temperature sensor is not available on this device';
