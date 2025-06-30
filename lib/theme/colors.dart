@@ -43,3 +43,5 @@ Color oscilloscopeOptionLabelColor = Colors.black;
 Color guideDrawerBackgroundColor = Colors.white;
 Color guideDrawerHeadingColor = Colors.black87;
 Color guideDrawerHighlightColor = Colors.black54;
+Color snackBarBackgroundColor = Colors.grey[700]!;
+Color snackBarContentColor = Colors.white;

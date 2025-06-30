@@ -63,6 +63,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           );
         }
         break;
+      case 11:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/thermometer') {
+          Navigator.popUntil(context, ModalRoute.withName('/thermometer'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/thermometer',
+            (route) => route.isFirst,
+          );
+        }
+        break;
       case 12:
         if (Navigator.canPop(context) &&
             ModalRoute.of(context)?.settings.name == '/roboticArm') {

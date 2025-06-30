@@ -301,3 +301,12 @@ String buyPsLabMenu = 'Buy PSLab';
 String faqMenu = 'FAQ';
 String shareAppMenu = 'Share App';
 String privacyPolicyMenu = 'Privacy Policy';
+const String thermometerTitle = 'Thermometer';
+const String thermometerIntro =
+    'Measure ambient temperature using device sensors.';
+const String celsius = '°C';
+const String temperatureSensorError = 'Temperature sensor error:';
+const String temperatureSensorInitialError =
+    'Temperature sensor initialization error:';
+const String temperatureSensorUnavailableMessage =
+    'Ambient temperature sensor is not available on this device';

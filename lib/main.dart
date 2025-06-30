@@ -15,6 +15,7 @@ import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
 import 'package:pslab/theme/app_theme.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
+import 'package:pslab/view/thermometer_screen.dart';
 import 'constants.dart';
 
 void main() {
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         '/roboticArm': (context) => const RoboticArmScreen(),
         '/luxmeter': (context) => const LuxMeterScreen(),
         '/soundmeter': (context) => const SoundMeterScreen(),
+        '/thermometer': (context) => const ThermometerScreen(),
       },
     );
   }
