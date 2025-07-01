@@ -296,7 +296,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
               onTap: () async {
-                await launchUrl(Uri.parse(shop));
+                await launchUrl(Uri.parse(shopLink));
               },
             ),
             ListTile(
