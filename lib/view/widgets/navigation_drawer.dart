@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/board_state_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme/colors.dart';
 
@@ -294,8 +295,8 @@ class _NavDrawerState extends State<NavDrawer> {
                   fontSize: 14,
                 ),
               ),
-              onTap: () {
-                /**/
+              onTap: () async {
+                await launchUrl(Uri.parse(shop));
               },
             ),
             ListTile(

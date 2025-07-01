@@ -304,7 +304,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             ),
                           ),
                           SizedBox(
-                            width: 50,
+                            width: 55,
                             child: TextField(
                               controller: TextEditingController(
                                 text:

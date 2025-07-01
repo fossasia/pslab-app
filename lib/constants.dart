@@ -335,3 +335,4 @@ String buyPsLabMenu = 'Buy PSLab';
 String faqMenu = 'FAQ';
 String shareAppMenu = 'Share App';
 String privacyPolicyMenu = 'Privacy Policy';
+String shop = 'https://pslab.io/shop/';
