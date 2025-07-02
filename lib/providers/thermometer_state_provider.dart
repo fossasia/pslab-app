@@ -3,13 +3,11 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/others/logger_service.dart';
-import 'package:environment_sensors/environment_sensors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/constants.dart';
 
 class ThermometerStateProvider extends ChangeNotifier {
-  double _currentTemperature = 0.0;
-  StreamSubscription? _temperatureSubscription;
+  final double _currentTemperature = 0.0;
   Timer? _timeTimer;
   final List<double> _temperatureData = [];
   final List<double> _timeData = [];
@@ -21,12 +19,11 @@ class ThermometerStateProvider extends ChangeNotifier {
   double _temperatureMax = 0;
   double _temperatureSum = 0;
   int _dataCount = 0;
-  bool _sensorAvailable = false;
-  final EnvironmentSensors _environmentSensors = EnvironmentSensors();
 
-  void initializeSensors() async {
+  void initializeSensors() {
     try {
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+
       _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         _currentTime =
             (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
@@ -34,60 +31,13 @@ class ThermometerStateProvider extends ChangeNotifier {
         notifyListeners();
       });
 
-      try {
-        await _checkTemperatureSensorAvailability();
-
-        if (_sensorAvailable) {
-          _startTemperatureReading();
-        } else {
-          _showTemperatureSensorUnavailableMessage();
-        }
-      } catch (e) {
-        logger.e("$temperatureSensorInitialError $e");
-        _sensorAvailable = false;
-        _showTemperatureSensorUnavailableMessage();
-      }
+      logger.w(temperatureSensorUnavailableMessage);
     } catch (e) {
       logger.e("$temperatureSensorInitialError $e");
-      _showTemperatureSensorUnavailableMessage();
     }
-  }
-
-  Future<void> _checkTemperatureSensorAvailability() async {
-    try {
-      _sensorAvailable = await _environmentSensors
-          .getSensorAvailable(SensorType.AmbientTemperature);
-    } catch (e) {
-      logger.e("Error checking temperature sensor availability: $e");
-      _sensorAvailable = false;
-    }
-  }
-
-  void _startTemperatureReading() {
-    try {
-      _temperatureSubscription = _environmentSensors.temperature.listen(
-        (double temperatureValue) {
-          _currentTemperature = temperatureValue;
-          notifyListeners();
-        },
-        onError: (error) {
-          logger.e("$temperatureSensorError $error");
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      logger.e("$temperatureSensorInitialError $e");
-      _sensorAvailable = false;
-      _showTemperatureSensorUnavailableMessage();
-    }
-  }
-
-  void _showTemperatureSensorUnavailableMessage() {
-    logger.w(temperatureSensorUnavailableMessage);
   }
 
   void disposeSensors() {
-    _temperatureSubscription?.cancel();
     _timeTimer?.cancel();
   }
 
@@ -98,8 +48,6 @@ class ThermometerStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    if (!_sensorAvailable) return;
-
     final temperature = _currentTemperature;
     final time = _currentTime;
     _temperatureData.add(temperature);
@@ -136,7 +84,7 @@ class ThermometerStateProvider extends ChangeNotifier {
   double getCurrentTime() => _currentTime;
   double getMaxTime() => _timeData.isNotEmpty ? _timeData.last : 0;
   double getMinTime() => _timeData.isNotEmpty ? _timeData.first : 0;
-  bool isSensorAvailable() => _sensorAvailable;
+  bool isSensorAvailable() => false;
 
   double getTimeInterval() {
     if (_currentTime <= 10) return 2;
