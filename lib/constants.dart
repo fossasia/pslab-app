@@ -86,6 +86,7 @@ List<String> channelEntries = [
   'MIC',
 ];
 
+String multimeter = 'Multimeter';
 String connectDevice = 'Connect Device';
 String deviceConnected = 'Device Connected Successfully';
 String noDeviceFound = 'No USB Device Found';
