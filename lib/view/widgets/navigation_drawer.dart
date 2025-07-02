@@ -278,27 +278,31 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: listTileFocusColor,
-              dense: true,
-              leading: Icon(
-                Icons.shopping_cart,
-                color:
-                    widget.selectedIndex == 8 ? selectedMenuColor : menuColor,
-              ),
-              title: Text(
-                buyPsLabMenu,
-                style: TextStyle(
-                  color: widget.selectedIndex == 8
-                      ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                focusColor: listTileFocusColor,
+                dense: true,
+                leading: Icon(
+                  Icons.shopping_cart,
+                  color:
+                      widget.selectedIndex == 8 ? selectedMenuColor : menuColor,
                 ),
-              ),
-              onTap: () async {
-                await launchUrl(Uri.parse(shopLink));
-              },
-            ),
+                title: Text(
+                  buyPsLabMenu,
+                  style: TextStyle(
+                    color: widget.selectedIndex == 8
+                        ? selectedMenuColor
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                onTap: () async {
+                  final launched = await launchUrl(Uri.parse(shopLink));
+                  if (!launched && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(shopError)),
+                    );
+                  }
+                }),
             ListTile(
               focusColor: listTileFocusColor,
               dense: true,

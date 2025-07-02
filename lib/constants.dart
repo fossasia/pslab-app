@@ -336,3 +336,4 @@ String faqMenu = 'FAQ';
 String shareAppMenu = 'Share App';
 String privacyPolicyMenu = 'Privacy Policy';
 String shopLink = 'https://pslab.io/shop/';
+String shopError = 'Could not open the shop link';
