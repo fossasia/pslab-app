@@ -80,6 +80,12 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
+  fonts:
+    - family: Digital-7
+      fonts:
+        - asset: fonts/Digital-7.ttf
+        - asset: fonts/Digital-7-Italic.ttf
+          style: italic
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
