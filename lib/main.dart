@@ -8,6 +8,7 @@ import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
+import 'package:pslab/view/multimeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/robotic_arm_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const InstrumentsScreen(),
         '/oscilloscope': (context) => const OscilloscopeScreen(),
         '/compass': (context) => const CompassScreen(),
+        '/multimeter': (context) => const MultimeterScreen(),
         '/connectDevice': (context) => const ConnectDeviceScreen(),
         '/faq': (context) => const FAQScreen(),
         '/settings': (context) => const SettingsScreen(),

@@ -40,3 +40,6 @@ Color selectedMenuColor = Colors.red;
 Color menuColor = Colors.grey;
 Color listTileFocusColor = Colors.grey[350]!;
 Color oscilloscopeOptionLabelColor = Colors.black;
+Color guideDrawerBackgroundColor = Colors.white;
+Color guideDrawerHeadingColor = Colors.black87;
+Color guideDrawerHighlightColor = Colors.black54;

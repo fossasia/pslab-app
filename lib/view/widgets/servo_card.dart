@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 import '../../constants.dart';
+import '../../providers/robotic_arm_state_provider.dart';
 
 class ServoCard extends StatelessWidget {
   final double value;
@@ -10,6 +12,7 @@ class ServoCard extends StatelessWidget {
   final VoidCallback onTap;
   final String label;
   final int servoId;
+  final double cardHeight;
 
   const ServoCard({
     super.key,
@@ -18,23 +21,25 @@ class ServoCard extends StatelessWidget {
     required this.onTap,
     required this.label,
     required this.servoId,
+    required this.cardHeight,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    final provider = Provider.of<RoboticArmStateProvider>(context);
+
+    final sliderSize =
+        provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.66;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade400),
+      ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade400),
-              ),
-            ),
-          ),
           Positioned(
             top: 6,
             left: 8,
@@ -65,7 +70,7 @@ class ServoCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    '${value.toInt()}°',
+                    '${value.floor()} $degreeSymbol',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -75,26 +80,26 @@ class ServoCard extends StatelessWidget {
                 ),
               ),
               childWhenDragging:
-                  const Icon(Icons.more_vert, size: 16, color: Colors.grey),
-              child: const Icon(Icons.more_vert, size: 16, color: Colors.grey),
+                  const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
+              child:
+                  const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 25,
+          Positioned.fill(
+            top: provider.maxAngle == 180 ? 25 : 0,
             child: GestureDetector(
               onTap: onTap,
               child: Center(
                 child: SleekCircularSlider(
-                  initialValue: value,
+                  initialValue: value.clamp(0, provider.maxAngle.toDouble()),
+                  key: ValueKey(provider.maxAngle),
                   min: 0,
-                  max: 360,
+                  max: provider.maxAngle.toDouble(),
                   onChange: onChanged,
                   appearance: CircularSliderAppearance(
-                    size: 96,
-                    startAngle: 270,
-                    angleRange: 360,
+                    size: sliderSize,
+                    startAngle: provider.maxAngle == 180 ? 180 : 270,
+                    angleRange: provider.maxAngle.toDouble(),
                     customWidths: CustomSliderWidths(
                       trackWidth: 8,
                       progressBarWidth: 8,
@@ -103,10 +108,21 @@ class ServoCard extends StatelessWidget {
                     customColors: CustomSliderColors(
                       trackColor: Colors.grey.shade300,
                       progressBarColor: primaryRed,
-                      dotColor: Colors.blue,
+                      dotColor: Colors.black38,
                     ),
                     infoProperties: InfoProperties(
-                      mainLabelStyle: const TextStyle(fontSize: 16),
+                      mainLabelStyle: TextStyle(
+                        fontSize: 22,
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 10,
+                            color: Colors.black.withAlpha((0.3 * 255).round()),
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
                       modifier: (val) => '${val.toInt()}$degreeSymbol',
                     ),
                   ),

@@ -27,6 +27,19 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
             (route) => route.isFirst,
           );
         }
+        break;
+      case 1:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/multimeter') {
+          Navigator.popUntil(context, ModalRoute.withName('/multimeter'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/multimeter',
+            (route) => route.isFirst,
+          );
+        }
+        break;
       case 7:
         if (Navigator.canPop(context) &&
             ModalRoute.of(context)?.settings.name == '/accelerometer') {
