@@ -3,6 +3,8 @@ import 'package:gauge_indicator/gauge_indicator.dart';
 import 'dart:math';
 import 'package:pslab/constants.dart';
 
+import '../../theme/colors.dart';
+
 class GaugeWidget extends StatelessWidget {
   final double gaugeSize;
   final double currentValue;
@@ -59,7 +61,7 @@ class GaugeWidget extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: Colors.cyanAccent[400],
+              color: gaugeBackgroundColor,
               shape: BoxShape.circle,
             ),
             child: Padding(
@@ -91,17 +93,17 @@ class GaugeWidget extends StatelessWidget {
         degrees: 270,
         style: GaugeAxisStyle(
           thickness: (size * 0.05).clamp(3.0, 15.0),
-          background: Colors.cyanAccent[100],
+          background: gaugeAxisColor,
           segmentSpacing: 2,
         ),
-        progressBar: const GaugeProgressBar.basic(
-          color: Colors.white,
+        progressBar: GaugeProgressBar.basic(
+          color: gaugeProgressColor,
         ),
         pointer: GaugePointer.needle(
           width: (size * 0.09).clamp(4.0, 20.0),
           height: (size * 0.35).clamp(15.0, 80.0),
           borderRadius: (size * 0.03).clamp(2.0, 12.0),
-          color: Colors.white,
+          color: gaugeNeedleColor,
         ),
       ),
     );
@@ -127,7 +129,7 @@ class GaugeWidget extends StatelessWidget {
                 style: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: blackTextColor,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -143,7 +145,7 @@ class GaugeWidget extends StatelessWidget {
                     maxScaleError,
                     style: TextStyle(
                       fontSize: errorFontSize,
-                      color: Colors.red,
+                      color: gaugeMaxScaleLimitColor,
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
