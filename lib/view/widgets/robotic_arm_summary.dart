@@ -37,6 +37,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
     final double avg = data['avgAngle'];
     final double max = data['maxAngle'];
     final double min = data['minAngle'];
+    final List<Map<String, dynamic>> labelPoints = data['dutyLabelPoints'];
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -235,23 +236,18 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                               reservedSize: 12,
                                               interval: 1,
                                               getTitlesWidget: (value, _) {
-                                                final double period =
-                                                    1000 / widget.frequency;
-                                                for (int i = 0;
-                                                    i < data['dutyList'].length;
-                                                    i++) {
-                                                  final double start =
-                                                      i * period;
-                                                  final double high =
-                                                      (data['dutyList'][i] /
-                                                              100) *
-                                                          period;
-                                                  final double mid =
-                                                      start + high / 2;
-                                                  if ((value - mid).abs() <
+                                                if (pwmSpots.isEmpty) {
+                                                  return const SizedBox
+                                                      .shrink();
+                                                }
+
+                                                for (final label
+                                                    in labelPoints) {
+                                                  if ((label['x'] - value)
+                                                          .abs() <
                                                       0.5) {
                                                     return Text(
-                                                      '${data['dutyList'][i].toStringAsFixed(1)}$percentage',
+                                                      label['label'],
                                                       style: const TextStyle(
                                                         color: Colors.white70,
                                                         fontSize: 9,
@@ -261,6 +257,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                     );
                                                   }
                                                 }
+
                                                 return const SizedBox.shrink();
                                               },
                                             ),

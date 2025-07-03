@@ -235,6 +235,7 @@ class RoboticArmStateProvider extends ChangeNotifier {
     List<FlSpot> spots = [];
     List<double> dutyCycles = [];
     List<double> angleList = [];
+    List<Map<String, dynamic>> dutyLabelPoints = [];
 
     double time = 0;
 
@@ -253,6 +254,12 @@ class RoboticArmStateProvider extends ChangeNotifier {
 
       final duty = (pulseHigh / period) * 100;
       dutyCycles.add(duty);
+
+      final mid = time + highMs / 2;
+      dutyLabelPoints.add({
+        'x': mid,
+        'label': '${duty.toStringAsFixed(1)}$percentage',
+      });
 
       spots.add(FlSpot(time, 0));
       spots.add(FlSpot(time, 1));
@@ -287,6 +294,7 @@ class RoboticArmStateProvider extends ChangeNotifier {
       'avgAngle': avgAngle,
       'minAngle': minAngle,
       'maxAngle': maxAngleVal,
+      'dutyLabelPoints': dutyLabelPoints,
     };
   }
 }
