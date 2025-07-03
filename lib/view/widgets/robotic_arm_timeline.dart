@@ -1,50 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/constants.dart';
-
-import '../../theme/colors.dart';
+import 'package:pslab/theme/colors.dart';
 
 class TimelineScrollView extends StatelessWidget {
-  final ScrollController scrollController;
   final int timelinePosition;
-  final double scrollAmountPerTick;
-  final List<List<double>> timelineDegrees;
+  final double screenHeight;
+  final List<List<double?>> timelineDegrees;
   final void Function(int index, int servo, double value) onUpdate;
+  final int totalTimelineItems;
+
+  final ScrollController scrollController;
 
   const TimelineScrollView({
     super.key,
-    required this.scrollController,
+    required this.screenHeight,
     required this.timelinePosition,
-    required this.scrollAmountPerTick,
     required this.timelineDegrees,
     required this.onUpdate,
+    required this.totalTimelineItems,
+    required this.scrollController,
   });
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final boxWidth = (screenWidth / 6) - 2;
+    final timeLineHeight = (screenHeight - screenHeight / 2.3);
+    final boxHeight = timeLineHeight / 6.5;
+
     return SizedBox(
-      height: 160,
+      height: timeLineHeight,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
         child: Row(
-          children: List.generate(60, (index) {
+          children: List.generate(totalTimelineItems, (index) {
             bool isCurrent = index == timelinePosition;
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 0.5),
               child: Column(
                 children: [
                   Container(
-                    width: 130,
+                    width: boxWidth,
                     height: 4,
                     color: isCurrent ? primaryRed : Colors.transparent,
                   ),
                   const SizedBox(height: 3),
                   ...List.generate(4, (boxIndex) {
                     return Padding(
-                      padding: const EdgeInsets.all(1.0),
+                      padding: const EdgeInsets.all(0.5),
                       child: SizedBox(
-                        width: 130,
-                        height: 35,
+                        width: boxWidth,
+                        height: boxHeight,
                         child: DragTarget<Map<String, dynamic>>(
                           builder: (context, candidateData, rejectedData) {
                             bool isHighlighted = candidateData.isNotEmpty;
@@ -53,17 +60,17 @@ class TimelineScrollView extends StatelessWidget {
                                 color: isHighlighted
                                     ? Colors.blue.withAlpha((0.3 * 255).round())
                                     : Colors.black,
-                                borderRadius: BorderRadius.circular(4),
                               ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2),
+                              padding: const EdgeInsets.all(5),
                               child: Stack(
                                 children: [
                                   Positioned(
                                     top: 0,
                                     left: 1,
                                     child: Text(
-                                      '${timelineDegrees[index][boxIndex].toStringAsFixed(0)}$degreeSymbol',
+                                      timelineDegrees[index][boxIndex] != null
+                                          ? '${timelineDegrees[index][boxIndex]!.toStringAsFixed(0)}$degreeSymbol'
+                                          : '',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
@@ -77,7 +84,7 @@ class TimelineScrollView extends StatelessWidget {
                                       '${index + 1}s',
                                       style: const TextStyle(
                                         color: Colors.white,
-                                        fontSize: 14,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),
@@ -95,7 +102,8 @@ class TimelineScrollView extends StatelessWidget {
                               (DragTargetDetails<Map<String, dynamic>>
                                   details) {
                             final data = details.data;
-                            onUpdate(index, boxIndex, data['degree']);
+                            onUpdate(index, boxIndex,
+                                data['degree'].floorToDouble());
                           },
                         ),
                       ),
