@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:data/polynomial.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
@@ -33,6 +34,7 @@ class ScienceLab {
   Map<String, String> waveType = {};
   List<AnalogAcquisitionChannel> aChannels = [];
   List<DigitalChannel> dChannels = [];
+  static final double capacitorDischargeVoltage = 0.01 * 3.3;
 
   late CommunicationHandler mCommunicationHandler;
   late SocketClient mSocketClient;
@@ -145,6 +147,15 @@ class ScienceLab {
       }
     }
     calibrated = false;
+  }
+
+  Future<double?> getResistance() async {
+    double voltage = await getAverageVoltage("RES", null);
+    if (voltage > 3.295) {
+      return null;
+    }
+    double current = (3.3 - voltage) / 5.1e3;
+    return (voltage / current) * resistanceScaling;
   }
 
   Future<void> captureTraces(int number, int samples, double timeGap,
@@ -412,6 +423,178 @@ class ScienceLab {
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  int calcCHOSA(String channelName) {
+    channelName = channelName.toUpperCase();
+    AnalogInputSource? source = analogInputSources[channelName];
+    bool found = false;
+    for (String temp in allAnalogChannels) {
+      if (temp == channelName) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      logger.e("Invalid channel name: $channelName");
+      return calcCHOSA("CH1");
+    }
+
+    return source!.chosa;
+  }
+
+  Future<double> getVoltage(String channelName, int sample) async {
+    await voltmeterAutoRange(channelName);
+    double voltage = await getAverageVoltage(channelName, sample);
+    if (channelName == 'CH1' || channelName == 'CH2') {
+      return 2 * voltage;
+    }
+    return voltage;
+  }
+
+  Future<void> voltmeterAutoRange(String channelName) async {
+    if (analogInputSources[channelName]!.gainPGA != 0) {
+      await setGain(channelName, 0, true);
+    }
+  }
+
+  Future<double> getAverageVoltage(String channelName, int? sample) async {
+    sample ??= 1;
+    Polynomial poly;
+    double sum = 0;
+    poly = analogInputSources[channelName]!.calPoly12;
+    List<double> vals = [];
+    for (int i = 0; i < sample; i++) {
+      vals.add(await getRawAverageVoltage(channelName));
+    }
+    for (int j = 0; j < vals.length; j++) {
+      sum = sum + poly.evaluate(vals[j]);
+    }
+    return sum / 2 * vals.length;
+  }
+
+  Future<double> getRawAverageVoltage(String channelName) async {
+    try {
+      int chosa = calcCHOSA(channelName);
+      mPacketHandler.sendByte(mCommandsProto.adc);
+      mPacketHandler.sendByte(mCommandsProto.getVoltageSummed);
+      mPacketHandler.sendByte(chosa);
+      int vSum = await mPacketHandler.getVoltageSummation();
+      return vSum / 16.0;
+    } catch (e) {
+      logger.e("Error in getRawAverageVoltage");
+    }
+    return 0;
+  }
+
+  Future<void> setCapacitorState(int state, int t) async {
+    try {
+      mPacketHandler.sendByte(mCommandsProto.adc);
+      mPacketHandler.sendByte(mCommandsProto.setCap);
+      mPacketHandler.sendByte(state);
+      mPacketHandler.sendInt(t);
+      await mPacketHandler.getAcknowledgement();
+    } catch (e) {
+      logger.e("Error in setCapacitorState: $e");
+    }
+  }
+
+  Future<void> dischargeCap(int dischargeTime, double timeout) async {
+    DateTime startTime = DateTime.now();
+
+    double voltage = await getAverageVoltage("CAP", 1);
+    double previousVoltage = voltage;
+
+    while (voltage > capacitorDischargeVoltage) {
+      await setCapacitorState(0, dischargeTime);
+      voltage = await getAverageVoltage("CAP", 1);
+
+      if ((previousVoltage - voltage).abs() < capacitorDischargeVoltage) {
+        break;
+      }
+
+      previousVoltage = voltage;
+      if (DateTime.now().difference(startTime).inMilliseconds > timeout) {
+        break;
+      }
+    }
+  }
+
+  Future<double?> getCapacitance() async {
+    List<double> goodVolts = [2.5, 3.3];
+    int ct = 0;
+    int cr = 1;
+    int iterations = 0;
+    double startTime = DateTime.now().millisecondsSinceEpoch / 1000;
+    while (DateTime.now().millisecondsSinceEpoch / 1000 - startTime < 5) {
+      if (ct > 65000) {
+        logger.t("CT too high");
+        ct = (ct / pow(10, (4 - cr))).toInt();
+        cr = 0;
+      }
+      List<double>? temp = await getCap(cr, 0, ct);
+      double V = temp![0];
+      double C = temp[1];
+      if (ct > 30000 && V < 0.1) {
+        logger.t("Capacitance too high!");
+        return null;
+      } else if (V > goodVolts[0] && V < goodVolts[1]) {
+        return C;
+      } else if (V < goodVolts[0] && V > 0.01 && ct < 40000) {
+        if (goodVolts[0] / V > 1.1 && iterations < 10) {
+          ct = (ct * goodVolts[0] / V).toInt();
+          iterations++;
+          logger.t("Increasing charge time: $ct");
+        } else if (iterations == 10) {
+          return null;
+        } else {
+          return C;
+        }
+      } else if (V <= 0.1 && cr <= 3) {
+        if (cr == 3) {
+          cr = 0;
+        } else {
+          cr++;
+        }
+      } else if (cr == 0) {
+        logger.t("Capacitance too high!");
+        return null;
+      }
+    }
+    return null;
+  }
+
+  Future<List<double>?> getCap(
+      int currentRange, double trim, int chargeTime) async {
+    await dischargeCap(30000, 1000);
+    try {
+      mPacketHandler.sendByte(mCommandsProto.common);
+      mPacketHandler.sendByte(mCommandsProto.getCapacitance);
+      mPacketHandler.sendByte(currentRange);
+      if (trim < 0) {
+        mPacketHandler.sendByte((31 - trim.abs() / 2).toInt() | 32);
+      } else {
+        mPacketHandler.sendByte((trim / 2).toInt());
+      }
+      mPacketHandler.sendInt(chargeTime);
+      await Future.delayed(
+          Duration(milliseconds: (chargeTime * 1e-6 + 0.02).toInt()));
+      int vCode;
+      int i = 0;
+      do {
+        vCode = await mPacketHandler.getVoltageSummation();
+      } while (vCode == -1 && i++ < 10);
+      double v = 3.3 * vCode / 4095;
+      double chargeCurrent = currents[currentRange] * (100 + trim) / 100;
+      double c = 0;
+      if (v != 0) {
+        c = (chargeCurrent * chargeTime * 1e-6 / v - socketCapacitance);
+      }
+      return [c, v];
+    } catch (e) {
+      logger.e("Error in getCapacitance: $e");
+    }
+    return null;
   }
 
   Future<void> servo4(

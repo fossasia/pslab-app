@@ -40,6 +40,7 @@ class AnalogInputSource {
       gainPGA = 2;
       _gain = 0;
     }
+    gainPGA = 1;
     _gain = 0;
     regenerateCalibration();
   }

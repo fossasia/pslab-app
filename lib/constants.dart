@@ -87,6 +87,25 @@ List<String> channelEntries = [
 ];
 
 String multimeter = 'Multimeter';
+String defaultValue = '0.00';
+String unitVolts = 'Volts';
+List<String> knobMarker = [
+  'CH1',
+  'CAP',
+  'VOL',
+  'RES',
+  'CAP',
+  'LA1',
+  'LA2',
+  'LA3',
+  'LA4',
+  'CH3',
+  'CH2',
+];
+String voltage = 'Voltage';
+String unitHz = 'Hz';
+String countPulse = 'Count Pulse';
+String measure = 'Measure';
 String connectDevice = 'Connect Device';
 String deviceConnected = 'Device Connected Successfully';
 String noDeviceFound = 'No USB Device Found';
