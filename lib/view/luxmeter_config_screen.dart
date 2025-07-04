@@ -47,70 +47,72 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Consumer<LuxMeterConfigProvider>(
             builder: (context, provider, child) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildConfigItem(
-                    title: updatePeriod,
-                    value: '${provider.config.updatePeriod} $ms',
-                    controller: _updatePeriodController,
-                    onChanged: (value) {
-                      final intValue = int.tryParse(value);
-                      if (intValue != null &&
-                          intValue >= 100 &&
-                          intValue <= 1000) {
-                        provider.updateUpdatePeriod(intValue);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                updatePeriodErrorMessage,
-                                style: TextStyle(color: snackBarContentColor),
-                              ),
-                              backgroundColor: snackBarBackgroundColor),
-                        );
-                      }
-                    },
-                    hint: updatePeriodHint,
-                  ),
-                  _buildConfigItem(
-                    title: highLimit,
-                    value: '${provider.config.highLimit} $lx',
-                    controller: _highLimitController,
-                    onChanged: (value) {
-                      final intValue = int.tryParse(value);
-                      if (intValue != null &&
-                          intValue >= 10 &&
-                          intValue <= 10000) {
-                        provider.updateHighLimit(intValue);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                highLimitErrorMessage,
-                                style: TextStyle(color: snackBarContentColor),
-                              ),
-                              backgroundColor: snackBarBackgroundColor),
-                        );
-                      }
-                    },
-                    hint: highLimitHint,
-                  ),
-                  _buildSensorDropdown(provider),
-                  _buildConfigItem(
-                    title: sensorGain,
-                    value: provider.config.sensorGain.toString(),
-                    controller: _sensorGainController,
-                    onChanged: (value) {
-                      final intValue = int.tryParse(value);
-                      if (intValue != null) {
-                        provider.updateSensorGain(intValue);
-                      }
-                    },
-                    hint: sensorGainHint,
-                  ),
-                  _buildLocationCheckbox(provider),
-                ],
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildConfigItem(
+                      title: updatePeriod,
+                      value: '${provider.config.updatePeriod} $ms',
+                      controller: _updatePeriodController,
+                      onChanged: (value) {
+                        final intValue = int.tryParse(value);
+                        if (intValue != null &&
+                            intValue >= 100 &&
+                            intValue <= 1000) {
+                          provider.updateUpdatePeriod(intValue);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                  updatePeriodErrorMessage,
+                                  style: TextStyle(color: snackBarContentColor),
+                                ),
+                                backgroundColor: snackBarBackgroundColor),
+                          );
+                        }
+                      },
+                      hint: updatePeriodHint,
+                    ),
+                    _buildConfigItem(
+                      title: highLimit,
+                      value: '${provider.config.highLimit} $lx',
+                      controller: _highLimitController,
+                      onChanged: (value) {
+                        final intValue = int.tryParse(value);
+                        if (intValue != null &&
+                            intValue >= 10 &&
+                            intValue <= 10000) {
+                          provider.updateHighLimit(intValue);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                  highLimitErrorMessage,
+                                  style: TextStyle(color: snackBarContentColor),
+                                ),
+                                backgroundColor: snackBarBackgroundColor),
+                          );
+                        }
+                      },
+                      hint: highLimitHint,
+                    ),
+                    _buildSensorDropdown(provider),
+                    _buildConfigItem(
+                      title: sensorGain,
+                      value: provider.config.sensorGain.toString(),
+                      controller: _sensorGainController,
+                      onChanged: (value) {
+                        final intValue = int.tryParse(value);
+                        if (intValue != null) {
+                          provider.updateSensorGain(intValue);
+                        }
+                      },
+                      hint: sensorGainHint,
+                    ),
+                    _buildLocationCheckbox(provider),
+                  ],
+                ),
               );
             },
           ),
