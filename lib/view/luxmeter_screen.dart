@@ -6,6 +6,7 @@ import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/view/luxmeter_config_screen.dart';
 
 import '../theme/colors.dart';
 
@@ -48,6 +49,49 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     ];
   }
 
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'lux_meter_config',
+          child: Text(showLuxmeterConfig),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            // TODO
+            break;
+          case 'lux_meter_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LuxMeterConfigScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -59,6 +103,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       child: Stack(children: [
         CommonScaffold(
           title: luxMeterTitle,
+          onOptionsPressed: _showOptionsMenu,
           onGuidePressed: _showInstrumentGuide,
           body: SafeArea(
             child: Column(

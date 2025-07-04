@@ -213,7 +213,7 @@ String degreeSymbol = '°';
 String enterAngleRange = 'Enter angle (0 - 360)';
 String errorCannotBeEmpty = 'Cannot be empty';
 String servoValidNumberRange = 'Please enter a valid number between 0 and 360';
-String ok = 'Ok';
+String ok = 'OK';
 String roboticArm = 'Robotic Arm';
 String play = 'Play';
 String pause = 'Pause';
@@ -338,3 +338,21 @@ String shareAppMenu = 'Share App';
 String privacyPolicyMenu = 'Privacy Policy';
 String shopLink = 'https://pslab.io/shop/';
 String shopError = 'Could not open the shop link';
+String showLuxmeterConfig = 'Lux Meter Configurations';
+String luxmeterConfigurations = 'Lux Meter Configurations';
+String updatePeriod = 'Update Period';
+String updatePeriodHint =
+    'Please provide time interval at which data will be updated (100 ms to 1000 ms)';
+String highLimit = 'High Limit';
+String highLimitHint =
+    'Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)';
+String sensorGain = 'Sensor Gain';
+String sensorGainHint = 'Please set gain of the sensor';
+String locationData = 'Include Location Data';
+String locationDataHint = 'Include the location data in the logged file';
+String activeSensor = 'Active Sensor';
+String ms = 'ms';
+String inBuiltSensor = 'In-built Sensor';
+String updatePeriodErrorMessage =
+    'Entered update period is not within the limits!';
+String highLimitErrorMessage = 'Entered High limit is not within the limits!';
