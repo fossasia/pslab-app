@@ -39,8 +39,10 @@ class AnalogInputSource {
       gainEnabled = true;
       gainPGA = 2;
       _gain = 0;
+    } else {
+      gainPGA = 1;
+      _gain = 0;
     }
-    _gain = 0;
     regenerateCalibration();
   }
 

@@ -45,3 +45,24 @@ Color snackBarContentColor = Colors.white;
 Color guideDrawerBackgroundColor = Colors.white;
 Color guideDrawerHeadingColor = Colors.black87;
 Color guideDrawerHighlightColor = Colors.black54;
+List<Color> knobLabelColors = [
+  Color(0xFFD32F2F), // CH1
+  Color(0xFFD32F2F), // CAP
+  Color(0xFFD32F2F), // AN8
+  Colors.black, // RES
+  Colors.black, // CAP
+  Colors.black, // ID1
+  Colors.black, // ID2
+  Colors.black, // ID3
+  Colors.black, // ID4
+  Color(0xFFD32F2F), // CH3
+  Color(0xFFD32F2F), // CH2
+];
+Color innerDialFillColor = Colors.white;
+Color innerPointerColor = Colors.white;
+Color pointerColor = Color(0xFFD32F2F);
+Color multimeterBorderRed = Color(0xFFD32F2F);
+Color multimeterBorderBlack = Colors.black;
+Color multimeterBorderLightRed = Color.fromARGB(255, 240, 162, 162);
+Color multimeterDividerColor = Colors.grey;
+Color multimeterIconColor = Colors.white;

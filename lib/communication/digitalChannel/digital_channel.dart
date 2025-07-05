@@ -7,6 +7,7 @@ class DigitalChannel {
   static const int everyFourthRisingEdge = 4;
   static const int everyRisingEdge = 3;
   static const int everyFallingEdge = 2;
+  static const int captureDelay = 2;
   static List<String> digitalChannelNames = [
     'LA1',
     'LA2',
@@ -58,25 +59,22 @@ class DigitalChannel {
       final int s = initialStates[channelName]!;
       initialState = s == 1;
     }
-    this.timestamps.setRange(0, timestamps.length, timestamps);
+    this.timestamps.setRange(0, timestamps.length - 1, timestamps);
     dLength = timestamps.length;
-    double factor;
-    switch (prescaler) {
-      case 0:
-        factor = 64;
-        break;
-      case 1:
-        factor = 8;
-        break;
-      case 2:
-        factor = 4;
-        break;
-      default:
-        factor = 1;
-        break;
+    double factor = 64;
+    List<double> diff = [];
+    for (int i = 0; i < this.timestamps.length - 1; i++) {
+      diff.add(this.timestamps[i + 1] - this.timestamps[i]);
+    }
+    for (int i = 0; i < diff.length; i++) {
+      if (diff[i] < 0) {
+        for (int j = i + 1; j < this.timestamps.length; j++) {
+          this.timestamps[j] += (1 << 16) - 1;
+        }
+      }
     }
     for (int i = 0; i < this.timestamps.length; i++) {
-      this.timestamps[i] /= factor;
+      this.timestamps[i] = (this.timestamps[i] + (i * captureDelay)) / factor;
     }
     if (dLength > 0) {
       maxT = this.timestamps[this.timestamps.length - 1];
@@ -99,11 +97,11 @@ class DigitalChannel {
       plotLength = 1;
     } else if (mode == everyEdge) {
       xAxis[0] = 0;
-      yAxis[0] = state as double;
+      yAxis[0] = state.toDouble();
       int length = 0;
       for (int i = 1, j = 1; i < dLength; i++, j++) {
         xAxis[j] = timestamps[i];
-        yAxis[j] = state as double;
+        yAxis[j] = state.toDouble();
         if (state == high) {
           state = low;
         } else {
@@ -111,23 +109,23 @@ class DigitalChannel {
         }
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = state as double;
+        yAxis[j] = state.toDouble();
         length = j;
       }
       plotLength = length;
     } else if (mode == everyFallingEdge) {
       xAxis[0] = 0;
-      yAxis[0] = high as double;
+      yAxis[0] = high.toDouble();
       int length = 0;
       for (int i = 1, j = 1; i < dLength; i++, j++) {
         xAxis[j] = timestamps[i];
-        yAxis[j] = high as double;
+        yAxis[j] = high.toDouble();
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = low as double;
+        yAxis[j] = low.toDouble();
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = high as double;
+        yAxis[j] = high.toDouble();
         length = j;
       }
       state = high;
@@ -136,21 +134,29 @@ class DigitalChannel {
         mode == everyFourthRisingEdge ||
         mode == everySixteenthRisingEdge) {
       xAxis[0] = 0;
-      yAxis[0] = low as double;
+      yAxis[0] = low.toDouble();
       int length = 0;
       for (int i = 1, j = 1; i < dLength; i++, j++) {
         xAxis[j] = timestamps[i];
-        yAxis[j] = low as double;
+        yAxis[j] = low.toDouble();
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = high as double;
+        yAxis[j] = high.toDouble();
         j++;
         xAxis[j] = timestamps[i];
-        yAxis[j] = low as double;
+        yAxis[j] = low.toDouble();
         length = j;
       }
       state = low;
       plotLength = length;
     }
+  }
+
+  List<double> getXAxis() {
+    return xAxis.sublist(0, plotLength);
+  }
+
+  List<double> getYAxis() {
+    return yAxis.sublist(0, plotLength);
   }
 }
