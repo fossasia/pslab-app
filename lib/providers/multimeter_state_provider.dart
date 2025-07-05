@@ -19,7 +19,7 @@ class MultimeterStateProvider extends ChangeNotifier {
   MultimeterStateProvider() {
     _selectedIndex = 0;
     _scienceLab = getIt<ScienceLab>();
-    isSwitchChecked = true;
+    isSwitchChecked = false;
     delay = 1000;
     value = defaultValue;
     unit = unitVolts;
@@ -36,7 +36,7 @@ class MultimeterStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSwitchChecked(bool value) {
+  void toggleSwitch(bool value) {
     isSwitchChecked = value;
     notifyListeners();
   }
@@ -140,7 +140,24 @@ class MultimeterStateProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> getIDData() async {}
+  Future<void> getIDData() async {
+    try {
+      if (!isSwitchChecked) {
+        double frequency =
+            await _scienceLab.getFrequency(knobMarker[_selectedIndex]);
+        value = frequency.toStringAsFixed(2);
+        unit = unitHz;
+      } else {
+        await _scienceLab.countPulses(knobMarker[_selectedIndex]);
+        int pulseCount = await _scienceLab.readPulseCount();
+        value = pulseCount.toString();
+        unit = "";
+      }
+    } catch (e) {
+      value = "Cannot measure!";
+      unit = "null";
+    }
+  }
 
   @override
   void dispose() {

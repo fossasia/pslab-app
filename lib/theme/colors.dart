@@ -64,3 +64,5 @@ Color pointerColor = Color(0xFFD32F2F);
 Color multimeterBorderRed = Color(0xFFD32F2F);
 Color multimeterBorderBlack = Colors.black;
 Color multimeterBorderLightRed = Color.fromARGB(255, 240, 162, 162);
+Color multimeterDividerColor = Colors.grey;
+Color multimeterIconColor = Colors.white;

@@ -7,6 +7,7 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/multimeter_knob.dart';
 
 class MultimeterScreen extends StatefulWidget {
+  final String icRecord = 'assets/icons/ic_record_white.png';
   const MultimeterScreen({super.key});
 
   @override
@@ -60,7 +61,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                           ),
                           Divider(
                             height: 1,
-                            color: Colors.grey,
+                            color: multimeterDividerColor,
                           ),
                           Expanded(
                             flex: 25,
@@ -143,14 +144,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                                 activeColor:
                                                     multimeterBorderBlack,
                                                 value: provider.isSwitchChecked,
-                                                onChanged: (bool? value) {
-                                                  setState(
-                                                    () {
-                                                      provider.isSwitchChecked =
-                                                          value!;
-                                                    },
-                                                  );
-                                                },
+                                                onChanged: (bool value) {},
                                               ),
                                             ),
                                             Text(
@@ -205,6 +199,23 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                 ],
               ),
             ),
+            actions: [
+              IconButton(
+                icon: Image.asset(
+                  widget.icRecord,
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(Icons.info, color: multimeterIconColor),
+                onPressed: () {},
+              ),
+              IconButton(
+                  icon: Icon(Icons.more_vert, color: multimeterIconColor),
+                  onPressed: () {}),
+            ],
           );
         },
       ),
