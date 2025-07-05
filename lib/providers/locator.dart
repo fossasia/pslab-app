@@ -8,7 +8,6 @@ import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/science_lab_common.dart';
 import 'package:pslab/providers/board_state_provider.dart';
-import 'package:pslab/providers/luxmeter_config_provider.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -26,6 +25,4 @@ void setupLocator() {
   getIt.registerLazySingleton<ScienceLab>(
       () => getIt.get<ScienceLabCommon>().getScienceLab());
   getIt.registerLazySingleton<BoardStateProvider>(() => BoardStateProvider());
-  getIt.registerLazySingleton<LuxMeterConfigProvider>(
-      () => LuxMeterConfigProvider());
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_config_provider.dart';
-import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 
 import '../theme/colors.dart';
 
@@ -40,8 +40,33 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CommonScaffold(
-      title: luxmeterConfigurations,
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
+        leading: Builder(builder: (context) {
+          return IconButton(
+            onPressed: () {
+              if (Navigator.canPop(context) &&
+                  ModalRoute.of(context)?.settings.name == '/luxmeter') {
+                Navigator.popUntil(context, ModalRoute.withName('/luxmeter'));
+              } else {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/luxmeter',
+                  (route) => route.isFirst,
+                );
+              }
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: appBarContentColor,
+            ),
+          );
+        }),
+        backgroundColor: primaryRed,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -134,7 +159,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w400,
-          color: blackTextColor,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
       subtitle: Text(
@@ -215,7 +240,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w400,
-          color: blackTextColor,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
       subtitle: Text(
@@ -301,7 +326,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
         style: TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w400,
-          color: blackTextColor,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
       subtitle: Text(
@@ -313,7 +338,6 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
       ),
       trailing: Checkbox(
         value: provider.config.includeLocationData,
-        checkColor: Colors.white,
         onChanged: (bool? value) {
           if (value != null) {
             provider.updateIncludeLocationData(value);

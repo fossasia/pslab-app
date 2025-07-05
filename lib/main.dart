@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
-import 'package:pslab/providers/luxmeter_config_provider.dart';
 import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
@@ -29,9 +28,6 @@ void main() {
       providers: [
         ChangeNotifierProvider<BoardStateProvider>(
           create: (context) => getIt<BoardStateProvider>(),
-        ),
-        ChangeNotifierProvider<LuxMeterConfigProvider>(
-          create: (context) => getIt<LuxMeterConfigProvider>(),
         ),
       ],
       child: const MyApp(),
