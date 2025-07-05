@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_config_provider.dart';
+import 'package:pslab/view/widgets/config_widgets.dart';
 
 import '../theme/colors.dart';
 
@@ -76,7 +77,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildConfigItem(
+                    ConfigInputItem(
                       title: updatePeriod,
                       value: '${provider.config.updatePeriod} $ms',
                       controller: _updatePeriodController,
@@ -99,7 +100,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                       },
                       hint: updatePeriodHint,
                     ),
-                    _buildConfigItem(
+                    ConfigInputItem(
                       title: highLimit,
                       value: '${provider.config.highLimit} $lx',
                       controller: _highLimitController,
@@ -122,8 +123,21 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                       },
                       hint: highLimitHint,
                     ),
-                    _buildSensorDropdown(provider),
-                    _buildConfigItem(
+                    ConfigDropdownItem(
+                      title: activeSensor,
+                      selectedValue: provider.config.activeSensor,
+                      options: [
+                        ConfigOption(
+                            value: 'In-built Sensor',
+                            displayName: inBuiltSensor),
+                        ConfigOption(value: 'BH1750', displayName: 'BH1750'),
+                        ConfigOption(value: 'TSL2561', displayName: 'TSL2561'),
+                      ],
+                      onChanged: (value) {
+                        provider.updateActiveSensor(value);
+                      },
+                    ),
+                    ConfigInputItem(
                       title: sensorGain,
                       value: provider.config.sensorGain.toString(),
                       controller: _sensorGainController,
@@ -135,7 +149,14 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                       },
                       hint: sensorGainHint,
                     ),
-                    _buildLocationCheckbox(provider),
+                    ConfigCheckboxItem(
+                      title: locationData,
+                      subtitle: locationDataHint,
+                      value: provider.config.includeLocationData,
+                      onChanged: (value) {
+                        provider.updateIncludeLocationData(value);
+                      },
+                    ),
                   ],
                 ),
               );
@@ -143,213 +164,6 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildConfigItem({
-    required String title,
-    required String value,
-    required TextEditingController controller,
-    required Function(String) onChanged,
-    String? hint,
-  }) {
-    return ListTile(
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-      subtitle: Text(
-        value,
-        style: TextStyle(
-          fontSize: 14,
-          color: hintTextColor,
-        ),
-      ),
-      onTap: () => _showInputDialog(title, controller, onChanged, hint),
-      contentPadding: EdgeInsets.zero,
-    );
-  }
-
-  void _showInputDialog(String title, TextEditingController controller,
-      Function(String) onChanged, String? hint) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (hint != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Text(
-                    hint,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: hintTextColor,
-                    ),
-                  ),
-                ),
-              TextField(
-                controller: controller,
-                keyboardType: TextInputType.numberWithOptions(decimal: false),
-                decoration: InputDecoration(
-                  border: const UnderlineInputBorder(),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryRed),
-                  ),
-                ),
-                autofocus: true,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                cancel,
-                style: TextStyle(color: primaryRed),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                onChanged(controller.text);
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                ok,
-                style: TextStyle(color: primaryRed),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildSensorDropdown(LuxMeterConfigProvider provider) {
-    return ListTile(
-      title: Text(
-        activeSensor,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-      subtitle: Text(
-        provider.config.activeSensor,
-        style: TextStyle(
-          fontSize: 14,
-          color: hintTextColor,
-        ),
-      ),
-      onTap: () => _showSensorDialog(provider),
-      contentPadding: EdgeInsets.zero,
-    );
-  }
-
-  void _showSensorDialog(LuxMeterConfigProvider provider) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(activeSensor),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RadioListTile<String>(
-                title: Text(inBuiltSensor),
-                value: 'In-built Sensor',
-                groupValue: provider.config.activeSensor,
-                onChanged: (String? value) {
-                  if (value != null) {
-                    provider.updateActiveSensor(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-                activeColor: primaryRed,
-                contentPadding: EdgeInsets.zero,
-              ),
-              RadioListTile<String>(
-                title: const Text('BH1750'),
-                value: 'BH1750',
-                groupValue: provider.config.activeSensor,
-                onChanged: (String? value) {
-                  if (value != null) {
-                    provider.updateActiveSensor(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-                activeColor: primaryRed,
-                contentPadding: EdgeInsets.zero,
-              ),
-              RadioListTile<String>(
-                title: const Text('TSL2561'),
-                value: 'TSL2561',
-                groupValue: provider.config.activeSensor,
-                onChanged: (String? value) {
-                  if (value != null) {
-                    provider.updateActiveSensor(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-                activeColor: primaryRed,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                cancel,
-                style: TextStyle(color: primaryRed),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildLocationCheckbox(LuxMeterConfigProvider provider) {
-    return ListTile(
-      title: Text(
-        locationData,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-      subtitle: Text(
-        locationDataHint,
-        style: TextStyle(
-          fontSize: 14,
-          color: hintTextColor,
-        ),
-      ),
-      trailing: Checkbox(
-        value: provider.config.includeLocationData,
-        onChanged: (bool? value) {
-          if (value != null) {
-            provider.updateIncludeLocationData(value);
-          }
-        },
-        activeColor: checkBoxActiveColor,
-      ),
-      onTap: () {
-        provider
-            .updateIncludeLocationData(!provider.config.includeLocationData);
-      },
-      contentPadding: EdgeInsets.zero,
     );
   }
 }
