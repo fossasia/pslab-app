@@ -13,7 +13,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.pslab.DataFormatter;
 import io.pslab.R;
@@ -87,8 +86,8 @@ public class SensorSHT21 extends AbstractSensorActivity {
 
     private class SensorDataFetch extends AbstractSensorActivity.SensorDataFetch {
 
-        private List<Double> dataSHT21Temp = new ArrayList<>();
-        private List<Double> dataSHT21Humidity = new ArrayList<>();
+        private Double dataSHT21Temp;
+        private Double dataSHT21Humidity;
         /* Initialization required if updateUi is executed before getSensorData */
         private float timeElapsed = getTimeElapsed();
 
@@ -98,9 +97,9 @@ public class SensorSHT21 extends AbstractSensorActivity {
 
             try {
                 if (sensorSHT21 != null) {
-                    sensorSHT21.selectParameter("temperature");
+                    sensorSHT21.setMode(SHT21.Mode.TEMPERATURE);
                     dataSHT21Temp = sensorSHT21.getRaw();
-                    sensorSHT21.selectParameter("humidity");
+                    sensorSHT21.setMode(SHT21.Mode.HUMIDITY);
                     dataSHT21Humidity = sensorSHT21.getRaw();
 
                     success = dataSHT21Temp != null && dataSHT21Humidity != null;
@@ -111,8 +110,8 @@ public class SensorSHT21 extends AbstractSensorActivity {
             timeElapsed = getTimeElapsed();
 
             if (success) {
-                entriesTemperature.add(new Entry(timeElapsed, dataSHT21Temp.get(0).floatValue()));
-                entriesTemperature.add(new Entry(timeElapsed, dataSHT21Humidity.get(0).floatValue()));
+                entriesTemperature.add(new Entry(timeElapsed, dataSHT21Temp.floatValue()));
+                entriesHumidity.add(new Entry(timeElapsed, dataSHT21Humidity.floatValue()));
             }
 
             return success;
@@ -121,8 +120,8 @@ public class SensorSHT21 extends AbstractSensorActivity {
         protected void updateUi() {
 
             if (isSensorDataAcquired()) {
-                tvSensorSHT21Temp.setText(DataFormatter.formatDouble(dataSHT21Temp.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
-                tvSensorSHT21Humidity.setText(DataFormatter.formatDouble(dataSHT21Humidity.get(0), DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorSHT21Temp.setText(DataFormatter.formatDouble(dataSHT21Temp, DataFormatter.HIGH_PRECISION_FORMAT));
+                tvSensorSHT21Humidity.setText(DataFormatter.formatDouble(dataSHT21Humidity, DataFormatter.HIGH_PRECISION_FORMAT));
             }
 
             LineDataSet dataSetTemperature = new LineDataSet(entriesTemperature, getString(R.string.temperature));

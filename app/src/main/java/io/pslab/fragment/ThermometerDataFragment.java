@@ -1,5 +1,8 @@
 package io.pslab.fragment;
 
+import static android.content.Context.SENSOR_SERVICE;
+import static io.pslab.others.CSVLogger.CSV_DIRECTORY;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -10,16 +13,15 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-
-import androidx.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.github.anastr.speedviewlib.PointerSpeedometer;
 import com.github.mikephil.charting.charts.LineChart;
@@ -29,6 +31,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,12 +61,10 @@ import io.pslab.others.CSVLogger;
 import io.pslab.others.CustomSnackBar;
 import io.pslab.others.ScienceLabCommon;
 
-import static android.content.Context.SENSOR_SERVICE;
-import static io.pslab.others.CSVLogger.CSV_DIRECTORY;
-
 public class ThermometerDataFragment extends Fragment implements OperationCallback {
 
-    private static final String TEMPERATURE = "temperature";
+    private static final String TAG = ThermometerDataFragment.class.getSimpleName();
+
     private static final CSVDataLine CSV_HEADER = new CSVDataLine()
             .add("Timestamp")
             .add("DateTime")
@@ -123,7 +124,7 @@ public class ThermometerDataFragment extends Fragment implements OperationCallba
 
     public static void setParameters(int updatePeriod, String type, String unit) {
         ThermometerDataFragment.updatePeriod = updatePeriod;
-        ThermometerDataFragment.sensorType = Integer.valueOf(type);
+        ThermometerDataFragment.sensorType = Integer.parseInt(type);
         ThermometerDataFragment.unit = unit;
 
     }
@@ -356,10 +357,9 @@ public class ThermometerDataFragment extends Fragment implements OperationCallba
                     File.separator + CSV_DIRECTORY + File.separator + thermoSensor.getSensorName() +
                     File.separator + CSVLogger.FILE_NAME_FORMAT.format(new Date()) + "_graph.jpg"));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unable to save bitmap", e);
         }
     }
-
 
     private void setupInstruments() {
         setUnit();
@@ -582,7 +582,7 @@ public class ThermometerDataFragment extends Fragment implements OperationCallba
                         data = i2c.scan(null);
                         if (data.contains(0x39)) {
                             SHT21 sensorSHT21 = new SHT21(i2c, scienceLab);
-                            sensorSHT21.selectParameter(TEMPERATURE);
+                            sensorSHT21.setMode(SHT21.Mode.TEMPERATURE);
                             sensorType = 1;
                         } else {
                             CustomSnackBar.showSnackBar(getActivity().findViewById(android.R.id.content),
@@ -590,7 +590,7 @@ public class ThermometerDataFragment extends Fragment implements OperationCallba
                             sensorType = 0;
                         }
                     } catch (IOException | InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Unable to get data from sensor.", e);
                     }
                 } else {
                     CustomSnackBar.showSnackBar(getActivity().findViewById(android.R.id.content),

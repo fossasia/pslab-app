@@ -29,13 +29,10 @@ public class CommunicationHandler {
     private UsbSerialDriver driver;
     private UsbSerialPort port;
     public UsbDevice mUsbDevice;
-    List<UsbSerialDriver> drivers;
 
     public static final int DEFAULT_READ_BUFFER_SIZE = 32 * 1024;
-    public static final int DEFAULT_WRITE_BUFFER_SIZE = 32 * 1024;
 
     private byte[] mReadBuffer;
-    private byte[] mWriteBuffer;
 
     public CommunicationHandler(UsbManager usbManager) {
         this.mUsbManager = usbManager;
@@ -45,7 +42,7 @@ public class CommunicationHandler {
         customTable.addProduct(PSLAB_VENDOR_ID_V6, PSLAB_PRODUCT_ID_V6, Cp21xxSerialDriver.class);
 
         UsbSerialProber prober = new UsbSerialProber(customTable);
-        drivers = prober.findAllDrivers(usbManager);
+        List<UsbSerialDriver> drivers = prober.findAllDrivers(usbManager);
 
         if (drivers.isEmpty()) {
             Log.d(TAG, "No drivers found");
@@ -56,7 +53,6 @@ public class CommunicationHandler {
             mUsbDevice = driver.getDevice();
         }
         mReadBuffer = new byte[DEFAULT_READ_BUFFER_SIZE];
-        mWriteBuffer = new byte[DEFAULT_WRITE_BUFFER_SIZE];
     }
 
     public void open(int baudRate) throws IOException {
@@ -115,7 +111,7 @@ public class CommunicationHandler {
                 bytesToBeReadTemp -= readNow;
             }
         }
-        Log.v("Bytes Read", "" + numBytesRead);
+        Log.v(TAG, "Bytes Read: " + numBytesRead);
         return numBytesRead;
     }
 
@@ -135,7 +131,7 @@ public class CommunicationHandler {
                 bytesToBeReadTemp -= readNow;
             }
         }
-        Log.v("Bytes Read", "" + numBytesRead);
+        Log.v(TAG, "Bytes Read: " + numBytesRead);
         return numBytesRead;
     }
 
