@@ -121,6 +121,26 @@ String wifi = 'WIFI';
 String whatisPslab = 'What is PSLab Device?';
 String pslabUrl = 'https://pslab.io';
 
+String logicAnalyzer = 'Logic Analyzer';
+String channelSelection = 'Channel Selection';
+String logicAnalyzerAxisTitle = 'Time (ms)';
+String noOfChannelsOne = '1';
+String noOfChannelsTwo = '2';
+String noOfChannelsThree = '3';
+String noOfChannelsFour = '4';
+String channelLA1 = 'LA1';
+String channelLA2 = 'LA2';
+String channelLA3 = 'LA3';
+String channelLA4 = 'LA4';
+List<String> analysisOptions = [
+  'EVERY EDGE',
+  'EVERY FALLING EDGE',
+  'EVERY RISING EDGE',
+  'EVERY FOURTH RISING EDGE',
+  'DISABLED'
+];
+String analyze = 'ANALYZE';
+
 String settings = 'Settings';
 String start = 'Auto Start';
 String autoStartText = 'Auto start app when PSLab device is connected';

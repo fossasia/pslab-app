@@ -8,6 +8,7 @@ import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
+import 'package:pslab/view/logic_analyzer_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import 'package:pslab/view/multimeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const InstrumentsScreen(),
         '/oscilloscope': (context) => const OscilloscopeScreen(),
         '/multimeter': (context) => const MultimeterScreen(),
+        '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
         '/connectDevice': (context) => const ConnectDeviceScreen(),
         '/faq': (context) => const FAQScreen(),
         '/settings': (context) => const SettingsScreen(),

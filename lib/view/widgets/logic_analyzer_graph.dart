@@ -1,0 +1,121 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
+import 'package:pslab/providers/logic_analyzer_state_provider.dart';
+import 'package:pslab/theme/colors.dart';
+
+class LogicAnalyzerGraph extends StatefulWidget {
+  const LogicAnalyzerGraph({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _LogicAnalyzerGraphState();
+}
+
+class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
+  Widget sideTitleWidgets(double value, TitleMeta meta) {
+    final style = TextStyle(
+      color: chartTextColor,
+      fontSize: 9,
+    );
+    return SideTitleWidget(
+      meta: meta,
+      child: Text(
+        maxLines: 1,
+        meta.formattedValue,
+        style: style,
+      ),
+    );
+  }
+
+  Widget topTitleWidgets(double value, TitleMeta meta) {
+    final style = TextStyle(
+      color: chartTextColor,
+      fontSize: 9,
+    );
+    return SideTitleWidget(
+      meta: meta,
+      child: Text(
+        maxLines: 1,
+        meta.formattedValue,
+        style: style,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<LogicAnalyzerStateProvider>(
+        builder: (context, provider, _) {
+      return SizedBox(
+        child: LineChart(
+          LineChartData(
+            backgroundColor: chartBackgroundColor,
+            titlesData: FlTitlesData(
+              show: true,
+              topTitles: AxisTitles(
+                axisNameWidget: Text(
+                  logicAnalyzerAxisTitle,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: chartTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                axisNameSize: 20,
+                sideTitles: SideTitles(
+                  maxIncluded: false,
+                  interval: 1,
+                  reservedSize: 20,
+                  showTitles: true,
+                  getTitlesWidget: topTitleWidgets,
+                ),
+              ),
+              bottomTitles:
+                  const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  interval: 1,
+                  reservedSize: 30,
+                  showTitles: true,
+                  getTitlesWidget: sideTitleWidgets,
+                ),
+              ),
+              rightTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: false,
+                ),
+              ),
+            ),
+            gridData: FlGridData(
+              show: true,
+              drawHorizontalLine: true,
+              drawVerticalLine: true,
+            ),
+            borderData: FlBorderData(
+              show: true,
+              border: Border(
+                bottom: BorderSide(
+                  color: chartBorderColor,
+                ),
+                left: BorderSide(
+                  color: chartBorderColor,
+                ),
+                top: BorderSide(
+                  color: chartBorderColor,
+                ),
+                right: BorderSide(
+                  color: chartBorderColor,
+                ),
+              ),
+            ),
+            maxY: 2,
+            maxX: 10,
+            minY: -1,
+            minX: 0,
+          ),
+        ),
+      );
+    });
+  }
+}
