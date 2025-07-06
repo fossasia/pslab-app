@@ -45,31 +45,62 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
           padding: EdgeInsets.all(cardPadding),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: screenWidth < 500 ? 40 : 35,
-                    child: Instrumentstats(
-                      titleFontSize: titleFontSize,
-                      statFontSize: statFontSize,
-                      maxValue: maxDb,
-                      minValue: minDb,
-                      avgValue: avgDb,
-                      unit: db,
+              if (isLargeScreen) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 40,
+                      child: Center(
+                        child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentDb,
+                          minValue: 0,
+                          maxValue: 200,
+                          unit: db,
+                          currentValueFontSize: dbValueFontSize,
+                        ),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: screenWidth < 500 ? 60 : 65,
-                    child: GaugeWidget(
-                        gaugeSize: gaugeSize,
-                        currentValue: currentDb,
-                        minValue: 0,
-                        maxValue: 200,
+                    Expanded(
+                      flex: 60,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxDb,
+                        minValue: minDb,
+                        avgValue: avgDb,
                         unit: db,
-                        currentValueFontSize: dbValueFontSize),
-                  ),
-                ],
-              );
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: screenWidth < 500 ? 40 : 35,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxDb,
+                        minValue: minDb,
+                        avgValue: avgDb,
+                        unit: db,
+                      ),
+                    ),
+                    Expanded(
+                      flex: screenWidth < 500 ? 60 : 65,
+                      child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentDb,
+                          minValue: 0,
+                          maxValue: 200,
+                          unit: db,
+                          currentValueFontSize: dbValueFontSize),
+                    ),
+                  ],
+                );
+              }
             },
           ),
         ),
