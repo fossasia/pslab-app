@@ -8,6 +8,7 @@ import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/barometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 
 class BarometerScreen extends StatefulWidget {
   const BarometerScreen({super.key});
@@ -16,6 +17,9 @@ class BarometerScreen extends StatefulWidget {
 }
 
 class _BarometerScreenState extends State<BarometerScreen> {
+  bool _showGuide = false;
+  static const imagePath = 'assets/images/bmp180_schematic.png';
+
   void _showSensorErrorSnackbar(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -32,6 +36,36 @@ class _BarometerScreenState extends State<BarometerScreen> {
     }
   }
 
+  void _showInstrumentGuide() {
+    setState(() {
+      _showGuide = true;
+    });
+  }
+
+  void _hideInstrumentGuide() {
+    setState(() {
+      _showGuide = false;
+    });
+  }
+
+  List<Widget> _getBarometerContent() {
+    return [
+      InstrumentBulletPoint(
+        text: baroMeterBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: baroMeterBulletPoint2,
+      ),
+      const InstrumentImage(
+        imagePath: imagePath,
+      ),
+      InstrumentBulletPoint(
+        text: baroMeterBulletPoint3,
+      ),
+      InstrumentBulletPoint(text: baroMeterBulletPoint4),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -41,23 +75,32 @@ class _BarometerScreenState extends State<BarometerScreen> {
             ..initializeSensors(onError: _showSensorErrorSnackbar),
         ),
       ],
-      child: CommonScaffold(
-        title: barometerTitle,
-        body: SafeArea(
-          child: Column(
-            children: [
-              const Expanded(
-                flex: 45,
-                child: BarometerCard(),
-              ),
-              Expanded(
-                flex: 55,
-                child: _buildChartSection(),
-              ),
-            ],
+      child: Stack(children: [
+        CommonScaffold(
+          title: barometerTitle,
+          onGuidePressed: _showInstrumentGuide,
+          body: SafeArea(
+            child: Column(
+              children: [
+                const Expanded(
+                  flex: 45,
+                  child: BarometerCard(),
+                ),
+                Expanded(
+                  flex: 55,
+                  child: _buildChartSection(),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+        if (_showGuide)
+          InstrumentOverviewDrawer(
+            instrumentName: barometerTitle,
+            content: _getBarometerContent(),
+            onHide: _hideInstrumentGuide,
+          ),
+      ]),
     );
   }
 
