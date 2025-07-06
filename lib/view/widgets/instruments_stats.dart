@@ -9,15 +9,18 @@ class Instrumentstats extends StatelessWidget {
   final double minValue;
   final double maxValue;
   final double avgValue;
+  final double? currentAltitude;
 
-  const Instrumentstats(
-      {super.key,
-      required this.unit,
-      required this.titleFontSize,
-      required this.avgValue,
-      required this.maxValue,
-      required this.minValue,
-      required this.statFontSize});
+  const Instrumentstats({
+    super.key,
+    required this.unit,
+    required this.titleFontSize,
+    required this.avgValue,
+    required this.maxValue,
+    required this.minValue,
+    required this.statFontSize,
+    this.currentAltitude,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +59,26 @@ class Instrumentstats extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         StatItem(
-                            label: '$maxLabel ($unit)',
-                            value: maxValue,
-                            fontSize: statFontSize),
+                          label: '$maxLabel ($unit)',
+                          value: maxValue,
+                          fontSize: statFontSize,
+                        ),
                         StatItem(
-                            label: '$minLabel ($unit)',
-                            value: minValue,
-                            fontSize: statFontSize),
+                          label: '$minLabel ($unit)',
+                          value: minValue,
+                          fontSize: statFontSize,
+                        ),
                         StatItem(
-                            label: '$avgLabel ($unit)',
-                            value: avgValue,
-                            fontSize: statFontSize),
+                          label: '$avgLabel ($unit)',
+                          value: avgValue,
+                          fontSize: statFontSize,
+                        ),
+                        if (currentAltitude != null)
+                          StatItem(
+                            label: '$altitudeLabel ($meterUnit)',
+                            value: currentAltitude!,
+                            fontSize: statFontSize,
+                          ),
                       ],
                     ),
                   ),
@@ -85,16 +97,16 @@ class StatItem extends StatelessWidget {
   final double value;
   final double fontSize;
 
-  const StatItem(
-      {super.key,
-      required this.label,
-      required this.fontSize,
-      required this.value});
+  const StatItem({
+    super.key,
+    required this.label,
+    required this.fontSize,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final valueFontSize = screenWidth < 400 ? 14.0 : 16.0;
     final padding = screenWidth < 400 ? 15.0 : 20.0;
 
     return Flexible(
@@ -129,7 +141,7 @@ class StatItem extends StatelessWidget {
                   value.toStringAsFixed(2),
                   style: TextStyle(
                     color: cardContentColor,
-                    fontSize: valueFontSize,
+                    fontSize: fontSize,
                     fontWeight: FontWeight.bold,
                   ),
                   overflow: TextOverflow.ellipsis,

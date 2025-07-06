@@ -47,87 +47,68 @@ class _BarometerCardState extends State<BarometerCard> {
           padding: EdgeInsets.all(cardPadding),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: screenWidth < 500 ? 40 : 35,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 75,
-                          child: Instrumentstats(
-                            titleFontSize: titleFontSize,
-                            statFontSize: statFontSize,
-                            maxValue: maxPressure,
-                            minValue: minPressure,
-                            avgValue: avgPressure,
-                            unit: atm,
-                          ),
+              if (isLargeScreen) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 40,
+                      child: Center(
+                        child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentPressure,
+                          minValue: 0,
+                          maxValue: 2,
+                          unit: atm,
+                          currentValueFontSize: pressureValueFontSize,
                         ),
-                        Expanded(
-                          flex: 25,
-                          child:
-                              _buildAltitudeTile(currentAltitude, statFontSize),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: screenWidth < 500 ? 60 : 65,
-                    child: GaugeWidget(
-                        gaugeSize: gaugeSize,
-                        currentValue: currentPressure,
-                        minValue: 0,
-                        maxValue: 2,
+                    Expanded(
+                      flex: 60,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxPressure,
+                        minValue: minPressure,
+                        avgValue: avgPressure,
                         unit: atm,
-                        currentValueFontSize: pressureValueFontSize),
-                  ),
-                ],
-              );
+                        currentAltitude: currentAltitude,
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: screenWidth < 500 ? 40 : 35,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxPressure,
+                        minValue: minPressure,
+                        avgValue: avgPressure,
+                        unit: atm,
+                        currentAltitude: currentAltitude,
+                      ),
+                    ),
+                    Expanded(
+                      flex: screenWidth < 500 ? 60 : 65,
+                      child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentPressure,
+                          minValue: 0,
+                          maxValue: 2,
+                          unit: atm,
+                          currentValueFontSize: pressureValueFontSize),
+                    ),
+                  ],
+                );
+              }
             },
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildAltitudeTile(double currentAltitude, double fontSize) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final padding = screenWidth < 400 ? 15.0 : 20.0;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Center(
-          child: Text(
-            '$altitudeLabel ($meterUnit)',
-            style: TextStyle(
-              color: cardContentColor,
-              fontSize: fontSize,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: padding, vertical: 3),
-            decoration: BoxDecoration(
-              border: Border.all(color: instrumentStatBoxColor),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              currentAltitude.toStringAsFixed(2),
-              style: TextStyle(
-                color: cardContentColor,
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
