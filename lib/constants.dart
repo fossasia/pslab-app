@@ -87,6 +87,25 @@ List<String> channelEntries = [
 ];
 
 String multimeter = 'Multimeter';
+String defaultValue = '0.00';
+String unitVolts = 'Volts';
+List<String> knobMarker = [
+  'CH1',
+  'CAP',
+  'VOL',
+  'RES',
+  'CAP',
+  'LA1',
+  'LA2',
+  'LA3',
+  'LA4',
+  'CH3',
+  'CH2',
+];
+String voltage = 'Voltage';
+String unitHz = 'Hz';
+String countPulse = 'Count Pulse';
+String measure = 'Measure';
 String connectDevice = 'Connect Device';
 String deviceConnected = 'Device Connected Successfully';
 String noDeviceFound = 'No USB Device Found';
@@ -256,10 +275,21 @@ String lx = 'Lx';
 String maxScaleError = 'Max Scale';
 String lightSensorError = 'Light sensor error:';
 String lightSensorInitialError = 'Failed to initialize light sensor:';
+String barometerTitle = 'Barometer';
+String atm = 'atm';
+String barometerSensorInitialError = 'Failed to initialize barometer sensor:';
+String barometerSensorError = 'Barometer sensor error occurred';
+String barometerNotAvailable = 'Barometer sensor not available on this device';
+String meterUnit = 'm';
+String altitudeLabel = 'Altitude';
 String soundMeterError = 'Sound sensor error:';
 String soundMeterInitialError = 'Sound sensor initialization error:';
 String db = 'dB';
 String soundMeterTitle = 'Sound Meter';
+String noLightSensor = "Device does not have a light sensor";
+String lightSensorErrorDetails = "Light sensor error details:";
+String lightSensorErrorLog =
+    "No light sensor data received - sensor may not be available";
 String playBackSummary = 'Playback Summary';
 String servo = 'Servo:';
 String percentage = '%';
@@ -338,3 +368,11 @@ String shareAppMenu = 'Share App';
 String privacyPolicyMenu = 'Privacy Policy';
 String shopLink = 'https://pslab.io/shop/';
 String shopError = 'Could not open the shop link';
+String baroMeterBulletPoint1 =
+    'The Barometer can be used to measure Atmospheric pressure. This instrument is compatible with either the built in pressure sensor on any android device or the BMP-180 pressure sensor';
+String baroMeterBulletPoint2 =
+    'If you want to use the sensor BMP-180, connect the sensor to PSLab device as shown in the figure.';
+String baroMeterBulletPoint3 =
+    'The above pin configuration has to be same except for the pin GND. GND is meant for Ground and any of the PSLab device GND pins can be used since they are common.';
+String baroMeterBulletPoint4 =
+    'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';

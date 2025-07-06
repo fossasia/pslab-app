@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
-import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -16,6 +16,7 @@ class LuxMeterScreen extends StatefulWidget {
 }
 
 class _LuxMeterScreenState extends State<LuxMeterScreen> {
+  late LuxMeterStateProvider _provider;
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
   void _showInstrumentGuide() {
@@ -49,13 +50,43 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<LuxMeterStateProvider>(
-          create: (_) => LuxMeterStateProvider()..initializeSensors(),
+  void initState() {
+    super.initState();
+    _provider = LuxMeterStateProvider();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _provider.initializeSensors(onError: _showSensorErrorSnackbar);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _provider.disposeSensors();
+    _provider.dispose();
+    super.dispose();
+  }
+
+  void _showSensorErrorSnackbar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+          duration: const Duration(seconds: 4),
+          behavior: SnackBarBehavior.floating,
         ),
-      ],
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<LuxMeterStateProvider>.value(
+      value: _provider,
       child: Stack(children: [
         CommonScaffold(
           title: luxMeterTitle,
@@ -90,6 +121,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       builder: (context, provider, child) {
         final screenWidth = MediaQuery.of(context).size.width;
         final cardMargin = screenWidth < 400 ? 8.0 : 16.0;
+        final cardPadding = screenWidth < 400 ? 2.0 : 5.0;
         List<FlSpot> spots = provider.getLuxChartData();
         double maxLux = provider.getMaxLux();
         double maxTime = provider.getMaxTime();
@@ -98,10 +130,10 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
 
         return Container(
           margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
-          padding: EdgeInsets.all(cardMargin),
+          padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
             color: chartBackgroundColor,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.zero,
           ),
           child: _buildChart(
               screenWidth, maxLux, maxTime, minTime, timeInterval, spots),
@@ -152,97 +184,102 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             : 10.0;
     final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
-    final reservedSizeLeft = screenWidth < 400 ? 20.0 : 25.0;
-    return LineChart(
-      LineChartData(
-        backgroundColor: chartBackgroundColor,
-        titlesData: FlTitlesData(
-          show: true,
-          topTitles: AxisTitles(
-            axisNameWidget: Padding(
-              padding: EdgeInsets.only(left: screenWidth < 400 ? 15 : 25),
-              child: Text(
-                timeAxisLabel,
+    final reservedSizeLeft = screenWidth < 400 ? 27.0 : 30.0;
+    final reservedSizeRight = screenWidth < 400 ? 27.0 : 30.0;
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: LineChart(
+        LineChartData(
+          backgroundColor: chartBackgroundColor,
+          titlesData: FlTitlesData(
+            show: true,
+            topTitles: AxisTitles(
+              axisNameWidget: Padding(
+                padding: EdgeInsets.only(left: screenWidth < 400 ? 15 : 25),
+                child: Text(
+                  timeAxisLabel,
+                  style: TextStyle(
+                    fontSize: axisNameFontSize,
+                    color: chartTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              axisNameSize: screenWidth < 400 ? 18 : 20,
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: reservedSizeBottom,
+                getTitlesWidget: sideTitleWidgets,
+                interval: timeInterval,
+              ),
+            ),
+            leftTitles: AxisTitles(
+              axisNameWidget: Text(
+                lx,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
                   color: chartTextColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-            axisNameSize: screenWidth < 400 ? 18 : 20,
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: reservedSizeBottom,
-              getTitlesWidget: sideTitleWidgets,
-              interval: timeInterval,
-            ),
-          ),
-          leftTitles: AxisTitles(
-            axisNameWidget: Text(
-              lx,
-              style: TextStyle(
-                fontSize: axisNameFontSize,
-                color: chartTextColor,
-                fontWeight: FontWeight.bold,
+              sideTitles: SideTitles(
+                reservedSize: reservedSizeLeft,
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  return SideTitleWidget(
+                    meta: meta,
+                    child: Text(
+                      value.toInt().toString(),
+                      style: TextStyle(
+                        color: chartTextColor,
+                        fontSize: chartFontSize,
+                      ),
+                    ),
+                  );
+                },
+                interval: maxLux > 0 ? (maxLux / 5).ceilToDouble() : 10,
               ),
             ),
-            sideTitles: SideTitles(
-              reservedSize: reservedSizeLeft,
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  meta: meta,
-                  child: Text(
-                    value.toInt().toString(),
-                    style: TextStyle(
-                      color: chartTextColor,
-                      fontSize: chartFontSize,
-                    ),
-                  ),
-                );
-              },
-              interval: maxLux > 0 ? (maxLux / 5).ceilToDouble() : 10,
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(
+                  showTitles: false, reservedSize: reservedSizeRight),
             ),
           ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+          gridData: FlGridData(
+            show: true,
+            drawHorizontalLine: true,
+            drawVerticalLine: true,
+            horizontalInterval: maxLux > 0 ? (maxLux / 5).ceilToDouble() : 10,
+            verticalInterval: timeInterval,
           ),
-        ),
-        gridData: FlGridData(
-          show: true,
-          drawHorizontalLine: true,
-          drawVerticalLine: true,
-          horizontalInterval: maxLux > 0 ? (maxLux / 5).ceilToDouble() : 10,
-          verticalInterval: timeInterval,
-        ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border(
-            bottom: BorderSide(color: chartBorderColor),
-            left: BorderSide(color: chartBorderColor),
-            top: BorderSide(color: chartBorderColor),
-            right: BorderSide(color: chartBorderColor),
+          borderData: FlBorderData(
+            show: true,
+            border: Border(
+              bottom: BorderSide(color: chartBorderColor),
+              left: BorderSide(color: chartBorderColor),
+              top: BorderSide(color: chartBorderColor),
+              right: BorderSide(color: chartBorderColor),
+            ),
           ),
+          minY: 0,
+          maxY: maxLux > 0 ? (maxLux * 1.1) : 100,
+          maxX: maxTime > 0 ? maxTime : 10,
+          minX: minTime,
+          clipData: const FlClipData.all(),
+          lineBarsData: [
+            LineChartBarData(
+              spots: spots,
+              isCurved: true,
+              color: chartLineColor,
+              barWidth: screenWidth < 400 ? 1.5 : 2.0,
+              isStrokeCapRound: true,
+              dotData: const FlDotData(show: false),
+              belowBarData: BarAreaData(show: false),
+            ),
+          ],
         ),
-        minY: 0,
-        maxY: maxLux > 0 ? (maxLux * 1.1) : 100,
-        maxX: maxTime > 0 ? maxTime : 10,
-        minX: minTime,
-        clipData: const FlClipData.all(),
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            color: chartLineColor,
-            barWidth: screenWidth < 400 ? 1.5 : 2.0,
-            isStrokeCapRound: true,
-            dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: false),
-          ),
-        ],
       ),
     );
   }
