@@ -16,6 +16,27 @@ class ThermometerScreen extends StatefulWidget {
 }
 
 class _ThermometerScreenState extends State<ThermometerScreen> {
+  ThermometerStateProvider? _temperatureProvider;
+  bool _showGuide = false;
+  bool _snackbarShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeProvider();
+  }
+
+  Future<void> _initializeProvider() async {
+    _temperatureProvider = ThermometerStateProvider();
+    await _temperatureProvider!.initializeSensors();
+  }
+
+  @override
+  void dispose() {
+    _temperatureProvider?.dispose();
+    super.dispose();
+  }
+
   void _showSensorErrorSnackbar(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -31,9 +52,6 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
       );
     }
   }
-
-  bool _showGuide = false;
-  bool _snackbarShown = false;
 
   void _showInstrumentGuide() {
     setState(() {
@@ -57,15 +75,13 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<ThermometerStateProvider>(
-          create: (_) => ThermometerStateProvider()..initializeSensors(),
-        ),
-      ],
+    return ChangeNotifierProvider<ThermometerStateProvider>.value(
+      value: _temperatureProvider!,
       child: Consumer<ThermometerStateProvider>(
         builder: (context, provider, child) {
-          if (!provider.isSensorAvailable() && !_snackbarShown) {
+          if (!provider.isSensorAvailable() &&
+              !_snackbarShown &&
+              provider.isInitialized()) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSensorErrorSnackbar(temperatureSensorUnavailableMessage);
               _snackbarShown = true;
@@ -173,6 +189,12 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeRight = screenWidth < 400 ? 25.0 : 30.0;
+    double minY = spots.isNotEmpty
+        ? spots.map((s) => s.y).reduce((a, b) => a < b ? a : b)
+        : 0.0;
+    double maxY = spots.isNotEmpty
+        ? spots.map((s) => s.y).reduce((a, b) => a > b ? a : b)
+        : 50.0;
     return Padding(
       padding: const EdgeInsets.only(right: 20.0),
       child: LineChart(
@@ -250,8 +272,8 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
               right: BorderSide(color: chartBorderColor),
             ),
           ),
-          minY: 0,
-          maxY: 60,
+          minY: minY < -40 ? minY - 3 : -40,
+          maxY: maxY > 50 ? maxY + 3 : 50,
           maxX: maxTime > 0 ? maxTime : 10,
           minX: minTime,
           clipData: const FlClipData.all(),
