@@ -49,7 +49,7 @@ dependencies:
       url: https://github.com/AsCress/flutter_audio_capture.git
       ref: master
   data: ^0.14.0
-  permission_handler: ^12.0.0+1
+  permission_handler: ^12.0.1
   logger: ^2.6.0
   url_launcher: ^6.3.1
   font_awesome_flutter: ^10.8.0
@@ -80,6 +80,12 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
+  fonts:
+    - family: Digital-7
+      fonts:
+        - asset: fonts/Digital-7.ttf
+        - asset: fonts/Digital-7-Italic.ttf
+          style: italic
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

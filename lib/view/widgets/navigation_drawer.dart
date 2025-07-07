@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/providers/board_state_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme/colors.dart';
 
@@ -277,27 +278,31 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: listTileFocusColor,
-              dense: true,
-              leading: Icon(
-                Icons.shopping_cart,
-                color:
-                    widget.selectedIndex == 8 ? selectedMenuColor : menuColor,
-              ),
-              title: Text(
-                buyPsLabMenu,
-                style: TextStyle(
-                  color: widget.selectedIndex == 8
-                      ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                focusColor: listTileFocusColor,
+                dense: true,
+                leading: Icon(
+                  Icons.shopping_cart,
+                  color:
+                      widget.selectedIndex == 8 ? selectedMenuColor : menuColor,
                 ),
-              ),
-              onTap: () {
-                /**/
-              },
-            ),
+                title: Text(
+                  buyPsLabMenu,
+                  style: TextStyle(
+                    color: widget.selectedIndex == 8
+                        ? selectedMenuColor
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                onTap: () async {
+                  final launched = await launchUrl(Uri.parse(shopLink));
+                  if (!launched && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(shopError)),
+                    );
+                  }
+                }),
             ListTile(
               focusColor: listTileFocusColor,
               dense: true,
