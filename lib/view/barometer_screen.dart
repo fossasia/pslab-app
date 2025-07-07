@@ -79,20 +79,36 @@ class _BarometerScreenState extends State<BarometerScreen> {
         CommonScaffold(
           title: barometerTitle,
           onGuidePressed: _showInstrumentGuide,
-          body: SafeArea(
-            child: Column(
-              children: [
-                const Expanded(
-                  flex: 45,
-                  child: BarometerCard(),
-                ),
-                Expanded(
-                  flex: 55,
-                  child: _buildChartSection(),
-                ),
-              ],
-            ),
-          ),
+          body: SafeArea(child: LayoutBuilder(builder: (context, constraints) {
+            final isLargeScreen = constraints.maxWidth > 900;
+            if (isLargeScreen) {
+              return Row(
+                children: [
+                  const Expanded(
+                    flex: 35,
+                    child: BarometerCard(),
+                  ),
+                  Expanded(
+                    flex: 65,
+                    child: _buildChartSection(),
+                  ),
+                ],
+              );
+            } else {
+              return Column(
+                children: [
+                  const Expanded(
+                    flex: 45,
+                    child: BarometerCard(),
+                  ),
+                  Expanded(
+                    flex: 55,
+                    child: _buildChartSection(),
+                  ),
+                ],
+              );
+            }
+          })),
         ),
         if (_showGuide)
           InstrumentOverviewDrawer(

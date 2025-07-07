@@ -44,31 +44,59 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
           padding: EdgeInsets.all(cardPadding),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: screenWidth < 500 ? 40 : 35,
-                    child: Instrumentstats(
-                      titleFontSize: titleFontSize,
-                      statFontSize: statFontSize,
-                      maxValue: maxLux,
-                      minValue: minLux,
-                      avgValue: avgLux,
-                      unit: 'Lx',
+              if (isLargeScreen) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 40,
+                      child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentLux,
+                          minValue: 0,
+                          maxValue: 10000,
+                          unit: 'Lx',
+                          currentValueFontSize: luxValueFontSize),
                     ),
-                  ),
-                  Expanded(
-                    flex: screenWidth < 500 ? 60 : 65,
-                    child: GaugeWidget(
-                        gaugeSize: gaugeSize,
-                        currentValue: currentLux,
-                        minValue: 0,
-                        maxValue: 10000,
+                    Expanded(
+                      flex: 60,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxLux,
+                        minValue: minLux,
+                        avgValue: avgLux,
                         unit: 'Lx',
-                        currentValueFontSize: luxValueFontSize),
-                  ),
-                ],
-              );
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: screenWidth < 500 ? 40 : 35,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxLux,
+                        minValue: minLux,
+                        avgValue: avgLux,
+                        unit: 'Lx',
+                      ),
+                    ),
+                    Expanded(
+                      flex: screenWidth < 500 ? 60 : 65,
+                      child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentLux,
+                          minValue: 0,
+                          maxValue: 10000,
+                          unit: 'Lx',
+                          currentValueFontSize: luxValueFontSize),
+                    ),
+                  ],
+                );
+              }
             },
           ),
         ),
