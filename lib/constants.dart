@@ -132,6 +132,12 @@ String channelLA1 = 'LA1';
 String channelLA2 = 'LA2';
 String channelLA3 = 'LA3';
 String channelLA4 = 'LA4';
+List<String> channelNames = [
+  channelLA1,
+  channelLA2,
+  channelLA3,
+  channelLA4,
+];
 List<String> analysisOptions = [
   'EVERY EDGE',
   'EVERY FALLING EDGE',

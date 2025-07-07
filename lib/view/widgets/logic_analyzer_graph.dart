@@ -49,6 +49,13 @@ class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
         builder: (context, provider, _) {
       return SizedBox(
         child: LineChart(
+          transformationConfig: FlTransformationConfig(
+            minScale: 1,
+            maxScale: 25,
+            scaleAxis: FlScaleAxis.horizontal,
+            panEnabled: true,
+            scaleEnabled: true,
+          ),
           LineChartData(
             backgroundColor: chartBackgroundColor,
             titlesData: FlTitlesData(
@@ -75,6 +82,8 @@ class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
+                  maxIncluded: false,
+                  minIncluded: false,
                   interval: 1,
                   reservedSize: 30,
                   showTitles: true,
@@ -109,10 +118,10 @@ class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
                 ),
               ),
             ),
-            maxY: 2,
-            maxX: 10,
-            minY: -1,
-            minX: 0,
+            clipData: const FlClipData.all(),
+            lineBarsData: provider.createPlots(),
+            maxY: provider.getMaxY(),
+            minY: provider.getMinY(),
           ),
         ),
       );

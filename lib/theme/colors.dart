@@ -67,3 +67,9 @@ Color multimeterBorderBlack = Colors.black;
 Color multimeterBorderLightRed = Color.fromARGB(255, 240, 162, 162);
 Color multimeterDividerColor = Colors.grey;
 Color multimeterIconColor = Colors.white;
+List<Color> logicAnalyzerChannelColors = [
+  Color(0xFFFF00FF),
+  Colors.green,
+  Colors.cyan,
+  Colors.yellow,
+];
