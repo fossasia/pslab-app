@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:light/light.dart';
 import 'package:flutter/foundation.dart';
@@ -22,7 +21,13 @@ class LuxMeterStateProvider extends ChangeNotifier {
   double _luxMax = 0;
   double _luxSum = 0;
   int _dataCount = 0;
-  void initializeSensors() {
+  bool _sensorAvailable = false;
+
+  Function(String)? onSensorError;
+
+  void initializeSensors({Function(String)? onError}) {
+    onSensorError = onError;
+
     try {
       _light = Light();
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
@@ -32,21 +37,39 @@ class LuxMeterStateProvider extends ChangeNotifier {
         _updateData();
         notifyListeners();
       });
+
+      Timer sensorTimeout = Timer(const Duration(seconds: 3), () {
+        if (!_sensorAvailable) {
+          _handleSensorError(lightSensorErrorLog);
+        }
+      });
+
       _lightSubscription = _light!.lightSensorStream.listen(
         (int luxValue) {
           _currentLux = luxValue.toDouble();
+          if (!_sensorAvailable) {
+            _sensorAvailable = true;
+            sensorTimeout.cancel();
+          }
           notifyListeners();
         },
         onError: (error) {
-          logger.e(
-            "$lightSensorError $error",
-          );
+          logger.e("$lightSensorError $error");
+          sensorTimeout.cancel();
+          _handleSensorError(error);
         },
-        cancelOnError: true,
+        cancelOnError: false,
       );
     } catch (e) {
       logger.e("$lightSensorInitialError $e");
+      _handleSensorError(e);
     }
+  }
+
+  void _handleSensorError(dynamic error) {
+    _sensorAvailable = false;
+    onSensorError?.call(noLightSensor);
+    logger.e("$lightSensorErrorDetails $error");
   }
 
   void disposeSensors() {
@@ -61,6 +84,8 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
+    if (!_sensorAvailable) return;
+
     final lux = _currentLux;
     final time = _currentTime;
     _luxData.add(lux);
