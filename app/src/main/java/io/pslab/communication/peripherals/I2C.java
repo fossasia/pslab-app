@@ -1,16 +1,15 @@
 package io.pslab.communication.peripherals;
 
-import android.os.SystemClock;
 import android.util.Log;
-
-import io.pslab.communication.CommandsProto;
-import io.pslab.communication.PacketHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import io.pslab.communication.CommandsProto;
+import io.pslab.communication.PacketHandler;
 
 /**
  * Created by viveksb007 on 28/3/17.
@@ -140,6 +139,16 @@ public class I2C {
         return val;
     }
 
+    /**
+     * Reads data from an I2C device.
+     *
+     * @param deviceAddress   address of the device to read from
+     * @param registerAddress address of the register to read from
+     * @param bytesToRead     number of bytes to read from the device
+     * @return bytes read from the device plus a status byte as the last element (so this will be
+     * {@code bytesToRead} plus one)
+     * @throws IOException if data cannot be read
+     */
     public ArrayList<Integer> readBulk(int deviceAddress, int registerAddress, int bytesToRead) throws IOException {
         packetHandler.sendByte(commandsProto.I2C_HEADER);
         packetHandler.sendByte(commandsProto.I2C_READ_BULK);

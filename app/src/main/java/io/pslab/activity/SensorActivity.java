@@ -3,6 +3,7 @@ package io.pslab.activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -192,7 +193,7 @@ public class SensorActivity extends GuideActivity {
                     // Perform I2C scan to detect connected sensors
                     detectedSensors = i2c.scan(null);
                 } catch (IOException | NullPointerException e) {
-                    e.printStackTrace();
+                    Log.w(TAG, "Error scanning for sensors", e);
                 }
             }
 
