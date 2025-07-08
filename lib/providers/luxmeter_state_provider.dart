@@ -5,6 +5,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'package:light/light.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/constants.dart';
+import 'package:pslab/providers/luxmeter_config_provider.dart';
 
 class LuxMeterStateProvider extends ChangeNotifier {
   double _currentLux = 0.0;
@@ -23,7 +24,22 @@ class LuxMeterStateProvider extends ChangeNotifier {
   int _dataCount = 0;
   bool _sensorAvailable = false;
 
+  LuxMeterConfigProvider? _configProvider;
+
   Function(String)? onSensorError;
+
+  void setConfigProvider(LuxMeterConfigProvider configProvider) {
+    _configProvider = configProvider;
+    _configProvider?.addListener(_onConfigChanged);
+  }
+
+  void _onConfigChanged() {
+    if (_configProvider != null) {
+      // TODO
+    }
+  }
+
+  LuxMeterConfigProvider? get configProvider => _configProvider;
 
   void initializeSensors({Function(String)? onError}) {
     onSensorError = onError;
@@ -79,6 +95,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _configProvider?.removeListener(_onConfigChanged);
     disposeSensors();
     super.dispose();
   }

@@ -45,6 +45,7 @@ Color snackBarContentColor = Colors.white;
 Color guideDrawerBackgroundColor = Colors.white;
 Color guideDrawerHeadingColor = Colors.black87;
 Color guideDrawerHighlightColor = Colors.black54;
+Color hintTextColor = Colors.grey;
 List<Color> knobLabelColors = [
   Color(0xFFD32F2F), // CH1
   Color(0xFFD32F2F), // CAP
