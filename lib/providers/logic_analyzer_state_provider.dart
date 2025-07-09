@@ -131,33 +131,34 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         break;
     }
 
-    switch (channelMode) {
-      case 1:
-        await captureOne(analysisChannelNames[0], analysisEdgesNames[0]);
-        maxY = singleChannelAxisMax;
-        minY = singleChannelAxisMin;
-        break;
-      case 2:
-        await captureTwo(analysisChannelNames, analysisEdgesNames);
-        maxY = twoChannelAxisMax;
-        minY = twoChannelAxisMin;
-        break;
-      case 3:
-        await captureThree(analysisChannelNames, analysisEdgesNames);
-        maxY = threeChannelAxisMax;
-        minY = threeChannelAxisMin;
-        break;
-      case 4:
-        await captureFour(analysisChannelNames, analysisEdgesNames);
-        maxY = fourChannelAxisMax;
-        minY = fourChannelAxisMin;
-        break;
-      default:
-        break;
+    if (_scienceLab.isConnected()) {
+      switch (channelMode) {
+        case 1:
+          await captureOne(analysisChannelNames[0], analysisEdgesNames[0]);
+          maxY = singleChannelAxisMax;
+          minY = singleChannelAxisMin;
+          break;
+        case 2:
+          await captureTwo(analysisChannelNames, analysisEdgesNames);
+          maxY = twoChannelAxisMax;
+          minY = twoChannelAxisMin;
+          break;
+        case 3:
+          await captureThree(analysisChannelNames, analysisEdgesNames);
+          maxY = threeChannelAxisMax;
+          minY = threeChannelAxisMin;
+          break;
+        case 4:
+          await captureFour(analysisChannelNames, analysisEdgesNames);
+          maxY = fourChannelAxisMax;
+          minY = fourChannelAxisMin;
+          break;
+        default:
+          break;
+      }
+      isData = true;
     }
-
     isProcessing = false;
-    isData = true;
     notifyListeners();
   }
 

@@ -701,14 +701,10 @@ class ScienceLab {
           modes[0] | (modes[1] << 4) | (modes[2] << 8) | (modes[3] << 12));
       mPacketHandler.sendByte(prescale);
       int triggerOptions = 0;
-      if (triggerChannel![0]) {
-        triggerOptions |= 4;
-      }
-      if (triggerChannel[1]) {
-        triggerOptions |= 8;
-      }
-      if (triggerChannel[2]) {
-        triggerOptions |= 16;
+      for (int i = 0; i < 3; i++) {
+        if (triggerChannel![i]) {
+          triggerOptions |= (4 << i);
+        }
       }
       if (triggerOptions == 0) {
         triggerOptions |= 4;
