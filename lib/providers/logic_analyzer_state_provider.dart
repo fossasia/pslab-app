@@ -329,7 +329,7 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
           break;
       }
 
-      _scienceLab.startTwoChannelLA(null, null, 67, null, null, null);
+      await _scienceLab.startTwoChannelLA(null, null, 67, null, null, null);
       await Future.delayed(const Duration(seconds: 1));
       LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
