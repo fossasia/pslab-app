@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/theme/colors.dart';
-
 import '../../constants.dart';
 
 class PlaybackSummaryDialog extends StatefulWidget {
@@ -25,10 +24,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final data = widget.getSummary(
-      selectedServo,
-      widget.maxAngle,
-    );
+    final data = widget.getSummary(selectedServo, widget.maxAngle);
 
     final List<FlSpot> pwmSpots = data['spots'];
     final double avgDuty = data['avgDuty'];
@@ -41,36 +37,39 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
 
     return Dialog(
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 280),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Expanded(child: Divider(color: primaryRed)),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    playBackSummary,
-                    style: TextStyle(
-                      color: primaryRed,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.75,
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(child: Divider(color: primaryRed)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      playBackSummary,
+                      style: TextStyle(
+                        color: primaryRed,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(child: Divider(color: primaryRed)),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                  Expanded(child: Divider(color: primaryRed)),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  Flexible(
                     flex: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,41 +78,32 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(2),
                             border: Border.all(color: Colors.grey.shade400),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                servo,
-                                style: TextStyle(
-                                    fontSize: 10, color: Colors.black),
-                              ),
-                              ButtonTheme(
-                                alignedDropdown: true,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                minWidth: 0,
-                                height: 24,
-                                child: DropdownButton<int>(
-                                  isDense: true,
-                                  isExpanded: false,
-                                  value: selectedServo,
-                                  dropdownColor: Colors.white,
-                                  underline: const SizedBox(),
+                              Text(servo,
                                   style: const TextStyle(
-                                      fontSize: 10, color: Colors.black),
-                                  items: List.generate(4, (i) {
-                                    return DropdownMenuItem(
-                                      value: i,
-                                      child: Text('$servo ${i + 1}',
-                                          style: const TextStyle(fontSize: 10)),
-                                    );
-                                  }),
-                                  onChanged: (v) =>
-                                      setState(() => selectedServo = v!),
-                                ),
+                                      fontSize: 10, color: Colors.black)),
+                              const SizedBox(width: 4),
+                              DropdownButton<int>(
+                                isDense: true,
+                                value: selectedServo,
+                                dropdownColor: Colors.white,
+                                underline: const SizedBox(),
+                                style: const TextStyle(
+                                    fontSize: 10, color: Colors.black),
+                                items: List.generate(4, (i) {
+                                  return DropdownMenuItem(
+                                    value: i,
+                                    child: Text('$servo ${i + 1}',
+                                        style: const TextStyle(fontSize: 10)),
+                                  );
+                                }),
+                                onChanged: (v) =>
+                                    setState(() => selectedServo = v!),
                               ),
                             ],
                           ),
@@ -164,18 +154,17 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Expanded(
+                  Flexible(
                     flex: 3,
                     child: Container(
-                      padding: const EdgeInsets.all(8),
-                      margin: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(2),
+                      margin: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Colors.black,
-                        borderRadius: BorderRadius.circular(0),
                         border: Border.all(color: Colors.white24),
                       ),
                       child: Column(
-                        mainAxisSize: MainAxisSize.max,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Padding(
                             padding: EdgeInsets.only(bottom: 6),
@@ -189,7 +178,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                             ),
                           ),
                           SizedBox(
-                            height: 130,
+                            height: MediaQuery.of(context).size.height * 0.30,
                             child: LayoutBuilder(
                               builder: (context, constraints) {
                                 final calculatedWidth = pwmSpots.isNotEmpty
@@ -240,7 +229,6 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                   return const SizedBox
                                                       .shrink();
                                                 }
-
                                                 for (final label
                                                     in labelPoints) {
                                                   if ((label['x'] - value)
@@ -257,7 +245,6 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                     );
                                                   }
                                                 }
-
                                                 return const SizedBox.shrink();
                                               },
                                             ),
@@ -271,9 +258,8 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                                   Text(
                                                 '${value.toInt()} ms',
                                                 style: const TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 9,
-                                                ),
+                                                    color: Colors.white70,
+                                                    fontSize: 9),
                                               ),
                                             ),
                                           ),
@@ -284,21 +270,15 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                               interval: 1,
                                               getTitlesWidget: (value, _) {
                                                 if (value == 1) {
-                                                  return Text(
-                                                    high,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 8,
-                                                    ),
-                                                  );
+                                                  return Text(high,
+                                                      style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 8));
                                                 } else if (value == 0) {
-                                                  return Text(
-                                                    low,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 8,
-                                                    ),
-                                                  );
+                                                  return Text(low,
+                                                      style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 8));
                                                 }
                                                 return const SizedBox.shrink();
                                               },
@@ -313,14 +293,11 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                           show: true,
                                           border: const Border(
                                             bottom: BorderSide(
-                                              color: Colors.white38,
-                                            ),
+                                                color: Colors.white38),
                                             left: BorderSide(
-                                              color: Colors.white38,
-                                            ),
+                                                color: Colors.white38),
                                             right: BorderSide(
-                                              color: Colors.white38,
-                                            ),
+                                                color: Colors.white38),
                                           ),
                                         ),
                                         lineBarsData: [
@@ -342,6 +319,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                               },
                             ),
                           ),
+                          const SizedBox(height: 4),
                           Text(
                             timeMillisecond,
                             style: TextStyle(
@@ -353,29 +331,29 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                         ],
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
-            ),
-            const SizedBox(height: 6),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  side: const BorderSide(color: Colors.black54),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  close,
-                  style: TextStyle(fontSize: 8, color: Colors.black),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(color: Colors.black54),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    close,
+                    style: TextStyle(fontSize: 8, color: Colors.black),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -393,23 +371,22 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 70,
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      width: MediaQuery.of(context).size.width * 0.09,
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         children: [
-          Icon(icon, color: primaryRed, size: 18),
+          Icon(icon, color: primaryRed, size: 14),
           const SizedBox(height: 2),
-          Text(label,
-              style: const TextStyle(fontSize: 10, color: Colors.black)),
+          Text(label, style: const TextStyle(fontSize: 7, color: Colors.black)),
           const SizedBox(height: 1),
           Text(value,
               style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 7,
                   fontWeight: FontWeight.bold,
                   color: Colors.black)),
         ],
