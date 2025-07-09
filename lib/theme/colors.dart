@@ -73,3 +73,6 @@ List<Color> logicAnalyzerChannelColors = [
   Colors.cyan,
   Colors.yellow,
 ];
+Color logicAnalyzerChannelsTextColor = Colors.black;
+Color logicAnalyzerTextColor = Colors.white;
+Color logicAnalyzerGraphTextColor = Colors.amber;

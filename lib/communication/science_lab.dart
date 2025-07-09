@@ -512,7 +512,7 @@ class ScienceLab {
   }
 
   Future<bool> fetchLAChannel(int channelNumber,
-      HashMap<String, int> initialStates, int channels) async {
+      LinkedHashMap<String, int> initialStates, int channels) async {
     DigitalChannel dChan = dChannels[channelNumber];
 
     LinkedHashMap<String, int> tempMap = LinkedHashMap<String, int>();
@@ -548,7 +548,7 @@ class ScienceLab {
   }
 
   Future<double> fetchLAChannelFrequency(
-      int channelNumber, HashMap<String, int> initialStates) async {
+      int channelNumber, LinkedHashMap<String, int> initialStates) async {
     double laChannelFrequency = 0;
     DigitalChannel dChan = dChannels[channelNumber];
 
@@ -578,7 +578,7 @@ class ScienceLab {
     if (count == maxSamples / 2 - 1) {
       laChannelFrequency = 0;
     } else if (yAxis.isNotEmpty &&
-        yAxis.length != maxSamples / 2 - 2 &&
+        yAxis.length != maxSamples / 2 - 1 &&
         laChannelFrequency != yAxis.length) {
       laChannelFrequency = yAxis.length.toDouble();
     }
@@ -587,7 +587,7 @@ class ScienceLab {
 
   Future<double> getFrequency(String? channel) async {
     channel ??= 'LA1';
-    HashMap<String, int>? data;
+    LinkedHashMap<String, int>? data;
     try {
       await startOneChannelLA(channel, 1, channel, 3);
       await Future.delayed(const Duration(milliseconds: 250));
@@ -627,7 +627,7 @@ class ScienceLab {
       dChannels[aqChannel].channelName = channel;
       if (trMode == 3 || trMode == 4 || trMode == 5) {
         dChannels[aqChannel].initialStateOverride = 2;
-      } else {
+      } else if (trMode == 2) {
         dChannels[aqChannel].initialStateOverride = 1;
       }
     } catch (e) {
@@ -735,7 +735,7 @@ class ScienceLab {
     }
   }
 
-  Future<HashMap<String, int>?> getLAInitialStates() async {
+  Future<LinkedHashMap<String, int>?> getLAInitialStates() async {
     try {
       mPacketHandler.sendByte(mCommandsProto.timing);
       mPacketHandler.sendByte(mCommandsProto.getInitialDigitalStates);
@@ -794,7 +794,7 @@ class ScienceLab {
         D = 0;
       }
 
-      HashMap<String, int> retData = HashMap<String, int>();
+      LinkedHashMap<String, int> retData = LinkedHashMap<String, int>();
       retData['A'] = A;
       retData['B'] = B;
       retData['C'] = C;

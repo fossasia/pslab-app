@@ -10,6 +10,14 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class LogicAnalyzerStateProvider extends ChangeNotifier {
+  static const singleChannelAxisMin = -0.1;
+  static const singleChannelAxisMax = 1.1;
+  static const double twoChannelAxisMin = -0.3;
+  static const double twoChannelAxisMax = 3.3;
+  static const double threeChannelAxisMin = -0.5;
+  static const double threeChannelAxisMax = 5.5;
+  static const double fourChannelAxisMin = -0.7;
+  static const double fourChannelAxisMax = 7.7;
   static const int everyEdge = 1;
   static const int disabled = 0;
   static const int everyFourthRisingEdge = 4;
@@ -41,6 +49,7 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
 
   late ScienceLab _scienceLab;
   late bool isProcessing;
+  late bool isData;
 
   LogicAnalyzerStateProvider() {
     channelMode = 1;
@@ -65,11 +74,12 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     edgeSelectSpinner3 = analysisOptions[0];
     edgeSelectSpinner4 = analysisOptions[0];
 
-    maxY = 1.1;
-    minY = -0.1;
+    maxY = singleChannelAxisMax;
+    minY = singleChannelAxisMin;
 
     _scienceLab = getIt<ScienceLab>();
     isProcessing = false;
+    isData = false;
   }
 
   Future<void> analyze() async {
@@ -124,29 +134,30 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     switch (channelMode) {
       case 1:
         await captureOne(analysisChannelNames[0], analysisEdgesNames[0]);
-        maxY = 1.1;
-        minY = -0.1;
+        maxY = singleChannelAxisMax;
+        minY = singleChannelAxisMin;
         break;
       case 2:
         await captureTwo(analysisChannelNames, analysisEdgesNames);
-        maxY = 3.3;
-        minY = -0.3;
+        maxY = twoChannelAxisMax;
+        minY = twoChannelAxisMin;
         break;
       case 3:
         await captureThree(analysisChannelNames, analysisEdgesNames);
-        maxY = 5.5;
-        minY = -0.5;
+        maxY = threeChannelAxisMax;
+        minY = threeChannelAxisMin;
         break;
       case 4:
         await captureFour(analysisChannelNames, analysisEdgesNames);
-        maxY = 7.7;
-        minY = -0.7;
+        maxY = fourChannelAxisMax;
+        minY = fourChannelAxisMin;
         break;
       default:
         break;
     }
 
     isProcessing = false;
+    isData = true;
     notifyListeners();
   }
 
@@ -164,16 +175,16 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
 
   void singleChannelEveryEdge(List<double> xData, List<double> yData) {
     tempInput = [];
-    List<int> temp = List.filled(xData.length, 0);
-    List<int> yAxis = List.filled(yData.length, 0);
+    List<double> temp = List.filled(xData.length, 0);
+    List<double> yAxis = List.filled(yData.length, 0);
 
     for (int i = 0; i < xData.length; i++) {
-      temp[i] = xData[i].toInt();
-      yAxis[i] = yData[i].toInt();
+      temp[i] = xData[i];
+      yAxis[i] = yData[i];
     }
 
-    List<int> xaxis = [];
-    List<int> yaxis = [];
+    List<double> xaxis = [];
+    List<double> yaxis = [];
     xaxis.add(temp[0]);
     yaxis.add(yAxis[0]);
 
@@ -186,30 +197,23 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
 
     if (yaxis.length > 1) {
       if (yaxis[1] == yaxis[0]) {
-        tempInput.add(FlSpot(
-            xaxis[0].toDouble(), (yaxis[0] + 2 * currentChannel).toDouble()));
+        tempInput.add(FlSpot(xaxis[0], (yaxis[0] + 2 * currentChannel)));
       } else {
-        tempInput.add(FlSpot(
-            xaxis[0].toDouble(), (yaxis[0] + 2 * currentChannel).toDouble()));
-        tempInput.add(FlSpot(
-            xaxis[0].toDouble(), (yaxis[1] + 2 * currentChannel).toDouble()));
+        tempInput.add(FlSpot(xaxis[0], (yaxis[0] + 2 * currentChannel)));
+        tempInput.add(FlSpot(xaxis[0], (yaxis[1] + 2 * currentChannel)));
       }
       for (int i = 1; i < xaxis.length - 1; i++) {
         if (yaxis[i] == yaxis[i + 1]) {
-          tempInput.add(FlSpot(
-              xaxis[i].toDouble(), (yaxis[i] + 2 * currentChannel).toDouble()));
+          tempInput.add(FlSpot(xaxis[i], (yaxis[i] + 2 * currentChannel)));
         } else {
-          tempInput.add(FlSpot(
-              xaxis[i].toDouble(), (yaxis[i] + 2 * currentChannel).toDouble()));
-          tempInput.add(FlSpot(xaxis[i].toDouble(),
-              (yaxis[i + 1] + 2 * currentChannel).toDouble()));
+          tempInput.add(FlSpot(xaxis[i], (yaxis[i] + 2 * currentChannel)));
+          tempInput.add(FlSpot(xaxis[i], (yaxis[i + 1] + 2 * currentChannel)));
         }
       }
-      tempInput.add(FlSpot(xaxis[xaxis.length - 1].toDouble(),
-          (yaxis[yaxis.length - 1] + 2 * currentChannel).toDouble()));
+      tempInput.add(FlSpot(xaxis[xaxis.length - 1],
+          (yaxis[xaxis.length - 1] + 2 * currentChannel)));
     } else {
-      tempInput.add(FlSpot(
-          xaxis[0].toDouble(), (yaxis[0] + 2 * currentChannel).toDouble()));
+      tempInput.add(FlSpot(xaxis[0], (yaxis[0] + 2 * currentChannel)));
     }
 
     setDataSet();
@@ -217,19 +221,19 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
 
   void singleChannelFourthRisingEdge(List<double> xData) {
     tempInput = [];
-    int xaxis = xData[0].toInt();
+    double xaxis = xData[0];
     tempInput
         .add(FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()));
     tempInput
         .add(FlSpot(xaxis.toDouble(), (1 + 2 * currentChannel).toDouble()));
     tempInput
         .add(FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()));
-    int check = xaxis;
+    double check = xaxis;
     int count = 0;
 
     if (xData.length > 1) {
       for (int i = 1; i < xData.length; i++) {
-        xaxis = xData[i].toInt();
+        xaxis = xData[i];
         if (xaxis != check) {
           if (count == 3) {
             tempInput.add(
@@ -284,8 +288,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     tempInput = [];
 
     for (int i = 0; i < xData.length; i++) {
-      int xaxis = xData[i].toInt();
-      int yaxis = yData[i].toInt();
+      double xaxis = xData[i];
+      double yaxis = yData[i];
       tempInput.add(
           FlSpot(xaxis.toDouble(), (yaxis + 2 * currentChannel).toDouble()));
     }
@@ -325,12 +329,11 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
           break;
       }
 
-      _scienceLab.startOneChannelLA(
-          channelName, digitalChannel.mode, channelName, 3);
+      _scienceLab.startTwoChannelLA(null, null, 67, null, null, null);
       await Future.delayed(const Duration(seconds: 1));
-      HashMap<String, int>? data = await _scienceLab.getLAInitialStates();
+      LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
-      holder = await _scienceLab.fetchLAChannel(channelNumber, data!, 3);
+      holder = await _scienceLab.fetchLAChannel(channelNumber, data!, 1);
     } catch (e) {
       logger.e("Error in captureOne: $e");
       holder = false;
@@ -421,7 +424,7 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       await _scienceLab.startTwoChannelLA(
           channelNames, modes, 67, null, null, null);
       await Future.delayed(const Duration(seconds: 1));
-      HashMap<String, int>? data = await _scienceLab.getLAInitialStates();
+      LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
       holder1 = await _scienceLab.fetchLAChannel(channelNumber1, data!, 2);
       await Future.delayed(const Duration(seconds: 1));
@@ -525,7 +528,7 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       await _scienceLab.startFourChannelLA(
           null, null, modes, null, triggerChannel);
       await Future.delayed(const Duration(seconds: 1));
-      HashMap<String, int>? data = await _scienceLab.getLAInitialStates();
+      LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
       holder1 = await _scienceLab.fetchLAChannel(channelNumber1, data!, 3);
       await Future.delayed(const Duration(seconds: 1));
@@ -639,7 +642,7 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       await _scienceLab.startFourChannelLA(
           null, null, modes, null, triggerChannel);
       await Future.delayed(const Duration(seconds: 1));
-      HashMap<String, int>? data = await _scienceLab.getLAInitialStates();
+      LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
       holder1 = await _scienceLab.fetchLAChannel(channelNumber1, data!, 4);
       await Future.delayed(const Duration(seconds: 1));
@@ -700,7 +703,6 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         (index) {
           return LineChartBarData(
             spots: dataSets[index],
-            isCurved: true,
             color: logicAnalyzerChannelColors[
                 index % logicAnalyzerChannelColors.length],
             barWidth: 2,

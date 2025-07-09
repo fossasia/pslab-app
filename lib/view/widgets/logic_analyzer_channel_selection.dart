@@ -36,7 +36,7 @@ class _LogicAnalyzerChannelSelectionState
                 margin: EdgeInsets.only(top: 10),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: logicAnalyzerTextColor,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: CarouselSlider(
@@ -45,28 +45,28 @@ class _LogicAnalyzerChannelSelectionState
                       noOfChannelsOne,
                       style: TextStyle(
                         fontSize: 25,
-                        color: Colors.black,
+                        color: logicAnalyzerChannelsTextColor,
                       ),
                     ),
                     Text(
                       noOfChannelsTwo,
                       style: TextStyle(
                         fontSize: 25,
-                        color: Colors.black,
+                        color: logicAnalyzerChannelsTextColor,
                       ),
                     ),
                     Text(
                       noOfChannelsThree,
                       style: TextStyle(
                         fontSize: 25,
-                        color: Colors.black,
+                        color: logicAnalyzerChannelsTextColor,
                       ),
                     ),
                     Text(
                       noOfChannelsFour,
                       style: TextStyle(
                         fontSize: 25,
-                        color: Colors.black,
+                        color: logicAnalyzerChannelsTextColor,
                       ),
                     ),
                   ],
@@ -110,9 +110,9 @@ class _LogicAnalyzerChannelSelectionState
                                 value: provider.channelSelectSpinner1,
                                 isExpanded: true,
                                 underline: Container(),
-                                iconEnabledColor: Colors.white,
+                                iconEnabledColor: logicAnalyzerTextColor,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: logicAnalyzerTextColor,
                                   fontSize: 14,
                                 ),
                                 items: channelNames.map(
@@ -133,7 +133,7 @@ class _LogicAnalyzerChannelSelectionState
                               ),
                               Divider(
                                 height: 1,
-                                color: Colors.white,
+                                color: logicAnalyzerTextColor,
                               ),
                               DropdownButton(
                                 dropdownColor: primaryRed,
@@ -143,9 +143,9 @@ class _LogicAnalyzerChannelSelectionState
                                 value: provider.edgeSelectSpinner1,
                                 isExpanded: true,
                                 underline: Container(),
-                                iconEnabledColor: Colors.white,
+                                iconEnabledColor: logicAnalyzerTextColor,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: logicAnalyzerTextColor,
                                   fontSize: 14,
                                 ),
                                 items: analysisOptions.map(
@@ -188,9 +188,9 @@ class _LogicAnalyzerChannelSelectionState
                                       value: provider.channelSelectSpinner2,
                                       isExpanded: true,
                                       underline: Container(),
-                                      iconEnabledColor: Colors.white,
+                                      iconEnabledColor: logicAnalyzerTextColor,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
                                       items: channelNames.map(
@@ -212,7 +212,7 @@ class _LogicAnalyzerChannelSelectionState
                                     ),
                                     Divider(
                                       height: 1,
-                                      color: Colors.white,
+                                      color: logicAnalyzerTextColor,
                                     ),
                                     DropdownButton(
                                       dropdownColor: primaryRed,
@@ -222,9 +222,9 @@ class _LogicAnalyzerChannelSelectionState
                                       value: provider.edgeSelectSpinner2,
                                       isExpanded: true,
                                       underline: Container(),
-                                      iconEnabledColor: Colors.white,
+                                      iconEnabledColor: logicAnalyzerTextColor,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
                                       items: analysisOptions.map(
@@ -269,9 +269,9 @@ class _LogicAnalyzerChannelSelectionState
                                       value: provider.channelSelectSpinner3,
                                       isExpanded: true,
                                       underline: Container(),
-                                      iconEnabledColor: Colors.white,
+                                      iconEnabledColor: logicAnalyzerTextColor,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
                                       items: channelNames.map(
@@ -293,7 +293,7 @@ class _LogicAnalyzerChannelSelectionState
                                     ),
                                     Divider(
                                       height: 1,
-                                      color: Colors.white,
+                                      color: logicAnalyzerTextColor,
                                     ),
                                     DropdownButton(
                                       dropdownColor: primaryRed,
@@ -303,9 +303,9 @@ class _LogicAnalyzerChannelSelectionState
                                       value: provider.edgeSelectSpinner3,
                                       isExpanded: true,
                                       underline: Container(),
-                                      iconEnabledColor: Colors.white,
+                                      iconEnabledColor: logicAnalyzerTextColor,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
                                       items: analysisOptions.map(
@@ -350,9 +350,9 @@ class _LogicAnalyzerChannelSelectionState
                                       value: provider.channelSelectSpinner4,
                                       isExpanded: true,
                                       underline: Container(),
-                                      iconEnabledColor: Colors.white,
+                                      iconEnabledColor: logicAnalyzerTextColor,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
                                       items: channelNames.map(
@@ -374,7 +374,7 @@ class _LogicAnalyzerChannelSelectionState
                                     ),
                                     Divider(
                                       height: 1,
-                                      color: Colors.white,
+                                      color: logicAnalyzerTextColor,
                                     ),
                                     DropdownButton(
                                       dropdownColor: primaryRed,
@@ -384,9 +384,9 @@ class _LogicAnalyzerChannelSelectionState
                                       value: provider.edgeSelectSpinner4,
                                       isExpanded: true,
                                       underline: Container(),
-                                      iconEnabledColor: Colors.white,
+                                      iconEnabledColor: logicAnalyzerTextColor,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
                                       items: analysisOptions.map(
@@ -418,7 +418,7 @@ class _LogicAnalyzerChannelSelectionState
               TextButton(
                 style: TextButton.styleFrom(
                   fixedSize: const Size(200, 40),
-                  backgroundColor: Colors.white,
+                  backgroundColor: logicAnalyzerTextColor,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 5,

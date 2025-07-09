@@ -123,7 +123,8 @@ String pslabUrl = 'https://pslab.io';
 
 String logicAnalyzer = 'Logic Analyzer';
 String channelSelection = 'Channel Selection';
-String logicAnalyzerAxisTitle = 'Time (ms)';
+String logicAnalyzerAxisTitle = 'Time (\u00B5s)';
+String noChartDataAvailable = 'No chart data available';
 String noOfChannelsOne = '1';
 String noOfChannelsTwo = '2';
 String noOfChannelsThree = '3';
