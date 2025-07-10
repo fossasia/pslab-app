@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
-import 'package:pslab/providers/Soundmeter_config_provider.dart';
+import 'package:pslab/providers/soundmeter_config_provider.dart';
 import 'package:pslab/view/widgets/config_widgets.dart';
 import '../theme/colors.dart';
 
@@ -13,23 +13,13 @@ class SoundMeterConfigScreen extends StatefulWidget {
 }
 
 class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
-  final TextEditingController _updatePeriodController = TextEditingController();
-  final TextEditingController _highLimitController = TextEditingController();
-  final TextEditingController _sensorGainController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<SoundMeterConfigProvider>(context, listen: false);
-    });
   }
 
   @override
   void dispose() {
-    _updatePeriodController.dispose();
-    _highLimitController.dispose();
-    _sensorGainController.dispose();
     super.dispose();
   }
 
@@ -62,7 +52,7 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
         }),
         backgroundColor: primaryRed,
         title: Text(
-          'SoundmeterConfigurations',
+          soundmeterConfig,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,

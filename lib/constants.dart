@@ -394,3 +394,4 @@ String baroMeterBulletPoint3 =
     'The above pin configuration has to be same except for the pin GND. GND is meant for Ground and any of the PSLab device GND pins can be used since they are common.';
 String baroMeterBulletPoint4 =
     'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';
+String soundmeterConfig = 'Soundmeter Configurations';

@@ -7,7 +7,7 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/soundmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../providers/Soundmeter_config_provider.dart';
+import '../providers/soundmeter_config_provider.dart';
 import '../theme/colors.dart';
 
 class SoundMeterScreen extends StatefulWidget {
@@ -61,7 +61,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
         ),
         PopupMenuItem(
           value: 'sound_meter_config',
-          child: Text("showSoundmeterConfig"),
+          child: Text(soundmeterConfig),
         ),
       ],
       elevation: 8,

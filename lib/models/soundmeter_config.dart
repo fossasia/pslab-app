@@ -4,10 +4,6 @@ class SoundMeterConfig {
     this.includeLocationData = true,
   });
   SoundMeterConfig copyWith({
-    int? updatePeriod,
-    int? highLimit,
-    String? activeSensor,
-    int? sensorGain,
     bool? includeLocationData,
   }) {
     return SoundMeterConfig(
