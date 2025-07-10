@@ -105,7 +105,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: updatePeriodHint,
+                      hint: luxmeterUpdatePeriodHint,
                     ),
                     ConfigInputItem(
                       title: highLimit,
@@ -128,7 +128,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: highLimitHint,
+                      hint: luxmeterHighLimitHint,
                     ),
                     ConfigDropdownItem(
                       title: activeSensor,

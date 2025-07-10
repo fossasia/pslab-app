@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
-import 'package:pslab/providers/barometer_config_provider.dart';
+import 'package:pslab/providers/gyroscope_config_provider.dart';
 import 'package:pslab/view/widgets/config_widgets.dart';
 
 import '../theme/colors.dart';
 
-class BarometerConfigScreen extends StatefulWidget {
-  const BarometerConfigScreen({super.key});
+class GyroscopeConfigScreen extends StatefulWidget {
+  const GyroscopeConfigScreen({super.key});
 
   @override
-  State<BarometerConfigScreen> createState() => _BarometerConfigScreenState();
+  State<GyroscopeConfigScreen> createState() => _GyroscopeConfigScreenState();
 }
 
-class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
+class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
   final TextEditingController _updatePeriodController = TextEditingController();
   final TextEditingController _highLimitController = TextEditingController();
   final TextEditingController _sensorGainController = TextEditingController();
@@ -24,9 +24,10 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
-          Provider.of<BarometerConfigProvider>(context, listen: false);
+          Provider.of<GyroscopeConfigProvider>(context, listen: false);
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
+      _sensorGainController.text = provider.config.sensorGain.toString();
     });
   }
 
@@ -49,12 +50,12 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
           return IconButton(
             onPressed: () {
               if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/barometer') {
-                Navigator.popUntil(context, ModalRoute.withName('/barometer'));
+                  ModalRoute.of(context)?.settings.name == '/gyroscope') {
+                Navigator.popUntil(context, ModalRoute.withName('/gyroscope'));
               } else {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  '/barometer',
+                  '/gyroscope',
                   (route) => route.isFirst,
                 );
               }
@@ -67,7 +68,7 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
         }),
         backgroundColor: primaryRed,
         title: Text(
-          barometerConfig,
+          gyroscopeConfigurations,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,
@@ -77,7 +78,7 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Consumer<BarometerConfigProvider>(
+          child: Consumer<GyroscopeConfigProvider>(
             builder: (context, provider, child) {
               return SingleChildScrollView(
                 child: Column(
@@ -108,15 +109,14 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
                     ),
                     ConfigInputItem(
                       title: highLimit,
-                      value: '${provider.config.highLimit} $atm',
+                      value: '${provider.config.highLimit} $gyroscopeAxisLabel',
                       controller: _highLimitController,
                       onChanged: (value) {
-                        final doubleValue = double.tryParse(value);
-                        if (doubleValue != null &&
-                            doubleValue >= 0 &&
-                            doubleValue <= 1.10 &&
-                            doubleValue.toString().length <= 4) {
-                          provider.updateHighLimit(doubleValue);
+                        final intValue = int.tryParse(value);
+                        if (intValue != null &&
+                            intValue >= 0 &&
+                            intValue <= 1000) {
+                          provider.updateHighLimit(intValue);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -128,20 +128,19 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
                           );
                         }
                       },
-                      hint: barometerHighLimitHint,
+                      hint: gyroscopeHighLimitHint,
                     ),
-                    ConfigDropdownItem(
-                      title: activeSensor,
-                      selectedValue: provider.config.activeSensor,
-                      options: [
-                        ConfigOption(
-                            value: 'In-built Sensor',
-                            displayName: inBuiltSensor),
-                        ConfigOption(value: 'BMP180', displayName: 'BMP180'),
-                      ],
+                    ConfigInputItem(
+                      title: sensorGain,
+                      value: provider.config.sensorGain.toString(),
+                      controller: _sensorGainController,
                       onChanged: (value) {
-                        provider.updateActiveSensor(value);
+                        final intValue = int.tryParse(value);
+                        if (intValue != null) {
+                          provider.updateSensorGain(intValue);
+                        }
                       },
+                      hint: sensorGainHint,
                     ),
                     ConfigCheckboxItem(
                       title: locationData,

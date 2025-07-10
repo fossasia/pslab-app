@@ -371,10 +371,10 @@ String shopError = 'Could not open the shop link';
 String showLuxmeterConfig = 'Lux Meter Configurations';
 String luxmeterConfigurations = 'Lux Meter Configurations';
 String updatePeriod = 'Update Period';
-String updatePeriodHint =
+String luxmeterUpdatePeriodHint =
     'Please provide time interval at which data will be updated (100 ms to 1000 ms)';
 String highLimit = 'High Limit';
-String highLimitHint =
+String luxmeterHighLimitHint =
     'Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)';
 String sensorGain = 'Sensor Gain';
 String sensorGainHint = 'Please set gain of the sensor';
@@ -398,3 +398,8 @@ String soundmeterConfig = 'Soundmeter Configurations';
 String barometerConfig = 'Barometer Configurations';
 String baroUpdatePeriodHint =
     'Please provide time interval at which data will be updated (100 ms to 2000 ms)';
+String barometerHighLimitHint =
+    'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)';
+String gyroscopeConfigurations = 'Gyroscope Configurations';
+String gyroscopeHighLimitHint =
+    'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)';
