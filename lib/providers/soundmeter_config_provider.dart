@@ -11,7 +11,7 @@ class SoundMeterConfigProvider extends ChangeNotifier {
   }
   Future<void> _loadConfigFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('Sound_config');
+    final jsonString = prefs.getString('sound_config');
     if (jsonString != null) {
       final Map<String, dynamic> jsonMap = json.decode(jsonString);
       _config = SoundMeterConfig.fromJson(jsonMap);
@@ -21,7 +21,7 @@ class SoundMeterConfigProvider extends ChangeNotifier {
 
   Future<void> _saveConfigToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('Sound_config', json.encode(_config.toJson()));
+    await prefs.setString('sound_config', json.encode(_config.toJson()));
   }
 
   void updateConfig(SoundMeterConfig newConfig) {

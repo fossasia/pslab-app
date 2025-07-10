@@ -14,7 +14,7 @@ class GyroscopeConfigProvider extends ChangeNotifier {
 
   Future<void> _loadConfigFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('gyro_config');
+    final jsonString = prefs.getString('gyroscope_config');
     if (jsonString != null) {
       final Map<String, dynamic> jsonMap = json.decode(jsonString);
       _config = GyroscopeConfig.fromJson(jsonMap);
@@ -24,7 +24,7 @@ class GyroscopeConfigProvider extends ChangeNotifier {
 
   Future<void> _saveConfigToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('gyro_config', json.encode(_config.toJson()));
+    await prefs.setString('gyroscope_config', json.encode(_config.toJson()));
   }
 
   void updateConfig(GyroscopeConfig newConfig) {

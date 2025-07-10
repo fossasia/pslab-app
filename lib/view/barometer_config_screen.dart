@@ -112,10 +112,11 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
                       controller: _highLimitController,
                       onChanged: (value) {
                         final doubleValue = double.tryParse(value);
+                        final regex = RegExp(r'^\d+(\.\d{1,2})?$');
                         if (doubleValue != null &&
                             doubleValue >= 0 &&
                             doubleValue <= 1.10 &&
-                            doubleValue.toString().length <= 4) {
+                            regex.hasMatch(value)) {
                           provider.updateHighLimit(doubleValue);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
