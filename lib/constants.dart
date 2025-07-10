@@ -403,3 +403,8 @@ String barometerHighLimitHint =
 String gyroscopeConfigurations = 'Gyroscope Configurations';
 String gyroscopeHighLimitHint =
     'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)';
+String accelerometerConfigurations = 'Accelerometer Configurations';
+String accelerometerUpdatePeriodHint =
+    'Please provide time interval at which data will be updated';
+String accelerometerHighLimitHint =
+    'Please provide the maximum limit of lux value to be recorded';
