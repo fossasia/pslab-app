@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/accelerometer_screen.dart';
@@ -47,6 +48,8 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       initialRoute: '/',
       routes: {
         '/': (context) => const InstrumentsScreen(),
