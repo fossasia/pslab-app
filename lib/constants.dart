@@ -395,3 +395,6 @@ String baroMeterBulletPoint3 =
 String baroMeterBulletPoint4 =
     'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';
 String soundmeterConfig = 'Soundmeter Configurations';
+String barometerConfig = 'Barometer Configurations';
+String baroUpdatePeriodHint =
+    'Please provide time interval at which data will be updated (100 ms to 2000 ms)';

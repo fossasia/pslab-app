@@ -39,7 +39,7 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
               } else {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  '/Soundmeter',
+                  '/soundmeter',
                   (route) => route.isFirst,
                 );
               }
