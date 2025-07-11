@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/board_state_provider.dart';
@@ -299,7 +298,8 @@ class _NavDrawerState extends State<NavDrawer> {
                   ),
                 ),
                 onTap: () async {
-                  final launched = await launchUrl(Uri.parse(shopLink));
+                  final launched =
+                      await launchUrl(Uri.parse(appLocalizations.shopLink));
                   if (!launched && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(appLocalizations.shopError)),

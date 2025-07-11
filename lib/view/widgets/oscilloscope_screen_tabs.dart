@@ -5,7 +5,6 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
-
 class OscilloscopeScreenTabs extends StatefulWidget {
   final String channelParametersImage = 'assets/images/channel_parameters.gif';
   final String dataAnalysisImage = 'assets/images/data_analysis.png';

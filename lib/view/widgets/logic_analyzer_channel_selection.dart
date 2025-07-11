@@ -33,6 +33,7 @@ class _LogicAnalyzerChannelSelectionState
       appLocalizations.analysisOptionEveryFallingEdge,
       appLocalizations.analysisOptionEveryRisingEdge,
       appLocalizations.analysisOptionEveryFourthRisingEdge,
+      appLocalizations.analysisOptionDisabled,
     ];
   }
 

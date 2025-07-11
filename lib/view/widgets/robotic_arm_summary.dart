@@ -4,7 +4,6 @@ import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
-
 class PlaybackSummaryDialog extends StatefulWidget {
   final int frequency;
   final int maxAngle;

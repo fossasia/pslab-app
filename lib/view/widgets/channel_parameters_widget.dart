@@ -26,6 +26,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
       appLocalizations.yAxisRange4V,
       appLocalizations.yAxisRange3V,
       appLocalizations.yAxisRange2V,
+      appLocalizations.yAxisRange1_5V,
       appLocalizations.yAxisRange1V,
       appLocalizations.yAxisRange500mV,
       appLocalizations.yAxisRange160V,

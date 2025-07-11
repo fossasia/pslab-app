@@ -18,4 +18,3 @@ List<String> instrumentIcons = [
   'assets/icons/tile_icon_gas.png',
   'assets/icons/tile_icon_gas.png',
 ];
-String shopLink = "https://pslab.io/shop/";

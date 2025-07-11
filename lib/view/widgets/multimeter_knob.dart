@@ -189,6 +189,7 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
       appLocalizations.knobMarkerCap,
       appLocalizations.knobMarkerVol,
       appLocalizations.knobMarkerRes,
+      appLocalizations.knobMarkerCap,
       appLocalizations.knobMarkerLa1,
       appLocalizations.knobMarkerLa2,
       appLocalizations.knobMarkerLa3,
