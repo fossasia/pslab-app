@@ -1,7 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/logic_analyzer_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
@@ -14,6 +15,27 @@ class LogicAnalyzerChannelSelection extends StatefulWidget {
 
 class _LogicAnalyzerChannelSelectionState
     extends State<LogicAnalyzerChannelSelection> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late List<String> channelNames;
+  late List<String> analysisOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    channelNames = [
+      appLocalizations.channelLA1,
+      appLocalizations.channelLA2,
+      appLocalizations.channelLA3,
+      appLocalizations.channelLA4,
+    ];
+    analysisOptions = [
+      appLocalizations.analysisOptionEveryEdge,
+      appLocalizations.analysisOptionEveryFallingEdge,
+      appLocalizations.analysisOptionEveryRisingEdge,
+      appLocalizations.analysisOptionEveryFourthRisingEdge,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LogicAnalyzerStateProvider>(
@@ -25,7 +47,7 @@ class _LogicAnalyzerChannelSelectionState
           child: Column(
             children: [
               Text(
-                channelSelection,
+                appLocalizations.channelSelection,
                 style: TextStyle(
                   fontSize: 14,
                   color: chartTextColor,
@@ -42,28 +64,28 @@ class _LogicAnalyzerChannelSelectionState
                 child: CarouselSlider(
                   items: [
                     Text(
-                      noOfChannelsOne,
+                      appLocalizations.noOfChannelsOne,
                       style: TextStyle(
                         fontSize: 25,
                         color: logicAnalyzerChannelsTextColor,
                       ),
                     ),
                     Text(
-                      noOfChannelsTwo,
+                      appLocalizations.noOfChannelsTwo,
                       style: TextStyle(
                         fontSize: 25,
                         color: logicAnalyzerChannelsTextColor,
                       ),
                     ),
                     Text(
-                      noOfChannelsThree,
+                      appLocalizations.noOfChannelsThree,
                       style: TextStyle(
                         fontSize: 25,
                         color: logicAnalyzerChannelsTextColor,
                       ),
                     ),
                     Text(
-                      noOfChannelsFour,
+                      appLocalizations.noOfChannelsFour,
                       style: TextStyle(
                         fontSize: 25,
                         color: logicAnalyzerChannelsTextColor,
@@ -428,7 +450,7 @@ class _LogicAnalyzerChannelSelectionState
                   ),
                 ),
                 child: Text(
-                  analyze,
+                  appLocalizations.analyze,
                   style: TextStyle(
                     color: primaryRed,
                     fontWeight: FontWeight.bold,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 import '../../theme/colors.dart';
@@ -13,6 +14,20 @@ class XYPlotWidget extends StatefulWidget {
 }
 
 class _XYPlotState extends State<XYPlotWidget> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late List<String> channelEntries;
+
+  @override
+  void initState() {
+    super.initState();
+    channelEntries = [
+      appLocalizations.channel1,
+      appLocalizations.channel2,
+      appLocalizations.channel3,
+      appLocalizations.mic,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
@@ -47,7 +62,7 @@ class _XYPlotState extends State<XYPlotWidget> {
                       },
                     ),
                     Text(
-                      enablePlot,
+                      appLocalizations.enablePlot,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
@@ -125,7 +140,7 @@ class _XYPlotState extends State<XYPlotWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
               child: Text(
-                xyPlot,
+                appLocalizations.xyPlot,
                 style: TextStyle(
                   color: oscilloscopeOptionTitleColor,
                   fontStyle: FontStyle.normal,

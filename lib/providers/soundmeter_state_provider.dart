@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/audio_jack.dart';
 
 class SoundMeterStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   double _currentDb = 0.0;
   Timer? _timeTimer;
   Timer? _audioTimer;
@@ -47,7 +49,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
         }
       });
     } catch (e) {
-      logger.e("$soundMeterInitialError $e");
+      logger.e("${appLocalizations.soundMeterInitialError} $e");
     }
   }
 

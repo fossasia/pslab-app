@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class TimelineScrollView extends StatelessWidget {
@@ -23,6 +24,7 @@ class TimelineScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
     final screenWidth = MediaQuery.of(context).size.width;
     final boxWidth = (screenWidth / 6) - 2;
     final timeLineHeight = (screenHeight - screenHeight / 2.3);
@@ -69,7 +71,7 @@ class TimelineScrollView extends StatelessWidget {
                                     left: 1,
                                     child: Text(
                                       timelineDegrees[index][boxIndex] != null
-                                          ? '${timelineDegrees[index][boxIndex]!.toStringAsFixed(0)}$degreeSymbol'
+                                          ? '${timelineDegrees[index][boxIndex]!.toStringAsFixed(0)}${appLocalizations.degreeSymbol}'
                                           : '',
                                       style: const TextStyle(
                                         color: Colors.white,

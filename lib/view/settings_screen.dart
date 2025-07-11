@@ -3,7 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -13,10 +14,20 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool isTxtFormatSelected =
-      (GetIt.instance.get<BoardStateProvider>().exportFormat == txtFormat);
-  bool isCsvFormatSelected =
-      (GetIt.instance.get<BoardStateProvider>().exportFormat == csvFormat);
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  bool isTxtFormatSelected = false;
+  bool isCsvFormatSelected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isTxtFormatSelected =
+        (GetIt.instance.get<BoardStateProvider>().exportFormat ==
+            appLocalizations.txtFormat);
+    isCsvFormatSelected =
+        (GetIt.instance.get<BoardStateProvider>().exportFormat ==
+            appLocalizations.csvFormat);
+  }
 
   void _showExportFormatDialog() {
     showDialog(
@@ -27,12 +38,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             borderRadius: BorderRadius.zero,
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
-          title: Text(export,
+          title: Text(appLocalizations.export,
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           children: [
             RadioListTile<bool>(
-              title: Text(txtFormat),
+              title: Text(appLocalizations.txtFormat),
               value: true,
               groupValue: isTxtFormatSelected,
               activeColor: primaryRed,
@@ -42,14 +53,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     isTxtFormatSelected = true;
                     isCsvFormatSelected = false;
                     GetIt.instance.get<BoardStateProvider>().exportFormat =
-                        txtFormat;
+                        appLocalizations.txtFormat;
                     Navigator.of(context).pop();
                   },
                 );
               },
             ),
             RadioListTile<bool>(
-              title: Text(csvFormat),
+              title: Text(appLocalizations.csvFormat),
               value: true,
               groupValue: isCsvFormatSelected,
               activeColor: primaryRed,
@@ -59,7 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     isTxtFormatSelected = false;
                     isCsvFormatSelected = true;
                     GetIt.instance.get<BoardStateProvider>().exportFormat =
-                        csvFormat;
+                        appLocalizations.csvFormat;
                     Navigator.of(context).pop();
                   },
                 );
@@ -74,7 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 20, bottom: 5),
                   child: Text(
-                    cancel,
+                    appLocalizations.cancel,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -89,15 +100,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
-      title: settings,
+      title: appLocalizations.settings,
       index: 4,
       body: SafeArea(
         child: ListView(
           children: [
             const SizedBox(height: 10),
             CheckboxListTile(
-              title: Text(start),
-              subtitle: Text(autoStartText),
+              title: Text(appLocalizations.autoStart),
+              subtitle: Text(appLocalizations.autoStartText),
               value: GetIt.instance.get<BoardStateProvider>().autoStart,
               onChanged: (bool? value) {
                 setState(() {
@@ -108,8 +119,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 10),
             ListTile(
-              title: Text(export),
-              subtitle: Text(currentFormat +
+              title: Text(appLocalizations.export),
+              subtitle: Text(appLocalizations.currentFormat +
                   GetIt.instance.get<BoardStateProvider>().exportFormat),
               onTap: () {
                 _showExportFormatDialog();

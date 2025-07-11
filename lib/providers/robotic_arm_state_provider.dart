@@ -3,12 +3,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pslab/communication/science_lab.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/providers/locator.dart';
 import '../others/science_lab_common.dart';
 import 'package:vibration/vibration.dart';
 
 class RoboticArmStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final List<double> servoValues = [0, 0, 0, 0];
   List<List<double?>> timelineDegrees = [];
   List<List<double?>> pwmData = [];
@@ -23,9 +25,9 @@ class RoboticArmStateProvider extends ChangeNotifier {
   Timer? _timelineTimer;
   final ScrollController timelineScrollController = ScrollController();
 
-  String _selectedFrequency = frequency50Hz;
-  String _selectedMaxAngle = angle180;
-  String _selectedDuration = duration1Min;
+  late String _selectedFrequency;
+  late String _selectedMaxAngle;
+  late String _selectedDuration;
 
   int get maxAngle => int.tryParse(_selectedMaxAngle) ?? 180;
 
@@ -37,12 +39,16 @@ class RoboticArmStateProvider extends ChangeNotifier {
 
   bool get showControlBox => _showControlBox;
 
-  int get totalTimelineItems => _selectedDuration == duration2Min ? 120 : 60;
+  int get totalTimelineItems =>
+      _selectedDuration == appLocalizations.duration2Min ? 120 : 60;
 
   VoidCallback? onPlaybackEnd;
 
   RoboticArmStateProvider() {
     _initTimelineDegrees();
+    _selectedFrequency = appLocalizations.frequency50Hz;
+    _selectedMaxAngle = appLocalizations.angle180;
+    _selectedDuration = appLocalizations.duration1Min;
   }
 
   void _initTimelineDegrees() {
@@ -132,7 +138,8 @@ class RoboticArmStateProvider extends ChangeNotifier {
             servoValues[2],
             servoValues[3],
             maxAngle: maxAngle,
-            frequency: selectedFrequency == frequency50Hz ? 50 : 100,
+            frequency:
+                selectedFrequency == appLocalizations.frequency50Hz ? 50 : 100,
           );
         } catch (e) {
           logger.e(e);
@@ -174,7 +181,9 @@ class RoboticArmStateProvider extends ChangeNotifier {
               angles[2],
               angles[3],
               maxAngle: maxAngle,
-              frequency: selectedFrequency == frequency50Hz ? 50 : 100,
+              frequency: selectedFrequency == appLocalizations.frequency50Hz
+                  ? 50
+                  : 100,
             );
           } catch (e) {
             logger.e('Servo command failed: $e');
@@ -227,7 +236,8 @@ class RoboticArmStateProvider extends ChangeNotifier {
     int maxAngle,
   ) {
     const int base = 750;
-    int frequency = selectedFrequency == frequency50Hz ? 50 : 100;
+    int frequency =
+        selectedFrequency == appLocalizations.frequency50Hz ? 50 : 100;
     int range = maxAngle == 360 ? 3800 : 1900;
     int period = 1000000 ~/ frequency;
     double periodMs = period / 1000;
@@ -258,7 +268,7 @@ class RoboticArmStateProvider extends ChangeNotifier {
       final mid = time + highMs / 2;
       dutyLabelPoints.add({
         'x': mid,
-        'label': '${duty.toStringAsFixed(1)}$percentage',
+        'label': '${duty.toStringAsFixed(1)}${appLocalizations.percentage}',
       });
 
       spots.add(FlSpot(time, 0));

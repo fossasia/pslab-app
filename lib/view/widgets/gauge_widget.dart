@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 import 'dart:math';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 import '../../theme/colors.dart';
 
 class GaugeWidget extends StatelessWidget {
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final double gaugeSize;
   final double currentValue;
   final double currentValueFontSize;
@@ -13,7 +15,7 @@ class GaugeWidget extends StatelessWidget {
   final double maxValue;
   final String unit;
 
-  const GaugeWidget({
+  GaugeWidget({
     super.key,
     required this.gaugeSize,
     required this.currentValue,
@@ -142,7 +144,7 @@ class GaugeWidget extends StatelessWidget {
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                    maxScaleError,
+                    appLocalizations.maxScaleError,
                     style: TextStyle(
                       fontSize: errorFontSize,
                       color: gaugeMaxScaleLimitColor,

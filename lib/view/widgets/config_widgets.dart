@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class ConfigInputItem extends StatelessWidget {
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final String title;
   final String value;
   final TextEditingController controller;
   final Function(String) onChanged;
   final String? hint;
 
-  const ConfigInputItem({
+  ConfigInputItem({
     super.key,
     required this.title,
     required this.value,
@@ -85,7 +87,7 @@ class ConfigInputItem extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                cancel,
+                appLocalizations.cancel,
                 style: TextStyle(color: primaryRed),
               ),
             ),
@@ -95,7 +97,7 @@ class ConfigInputItem extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               child: Text(
-                ok,
+                appLocalizations.ok,
                 style: TextStyle(color: primaryRed),
               ),
             ),
@@ -107,12 +109,13 @@ class ConfigInputItem extends StatelessWidget {
 }
 
 class ConfigDropdownItem extends StatelessWidget {
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final String title;
   final String selectedValue;
   final List<ConfigOption> options;
   final Function(String) onChanged;
 
-  const ConfigDropdownItem({
+  ConfigDropdownItem({
     super.key,
     required this.title,
     required this.selectedValue,
@@ -171,7 +174,7 @@ class ConfigDropdownItem extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                cancel,
+                appLocalizations.cancel,
                 style: TextStyle(color: primaryRed),
               ),
             ),
@@ -183,12 +186,13 @@ class ConfigDropdownItem extends StatelessWidget {
 }
 
 class ConfigCheckboxItem extends StatelessWidget {
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final String title;
   final String subtitle;
   final bool value;
   final Function(bool) onChanged;
 
-  const ConfigCheckboxItem({
+  ConfigCheckboxItem({
     super.key,
     required this.title,
     required this.subtitle,

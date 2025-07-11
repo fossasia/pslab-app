@@ -1,60 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:pslab/constants.dart';
 
 class FAQScreen extends StatelessWidget {
-  static const List<FAQItem> faqs = [
-    FAQItem(
-      question: FAQConstants.whatIsPslab,
-      answer: FAQConstants.whatIsPslabAnswer,
-    ),
-    FAQItem(
-      question: FAQConstants.whereToBuy,
-      answer: FAQConstants.whereToBuyAnswer,
-      linkText: FAQConstants.whereToBuyLinkText,
-      linkUrl: FAQConstants.whereToBuyLinkUrl,
-    ),
-    FAQItem(
-      question: FAQConstants.downloadAndroidApp,
-      answer: FAQConstants.downloadAndroidAppAnswer,
-      linkText: FAQConstants.downloadAndroidAppLinkText,
-      linkUrl: FAQConstants.downloadAndroidAppLinkUrl,
-    ),
-    FAQItem(
-      question: FAQConstants.downloadDesktopApp,
-      answer: FAQConstants.downloadDesktopAppAnswer,
-    ),
-    FAQItem(
-      question: FAQConstants.howToConnect,
-      answer: FAQConstants.howToConnectAnswer,
-    ),
-    FAQItem(
-        question: FAQConstants.reportBug,
-        answer: FAQConstants.reportBugAnswer,
-        linkText: FAQConstants.reportBugLinkText,
-        linkUrl: FAQConstants.reportBugLinkUrl),
-    FAQItem(
-      question: FAQConstants.recordData,
-      answer: FAQConstants.recordDataAnswer,
-    ),
-    FAQItem(
-      question: FAQConstants.usePhoneSensors,
-      answer: FAQConstants.usePhoneSensorsAnswer,
-    ),
-    FAQItem(
-      question: FAQConstants.compatibleSensors,
-      answer: FAQConstants.compatibleSensorsAnswer,
-    ),
-  ];
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
-  const FAQScreen({super.key});
+  FAQScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    List<FAQItem> faqs = [
+      FAQItem(
+        question: appLocalizations.faqWhatIsPslab,
+        answer: appLocalizations.faqWhatIsPslabAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqWhereToBuy,
+        answer: appLocalizations.faqWhereToBuyAnswer,
+        linkText: appLocalizations.faqWhereToBuyLinkText,
+        linkUrl: appLocalizations.faqWhereToBuyLinkUrl,
+      ),
+      FAQItem(
+        question: appLocalizations.faqDownloadAndroidApp,
+        answer: appLocalizations.faqDownloadAndroidAppAnswer,
+        linkText: appLocalizations.faqDownloadAndroidAppLinkText,
+        linkUrl: appLocalizations.faqDownloadAndroidAppLinkUrl,
+      ),
+      FAQItem(
+        question: appLocalizations.faqDownloadDesktopApp,
+        answer: appLocalizations.faqDownloadDesktopAppAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqHowToConnect,
+        answer: appLocalizations.faqHowToConnectAnswer,
+      ),
+      FAQItem(
+          question: appLocalizations.faqReportBug,
+          answer: appLocalizations.faqReportBugAnswer,
+          linkText: appLocalizations.faqReportBugLinkText,
+          linkUrl: appLocalizations.faqReportBugLinkUrl),
+      FAQItem(
+        question: appLocalizations.faqRecordData,
+        answer: appLocalizations.faqRecordDataAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqUsePhoneSensors,
+        answer: appLocalizations.faqUsePhoneSensorsAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqCompatibleSensors,
+        answer: appLocalizations.faqCompatibleSensorsAnswer,
+      ),
+    ];
     return MainScaffold(
-      title: faqTitle,
+      title: appLocalizations.faqTitle,
       index: 6,
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -76,7 +78,7 @@ class FAQScreen extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 0),
           child: Row(children: [
             Text(
-              Q,
+              appLocalizations.faqQ,
               style: TextStyle(
                 color: primaryRed,
               ),
@@ -102,7 +104,7 @@ class FAQScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 0),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
-                A,
+                appLocalizations.faqA,
               ),
               const SizedBox(
                 width: 10,
@@ -145,7 +147,7 @@ class FAQScreen extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      throw '$launchError $url';
+      throw '${appLocalizations.launchError} $url';
     }
   }
 }
