@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 class SoundMeterCard extends StatefulWidget {
   const SoundMeterCard({super.key});
@@ -13,6 +14,7 @@ class SoundMeterCard extends StatefulWidget {
 }
 
 class _SoundMeterCardState extends State<SoundMeterCard> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -56,7 +58,7 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
                           currentValue: currentDb,
                           minValue: 0,
                           maxValue: 200,
-                          unit: db,
+                          unit: appLocalizations.db,
                           currentValueFontSize: dbValueFontSize,
                         ),
                       ),
@@ -69,7 +71,7 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
                         maxValue: maxDb,
                         minValue: minDb,
                         avgValue: avgDb,
-                        unit: db,
+                        unit: appLocalizations.db,
                       ),
                     ),
                   ],
@@ -85,7 +87,7 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
                         maxValue: maxDb,
                         minValue: minDb,
                         avgValue: avgDb,
-                        unit: db,
+                        unit: appLocalizations.db,
                       ),
                     ),
                     Expanded(
@@ -95,7 +97,7 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
                           currentValue: currentDb,
                           minValue: 0,
                           maxValue: 200,
-                          unit: db,
+                          unit: appLocalizations.db,
                           currentValueFontSize: dbValueFontSize),
                     ),
                   ],

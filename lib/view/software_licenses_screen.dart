@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/oss_licenses.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SoftwareLicensesScreen extends StatelessWidget {
-  const SoftwareLicensesScreen({super.key});
-
+  SoftwareLicensesScreen({super.key});
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   static Future<List<Package>> loadLicenses() async {
     final lm = <String, List<String>>{};
     await for (var l in LicenseRegistry.licenses) {
@@ -36,7 +37,7 @@ class SoftwareLicensesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
-      title: softwareLicenses,
+      title: appLocalizations.softwareLicenses,
       index: 12,
       body: FutureBuilder<List<Package>>(
         future: _licenses,

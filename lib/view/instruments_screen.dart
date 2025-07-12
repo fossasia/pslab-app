@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/applications_list_item.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 
@@ -13,6 +15,9 @@ class InstrumentsScreen extends StatefulWidget {
 
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
   List<int> _filteredIndices = <int>[];
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late List<String> instrumentHeadings;
+  late List<String> instrumentDesc;
 
   void _onItemTapped(int index) {
     switch (index) {
@@ -36,6 +41,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/multimeter',
+            (route) => route.isFirst,
+          );
+        }
+        break;
+      case 2:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/logicAnalyzer') {
+          Navigator.popUntil(context, ModalRoute.withName('/logicAnalyzer'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/logicAnalyzer',
             (route) => route.isFirst,
           );
         }
@@ -135,6 +152,42 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   @override
   void initState() {
     super.initState();
+    instrumentHeadings = [
+      appLocalizations.oscilloscope,
+      appLocalizations.multimeter,
+      appLocalizations.logicAnalyzer,
+      appLocalizations.sensors,
+      appLocalizations.waveGenerator,
+      appLocalizations.powerSource,
+      appLocalizations.luxMeter,
+      appLocalizations.accelerometer,
+      appLocalizations.barometer,
+      appLocalizations.compass,
+      appLocalizations.gyroscope,
+      appLocalizations.thermometer,
+      appLocalizations.roboticArm,
+      appLocalizations.gasSensor,
+      appLocalizations.dustSensor,
+      appLocalizations.soundMeter,
+    ];
+    instrumentDesc = [
+      appLocalizations.oscilloscopeDesc,
+      appLocalizations.multimeterDesc,
+      appLocalizations.logicAnalyzerDesc,
+      appLocalizations.sensorsDesc,
+      appLocalizations.waveGeneratorDesc,
+      appLocalizations.powerSourceDesc,
+      appLocalizations.luxMeterDesc,
+      appLocalizations.accelerometerDesc,
+      appLocalizations.barometerDesc,
+      appLocalizations.compassDesc,
+      appLocalizations.gyroscopeDesc,
+      appLocalizations.thermometerDesc,
+      appLocalizations.roboticArmDesc,
+      appLocalizations.gasSensorDesc,
+      appLocalizations.dustSensorDesc,
+      appLocalizations.soundMeterDesc,
+    ];
     _filteredIndices =
         List<int>.generate(instrumentHeadings.length, (index) => index);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -155,10 +208,10 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   Widget build(BuildContext context) {
     return MainScaffold(
       index: 0,
-      title: instrumentsTitle,
+      title: appLocalizations.instrumentsTitle,
       showSearch: true,
       onSearchChanged: _filterInstruments,
-      searchHint: searchInstrumentsHint,
+      searchHint: appLocalizations.searchInstrumentsHint,
       body: SafeArea(
         child: _filteredIndices.isEmpty
             ? Center(
@@ -175,7 +228,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      noInstrumentsFoundMessage,
+                      appLocalizations.noInstrumentsFoundMessage,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Theme.of(context)
                                 .colorScheme
@@ -185,7 +238,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      tryDifferentSearchSuggestion,
+                      appLocalizations.tryDifferentSearchSuggestion,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context)
                                 .colorScheme

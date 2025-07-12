@@ -439,6 +439,10 @@ class ScienceLab {
     }
   }
 
+  DigitalChannel getDigitalChannel(int i) {
+    return dChannels[i];
+  }
+
   int? calculateDigitalChannel(String name) {
     if (DigitalChannel.digitalChannelNames.contains(name)) {
       return DigitalChannel.digitalChannelNames.indexOf(name);
@@ -507,8 +511,44 @@ class ScienceLab {
     return null;
   }
 
+  Future<bool> fetchLAChannel(int channelNumber,
+      LinkedHashMap<String, int> initialStates, int channels) async {
+    DigitalChannel dChan = dChannels[channelNumber];
+
+    LinkedHashMap<String, int> tempMap = LinkedHashMap<String, int>();
+    tempMap['LA1'] = initialStates['LA1']!;
+    tempMap['LA2'] = initialStates['LA2']!;
+    tempMap['LA3'] = initialStates['LA3']!;
+    tempMap['LA4'] = initialStates['LA4']!;
+    tempMap['RES'] = initialStates['RES']!;
+
+    int i = 0;
+    for (MapEntry<String, int> entry in initialStates.entries) {
+      if (dChan.channelNumber == i) {
+        i = entry.value;
+        break;
+      }
+      i++;
+    }
+    List<int>? temp =
+        await fetchIntDataFromLA(i, dChan.channelNumber + 1, channels);
+    List<double> data = List.filled(temp!.length - 1, 0.0);
+    if (temp[0] == 1) {
+      for (int j = 1; j < temp.length; j++) {
+        data[j - 1] = temp[j].toDouble();
+      }
+    } else {
+      logger.e("Error: Can't load data");
+      return false;
+    }
+    dChan.loadData(tempMap, data);
+
+    dChan.generateAxes();
+    return true;
+  }
+
   Future<double> fetchLAChannelFrequency(
-      int channelNumber, HashMap<String, int> initialStates) async {
+      int channelNumber, LinkedHashMap<String, int> initialStates) async {
     double laChannelFrequency = 0;
     DigitalChannel dChan = dChannels[channelNumber];
 
@@ -538,7 +578,7 @@ class ScienceLab {
     if (count == maxSamples / 2 - 1) {
       laChannelFrequency = 0;
     } else if (yAxis.isNotEmpty &&
-        yAxis.length != maxSamples / 2 - 2 &&
+        yAxis.length != maxSamples / 2 - 1 &&
         laChannelFrequency != yAxis.length) {
       laChannelFrequency = yAxis.length.toDouble();
     }
@@ -547,7 +587,7 @@ class ScienceLab {
 
   Future<double> getFrequency(String? channel) async {
     channel ??= 'LA1';
-    HashMap<String, int>? data;
+    LinkedHashMap<String, int>? data;
     try {
       await startOneChannelLA(channel, 1, channel, 3);
       await Future.delayed(const Duration(milliseconds: 250));
@@ -587,7 +627,7 @@ class ScienceLab {
       dChannels[aqChannel].channelName = channel;
       if (trMode == 3 || trMode == 4 || trMode == 5) {
         dChannels[aqChannel].initialStateOverride = 2;
-      } else {
+      } else if (trMode == 2) {
         dChannels[aqChannel].initialStateOverride = 1;
       }
     } catch (e) {
@@ -595,7 +635,103 @@ class ScienceLab {
     }
   }
 
-  Future<HashMap<String, int>?> getLAInitialStates() async {
+  Future<void> startTwoChannelLA(
+      List<String>? channels,
+      List<int>? modes,
+      int? maximumTime,
+      int? trigger,
+      String? edge,
+      String? triggerChannel) async {
+    maximumTime ??= 67;
+    trigger ??= 0;
+    edge ??= 'rising';
+    channels ??= ['LA1', 'LA2'];
+    modes ??= [1, 1];
+    List<int> chans = [
+      calculateDigitalChannel(channels[0])!,
+      calculateDigitalChannel(channels[1])!
+    ];
+    triggerChannel ??= channels[0];
+    if (trigger != 0) {
+      trigger = 1;
+      if (edge == 'falling') {
+        trigger |= 2;
+      }
+      trigger |= (calculateDigitalChannel(triggerChannel)! << 4);
+    }
+
+    try {
+      await clearBuffer(0, maxSamples);
+      mPacketHandler.sendByte(mCommandsProto.timing);
+      mPacketHandler.sendByte(mCommandsProto.startTwoChanLa);
+      mPacketHandler.sendInt((maxSamples / 4).toInt());
+      mPacketHandler.sendByte(trigger);
+      mPacketHandler.sendByte(modes[0] | (modes[1] << 4));
+      mPacketHandler.sendByte(chans[0] | (chans[1] << 4));
+      await mPacketHandler.getAcknowledgement();
+      for (int i = 0; i < 2; i++) {
+        DigitalChannel temp = dChannels[chans[i]];
+        temp.prescaler = 0;
+        temp.length = (maxSamples / 4).toInt();
+        temp.dataType = "long";
+        temp.maxTime = (maximumTime * 1e6).toInt();
+        temp.mode = modes[i];
+        temp.channelNumber = chans[i];
+        temp.channelName = channels[i];
+      }
+      digitalChannelsInBuffer = 2;
+    } catch (e) {
+      logger.e("Error starting logic analyzer: $e");
+    }
+  }
+
+  Future<void> startFourChannelLA(int? trigger, double? maximumTime,
+      List<int>? modes, String? edge, List<bool>? triggerChannel) async {
+    trigger ??= 1;
+    maximumTime ??= 0.001;
+    modes ??= [1, 1, 1, 1];
+    edge ??= '0';
+    await clearBuffer(0, maxSamples);
+    int prescale = 0;
+    try {
+      mPacketHandler.sendByte(mCommandsProto.timing);
+      mPacketHandler.sendByte(mCommandsProto.startFourChanLa);
+      mPacketHandler.sendInt((maxSamples / 4).toInt());
+      mPacketHandler.sendInt(
+          modes[0] | (modes[1] << 4) | (modes[2] << 8) | (modes[3] << 12));
+      mPacketHandler.sendByte(prescale);
+      int triggerOptions = 0;
+      for (int i = 0; i < 3; i++) {
+        if (triggerChannel![i]) {
+          triggerOptions |= (4 << i);
+        }
+      }
+      if (triggerOptions == 0) {
+        triggerOptions |= 4;
+      }
+      if (edge == 'rising') {
+        triggerOptions |= 2;
+      }
+      trigger |= triggerOptions;
+      mPacketHandler.sendByte(trigger);
+      await mPacketHandler.getAcknowledgement();
+      digitalChannelsInBuffer = 4;
+      int i = 0;
+      for (DigitalChannel dChan in dChannels) {
+        dChan.prescaler = prescale;
+        dChan.dataType = "int";
+        dChan.length = (maxSamples / 4).toInt();
+        dChan.maxTime = (maximumTime * 1e6).toInt();
+        dChan.mode = modes[i];
+        dChan.channelName = DigitalChannel.digitalChannelNames[i];
+        i++;
+      }
+    } catch (e) {
+      logger.e("Error starting logic analyzer: $e");
+    }
+  }
+
+  Future<LinkedHashMap<String, int>?> getLAInitialStates() async {
     try {
       mPacketHandler.sendByte(mCommandsProto.timing);
       mPacketHandler.sendByte(mCommandsProto.getInitialDigitalStates);
@@ -654,7 +790,7 @@ class ScienceLab {
         D = 0;
       }
 
-      HashMap<String, int> retData = HashMap<String, int>();
+      LinkedHashMap<String, int> retData = LinkedHashMap<String, int>();
       retData['A'] = A;
       retData['B'] = B;
       retData['C'] = C;

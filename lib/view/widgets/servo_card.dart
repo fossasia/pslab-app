@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-import '../../constants.dart';
 import '../../providers/robotic_arm_state_provider.dart';
 
 class ServoCard extends StatelessWidget {
@@ -27,7 +26,6 @@ class ServoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RoboticArmStateProvider>(context);
-
     final sliderSize =
         provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.72;
 
@@ -68,7 +66,7 @@ class ServoCard extends StatelessWidget {
                     color: Colors.black,
                   ),
                   child: Text(
-                    '${value.floor()} $degreeSymbol',
+                    '${value.floor()} °',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -121,7 +119,7 @@ class ServoCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      modifier: (val) => '${val.round()}$degreeSymbol',
+                      modifier: (val) => '${val.round()}°',
                     ),
                   ),
                 ),

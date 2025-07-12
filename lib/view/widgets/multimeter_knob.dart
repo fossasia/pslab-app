@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/multimeter_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
@@ -178,6 +179,25 @@ class MultimeterKnob extends StatefulWidget {
 class _MultimeterKnobState extends State<MultimeterKnob> {
   final double maxValue = 11.0;
   bool isDragging = true;
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late List<String> knobMarker;
+  @override
+  void initState() {
+    super.initState();
+    knobMarker = [
+      appLocalizations.knobMarkerCh1,
+      appLocalizations.knobMarkerCap,
+      appLocalizations.knobMarkerVol,
+      appLocalizations.knobMarkerRes,
+      appLocalizations.knobMarkerCap,
+      appLocalizations.knobMarkerLa1,
+      appLocalizations.knobMarkerLa2,
+      appLocalizations.knobMarkerLa3,
+      appLocalizations.knobMarkerLa4,
+      appLocalizations.knobMarkerCh3,
+      appLocalizations.knobMarkerCh2,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class Instrumentstats extends StatelessWidget {
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final String unit;
   final double titleFontSize;
   final double statFontSize;
@@ -11,7 +13,7 @@ class Instrumentstats extends StatelessWidget {
   final double avgValue;
   final double? currentAltitude;
 
-  const Instrumentstats({
+  Instrumentstats({
     super.key,
     required this.unit,
     required this.titleFontSize,
@@ -38,7 +40,7 @@ class Instrumentstats extends StatelessWidget {
               height: titleHeight,
               child: Center(
                 child: Text(
-                  builtIn,
+                  appLocalizations.builtIn,
                   style: TextStyle(
                     color: blackTextColor,
                     fontSize: titleFontSize,
@@ -59,23 +61,24 @@ class Instrumentstats extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         StatItem(
-                          label: '$maxLabel ($unit)',
+                          label: '${appLocalizations.maxValue} ($unit)',
                           value: maxValue,
                           fontSize: statFontSize,
                         ),
                         StatItem(
-                          label: '$minLabel ($unit)',
+                          label: '${appLocalizations.minValue} ($unit)',
                           value: minValue,
                           fontSize: statFontSize,
                         ),
                         StatItem(
-                          label: '$avgLabel ($unit)',
+                          label: '${appLocalizations.avgLabel} ($unit)',
                           value: avgValue,
                           fontSize: statFontSize,
                         ),
                         if (currentAltitude != null)
                           StatItem(
-                            label: '$altitudeLabel ($meterUnit)',
+                            label:
+                                '${appLocalizations.altitudeLabel} (${appLocalizations.meterUnit})',
                             value: currentAltitude!,
                             fontSize: statFontSize,
                           ),

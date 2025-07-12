@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/locator.dart';
 
 class AngleInputTopDialog extends StatefulWidget {
   final int index;
@@ -21,6 +22,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
   late double currentValue;
   late TextEditingController controller;
   late FocusNode _focusNode;
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   void initState() {
     super.initState();
@@ -83,7 +85,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         keyboardType: TextInputType.number,
                         style: const TextStyle(fontSize: 10),
                         decoration: InputDecoration(
-                          labelText: '$servo${widget.index + 1}',
+                          labelText: 'Servo${widget.index + 1}',
                           labelStyle:
                               const TextStyle(fontSize: 8, color: Colors.black),
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -143,7 +145,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         ),
                         textStyle: const TextStyle(fontSize: 11),
                       ),
-                      child: Text(cancel),
+                      child: Text(appLocalizations.cancel),
                     ),
                     const SizedBox(width: 8),
                     TextButton(
@@ -154,7 +156,9 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                           Navigator.pop(context);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(enterAngleRange)),
+                            SnackBar(
+                                content:
+                                    Text(appLocalizations.enterAngleRange)),
                           );
                         }
                       },
@@ -172,7 +176,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         textStyle: const TextStyle(
                             fontSize: 11, color: Colors.black26),
                       ),
-                      child: Text(ok),
+                      child: Text(appLocalizations.ok),
                     ),
                   ],
                 ),
@@ -197,7 +201,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
         ),
       ),
       child: Text(
-        '$angle$degreeSymbol',
+        '$angle°',
         style: const TextStyle(
           fontSize: 9,
           color: Colors.black,

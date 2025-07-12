@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/robotic_arm_controls.dart';
 import 'package:pslab/view/widgets/robotic_arm_dialog.dart';
@@ -18,10 +19,17 @@ class RoboticArmScreen extends StatefulWidget {
 
 class _RoboticArmScreenState extends State<RoboticArmScreen> {
   late RoboticArmStateProvider provider;
-
+  late List<String> servoLabels;
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   void initState() {
     super.initState();
+    servoLabels = [
+      appLocalizations.servo1,
+      appLocalizations.servo2,
+      appLocalizations.servo3,
+      appLocalizations.servo4,
+    ];
     provider = RoboticArmStateProvider();
     provider.initialize();
 
@@ -29,8 +37,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
       showDialog(
         context: context,
         builder: (_) => PlaybackSummaryDialog(
-          frequency:
-              int.parse(provider.selectedFrequency.replaceAll(hzSuffix, '')),
+          frequency: int.parse(provider.selectedFrequency
+              .replaceAll(appLocalizations.hzSuffix, '')),
           maxAngle: provider.maxAngle,
           getSummary: provider.generateSummary,
         ),
@@ -44,7 +52,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
-      barrierLabel: angleDialog,
+      barrierLabel: appLocalizations.angleDialog,
       transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, _, __) {
         return SafeArea(
@@ -75,7 +83,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
           final screenWidth = MediaQuery.of(context).size.width;
           final scrollAmount = (screenWidth / 6);
           return CommonScaffold(
-            title: roboticArm,
+            title: appLocalizations.roboticArm,
             actions: [
               IconButton(
                 icon: Icon(
@@ -87,10 +95,10 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                   color: Colors.white,
                 ),
                 tooltip: provider.manualEnabled
-                    ? manualMode
+                    ? appLocalizations.manualMode
                     : provider.isPlaying
-                        ? pause
-                        : play,
+                        ? appLocalizations.pause
+                        : appLocalizations.play,
                 onPressed: () {
                   if (!provider.manualEnabled) {
                     setState(() {
@@ -102,7 +110,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.stop, color: Colors.white),
-                tooltip: stop,
+                tooltip: appLocalizations.stop,
                 onPressed: () {
                   setState(() {
                     provider.stopScrolling(resetPosition: true);
@@ -111,7 +119,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.tune, color: Colors.white),
-                tooltip: controls,
+                tooltip: appLocalizations.controls,
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -151,25 +159,25 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.save, color: Colors.white),
-                tooltip: saveData,
+                tooltip: appLocalizations.saveData,
                 onPressed: () {}, //TODO
               ),
               IconButton(
                 icon: const Icon(Icons.info, color: Colors.white),
-                tooltip: showGuide,
+                tooltip: appLocalizations.showGuide,
                 onPressed: () {}, //TODO
               ),
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.white),
                 onSelected: (value) {
-                  if (value == showLoggedDataKey) {
+                  if (value == appLocalizations.showLoggedData) {
                     // TODO
                   }
                 },
                 itemBuilder: (BuildContext context) => [
                   PopupMenuItem<String>(
-                    value: showLoggedDataKey,
-                    child: Text(showLoggedData),
+                    value: appLocalizations.showLoggedData,
+                    child: Text(appLocalizations.showLoggedData),
                   ),
                 ],
               ),

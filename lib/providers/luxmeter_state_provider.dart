@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:light/light.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/providers/luxmeter_config_provider.dart';
+import 'package:pslab/providers/locator.dart';
 
 class LuxMeterStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   double _currentLux = 0.0;
   StreamSubscription? _lightSubscription;
   Timer? _timeTimer;
@@ -56,7 +58,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
 
       Timer sensorTimeout = Timer(const Duration(seconds: 3), () {
         if (!_sensorAvailable) {
-          _handleSensorError(lightSensorErrorLog);
+          _handleSensorError(appLocalizations.lightSensorErrorLog);
         }
       });
 
@@ -70,22 +72,22 @@ class LuxMeterStateProvider extends ChangeNotifier {
           notifyListeners();
         },
         onError: (error) {
-          logger.e("$lightSensorError $error");
+          logger.e("${appLocalizations.lightSensorError} $error");
           sensorTimeout.cancel();
           _handleSensorError(error);
         },
         cancelOnError: false,
       );
     } catch (e) {
-      logger.e("$lightSensorInitialError $e");
+      logger.e("${appLocalizations.lightSensorInitialError} $e");
       _handleSensorError(e);
     }
   }
 
   void _handleSensorError(dynamic error) {
     _sensorAvailable = false;
-    onSensorError?.call(noLightSensor);
-    logger.e("$lightSensorErrorDetails $error");
+    onSensorError?.call(appLocalizations.noLightSensor);
+    logger.e("${appLocalizations.lightSensorErrorDetails} $error");
   }
 
   void disposeSensors() {

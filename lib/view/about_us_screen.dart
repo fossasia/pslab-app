@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+
 class AboutUsScreen extends StatefulWidget {
   const AboutUsScreen({super.key});
-
   @override
   State<StatefulWidget> createState() => _AboutUsScreenState();
 }
@@ -44,41 +46,45 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
   final List<Map<String, dynamic>> contactItems = [
     {
       'icon': const Icon(Icons.mail),
-      'title': connectWithUs[1],
-      'url': 'mailto:$mail'
+      'title': appLocalizations.contactUs,
+      'url': 'mailto:${appLocalizations.mail}'
     },
-    {'icon': const Icon(Icons.link), 'title': connectWithUs[2], 'url': website},
+    {
+      'icon': const Icon(Icons.link),
+      'title': appLocalizations.visitOurWebsite,
+      'url': appLocalizations.website
+    },
     {
       'icon': const Icon(FontAwesomeIcons.github, size: 20),
-      'title': connectWithUs[3],
-      'url': github
+      'title': appLocalizations.forkUsOnGithub,
+      'url': appLocalizations.github
     },
     {
       'icon': const Icon(Icons.facebook_sharp),
-      'title': connectWithUs[4],
-      'url': facebook
+      'title': appLocalizations.likeUsOnFacebook,
+      'url': appLocalizations.facebook
     },
     {
       'icon': const Icon(FontAwesomeIcons.xTwitter, size: 20),
-      'title': connectWithUs[5],
-      'url': x
+      'title': appLocalizations.followUsOnX,
+      'url': appLocalizations.x
     },
     {
       'icon': const Icon(FontAwesomeIcons.youtube, size: 20),
-      'title': connectWithUs[6],
-      'url': youtube
+      'title': appLocalizations.watchUsOnYoutube,
+      'url': appLocalizations.youtube
     },
     {
       'icon': const Icon(Icons.person),
-      'title': connectWithUs[7],
-      'url': developers
+      'title': appLocalizations.developersLink,
+      'url': appLocalizations.developers
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
-      title: aboutUs,
+      title: appLocalizations.aboutUs,
       index: 5,
       body: SafeArea(
           child: Center(
@@ -101,7 +107,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
               child: Container(
                 margin: const EdgeInsets.all(20),
                 child: Text(
-                  pslabDescription,
+                  appLocalizations.pslabDescription,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 15,
@@ -115,12 +121,12 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.link),
-                  title: Text(feedbackNBugs,
+                  title: Text(appLocalizations.feedbackNBugs,
                       style: const TextStyle(
                         fontSize: 15,
                       )),
                   onTap: () async {
-                    await launchUrl(Uri.parse(feedbackForm));
+                    await launchUrl(Uri.parse(appLocalizations.feedbackForm));
                   },
                 ),
                 const Divider(
@@ -156,7 +162,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
               margin: const EdgeInsets.only(left: 15, top: 10, bottom: 10),
               alignment: Alignment.centerLeft,
               child: Text(
-                connectWithUs[0],
+                appLocalizations.connectWithUs,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w300,

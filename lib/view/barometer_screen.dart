@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/barometer_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
@@ -17,6 +18,7 @@ class BarometerScreen extends StatefulWidget {
 }
 
 class _BarometerScreenState extends State<BarometerScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool _showGuide = false;
   static const imagePath = 'assets/images/bmp180_schematic.png';
 
@@ -51,18 +53,18 @@ class _BarometerScreenState extends State<BarometerScreen> {
   List<Widget> _getBarometerContent() {
     return [
       InstrumentBulletPoint(
-        text: baroMeterBulletPoint1,
+        text: appLocalizations.baroMeterBulletPoint1,
       ),
       InstrumentBulletPoint(
-        text: baroMeterBulletPoint2,
+        text: appLocalizations.baroMeterBulletPoint2,
       ),
       const InstrumentImage(
         imagePath: imagePath,
       ),
       InstrumentBulletPoint(
-        text: baroMeterBulletPoint3,
+        text: appLocalizations.baroMeterBulletPoint3,
       ),
-      InstrumentBulletPoint(text: baroMeterBulletPoint4),
+      InstrumentBulletPoint(text: appLocalizations.baroMeterBulletPoint4),
     ];
   }
 
@@ -77,7 +79,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
       ],
       child: Stack(children: [
         CommonScaffold(
-          title: barometerTitle,
+          title: appLocalizations.barometerTitle,
           onGuidePressed: _showInstrumentGuide,
           body: SafeArea(child: LayoutBuilder(builder: (context, constraints) {
             final isLargeScreen = constraints.maxWidth > 900;
@@ -112,7 +114,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
         ),
         if (_showGuide)
           InstrumentOverviewDrawer(
-            instrumentName: barometerTitle,
+            instrumentName: appLocalizations.barometer,
             content: _getBarometerContent(),
             onHide: _hideInstrumentGuide,
           ),
@@ -262,7 +264,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
             axisNameWidget: Padding(
               padding: EdgeInsets.only(left: screenWidth < 400 ? 15 : 25),
               child: Text(
-                timeAxisLabel,
+                appLocalizations.timeAxisLabel,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
                   color: chartTextColor,
@@ -282,7 +284,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
           ),
           leftTitles: AxisTitles(
             axisNameWidget: Text(
-              atm,
+              appLocalizations.atm,
               style: TextStyle(
                 fontSize: axisNameFontSize,
                 color: chartTextColor,
@@ -309,7 +311,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
           ),
           rightTitles: AxisTitles(
             axisNameWidget: Text(
-              meterUnit,
+              appLocalizations.meterUnit,
               style: TextStyle(
                 fontSize: axisNameFontSize,
                 color: chartTextColor,

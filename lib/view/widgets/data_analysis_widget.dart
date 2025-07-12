@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 import '../../theme/colors.dart';
 
@@ -13,6 +14,7 @@ class DataAnalysisWidget extends StatefulWidget {
 }
 
 class _DataAnalysisState extends State<DataAnalysisWidget> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
@@ -54,7 +56,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             },
                           ),
                           Text(
-                            fourierAnalysis,
+                            appLocalizations.fourierAnalysis,
                             style: TextStyle(
                               color: oscilloscopeOptionLabelColor,
                               fontSize: 15,
@@ -198,7 +200,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                     decoration:
                         BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
                     child: Text(
-                      dataAnalysis,
+                      appLocalizations.dataAnalysis,
                       style: TextStyle(
                         color: oscilloscopeOptionTitleColor,
                         fontStyle: FontStyle.normal,
@@ -471,7 +473,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                     decoration:
                         BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
                     child: Text(
-                      offsets,
+                      appLocalizations.offsets,
                       style: TextStyle(
                         color: oscilloscopeOptionTitleColor,
                         fontStyle: FontStyle.normal,

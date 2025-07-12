@@ -1,7 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/theme/colors.dart';
-import '../../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/locator.dart';
 
 class PlaybackSummaryDialog extends StatefulWidget {
   final int frequency;
@@ -21,7 +22,7 @@ class PlaybackSummaryDialog extends StatefulWidget {
 
 class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
   int selectedServo = 0;
-
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     final data = widget.getSummary(selectedServo, widget.maxAngle);
@@ -54,7 +55,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      playBackSummary,
+                      appLocalizations.playBackSummary,
                       style: TextStyle(
                         color: primaryRed,
                         fontWeight: FontWeight.bold,
@@ -84,7 +85,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(servo,
+                              Text(appLocalizations.servo,
                                   style: const TextStyle(
                                       fontSize: 10, color: Colors.black)),
                               const SizedBox(width: 4),
@@ -98,7 +99,8 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                 items: List.generate(4, (i) {
                                   return DropdownMenuItem(
                                     value: i,
-                                    child: Text('$servo ${i + 1}',
+                                    child: Text(
+                                        '$appLocalizations.servo ${i + 1}',
                                         style: const TextStyle(fontSize: 10)),
                                   );
                                 }),
@@ -114,19 +116,19 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           children: [
                             _StatCard(
                                 icon: Icons.show_chart,
-                                label: avgAngleLabel,
+                                label: appLocalizations.avgAngleLabel,
                                 value:
-                                    '${avg.toStringAsFixed(1)}$degreeSymbol'),
+                                    '${avg.toStringAsFixed(1)}$appLocalizations.degreeSymbol'),
                             _StatCard(
                                 icon: Icons.arrow_upward,
-                                label: maxAngleLabel,
+                                label: appLocalizations.maxAngleLabel,
                                 value:
-                                    '${max.toStringAsFixed(1)}$degreeSymbol'),
+                                    '${max.toStringAsFixed(1)}$appLocalizations.degreeSymbol'),
                             _StatCard(
                                 icon: Icons.arrow_downward,
-                                label: minAngleLabel,
+                                label: appLocalizations.minAngleLabel,
                                 value:
-                                    '${min.toStringAsFixed(1)}$degreeSymbol'),
+                                    '${min.toStringAsFixed(1)}$appLocalizations.degreeSymbol'),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -135,19 +137,19 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           children: [
                             _StatCard(
                                 icon: Icons.timeline,
-                                label: avgDutyLabel,
+                                label: appLocalizations.avgDutyLabel,
                                 value:
-                                    '${avgDuty.toStringAsFixed(1)}$percentage'),
+                                    '${avgDuty.toStringAsFixed(1)}$appLocalizations.percentage'),
                             _StatCard(
                                 icon: Icons.trending_up,
-                                label: maxDutyLabel,
+                                label: appLocalizations.maxDutyLabel,
                                 value:
-                                    '${maxDuty.toStringAsFixed(1)}$percentage'),
+                                    '${maxDuty.toStringAsFixed(1)}$appLocalizations.percentage'),
                             _StatCard(
                                 icon: Icons.low_priority,
-                                label: minDutyLabel,
+                                label: appLocalizations.minDutyLabel,
                                 value:
-                                    '${minDuty.toStringAsFixed(1)}$percentage'),
+                                    '${minDuty.toStringAsFixed(1)}$appLocalizations.percentage'),
                           ],
                         ),
                       ],
@@ -169,7 +171,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 6),
                             child: Text(
-                              pwmWaveForm,
+                              appLocalizations.pwmWaveForm,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -270,12 +272,14 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                               interval: 1,
                                               getTitlesWidget: (value, _) {
                                                 if (value == 1) {
-                                                  return Text(high,
+                                                  return Text(
+                                                      appLocalizations.high,
                                                       style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 8));
                                                 } else if (value == 0) {
-                                                  return Text(low,
+                                                  return Text(
+                                                      appLocalizations.low,
                                                       style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 8));
@@ -321,7 +325,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            timeMillisecond,
+                            appLocalizations.timeMillisecond,
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -347,7 +351,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                   ),
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    close,
+                    appLocalizations.close,
                     style: TextStyle(fontSize: 8, color: Colors.black),
                   ),
                 ),

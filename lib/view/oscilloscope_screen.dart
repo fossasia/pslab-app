@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/channel_parameters_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
@@ -24,6 +24,7 @@ class OscilloscopeScreen extends StatefulWidget {
 }
 
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -147,12 +148,12 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                       !provider.autoScale()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(noSignal),
+                        content: Text(appLocalizations.noSignal),
                       ),
                     );
                   }
                 },
-                child: Text(autoScale,
+                child: Text(appLocalizations.autoScale,
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -197,7 +198,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                 itemBuilder: (BuildContext context) => [
                   PopupMenuItem<CheckboxListTile>(
                     child: CheckboxListTile(
-                      title: Text(automatedMeasurements),
+                      title: Text(appLocalizations.automatedMeasurements),
                       value: provider.isMeasurementsChecked,
                       onChanged: (bool? newValue) {
                         setState(() {
