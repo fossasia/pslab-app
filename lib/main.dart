@@ -62,7 +62,6 @@ class MyApp extends StatelessWidget {
         '/compass': (context) => const CompassScreen(),
         '/multimeter': (context) => const MultimeterScreen(),
         '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
-        '/compass': (context) => const CompassScreen(),
         '/connectDevice': (context) => const ConnectDeviceScreen(),
         '/faq': (context) => FAQScreen(),
         '/settings': (context) => const SettingsScreen(),
