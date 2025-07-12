@@ -121,10 +121,12 @@ class LuxMeterStateProvider extends ChangeNotifier {
         lux?.toStringAsFixed(2),
       ]);
     }
-    _luxData.add(lux!);
-    _timeData.add(time);
-    _luxSum += lux;
-    _dataCount++;
+    if (lux != null) {
+      _luxData.add(lux);
+      _timeData.add(time);
+      _luxSum += lux;
+      _dataCount++;
+    }
     if (_luxData.length > _chartMaxLength) {
       final removedValue = _luxData.removeAt(0);
       _timeData.removeAt(0);
