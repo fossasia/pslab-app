@@ -68,11 +68,11 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
       items: [
         PopupMenuItem(
           value: 'show_logged_data',
-          child: Text(showLoggedData),
+          child: Text(appLocalizations.showLoggedData),
         ),
         PopupMenuItem(
           value: 'accelerometer_config',
-          child: Text(accelerometerConfigurations),
+          child: Text(appLocalizations.accelerometerConfigurations),
         ),
       ],
       elevation: 8,

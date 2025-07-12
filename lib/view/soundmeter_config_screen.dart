@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/providers/soundmeter_config_provider.dart';
 import 'package:pslab/view/widgets/config_widgets.dart';
+import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
 class SoundMeterConfigScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class SoundMeterConfigScreen extends StatefulWidget {
 }
 
 class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   void initState() {
     super.initState();
@@ -52,7 +54,7 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
         }),
         backgroundColor: primaryRed,
         title: Text(
-          soundmeterConfig,
+          appLocalizations.soundmeterConfig,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,
@@ -66,8 +68,8 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
             builder: (context, provider, child) {
               return SingleChildScrollView(
                 child: ConfigCheckboxItem(
-                  title: locationData,
-                  subtitle: locationDataHint,
+                  title: appLocalizations.locationData,
+                  subtitle: appLocalizations.locationDataHint,
                   value: provider.config.includeLocationData,
                   onChanged: (value) {
                     provider.updateIncludeLocationData(value);

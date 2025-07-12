@@ -59,11 +59,11 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       items: [
         PopupMenuItem(
           value: 'show_logged_data',
-          child: Text(showLoggedData),
+          child: Text(appLocalizations.showLoggedData),
         ),
         PopupMenuItem(
           value: 'sound_meter_config',
-          child: Text(soundmeterConfig),
+          child: Text(appLocalizations.soundmeterConfig),
         ),
       ],
       elevation: 8,

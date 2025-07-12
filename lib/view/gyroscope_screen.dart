@@ -60,11 +60,11 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
       items: [
         PopupMenuItem(
           value: 'show_logged_data',
-          child: Text(showLoggedData),
+          child: Text(appLocalizations.showLoggedData),
         ),
         PopupMenuItem(
           value: 'gyroscope_config',
-          child: Text(gyroscopeConfigurations),
+          child: Text(appLocalizations.gyroscopeConfigurations),
         ),
       ],
       elevation: 8,

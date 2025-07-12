@@ -108,7 +108,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: appLocalizations.updatePeriodHint,
+                      hint: appLocalizations.luxmeterUpdatePeriodHint,
                     ),
                     ConfigInputItem(
                       title: appLocalizations.highLimit,
@@ -132,7 +132,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: appLocalizations.highLimitHint,
+                      hint: appLocalizations.luxmeterHighLimitHint,
                     ),
                     ConfigDropdownItem(
                       title: appLocalizations.activeSensor,

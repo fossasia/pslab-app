@@ -290,9 +290,9 @@
     "showLuxmeterConfig": "Lux Meter Configurations",
     "luxmeterConfigurations": "Lux Meter Configurations",
     "updatePeriod": "Update Period",
-    "updatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 1000 ms)",
+    "luxmeterUpdatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 1000 ms)",
     "highLimit": "High Limit",
-    "highLimitHint": "Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)",
+    "luxmeterHighLimitHint": "Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)",
     "sensorGain": "Sensor Gain",
     "sensorGainHint": "Please set gain of the sensor",
     "locationData": "Include Location Data",
@@ -305,5 +305,14 @@
     "baroMeterBulletPoint1": "The Barometer can be used to measure Atmospheric pressure. This instrument is compatible with either the built in pressure sensor on any android device or the BMP-180 pressure sensor",
     "baroMeterBulletPoint2": "If you want to use the sensor BMP-180, connect the sensor to PSLab device as shown in the figure.",
     "baroMeterBulletPoint3": "The above pin configuration has to be same except for the pin GND. GND is meant for Ground and any of the PSLab device GND pins can be used since they are common.",
-    "baroMeterBulletPoint4": "Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor."
+    "baroMeterBulletPoint4": "Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.",
+    "soundmeterConfig" : "Soundmeter Configurations",
+    "barometerConfig" : "Barometer Configurations",
+    "baroUpdatePeriodHint" : "Please provide time interval at which data will be updated (100 ms to 2000 ms)",
+    "barometerHighLimitHint" : "Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)",
+    "gyroscopeConfigurations" : "Gyroscope Configurations",
+    "gyroscopeHighLimitHint" : "Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)",
+    "accelerometerConfigurations" : "Accelerometer Configurations",
+    "accelerometerUpdatePeriodHint" : "Please provide time interval at which data will be updated",
+    "accelerometerHighLimitHint" : "Please provide the maximum limit of lux value to be recorded"
 }

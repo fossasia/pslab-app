@@ -83,11 +83,11 @@ class _BarometerScreenState extends State<BarometerScreen> {
       items: [
         PopupMenuItem(
           value: 'show_logged_data',
-          child: Text(showLoggedData),
+          child: Text(appLocalizations.showLoggedData),
         ),
         PopupMenuItem(
           value: 'baro_meter_config',
-          child: Text(barometerConfig),
+          child: Text(appLocalizations.barometerConfig),
         ),
       ],
       elevation: 8,

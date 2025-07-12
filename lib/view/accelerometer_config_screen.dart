@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/accelerometer_config_provider.dart';
 import 'package:pslab/view/widgets/config_widgets.dart';
 
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
 class AccelerometerConfigScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
   final TextEditingController _updatePeriodController = TextEditingController();
   final TextEditingController _highLimitController = TextEditingController();
   final TextEditingController _sensorGainController = TextEditingController();
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   @override
   void initState() {
@@ -70,7 +72,7 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
         }),
         backgroundColor: primaryRed,
         title: Text(
-          accelerometerConfigurations,
+          appLocalizations.accelerometerConfigurations,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,
@@ -87,8 +89,9 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ConfigInputItem(
-                      title: updatePeriod,
-                      value: '${provider.config.updatePeriod} $ms',
+                      title: appLocalizations.updatePeriod,
+                      value:
+                          '${provider.config.updatePeriod} ${appLocalizations.ms}',
                       controller: _updatePeriodController,
                       onChanged: (value) {
                         final intValue = int.tryParse(value);
@@ -100,18 +103,19 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                                 content: Text(
-                                  updatePeriodErrorMessage,
+                                  appLocalizations.updatePeriodErrorMessage,
                                   style: TextStyle(color: snackBarContentColor),
                                 ),
                                 backgroundColor: snackBarBackgroundColor),
                           );
                         }
                       },
-                      hint: accelerometerUpdatePeriodHint,
+                      hint: appLocalizations.accelerometerUpdatePeriodHint,
                     ),
                     ConfigInputItem(
-                      title: highLimit,
-                      value: '${provider.config.highLimit} $lx',
+                      title: appLocalizations.highLimit,
+                      value:
+                          '${provider.config.highLimit} ${appLocalizations.lx}',
                       controller: _highLimitController,
                       onChanged: (value) {
                         final intValue = int.tryParse(value);
@@ -123,22 +127,22 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                                 content: Text(
-                                  highLimitErrorMessage,
+                                  appLocalizations.highLimitErrorMessage,
                                   style: TextStyle(color: snackBarContentColor),
                                 ),
                                 backgroundColor: snackBarBackgroundColor),
                           );
                         }
                       },
-                      hint: accelerometerHighLimitHint,
+                      hint: appLocalizations.accelerometerHighLimitHint,
                     ),
                     ConfigDropdownItem(
-                      title: activeSensor,
+                      title: appLocalizations.activeSensor,
                       selectedValue: provider.config.activeSensor,
                       options: [
                         ConfigOption(
                             value: 'In-built Sensor',
-                            displayName: inBuiltSensor),
+                            displayName: appLocalizations.inBuiltSensor),
                         ConfigOption(value: 'MPU6050', displayName: 'MPU6050'),
                       ],
                       onChanged: (value) {
@@ -146,7 +150,7 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                       },
                     ),
                     ConfigInputItem(
-                      title: sensorGain,
+                      title: appLocalizations.sensorGain,
                       value: provider.config.sensorGain.toString(),
                       controller: _sensorGainController,
                       onChanged: (value) {
@@ -155,11 +159,11 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                           provider.updateSensorGain(intValue);
                         }
                       },
-                      hint: sensorGainHint,
+                      hint: appLocalizations.sensorGainHint,
                     ),
                     ConfigCheckboxItem(
-                      title: locationData,
-                      subtitle: locationDataHint,
+                      title: appLocalizations.locationData,
+                      subtitle: appLocalizations.locationDataHint,
                       value: provider.config.includeLocationData,
                       onChanged: (value) {
                         provider.updateIncludeLocationData(value);
