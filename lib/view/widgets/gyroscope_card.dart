@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/providers/gyroscope_state_provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 import '../../theme/colors.dart';
 
@@ -17,6 +18,7 @@ class GyroscopeCard extends StatefulWidget {
 }
 
 class _GyroscopeCardState extends State<GyroscopeCard> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,
@@ -102,7 +104,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                 Container(
                   margin: const EdgeInsets.only(top: 8, bottom: 12),
                   child: Text(
-                    "${currVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
+                    "${currVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
                     style: TextStyle(color: cardContentColor, fontSize: 14),
                   ),
                 ),
@@ -110,7 +112,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   alignment: Alignment.topLeft,
                   margin: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
-                    "$minValue ${minVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
+                    "${appLocalizations.minValue} ${minVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
                     style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
@@ -118,7 +120,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   alignment: Alignment.topLeft,
                   margin: const EdgeInsets.only(left: 8, top: 2),
                   child: Text(
-                    "$maxValue ${maxVal.toStringAsFixed(1)} $gyroscopeAxisLabel",
+                    "${appLocalizations.maxValue} ${maxVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
                     style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
@@ -138,7 +140,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                         axisNameWidget: Padding(
                           padding: const EdgeInsets.only(left: 25),
                           child: Text(
-                            timeAxisLabel,
+                            appLocalizations.timeAxisLabel,
                             style: TextStyle(
                               fontSize: 10,
                               color: chartTextColor,
@@ -152,7 +154,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                           sideTitles: SideTitles(showTitles: false)),
                       leftTitles: AxisTitles(
                         axisNameWidget: Text(
-                          gyroscopeAxisLabel,
+                          appLocalizations.gyroscopeAxisLabel,
                           style: TextStyle(
                             fontSize: 10,
                             color: chartTextColor,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:get_it/get_it.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/communication/handler/android_comms_handler.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/handler/ios_comms_handler.dart';
@@ -25,4 +26,11 @@ void setupLocator() {
   getIt.registerLazySingleton<ScienceLab>(
       () => getIt.get<ScienceLabCommon>().getScienceLab());
   getIt.registerLazySingleton<BoardStateProvider>(() => BoardStateProvider());
+}
+
+void registerAppLocalizations(AppLocalizations appLocalizations) {
+  if (getIt.isRegistered<AppLocalizations>()) {
+    getIt.unregister<AppLocalizations>();
+  }
+  getIt.registerLazySingleton<AppLocalizations>(() => appLocalizations);
 }

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 class SoundMeterCard extends StatefulWidget {
   const SoundMeterCard({super.key});
@@ -13,6 +14,7 @@ class SoundMeterCard extends StatefulWidget {
 }
 
 class _SoundMeterCardState extends State<SoundMeterCard> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -45,31 +47,62 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
           padding: EdgeInsets.all(cardPadding),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: screenWidth < 500 ? 40 : 35,
-                    child: Instrumentstats(
-                      titleFontSize: titleFontSize,
-                      statFontSize: statFontSize,
-                      maxValue: maxDb,
-                      minValue: minDb,
-                      avgValue: avgDb,
-                      unit: db,
+              if (isLargeScreen) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 40,
+                      child: Center(
+                        child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentDb,
+                          minValue: 0,
+                          maxValue: 200,
+                          unit: appLocalizations.db,
+                          currentValueFontSize: dbValueFontSize,
+                        ),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: screenWidth < 500 ? 60 : 65,
-                    child: GaugeWidget(
-                        gaugeSize: gaugeSize,
-                        currentValue: currentDb,
-                        minValue: 0,
-                        maxValue: 200,
-                        unit: db,
-                        currentValueFontSize: dbValueFontSize),
-                  ),
-                ],
-              );
+                    Expanded(
+                      flex: 60,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxDb,
+                        minValue: minDb,
+                        avgValue: avgDb,
+                        unit: appLocalizations.db,
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: screenWidth < 500 ? 40 : 35,
+                      child: Instrumentstats(
+                        titleFontSize: titleFontSize,
+                        statFontSize: statFontSize,
+                        maxValue: maxDb,
+                        minValue: minDb,
+                        avgValue: avgDb,
+                        unit: appLocalizations.db,
+                      ),
+                    ),
+                    Expanded(
+                      flex: screenWidth < 500 ? 60 : 65,
+                      child: GaugeWidget(
+                          gaugeSize: gaugeSize,
+                          currentValue: currentDb,
+                          minValue: 0,
+                          maxValue: 200,
+                          unit: appLocalizations.db,
+                          currentValueFontSize: dbValueFontSize),
+                    ),
+                  ],
+                );
+              }
             },
           ),
         ),
