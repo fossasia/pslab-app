@@ -5,9 +5,11 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/others/logger_service.dart';
 
-import '../constants.dart';
+import '../l10n/app_localizations.dart';
+import 'locator.dart';
 
 class CompassProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   MagnetometerEvent _magnetometerEvent =
       MagnetometerEvent(0, 0, 0, DateTime.now());
   AccelerometerEvent _accelerometerEvent =
@@ -34,7 +36,7 @@ class CompassProvider extends ChangeNotifier {
         notifyListeners();
       },
       onError: (error) {
-        logger.e("$magnetometerError: $error");
+        logger.e("${appLocalizations.magnetometerError}: $error");
       },
       cancelOnError: false,
     );
@@ -46,7 +48,7 @@ class CompassProvider extends ChangeNotifier {
         notifyListeners();
       },
       onError: (error) {
-        logger.e("$accelerometerError: $error");
+        logger.e("${appLocalizations.accelerometerError}: $error");
       },
       cancelOnError: false,
     );

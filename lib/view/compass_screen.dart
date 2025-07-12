@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
-import 'package:pslab/constants.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/compass_provider.dart';
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
 class CompassScreen extends StatelessWidget {
@@ -25,6 +26,7 @@ class CompassScreenContent extends StatefulWidget {
 }
 
 class _CompassScreenContentState extends State<CompassScreenContent> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   static const String compassIcon = 'assets/icons/compass_icon.png';
   @override
   void initState() {
@@ -45,7 +47,7 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
     return Consumer<CompassProvider>(
         builder: (context, compassProvider, child) {
       return CommonScaffold(
-        title: compassTitle,
+        title: appLocalizations.compassTitle,
         body: SafeArea(
           child: Container(
             padding: const EdgeInsets.all(16.0),
@@ -110,7 +112,7 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        parallelToGround,
+                        appLocalizations.parallelToGround,
                         style: TextStyle(
                           color: blackTextColor,
                           fontSize: 16,

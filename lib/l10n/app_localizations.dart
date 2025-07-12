@@ -1929,6 +1929,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.'**
   String get baroMeterBulletPoint4;
+
+  /// No description provided for @magnetometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnetometer error:'**
+  String get magnetometerError;
+
+  /// No description provided for @accelerometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Accelerometer error:'**
+  String get accelerometerError;
+
+  /// No description provided for @compassTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get compassTitle;
+
+  /// No description provided for @parallelToGround.
+  ///
+  /// In en, this message translates to:
+  /// **'Select axes parallel to ground'**
+  String get parallelToGround;
 }
 
 class _AppLocalizationsDelegate
