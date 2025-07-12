@@ -1,7 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pslab/communication/science_lab.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:usb_serial/usb_serial.dart';
@@ -9,16 +9,18 @@ import 'package:usb_serial/usb_serial.dart';
 import 'package:pslab/others/science_lab_common.dart';
 
 class BoardStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool initialisationStatus = false;
   bool pslabIsConnected = false;
   bool hasPermission = false;
   late ScienceLabCommon scienceLabCommon;
   String pslabVersionID = 'Not Connected';
-  String exportFormat = txtFormat;
+  late String exportFormat;
   bool autoStart = true;
 
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
+    exportFormat = appLocalizations.txtFormat;
   }
 
   Future<void> initialize() async {

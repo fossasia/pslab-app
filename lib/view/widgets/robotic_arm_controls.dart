@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
-import '../../constants.dart';
 import '../../providers/robotic_arm_state_provider.dart';
 
 class RoboticArmControls extends StatefulWidget {
@@ -15,10 +16,21 @@ class RoboticArmControls extends StatefulWidget {
 }
 
 class _RoboticArmControlsState extends State<RoboticArmControls> {
-  bool manualChecked = false;
-  String selectedDuration = duration1Min;
-  String selectedFrequency = frequency50Hz;
-  String selectedMaxAngle = angle180;
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late bool manualChecked;
+  late String selectedDuration;
+  late String selectedFrequency;
+  late String selectedMaxAngle;
+
+  @override
+  void initState() {
+    super.initState();
+    manualChecked = false;
+    selectedDuration = appLocalizations.duration1Min;
+    selectedFrequency = appLocalizations.frequency50Hz;
+    selectedMaxAngle = appLocalizations.angle180;
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RoboticArmStateProvider>(context);
@@ -42,7 +54,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 12),
                       child: Text(
-                        controlsTitle,
+                        appLocalizations.controlsTitle,
                         style: TextStyle(
                           color: primaryRed,
                           fontWeight: FontWeight.bold,
@@ -87,7 +99,8 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
 
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(playBackStop),
+                                        content:
+                                            Text(appLocalizations.playBackStop),
                                         duration: Duration(seconds: 2),
                                         behavior: SnackBarBehavior.floating,
                                         backgroundColor: Colors.black87,
@@ -101,7 +114,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                             },
                           ),
                           Text(
-                            manualLabel,
+                            appLocalizations.manualLabel,
                             style: TextStyle(color: Colors.black, fontSize: 12),
                           ),
                         ],
@@ -130,7 +143,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                             },
                           ),
                           Text(
-                            feedbackLabel,
+                            appLocalizations.feedbackLabel,
                             style: TextStyle(color: Colors.black, fontSize: 12),
                           ),
                         ],
@@ -157,14 +170,14 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Radio<String>(
-                                value: duration1Min,
+                                value: appLocalizations.duration1Min,
                                 groupValue: provider.selectedDuration,
                                 activeColor: primaryRed,
                                 onChanged: (value) {
                                   provider.setSelectedDuration(value!);
                                 },
                               ),
-                              Text(duration1Min,
+                              Text(appLocalizations.duration1Min,
                                   style: TextStyle(
                                       color: Colors.black, fontSize: 12)),
                             ],
@@ -175,14 +188,14 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Radio<String>(
-                                value: duration2Min,
+                                value: appLocalizations.duration2Min,
                                 groupValue: provider.selectedDuration,
                                 activeColor: primaryRed,
                                 onChanged: (value) {
                                   provider.setSelectedDuration(value!);
                                 },
                               ),
-                              Text(duration2Min,
+                              Text(appLocalizations.duration2Min,
                                   style: TextStyle(
                                       color: Colors.black, fontSize: 12)),
                             ],
@@ -204,9 +217,10 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                             showDialog(
                                               context: context,
                                               builder: (context) => AlertDialog(
-                                                title: Text(clearTimelineTitle),
-                                                content: Text(
-                                                    clearTimelineConfirmation),
+                                                title: Text(appLocalizations
+                                                    .clearTimelineTitle),
+                                                content: Text(appLocalizations
+                                                    .clearTimelineConfirmation),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () =>
@@ -224,7 +238,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                                                 .circular(20),
                                                       ),
                                                       child: Text(
-                                                        cancel,
+                                                        appLocalizations.cancel,
                                                         style: TextStyle(
                                                             color:
                                                                 Colors.black),
@@ -238,10 +252,12 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                                           .clearTimelineDegrees();
                                                       provider
                                                           .setSelectedDuration(
-                                                              duration1Min);
+                                                              appLocalizations
+                                                                  .duration1Min);
                                                       provider
                                                           .setSelectedFrequency(
-                                                              frequency50Hz);
+                                                              appLocalizations
+                                                                  .frequency50Hz);
                                                       provider.setManualEnabled(
                                                           false);
                                                     },
@@ -257,7 +273,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                                                 .circular(20),
                                                       ),
                                                       child: Text(
-                                                        clear,
+                                                        appLocalizations.clear,
                                                         style: TextStyle(
                                                             color:
                                                                 Colors.white),
@@ -274,7 +290,8 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                       color:
                                           hasValues ? primaryRed : Colors.black,
                                     ),
-                                    tooltip: clearTimelineTooltip,
+                                    tooltip:
+                                        appLocalizations.clearTimelineTooltip,
                                   ),
                                 ],
                               );
@@ -299,14 +316,14 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Radio<String>(
-                        value: frequency50Hz,
+                        value: appLocalizations.frequency50Hz,
                         groupValue: provider.selectedFrequency,
                         activeColor: primaryRed,
                         onChanged: (value) {
                           if (provider.isPlaying) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(frequencyChange),
+                                content: Text(appLocalizations.frequencyChange),
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,
                                 backgroundColor: Colors.black87,
@@ -318,20 +335,20 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                         },
                       ),
                       Text(
-                        frequency50Hz,
+                        appLocalizations.frequency50Hz,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 12),
                       ),
                       const SizedBox(width: 16),
                       Radio<String>(
-                        value: frequency100Hz,
+                        value: appLocalizations.frequency100Hz,
                         groupValue: provider.selectedFrequency,
                         activeColor: primaryRed,
                         onChanged: (value) {
                           if (provider.isPlaying) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(frequencyChange),
+                                content: Text(appLocalizations.frequencyChange),
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,
                                 backgroundColor: Colors.black87,
@@ -343,7 +360,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                         },
                       ),
                       Text(
-                        frequency100Hz,
+                        appLocalizations.frequency100Hz,
                         style:
                             const TextStyle(color: Colors.black, fontSize: 12),
                       ),
@@ -366,7 +383,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Radio<String>(
-                        value: angle180,
+                        value: appLocalizations.angle180,
                         groupValue: provider.selectedMaxAngle,
                         activeColor: primaryRed,
                         onChanged: (value) {
@@ -374,12 +391,12 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                         },
                       ),
                       Text(
-                        angle180,
+                        appLocalizations.angle180,
                         style: TextStyle(color: Colors.black, fontSize: 12),
                       ),
                       const SizedBox(width: 16),
                       Radio<String>(
-                        value: angle360,
+                        value: appLocalizations.angle360,
                         groupValue: provider.selectedMaxAngle,
                         activeColor: primaryRed,
                         onChanged: (value) {
@@ -387,7 +404,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                         },
                       ),
                       Text(
-                        angle360,
+                        appLocalizations.angle360,
                         style: TextStyle(color: Colors.black, fontSize: 12),
                       ),
                     ],

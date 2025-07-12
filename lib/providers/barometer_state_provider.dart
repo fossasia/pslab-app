@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pslab/constants.dart';
 
 class BarometerStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   double _currentPressure = 0.0;
   StreamSubscription? _barometerSubscription;
   Timer? _timeTimer;
@@ -41,7 +43,7 @@ class BarometerStateProvider extends ChangeNotifier {
 
       Timer sensorTimeout = Timer(const Duration(seconds: 3), () {
         if (!_sensorAvailable) {
-          _handleSensorError(barometerSensorError);
+          _handleSensorError(appLocalizations.barometerSensorError);
         }
       });
 
@@ -55,22 +57,22 @@ class BarometerStateProvider extends ChangeNotifier {
           notifyListeners();
         },
         onError: (error) {
-          logger.e("$barometerSensorError $error");
+          logger.e("${appLocalizations.barometerSensorError} $error");
           sensorTimeout.cancel();
           _handleSensorError(error);
         },
         cancelOnError: false,
       );
     } catch (e) {
-      logger.e("$barometerSensorInitialError $e");
+      logger.e("${appLocalizations.barometerSensorInitialError} $e");
       _handleSensorError(e);
     }
   }
 
   void _handleSensorError(dynamic error) {
     _sensorAvailable = false;
-    onSensorError?.call(barometerNotAvailable);
-    logger.e("$barometerSensorError $error");
+    onSensorError?.call(appLocalizations.barometerNotAvailable);
+    logger.e("${appLocalizations.barometerSensorError} $error");
   }
 
   void disposeSensors() {

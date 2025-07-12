@@ -1,7 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/logic_analyzer_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
@@ -13,6 +14,7 @@ class LogicAnalyzerGraph extends StatefulWidget {
 }
 
 class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,
@@ -64,7 +66,7 @@ class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
                           show: true,
                           topTitles: AxisTitles(
                             axisNameWidget: Text(
-                              logicAnalyzerAxisTitle,
+                              appLocalizations.logicAnalyzerAxisTitle,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: chartTextColor,
@@ -127,7 +129,7 @@ class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
                     )
                   : Center(
                       child: Text(
-                        noChartDataAvailable,
+                        appLocalizations.noChartDataAvailable,
                         style: TextStyle(
                           color: logicAnalyzerGraphTextColor,
                           fontSize: 11,

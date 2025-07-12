@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/accelerometer_screen.dart';
@@ -23,7 +24,6 @@ import 'constants.dart';
 void main() {
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
-  getIt<BoardStateProvider>().initialize();
   runApp(
     MultiProvider(
       providers: [
@@ -44,9 +44,16 @@ class MyApp extends StatelessWidget {
     _preCacheImages(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        registerAppLocalizations(AppLocalizations.of(context)!);
+        getIt<BoardStateProvider>().initialize();
+        return child!;
+      },
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       initialRoute: '/',
       routes: {
         '/': (context) => const InstrumentsScreen(),
@@ -54,10 +61,10 @@ class MyApp extends StatelessWidget {
         '/multimeter': (context) => const MultimeterScreen(),
         '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
         '/connectDevice': (context) => const ConnectDeviceScreen(),
-        '/faq': (context) => const FAQScreen(),
+        '/faq': (context) => FAQScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/aboutUs': (context) => const AboutUsScreen(),
-        '/softwareLicenses': (context) => const SoftwareLicensesScreen(),
+        '/softwareLicenses': (context) => SoftwareLicensesScreen(),
         '/accelerometer': (context) => const AccelerometerScreen(),
         '/gyroscope': (context) => const GyroscopeScreen(),
         '/roboticArm': (context) => const RoboticArmScreen(),

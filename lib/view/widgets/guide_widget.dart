@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
-
-import '../../constants.dart';
 
 class InstrumentOverviewDrawer extends StatefulWidget {
   final String instrumentName;
@@ -20,6 +20,7 @@ class InstrumentOverviewDrawer extends StatefulWidget {
 
 class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
     with SingleTickerProviderStateMixin {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   @override
@@ -126,7 +127,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                                   height: 2,
                                 ),
                                 Text(
-                                  hideGuide,
+                                  appLocalizations.hideGuide,
                                   style: TextStyle(
                                     color: appBarContentColor,
                                     fontSize: 14.0,

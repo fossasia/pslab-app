@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/providers/logic_analyzer_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/logic_analyzer_channel_selection.dart';
 import 'package:pslab/view/widgets/logic_analyzer_graph.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 class LogicAnalyzerScreen extends StatefulWidget {
   const LogicAnalyzerScreen({super.key});
@@ -16,6 +17,8 @@ class LogicAnalyzerScreen extends StatefulWidget {
 }
 
 class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -57,7 +60,7 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
       child: Consumer<LogicAnalyzerStateProvider>(
         builder: (context, provider, _) {
           return CommonScaffold(
-            title: logicAnalyzer,
+            title: appLocalizations.logicAnalyzerTitle,
             body: SafeArea(
               minimum: const EdgeInsets.only(right: 0, bottom: 0),
               child: Container(

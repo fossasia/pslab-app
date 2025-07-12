@@ -4,12 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/communication/digitalChannel/digital_channel.dart';
 import 'package:pslab/communication/science_lab.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class LogicAnalyzerStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   static const singleChannelAxisMin = -0.1;
   static const singleChannelAxisMax = 1.1;
   static const double twoChannelAxisMin = -0.3;
@@ -51,7 +52,14 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   late bool isProcessing;
   late bool isData;
 
+  late List<String> channelNames;
   LogicAnalyzerStateProvider() {
+    channelNames = [
+      appLocalizations.channelLA1,
+      appLocalizations.channelLA2,
+      appLocalizations.channelLA3,
+      appLocalizations.channelLA4,
+    ];
     channelMode = 1;
     channels = channelNames;
     channelMap = {};
@@ -69,10 +77,10 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     channelSelectSpinner2 = channelNames[1];
     channelSelectSpinner3 = channelNames[2];
     channelSelectSpinner4 = channelNames[3];
-    edgeSelectSpinner1 = analysisOptions[0];
-    edgeSelectSpinner2 = analysisOptions[0];
-    edgeSelectSpinner3 = analysisOptions[0];
-    edgeSelectSpinner4 = analysisOptions[0];
+    edgeSelectSpinner1 = appLocalizations.analysisOptionEveryEdge;
+    edgeSelectSpinner2 = appLocalizations.analysisOptionEveryEdge;
+    edgeSelectSpinner3 = appLocalizations.analysisOptionEveryEdge;
+    edgeSelectSpinner4 = appLocalizations.analysisOptionEveryEdge;
 
     maxY = singleChannelAxisMax;
     minY = singleChannelAxisMin;

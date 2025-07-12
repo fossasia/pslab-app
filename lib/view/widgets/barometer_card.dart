@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pslab/providers/barometer_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 
 import '../../theme/colors.dart';
 
@@ -14,6 +15,7 @@ class BarometerCard extends StatefulWidget {
 }
 
 class _BarometerCardState extends State<BarometerCard> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -58,7 +60,7 @@ class _BarometerCardState extends State<BarometerCard> {
                           currentValue: currentPressure,
                           minValue: 0,
                           maxValue: 2,
-                          unit: atm,
+                          unit: appLocalizations.atm,
                           currentValueFontSize: pressureValueFontSize,
                         ),
                       ),
@@ -71,7 +73,7 @@ class _BarometerCardState extends State<BarometerCard> {
                         maxValue: maxPressure,
                         minValue: minPressure,
                         avgValue: avgPressure,
-                        unit: atm,
+                        unit: appLocalizations.atm,
                         currentAltitude: currentAltitude,
                       ),
                     ),
@@ -88,7 +90,7 @@ class _BarometerCardState extends State<BarometerCard> {
                         maxValue: maxPressure,
                         minValue: minPressure,
                         avgValue: avgPressure,
-                        unit: atm,
+                        unit: appLocalizations.atm,
                         currentAltitude: currentAltitude,
                       ),
                     ),
@@ -99,7 +101,7 @@ class _BarometerCardState extends State<BarometerCard> {
                           currentValue: currentPressure,
                           minValue: 0,
                           maxValue: 2,
-                          unit: atm,
+                          unit: appLocalizations.atm,
                           currentValueFontSize: pressureValueFontSize),
                     ),
                   ],

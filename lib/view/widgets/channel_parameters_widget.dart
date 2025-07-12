@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
-import '../../constants.dart';
 import '../../theme/colors.dart';
 
 class ChannelParametersWidget extends StatefulWidget {
@@ -13,6 +14,25 @@ class ChannelParametersWidget extends StatefulWidget {
 }
 
 class _ChannelParametersState extends State<ChannelParametersWidget> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late List<String> yAxisRanges;
+
+  @override
+  void initState() {
+    super.initState();
+    yAxisRanges = [
+      appLocalizations.yAxisRange16V,
+      appLocalizations.yAxisRange8V,
+      appLocalizations.yAxisRange4V,
+      appLocalizations.yAxisRange3V,
+      appLocalizations.yAxisRange2V,
+      appLocalizations.yAxisRange1_5V,
+      appLocalizations.yAxisRange1V,
+      appLocalizations.yAxisRange500mV,
+      appLocalizations.yAxisRange160V,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
@@ -47,7 +67,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Text(
-                      ch1,
+                      appLocalizations.ch1,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
@@ -58,7 +78,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: Text(
-                        range,
+                        appLocalizations.range,
                         style: const TextStyle(
                           color: Color(0xFF424242),
                           fontWeight: FontWeight.normal,
@@ -147,7 +167,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Text(
-                      ch2,
+                      appLocalizations.ch2,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
@@ -158,7 +178,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: Text(
-                        range,
+                        appLocalizations.range,
                         style: const TextStyle(
                           color: Color(0xFF424242),
                           fontWeight: FontWeight.normal,
@@ -172,7 +192,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       child: SizedBox(
                         width: 120,
                         child: Text(
-                          rangeValue,
+                          appLocalizations.rangeValue,
                           style: TextStyle(
                             color: oscilloscopeOptionLabelColor,
                             fontStyle: FontStyle.normal,
@@ -205,7 +225,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Text(
-                      ch3Range,
+                      appLocalizations.ch3Range,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
@@ -258,7 +278,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Text(
-                      inBuiltMic,
+                      appLocalizations.inBuiltMic,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
@@ -291,7 +311,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       },
                     ),
                     Text(
-                      pslabMic,
+                      appLocalizations.pslabMic,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
@@ -315,7 +335,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
               child: Text(
-                channels,
+                appLocalizations.channels,
                 style: TextStyle(
                   color: oscilloscopeOptionTitleColor,
                   fontStyle: FontStyle.normal,
