@@ -12,6 +12,7 @@ import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/luxmeter_config_screen.dart';
 
+import '../constants.dart';
 import '../theme/colors.dart';
 
 class LuxMeterScreen extends StatefulWidget {
@@ -108,8 +109,11 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            const LoggedDataScreen(instrumentName: 'luxmeter'),
+        builder: (context) => LoggedDataScreen(
+          instrumentName: 'luxmeter',
+          appBarName: 'Lux Meter',
+          instrumentIcon: instrumentIcons[6],
+        ),
       ),
     );
   }
@@ -123,7 +127,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Recording started...',
+            '${appLocalizations.recordingStarted}...',
             style: TextStyle(color: snackBarContentColor),
           ),
           backgroundColor: snackBarBackgroundColor,
@@ -141,24 +145,24 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Save Recording'),
+          title: Text(appLocalizations.saveRecording),
           content: TextField(
             controller: filenameController,
-            decoration: const InputDecoration(
-              hintText: 'Enter filename (leave empty for auto-generated)',
-              labelText: 'Filename',
+            decoration: InputDecoration(
+              hintText: appLocalizations.enterFileName,
+              labelText: appLocalizations.fileName,
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(appLocalizations.cancel),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context, filenameController.text);
               },
-              child: const Text('Save'),
+              child: Text(appLocalizations.save),
             ),
           ],
         );
@@ -173,7 +177,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'File saved: ${file.path.split('/').last}',
+                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
                 style: TextStyle(color: snackBarContentColor),
               ),
               backgroundColor: snackBarBackgroundColor,
@@ -183,7 +187,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Failed to save file. No data was recorded.',
+                appLocalizations.failedToSave,
                 style: TextStyle(color: snackBarContentColor),
               ),
               backgroundColor: snackBarBackgroundColor,

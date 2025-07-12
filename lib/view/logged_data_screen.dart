@@ -1,21 +1,30 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/logged_data_chart_screen.dart';
 
+import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
+
 class LoggedDataScreen extends StatefulWidget {
   final String instrumentName;
+  final String appBarName;
+  final String instrumentIcon;
 
-  const LoggedDataScreen({super.key, required this.instrumentName});
+  const LoggedDataScreen(
+      {super.key,
+      required this.instrumentName,
+      required this.appBarName,
+      required this.instrumentIcon});
 
   @override
   State<LoggedDataScreen> createState() => _LoggedDataScreenState();
 }
 
 class _LoggedDataScreenState extends State<LoggedDataScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
   List<FileSystemEntity> _files = [];
   bool _isLoading = true;
@@ -46,17 +55,16 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('Delete File'),
-                content:
-                    const Text('Are you sure you want to delete this file?'),
+                title: Text(appLocalizations.deleteFile),
+                content: Text(appLocalizations.deleteHint),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancel'),
+                    child: Text(appLocalizations.cancel),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text('Delete'),
+                    child: Text(appLocalizations.delete),
                   ),
                 ],
               );
@@ -76,17 +84,16 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete All Data'),
-          content: const Text(
-              'Are you sure you want to delete all logged data for this instrument?'),
+          title: Text(appLocalizations.deleteAllData),
+          content: Text(appLocalizations.deleteCautionMessage),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(appLocalizations.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete All'),
+              child: Text(appLocalizations.deleteAll),
             ),
           ],
         );
@@ -99,15 +106,53 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
+  Map<String, dynamic> _getChartConfig() {
+    switch (widget.instrumentName.toLowerCase()) {
+      case 'luxmeter':
+        return {
+          'xAxisLabel': appLocalizations.timeAxisLabel,
+          'yAxisLabel': appLocalizations.lx,
+          'xDataColumnIndex': 1,
+          'yDataColumnIndex': 2,
+        };
+      case 'soundmeter':
+        return {
+          'xAxisLabel': appLocalizations.timeAxisLabel,
+          'yAxisLabel': appLocalizations.db,
+          'xDataColumnIndex': 1,
+          'yDataColumnIndex': 2,
+        };
+      case 'barometer':
+        return {
+          'xAxisLabel': appLocalizations.timeAxisLabel,
+          'yAxisLabel': appLocalizations.atm,
+          'xDataColumnIndex': 1,
+          'yDataColumnIndex': 2,
+        };
+      default:
+        return {
+          'xAxisLabel': appLocalizations.timeAxisLabel,
+          'yAxisLabel': 'Value',
+          'xDataColumnIndex': 1,
+          'yDataColumnIndex': 2,
+        };
+    }
+  }
+
   Future<void> _openFile(File file) async {
     final data = await _csvService.readCsvFromFile(file);
     if (mounted) {
+      final config = _getChartConfig();
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => LoggedDataChartScreen(
             data: data,
             fileName: file.path.split('/').last,
+            xAxisLabel: config['xAxisLabel'],
+            yAxisLabel: config['yAxisLabel'],
+            xDataColumnIndex: config['xDataColumnIndex'],
+            yDataColumnIndex: config['yDataColumnIndex'],
           ),
         ),
       );
@@ -117,12 +162,17 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   Future<void> _pickAndImportFile() async {
     final data = await _csvService.pickAndReadCsvFile();
     if (data != null && mounted) {
+      final config = _getChartConfig();
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => LoggedDataChartScreen(
             data: data,
             fileName: 'Imported Log',
+            xAxisLabel: config['xAxisLabel'],
+            yAxisLabel: config['yAxisLabel'],
+            xDataColumnIndex: config['xDataColumnIndex'],
+            yDataColumnIndex: config['yDataColumnIndex'],
           ),
         ),
       );
@@ -139,13 +189,13 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         0,
       ),
       items: [
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'import_log',
-          child: Text('Import Log'),
+          child: Text(appLocalizations.importLog),
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'delete_all',
-          child: Text('Delete All Data'),
+          child: Text(appLocalizations.deleteAllData),
         ),
       ],
     ).then((value) {
@@ -167,7 +217,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          luxMeterTitle,
+          widget.appBarName,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,
@@ -187,7 +237,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           : _files.isEmpty
               ? Center(
                   child: Text(
-                    'No logged data found.',
+                    appLocalizations.noLoggedData,
                     style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 )
@@ -206,7 +256,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
                         ),
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         margin:
                             const EdgeInsets.only(left: 8, right: 8, top: 8),
                         child: ListTile(
@@ -214,7 +264,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                           leading: CircleAvatar(
                             backgroundColor: Colors.transparent,
                             child: Image.asset(
-                              'assets/icons/tile_icon_lux_meter.png',
+                              widget.instrumentIcon,
                               color: primaryRed,
                             ),
                           ),

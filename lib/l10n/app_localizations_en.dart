@@ -985,4 +985,57 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get baroMeterBulletPoint4 =>
       'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';
+
+  @override
+  String get sharingMessage => 'Sharing PSLab Data';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteHint => 'Are you sure you want to delete this file?';
+
+  @override
+  String get deleteFile => 'Delete File';
+
+  @override
+  String get deleteAllData => 'Delete All Data';
+
+  @override
+  String get deleteCautionMessage =>
+      'Are you sure you want to delete all logged data for this instrument?';
+
+  @override
+  String get deleteAll => 'Delete All';
+
+  @override
+  String get noLoggedData => 'No logged data found.';
+
+  @override
+  String get importLog => 'Import Log';
+
+  @override
+  String get failedToSave => 'Failed to save file. No data was recorded.';
+
+  @override
+  String get fileSaved => 'File saved';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get enterFileName =>
+      'Enter filename (leave empty for auto-generated name)';
+
+  @override
+  String get fileName => 'Filename';
+
+  @override
+  String get saveRecording => 'Save Recording';
+
+  @override
+  String get recordingStarted => 'Recording started';
+
+  @override
+  String get noValidData => 'No valid data to display.';
 }

@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/view/about_us_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
@@ -116,8 +117,8 @@ class CsvService {
   Future<void> shareFile(String filePath) async {
     try {
       final xFile = XFile(filePath);
-      await SharePlus.instance
-          .share(ShareParams(files: [xFile], text: 'Sharing PSLab Data'));
+      await SharePlus.instance.share(
+          ShareParams(files: [xFile], text: appLocalizations.sharingMessage));
     } catch (e) {
       logger.e('Error sharing file: $e');
     }

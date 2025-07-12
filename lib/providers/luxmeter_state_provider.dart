@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:light/light.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/providers/luxmeter_config_provider.dart';
-import 'package:intl/intl.dart';
 import 'package:pslab/providers/locator.dart';
 
 class LuxMeterStateProvider extends ChangeNotifier {
@@ -25,8 +25,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
   double _luxMax = 0;
   double _luxSum = 0;
   int _dataCount = 0;
-  bool _sensorAvailable = true;
-
+  bool _sensorAvailable = false;
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
   double _recordingStartTime = 0.0;
@@ -42,7 +41,9 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void _onConfigChanged() {
-    if (_configProvider != null) {}
+    if (_configProvider != null) {
+      // TODO
+    }
   }
 
   LuxMeterConfigProvider? get configProvider => _configProvider;
@@ -60,13 +61,24 @@ class LuxMeterStateProvider extends ChangeNotifier {
         notifyListeners();
       });
 
+      Timer sensorTimeout = Timer(const Duration(seconds: 3), () {
+        if (!_sensorAvailable) {
+          _handleSensorError(appLocalizations.lightSensorErrorLog);
+        }
+      });
+
       _lightSubscription = _light!.lightSensorStream.listen(
         (int luxValue) {
           _currentLux = luxValue.toDouble();
+          if (!_sensorAvailable) {
+            _sensorAvailable = true;
+            sensorTimeout.cancel();
+          }
           notifyListeners();
         },
         onError: (error) {
           logger.e("${appLocalizations.lightSensorError} $error");
+          sensorTimeout.cancel();
           _handleSensorError(error);
         },
         cancelOnError: false,
@@ -78,14 +90,9 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void _handleSensorError(dynamic error) {
-    if (_sensorAvailable) {
-      _sensorAvailable = false;
-      onSensorError?.call(appLocalizations.noLightSensor);
-      logger.e("${appLocalizations.lightSensorErrorDetails} $error");
-      _lightSubscription?.cancel();
-      _currentLux = 0;
-      notifyListeners();
-    }
+    _sensorAvailable = false;
+    onSensorError?.call(appLocalizations.noLightSensor);
+    logger.e("${appLocalizations.lightSensorErrorDetails} $error");
   }
 
   void disposeSensors() {
@@ -101,7 +108,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final lux = _sensorAvailable ? _currentLux : 0.0;
+    final lux = _sensorAvailable ? _currentLux : null;
     final time = _currentTime;
 
     if (_isRecording) {
@@ -111,11 +118,10 @@ class LuxMeterStateProvider extends ChangeNotifier {
       _recordedData.add([
         dateFormat.format(now),
         relativeTime.toStringAsFixed(2),
-        lux.toStringAsFixed(2),
+        lux?.toStringAsFixed(2),
       ]);
     }
-
-    _luxData.add(lux);
+    _luxData.add(lux!);
     _timeData.add(time);
     _luxSum += lux;
     _dataCount++;
@@ -156,8 +162,8 @@ class LuxMeterStateProvider extends ChangeNotifier {
   List<FlSpot> getLuxChartData() => luxChartData;
   int getDataLength() => luxChartData.length;
   double getCurrentTime() => _currentTime;
-  double getMaxTime() => _timeData.isNotEmpty ? _timeData.last : 0.0;
-  double getMinTime() => _timeData.isNotEmpty ? _timeData.first : 0.0;
+  double getMaxTime() => _timeData.isNotEmpty ? _timeData.last : 0;
+  double getMinTime() => _timeData.isNotEmpty ? _timeData.first : 0;
   double getTimeInterval() {
     if (_currentTime <= 10) return 2;
     if (_currentTime <= 30) return 5;

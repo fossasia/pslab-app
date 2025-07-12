@@ -3,18 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pslab/theme/colors.dart';
 
+import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
+
 class LoggedDataChartScreen extends StatefulWidget {
   final List<List<dynamic>> data;
   final String fileName;
+  final String xAxisLabel;
+  final String yAxisLabel;
+  final int xDataColumnIndex;
+  final int yDataColumnIndex;
 
-  const LoggedDataChartScreen(
-      {super.key, required this.data, required this.fileName});
+  const LoggedDataChartScreen({
+    super.key,
+    required this.data,
+    required this.fileName,
+    this.xAxisLabel = 'Time (s)',
+    this.yAxisLabel = 'Value',
+    this.xDataColumnIndex = 1,
+    this.yDataColumnIndex = 2,
+  });
 
   @override
   State<LoggedDataChartScreen> createState() => _LoggedDataChartScreenState();
 }
 
 class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+
   @override
   void initState() {
     super.initState();
@@ -42,17 +58,18 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
   @override
   Widget build(BuildContext context) {
     final List<FlSpot> spots = [];
-    double maxLux = 0;
-    double maxTime = 0;
+    double maxY = 0;
+    double maxX = 0;
 
     for (int i = 1; i < widget.data.length; i++) {
       final row = widget.data[i];
-      if (row.length >= 3) {
-        final time = (row[1] as num).toDouble();
-        final lux = (row[2] as num).toDouble();
-        spots.add(FlSpot(time, lux));
-        if (lux > maxLux) maxLux = lux;
-        if (time > maxTime) maxTime = time;
+      if (row.length > widget.xDataColumnIndex &&
+          row.length > widget.yDataColumnIndex) {
+        final x = (row[widget.xDataColumnIndex] as num).toDouble();
+        final y = (row[widget.yDataColumnIndex] as num).toDouble();
+        spots.add(FlSpot(x, y));
+        if (y > maxY) maxY = y;
+        if (x > maxX) maxX = x;
       }
     }
 
@@ -73,7 +90,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
       ),
       body: SafeArea(
         child: spots.isEmpty
-            ? const Center(child: Text('No valid data to display.'))
+            ? Center(child: Text(appLocalizations.noValidData))
             : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
@@ -89,19 +106,19 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                           sideTitles: SideTitles(showTitles: false),
                         ),
                         bottomTitles: AxisTitles(
-                          axisNameWidget: const Text('Time (s)'),
+                          axisNameWidget: Text(widget.xAxisLabel),
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 30,
-                            interval: _getSafeInterval(maxTime, divisions: 10),
+                            interval: _getSafeInterval(maxX, divisions: 10),
                           ),
                         ),
                         leftTitles: AxisTitles(
-                          axisNameWidget: const Text('Lux (lx)'),
+                          axisNameWidget: Text(widget.yAxisLabel),
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 45,
-                            interval: _getSafeInterval(maxLux, divisions: 5),
+                            interval: _getSafeInterval(maxY, divisions: 5),
                           ),
                         ),
                         rightTitles: AxisTitles(
@@ -113,18 +130,17 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                         drawHorizontalLine: true,
                         drawVerticalLine: true,
                         horizontalInterval:
-                            _getSafeInterval(maxLux, divisions: 5),
-                        verticalInterval:
-                            _getSafeInterval(maxTime, divisions: 10),
+                            _getSafeInterval(maxY, divisions: 5),
+                        verticalInterval: _getSafeInterval(maxX, divisions: 10),
                       ),
                       borderData: FlBorderData(
                         show: true,
                         border: Border.all(color: chartBorderColor),
                       ),
                       minY: 0,
-                      maxY: maxLux > 0 ? maxLux * 1.1 : 10,
+                      maxY: maxY > 0 ? maxY * 1.1 : 10,
                       minX: 0,
-                      maxX: maxTime,
+                      maxX: maxX,
                       lineBarsData: [
                         LineChartBarData(
                           spots: spots,

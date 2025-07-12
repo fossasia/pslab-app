@@ -1929,6 +1929,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.'**
   String get baroMeterBulletPoint4;
+
+  /// No description provided for @sharingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing PSLab Data'**
+  String get sharingMessage;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this file?'**
+  String get deleteHint;
+
+  /// No description provided for @deleteFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete File'**
+  String get deleteFile;
+
+  /// No description provided for @deleteAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Data'**
+  String get deleteAllData;
+
+  /// No description provided for @deleteCautionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all logged data for this instrument?'**
+  String get deleteCautionMessage;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All'**
+  String get deleteAll;
+
+  /// No description provided for @noLoggedData.
+  ///
+  /// In en, this message translates to:
+  /// **'No logged data found.'**
+  String get noLoggedData;
+
+  /// No description provided for @importLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Log'**
+  String get importLog;
+
+  /// No description provided for @failedToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save file. No data was recorded.'**
+  String get failedToSave;
+
+  /// No description provided for @fileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved'**
+  String get fileSaved;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @enterFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter filename (leave empty for auto-generated name)'**
+  String get enterFileName;
+
+  /// No description provided for @fileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Filename'**
+  String get fileName;
+
+  /// No description provided for @saveRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Recording'**
+  String get saveRecording;
+
+  /// No description provided for @recordingStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording started'**
+  String get recordingStarted;
+
+  /// No description provided for @noValidData.
+  ///
+  /// In en, this message translates to:
+  /// **'No valid data to display.'**
+  String get noValidData;
 }
 
 class _AppLocalizationsDelegate
