@@ -329,7 +329,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                           color: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
-                            appLocalizations.timelineLabel,
+                            'Timeline',
                             style: TextStyle(fontSize: 8, color: Colors.black),
                           ),
                         ),
@@ -420,7 +420,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                           color: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
-                            appLocalizations.frequencyLabel,
+                            'Frequency',
                             style: TextStyle(fontSize: 8, color: Colors.black),
                           ),
                         ),
@@ -485,7 +485,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                           color: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
-                            appLocalizations.maxAngleLabel,
+                            'Maximum Angle',
                             style: TextStyle(fontSize: 8, color: Colors.black),
                           ),
                         ),
