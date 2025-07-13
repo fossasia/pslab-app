@@ -156,6 +156,10 @@ class CsvService {
   }
 
   void writeMetaData(String instrumentName, List<List<dynamic>> data) {
+    if (data.isNotEmpty && data[0].isNotEmpty && data[0][0] == instrumentName) {
+      return;
+    }
+
     final now = DateTime.now();
     final sdf = DateFormat('yyyy-MM-dd HH:mm:ss');
     final metaDataTime = sdf.format(now);

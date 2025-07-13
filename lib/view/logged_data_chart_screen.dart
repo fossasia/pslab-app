@@ -55,6 +55,19 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
     return interval > 0 ? interval : 1.0;
   }
 
+  double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    if (value is String) {
+      try {
+        return double.parse(value);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
   Widget _buildChart(double screenWidth, double maxY, double maxX, double minX,
       double timeInterval, List<FlSpot> spots) {
     final chartFontSize = screenWidth < 400
@@ -187,12 +200,15 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
       final row = widget.data[i];
       if (row.length > widget.xDataColumnIndex &&
           row.length > widget.yDataColumnIndex) {
-        final x = (row[widget.xDataColumnIndex] as num).toDouble();
-        final y = (row[widget.yDataColumnIndex] as num).toDouble();
-        spots.add(FlSpot(x, y));
-        if (y > maxY) maxY = y;
-        if (x > maxX) maxX = x;
-        if (i == 1 || x < minX) minX = x;
+        final xValue = _parseDouble(row[widget.xDataColumnIndex]);
+        final yValue = _parseDouble(row[widget.yDataColumnIndex]);
+
+        if (xValue != null && yValue != null) {
+          spots.add(FlSpot(xValue, yValue));
+          if (yValue > maxY) maxY = yValue;
+          if (xValue > maxX) maxX = xValue;
+          if (spots.length == 1 || xValue < minX) minX = xValue;
+        }
       }
     }
 
