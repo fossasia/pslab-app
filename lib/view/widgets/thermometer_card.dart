@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:pslab/providers/thermometer_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
-import 'package:pslab/constants.dart';
+
+import '../../l10n/app_localizations.dart';
+import '../../providers/locator.dart';
 
 class ThermometerCard extends StatefulWidget {
   const ThermometerCard({super.key});
@@ -13,6 +15,8 @@ class ThermometerCard extends StatefulWidget {
 }
 
 class _ThermometerCardState extends State<ThermometerCard> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -55,7 +59,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
                           currentValue: currentTemp,
                           minValue: -40,
                           maxValue: 125,
-                          unit: celsius,
+                          unit: appLocalizations.celsius,
                           currentValueFontSize: tempValueFontSize),
                     ),
                     Expanded(
@@ -66,7 +70,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
                         maxValue: maxTemp,
                         minValue: minTemp,
                         avgValue: avgTemp,
-                        unit: celsius,
+                        unit: appLocalizations.celsius,
                       ),
                     ),
                   ],
@@ -82,7 +86,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
                         maxValue: maxTemp,
                         minValue: minTemp,
                         avgValue: avgTemp,
-                        unit: celsius,
+                        unit: appLocalizations.celsius,
                       ),
                     ),
                     Expanded(
@@ -92,7 +96,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
                           currentValue: currentTemp,
                           minValue: -40,
                           maxValue: 125,
-                          unit: celsius,
+                          unit: appLocalizations.celsius,
                           currentValueFontSize: tempValueFontSize),
                     ),
                   ],

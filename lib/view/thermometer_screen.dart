@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/providers/thermometer_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/thermometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
 class ThermometerScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class ThermometerScreen extends StatefulWidget {
 }
 
 class _ThermometerScreenState extends State<ThermometerScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   ThermometerStateProvider? _temperatureProvider;
   bool _showGuide = false;
   bool _snackbarShown = false;
@@ -68,7 +70,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
   List<Widget> _getThermometerContent() {
     return [
       InstrumentIntroText(
-        text: thermometerIntro,
+        text: appLocalizations.thermometerIntro,
       ),
     ];
   }
@@ -83,7 +85,8 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
               !_snackbarShown &&
               provider.isInitialized()) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              _showSensorErrorSnackbar(temperatureSensorUnavailableMessage);
+              _showSensorErrorSnackbar(
+                  appLocalizations.temperatureSensorUnavailableMessage);
               _snackbarShown = true;
             });
           }
@@ -91,7 +94,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
           return Stack(
             children: [
               CommonScaffold(
-                title: thermometerTitle,
+                title: appLocalizations.thermometerTitle,
                 onGuidePressed: _showInstrumentGuide,
                 body: SafeArea(
                     child: LayoutBuilder(builder: (context, constraints) {
@@ -127,7 +130,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
               ),
               if (_showGuide)
                 InstrumentOverviewDrawer(
-                  instrumentName: thermometerTitle,
+                  instrumentName: appLocalizations.thermometerTitle,
                   content: _getThermometerContent(),
                   onHide: _hideInstrumentGuide,
                 ),
@@ -223,7 +226,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
               axisNameWidget: Padding(
                 padding: EdgeInsets.only(left: screenWidth < 400 ? 15 : 25),
                 child: Text(
-                  timeAxisLabel,
+                  appLocalizations.timeAxisLabel,
                   style: TextStyle(
                     fontSize: axisNameFontSize,
                     color: chartTextColor,
@@ -243,7 +246,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
             ),
             leftTitles: AxisTitles(
               axisNameWidget: Text(
-                celsius,
+                appLocalizations.celsius,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
                   color: chartTextColor,

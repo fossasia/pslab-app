@@ -56,13 +56,3 @@ List<String> instrumentIcons = [
   'assets/icons/tile_icon_gas.png',
   'assets/icons/tile_icon_gas.png',
 ];
-
-String thermometerTitle = 'Thermometer';
-String thermometerIntro =
-    'Thermometer instrument is used to measure ambient temprature. It can be measured using inbuilt ambient temprature sensor or through SHT21.';
-String celsius = '°C';
-String temperatureSensorError = 'Temperature sensor error:';
-String temperatureSensorInitialError =
-    'Temperature sensor initialization error:';
-String temperatureSensorUnavailableMessage =
-    'Ambient temperature sensor is not available on this device';

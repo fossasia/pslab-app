@@ -1929,6 +1929,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.'**
   String get baroMeterBulletPoint4;
+
+  /// No description provided for @thermometerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermometer'**
+  String get thermometerTitle;
+
+  /// No description provided for @thermometerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermometer instrument is used to measure ambient temprature. It can be measured using inbuilt ambient temprature sensor or through SHT21.'**
+  String get thermometerIntro;
+
+  /// No description provided for @celsius.
+  ///
+  /// In en, this message translates to:
+  /// **'°C'**
+  String get celsius;
+
+  /// No description provided for @temperatureSensorError.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature sensor error:'**
+  String get temperatureSensorError;
+
+  /// No description provided for @temperatureSensorInitialError.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature sensor initialization error:'**
+  String get temperatureSensorInitialError;
+
+  /// No description provided for @temperatureSensorUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient temperature sensor is not available on this device'**
+  String get temperatureSensorUnavailableMessage;
 }
 
 class _AppLocalizationsDelegate

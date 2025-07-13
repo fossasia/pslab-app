@@ -4,10 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pslab/constants.dart';
 import 'package:pslab/others/temperature_service.dart';
 
+import '../l10n/app_localizations.dart';
+import 'locator.dart';
+
 class ThermometerStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   double _currentTemperature = 0.0;
   Timer? _timeTimer;
   StreamSubscription<double>? _temperatureSubscription;
@@ -48,7 +51,7 @@ class ThermometerStateProvider extends ChangeNotifier {
           _isSensorAvailable = false;
         }
       } else {
-        logger.w(temperatureSensorUnavailableMessage);
+        logger.w(appLocalizations.temperatureSensorUnavailableMessage);
       }
 
       _startTimeTracking();
@@ -56,7 +59,7 @@ class ThermometerStateProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      logger.e("$temperatureSensorInitialError $e");
+      logger.e("${appLocalizations.temperatureSensorInitialError} $e");
       _isSensorAvailable = false;
       _isInitialized = true;
       notifyListeners();
