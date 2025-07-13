@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
@@ -16,6 +17,7 @@ class SoundMeterScreen extends StatefulWidget {
 }
 
 class _SoundMeterScreenState extends State<SoundMeterScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
   void _showInstrumentGuide() {
@@ -33,13 +35,13 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
   List<Widget> _getSoundMeterContent() {
     return [
       InstrumentIntroText(
-        text: soundMeterIntro,
+        text: appLocalizations.soundMeterIntro,
       ),
       const InstrumentImage(
         imagePath: imagePath,
       ),
       InstrumentIntroText(
-        text: soundMeterDesc,
+        text: appLocalizations.soundMeterDesc,
       ),
     ];
   }
@@ -55,7 +57,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       child: Stack(
         children: [
           CommonScaffold(
-            title: soundMeterTitle,
+            title: appLocalizations.soundMeterTitle,
             onGuidePressed: _showInstrumentGuide,
             body: SafeArea(
               child: LayoutBuilder(
@@ -95,7 +97,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
           ),
           if (_showGuide)
             InstrumentOverviewDrawer(
-              instrumentName: soundMeterTitle,
+              instrumentName: appLocalizations.soundMeterTitle,
               content: _getSoundMeterContent(),
               onHide: _hideInstrumentGuide,
             ),
@@ -183,7 +185,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
               axisNameWidget: Padding(
                 padding: EdgeInsets.only(left: screenWidth < 400 ? 15 : 25),
                 child: Text(
-                  timeAxisLabel,
+                  appLocalizations.timeAxisLabel,
                   style: TextStyle(
                     fontSize: axisNameFontSize,
                     color: chartTextColor,
@@ -203,7 +205,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
             ),
             leftTitles: AxisTitles(
               axisNameWidget: Text(
-                db,
+                appLocalizations.db,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
                   color: chartTextColor,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,11 +20,12 @@ class ConnectDeviceScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<ConnectDeviceScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
       index: 2,
-      title: connectDevice,
+      title: appLocalizations.connectDevice,
       body: Consumer<BoardStateProvider>(
         builder: (context, provider, _) {
           return SafeArea(
@@ -52,8 +54,8 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                             top: 20, bottom: 60, left: 40, right: 40),
                         child: Text(
                           provider.pslabIsConnected
-                              ? '$deviceConnected\n\n${provider.pslabVersionID}'
-                              : noDeviceFound,
+                              ? '${appLocalizations.deviceConnected}\n\n${provider.pslabVersionID}'
+                              : appLocalizations.noDeviceFound,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20,
@@ -73,7 +75,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                           children: [
                             Center(
                               child: Text(
-                                stepsToConnect[0],
+                                appLocalizations.stepsToConnectTitle,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   decoration: TextDecoration.underline,
@@ -84,19 +86,19 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              stepsToConnect[1],
+                              appLocalizations.step1ConnectMicroUsb,
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                             Text(
-                              stepsToConnect[2],
+                              appLocalizations.step2ConnectOtg,
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                             Text(
-                              stepsToConnect[3],
+                              appLocalizations.step3ConnectPhone,
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
@@ -109,7 +111,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       visible: provider.pslabIsConnected ? false : true,
                       child: Center(
                         child: Text(
-                          bluetoothWifiConnection,
+                          appLocalizations.bluetoothWifiConnection,
                           style: const TextStyle(
                             fontSize: 14,
                           ),
@@ -136,7 +138,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  bluetooth,
+                                  appLocalizations.bluetooth,
                                   style: TextStyle(color: buttonTextColor),
                                 ),
                               ),
@@ -156,7 +158,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  wifi,
+                                  appLocalizations.wifi,
                                   style: TextStyle(color: buttonTextColor),
                                 ),
                               ),
@@ -176,10 +178,11 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         padding: const EdgeInsets.all(10),
                         child: GestureDetector(
                           onTap: () async {
-                            await launchUrl(Uri.parse(pslabUrl));
+                            await launchUrl(
+                                Uri.parse(appLocalizations.pslabUrl));
                           },
                           child: Text(
-                            whatisPslab,
+                            appLocalizations.whatIsPslab,
                             style: TextStyle(
                               decoration: TextDecoration.underline,
                               decorationThickness: 1,

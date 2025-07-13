@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
+import 'package:pslab/providers/luxmeter_config_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/view/luxmeter_config_screen.dart';
 
 import '../theme/colors.dart';
 
@@ -17,8 +20,10 @@ class LuxMeterScreen extends StatefulWidget {
 
 class _LuxMeterScreenState extends State<LuxMeterScreen> {
   late LuxMeterStateProvider _provider;
+  late LuxMeterConfigProvider _configProvider;
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -34,27 +39,76 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   List<Widget> _getLuxMeterContent() {
     return [
       InstrumentBulletPoint(
-        text: luxMeterDesc,
+        text: appLocalizations.luxMeterDesc,
       ),
       InstrumentBulletPoint(
-        text: luxMeterSensorIntro,
+        text: appLocalizations.luxMeterSensorIntro,
       ),
       const InstrumentImage(
         imagePath: imagePath,
       ),
       InstrumentBulletPoint(
-        text: luxMeterBulletPoint1,
+        text: appLocalizations.luxMeterBulletPoint1,
       ),
-      InstrumentBulletPoint(text: luxMeterBulletPoint2),
+      InstrumentBulletPoint(text: appLocalizations.luxMeterBulletPoint2),
     ];
+  }
+
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(appLocalizations.showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'lux_meter_config',
+          child: Text(appLocalizations.showLuxmeterConfig),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            // TODO
+            break;
+          case 'lux_meter_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChangeNotifierProvider<LuxMeterConfigProvider>.value(
+          value: _configProvider,
+          child: const LuxMeterConfigScreen(),
+        ),
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
     _provider = LuxMeterStateProvider();
+    _configProvider = LuxMeterConfigProvider();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        _provider.setConfigProvider(_configProvider);
         _provider.initializeSensors(onError: _showSensorErrorSnackbar);
       }
     });
@@ -64,6 +118,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   void dispose() {
     _provider.disposeSensors();
     _provider.dispose();
+    _configProvider.dispose();
     super.dispose();
   }
 
@@ -85,11 +140,16 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<LuxMeterStateProvider>.value(
-      value: _provider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LuxMeterStateProvider>.value(value: _provider),
+        ChangeNotifierProvider<LuxMeterConfigProvider>.value(
+            value: _configProvider),
+      ],
       child: Stack(children: [
         CommonScaffold(
-          title: luxMeterTitle,
+          title: appLocalizations.luxMeterTitle,
+          onOptionsPressed: _showOptionsMenu,
           onGuidePressed: _showInstrumentGuide,
           body: SafeArea(child: LayoutBuilder(builder: (context, constraints) {
             final isLargeScreen = constraints.maxWidth > 900;
@@ -124,7 +184,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         ),
         if (_showGuide)
           InstrumentOverviewDrawer(
-            instrumentName: luxMeterTitle,
+            instrumentName: appLocalizations.luxMeterTitle,
             content: _getLuxMeterContent(),
             onHide: _hideInstrumentGuide,
           ),
@@ -213,7 +273,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
               axisNameWidget: Padding(
                 padding: EdgeInsets.only(left: screenWidth < 400 ? 15 : 25),
                 child: Text(
-                  timeAxisLabel,
+                  appLocalizations.timeAxisLabel,
                   style: TextStyle(
                     fontSize: axisNameFontSize,
                     color: chartTextColor,
@@ -233,7 +293,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             ),
             leftTitles: AxisTitles(
               axisNameWidget: Text(
-                lx,
+                appLocalizations.lx,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
                   color: chartTextColor,

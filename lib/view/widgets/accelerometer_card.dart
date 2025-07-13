@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/accelerometer_state_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,7 @@ class AccelerometerCard extends StatefulWidget {
 }
 
 class _AccelerometerCardState extends State<AccelerometerCard> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,
@@ -67,7 +69,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                 Container(
                   margin: const EdgeInsets.only(top: 8, bottom: 12),
                   child: Text(
-                    "${currVal.toStringAsFixed(1)} $accelerationAxisLabel",
+                    "${currVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
                     style: TextStyle(color: cardContentColor, fontSize: 14),
                   ),
                 ),
@@ -75,7 +77,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   alignment: Alignment.topLeft,
                   margin: const EdgeInsets.only(left: 8, top: 4),
                   child: Text(
-                    "$minValue ${minVal.toStringAsFixed(1)} $accelerationAxisLabel",
+                    "${appLocalizations.minValue} ${minVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
                     style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
@@ -83,7 +85,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   alignment: Alignment.topLeft,
                   margin: const EdgeInsets.only(left: 8, top: 2),
                   child: Text(
-                    "$maxValue ${maxVal.toStringAsFixed(1)} $accelerationAxisLabel",
+                    "${appLocalizations.maxValue} ${maxVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
                     style: TextStyle(color: cardContentColor, fontSize: 10),
                   ),
                 ),
@@ -103,7 +105,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                         axisNameWidget: Padding(
                           padding: const EdgeInsets.only(left: 25),
                           child: Text(
-                            timeAxisLabel,
+                            appLocalizations.timeAxisLabel,
                             style: TextStyle(
                               fontSize: 10,
                               color: chartTextColor,
@@ -117,7 +119,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                           sideTitles: SideTitles(showTitles: false)),
                       leftTitles: AxisTitles(
                         axisNameWidget: Text(
-                          accelerationAxisLabel,
+                          appLocalizations.accelerationAxisLabel,
                           style: TextStyle(
                             fontSize: 10,
                             color: chartTextColor,

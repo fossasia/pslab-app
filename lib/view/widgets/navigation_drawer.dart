@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,6 +17,7 @@ class NavDrawer extends StatefulWidget {
 }
 
 class _NavDrawerState extends State<NavDrawer> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final String navHeaderLogo = 'assets/icons/ic_nav_header_logo.png';
 
   @override
@@ -68,7 +70,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 0 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                instrumentsTitle,
+                appLocalizations.instrumentsTitle,
                 style: TextStyle(
                   color: widget.selectedIndex == 0
                       ? selectedMenuColor
@@ -102,7 +104,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 1 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                loggedDataMenu,
+                appLocalizations.loggedDataMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 1
                       ? selectedMenuColor
@@ -125,7 +127,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 2 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                connectDevice,
+                appLocalizations.connectDevice,
                 style: TextStyle(
                   color: widget.selectedIndex == 2
                       ? selectedMenuColor
@@ -157,7 +159,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 3 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                configFileMenu,
+                appLocalizations.configFileMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 3
                       ? selectedMenuColor
@@ -179,7 +181,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 4 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                settings,
+                appLocalizations.settings,
                 style: TextStyle(
                   color: widget.selectedIndex == 4
                       ? selectedMenuColor
@@ -211,7 +213,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 5 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                aboutUs,
+                appLocalizations.aboutUs,
                 style: TextStyle(
                   color: widget.selectedIndex == 5
                       ? selectedMenuColor
@@ -242,7 +244,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 6 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                documentationMenu,
+                appLocalizations.documentationMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 6
                       ? selectedMenuColor
@@ -264,7 +266,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 7 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                rateApp,
+                appLocalizations.rateApp,
                 style: TextStyle(
                   color: widget.selectedIndex == 7
                       ? selectedMenuColor
@@ -286,7 +288,7 @@ class _NavDrawerState extends State<NavDrawer> {
                       widget.selectedIndex == 8 ? selectedMenuColor : menuColor,
                 ),
                 title: Text(
-                  buyPsLabMenu,
+                  appLocalizations.buyPsLabMenu,
                   style: TextStyle(
                     color: widget.selectedIndex == 8
                         ? selectedMenuColor
@@ -296,10 +298,11 @@ class _NavDrawerState extends State<NavDrawer> {
                   ),
                 ),
                 onTap: () async {
-                  final launched = await launchUrl(Uri.parse(shopLink));
+                  final launched =
+                      await launchUrl(Uri.parse(appLocalizations.shopLink));
                   if (!launched && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(shopError)),
+                      SnackBar(content: Text(appLocalizations.shopError)),
                     );
                   }
                 }),
@@ -312,7 +315,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 9 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                faqMenu,
+                appLocalizations.faqMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 9
                       ? selectedMenuColor
@@ -343,7 +346,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 10 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                shareAppMenu,
+                appLocalizations.shareAppMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 10
                       ? selectedMenuColor
@@ -365,7 +368,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 11 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                privacyPolicyMenu,
+                appLocalizations.privacyPolicyMenu,
                 style: TextStyle(
                   color: widget.selectedIndex == 11
                       ? selectedMenuColor
@@ -387,7 +390,7 @@ class _NavDrawerState extends State<NavDrawer> {
                     widget.selectedIndex == 12 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                softwareLicenses,
+                appLocalizations.softwareLicenses,
                 style: TextStyle(
                   color: widget.selectedIndex == 12
                       ? selectedMenuColor

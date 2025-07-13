@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
-import '../../constants.dart';
 
 class AngleInputTopDialog extends StatefulWidget {
   final int index;
@@ -19,6 +20,7 @@ class AngleInputTopDialog extends StatefulWidget {
 }
 
 class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late double currentValue;
   late TextEditingController controller;
 
@@ -57,7 +59,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '$setAngle ${widget.index + 1}',
+                '${appLocalizations.setAngle} ${widget.index + 1}',
                 style: TextStyle(
                   color: primaryRed,
                   fontSize: 11,
@@ -121,7 +123,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
-                      '$val$degreeSymbol',
+                      '$val${appLocalizations.degreeSymbol}',
                       style: const TextStyle(fontSize: 11),
                     ),
                   );
@@ -140,7 +142,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: Text(cancel),
+                    child: Text(appLocalizations.cancel),
                   ),
                   const SizedBox(width: 6),
                   TextButton(
@@ -151,7 +153,8 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         Navigator.pop(context);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(enterAngleRange)),
+                          SnackBar(
+                              content: Text(appLocalizations.enterAngleRange)),
                         );
                       }
                     },
@@ -164,7 +167,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: Text(ok),
+                    child: Text(appLocalizations.ok),
                   ),
                 ],
               ),

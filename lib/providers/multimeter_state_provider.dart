@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/science_lab.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 
 class MultimeterStateProvider extends ChangeNotifier {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late List<String> knobMarker;
   late int _selectedIndex = 0;
   late ScienceLab _scienceLab;
   late bool isSwitchChecked;
@@ -21,9 +23,21 @@ class MultimeterStateProvider extends ChangeNotifier {
     _scienceLab = getIt<ScienceLab>();
     isSwitchChecked = false;
     delay = 1000;
-    value = defaultValue;
-    unit = unitVolts;
-
+    value = appLocalizations.defaultValue;
+    unit = appLocalizations.unitVolts;
+    knobMarker = [
+      appLocalizations.knobMarkerCh1,
+      appLocalizations.knobMarkerCap,
+      appLocalizations.knobMarkerVol,
+      appLocalizations.knobMarkerRes,
+      appLocalizations.knobMarkerCap,
+      appLocalizations.knobMarkerLa1,
+      appLocalizations.knobMarkerLa2,
+      appLocalizations.knobMarkerLa3,
+      appLocalizations.knobMarkerLa4,
+      appLocalizations.knobMarkerCh3,
+      appLocalizations.knobMarkerCh2,
+    ];
     _isProcessing = false;
 
     logData();
@@ -130,7 +144,7 @@ class MultimeterStateProvider extends ChangeNotifier {
             double? voltage =
                 await _scienceLab.getVoltage(knobMarker[_selectedIndex], 1);
             String voltageValue = voltage.toStringAsFixed(2);
-            String voltageUnit = unitVolts;
+            String voltageUnit = appLocalizations.unitVolts;
             value = voltageValue;
             unit = voltageUnit;
         }
@@ -146,7 +160,7 @@ class MultimeterStateProvider extends ChangeNotifier {
         double frequency =
             await _scienceLab.getFrequency(knobMarker[_selectedIndex]);
         value = frequency.toStringAsFixed(2);
-        unit = unitHz;
+        unit = appLocalizations.unitHz;
       } else {
         await _scienceLab.countPulses(knobMarker[_selectedIndex]);
         int pulseCount = await _scienceLab.readPulseCount();

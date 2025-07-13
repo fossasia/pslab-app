@@ -45,6 +45,7 @@ Color snackBarContentColor = Colors.white;
 Color guideDrawerBackgroundColor = Colors.white;
 Color guideDrawerHeadingColor = Colors.black87;
 Color guideDrawerHighlightColor = Colors.black54;
+Color hintTextColor = Colors.grey;
 List<Color> knobLabelColors = [
   Color(0xFFD32F2F), // CH1
   Color(0xFFD32F2F), // CAP
@@ -66,3 +67,12 @@ Color multimeterBorderBlack = Colors.black;
 Color multimeterBorderLightRed = Color.fromARGB(255, 240, 162, 162);
 Color multimeterDividerColor = Colors.grey;
 Color multimeterIconColor = Colors.white;
+List<Color> logicAnalyzerChannelColors = [
+  Color(0xFFFF00FF),
+  Colors.green,
+  Colors.cyan,
+  Colors.yellow,
+];
+Color logicAnalyzerChannelsTextColor = Colors.black;
+Color logicAnalyzerTextColor = Colors.white;
+Color logicAnalyzerGraphTextColor = Colors.amber;

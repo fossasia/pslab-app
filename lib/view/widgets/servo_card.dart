@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-import '../../constants.dart';
 import '../../providers/robotic_arm_state_provider.dart';
 
 class ServoCard extends StatelessWidget {
@@ -26,6 +27,7 @@ class ServoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
     final provider = Provider.of<RoboticArmStateProvider>(context);
 
     final sliderSize =
@@ -70,7 +72,7 @@ class ServoCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    '${value.floor()} $degreeSymbol',
+                    '${value.floor()} ${appLocalizations.degreeSymbol}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -123,7 +125,8 @@ class ServoCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      modifier: (val) => '${val.toInt()}$degreeSymbol',
+                      modifier: (val) =>
+                          '${val.toInt()}${appLocalizations.degreeSymbol}',
                     ),
                   ),
                 ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
-
-import '../../constants.dart';
 
 class OscilloscopeScreenTabs extends StatefulWidget {
   final String channelParametersImage = 'assets/images/channel_parameters.gif';
@@ -18,6 +18,7 @@ class OscilloscopeScreenTabs extends StatefulWidget {
 }
 
 class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
@@ -66,7 +67,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                         ? oscilloscopeOptionTitleColor
                         : Colors.transparent,
                     child: Text(
-                      channels,
+                      appLocalizations.channels,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(
@@ -118,7 +119,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                           ? oscilloscopeOptionTitleColor
                           : Colors.transparent,
                       child: Text(
-                        timeBase,
+                        appLocalizations.timeBase,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
@@ -169,7 +170,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                           ? oscilloscopeOptionTitleColor
                           : Colors.transparent,
                       child: Text(
-                        dataAnalysis,
+                        appLocalizations.dataAnalysis,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
@@ -220,7 +221,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                         ? oscilloscopeOptionTitleColor
                         : Colors.transparent,
                     child: Text(
-                      xyPlot,
+                      appLocalizations.xyPlot,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(

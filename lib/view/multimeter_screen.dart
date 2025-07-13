@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/multimeter_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
@@ -15,6 +16,7 @@ class MultimeterScreen extends StatefulWidget {
 }
 
 class _MultimeterScreenState extends State<MultimeterScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -26,7 +28,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
       child: Consumer<MultimeterStateProvider>(
         builder: (context, provider, _) {
           return CommonScaffold(
-            title: multimeter,
+            title: appLocalizations.multimeterTitle,
             body: SafeArea(
               child: Column(
                 children: [
@@ -96,7 +98,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                   border: Border.all(
                                       width: 3, color: multimeterBorderRed),
                                 ),
-                                child: Text(voltage,
+                                child: Text(appLocalizations.voltage,
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: multimeterBorderRed,
@@ -131,7 +133,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              unitHz,
+                                              appLocalizations.unitHz,
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   color: multimeterBorderBlack,
@@ -148,7 +150,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                               ),
                                             ),
                                             Text(
-                                              countPulse,
+                                              appLocalizations.countPulse,
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   color: multimeterBorderBlack,
@@ -178,7 +180,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                       ),
                                       child: Align(
                                         alignment: Alignment.bottomCenter,
-                                        child: Text(measure,
+                                        child: Text(appLocalizations.measure,
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 color: multimeterBorderBlack,

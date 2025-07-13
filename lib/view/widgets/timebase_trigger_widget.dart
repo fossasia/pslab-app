@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/constants.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 import '../../theme/colors.dart';
@@ -13,6 +14,20 @@ class TimebaseTriggerWidget extends StatefulWidget {
 }
 
 class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  late List<String> channelEntries;
+
+  @override
+  void initState() {
+    super.initState();
+    channelEntries = [
+      appLocalizations.channel1,
+      appLocalizations.channel2,
+      appLocalizations.channel3,
+      appLocalizations.mic,
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
@@ -47,7 +62,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       },
                     ),
                     Text(
-                      trigger,
+                      appLocalizations.trigger,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
@@ -210,7 +225,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      timeBase,
+                      appLocalizations.timeBase,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
                         fontSize: 15,
@@ -335,7 +350,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
               child: Text(
-                timeBaseAndTrigger,
+                appLocalizations.timeBaseAndTrigger,
                 style: TextStyle(
                   color: oscilloscopeOptionTitleColor,
                   fontStyle: FontStyle.normal,
