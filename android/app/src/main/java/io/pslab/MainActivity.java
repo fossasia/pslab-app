@@ -20,11 +20,8 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
     private static final String TEMPERATURE_CHANNEL = "io.pslab/temperature";
     private static final String TEMPERATURE_STREAM = "io.pslab/temperature_stream";
     private static final String TAG = "MainActivity";
-
     private SensorManager sensorManager;
     private Sensor temperatureSensor;
-    private MethodChannel temperatureChannel;
-    private EventChannel temperatureEventChannel;
     private EventChannel.EventSink temperatureEventSink;
     private boolean isListening = false;
     private float currentTemperature = 0.0f;
@@ -38,10 +35,10 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
             temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         }
 
-        temperatureChannel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), TEMPERATURE_CHANNEL);
+        MethodChannel temperatureChannel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), TEMPERATURE_CHANNEL);
         temperatureChannel.setMethodCallHandler(this::handleMethodCall);
 
-        temperatureEventChannel = new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), TEMPERATURE_STREAM);
+        EventChannel temperatureEventChannel = new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), TEMPERATURE_STREAM);
         temperatureEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink events) {
@@ -137,10 +134,7 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
 
     private boolean isValidTemperature(float temperature) {
         if (Float.isNaN(temperature) || Float.isInfinite(temperature)) return false;
-        if (temperature < -273.15f) return false;
-        if (temperature > 200f) return false;
-        if (Math.abs(temperature) > 1e10f) return false;
-        return true;
+        return temperature >= -273.15f && temperature <= 200f && Math.abs(temperature) <= 1e10f;
     }
 
     @Override
