@@ -120,7 +120,7 @@ class I2C {
     Uint8List buffer = Uint8List(bytesToRead + 1);
     await packetHandler.read(buffer, bytesToRead + 1);
     List<int> data = [];
-    for (int i in data) {
+    for (int i in buffer) {
       data.add(i.toInt());
     }
     return data;
