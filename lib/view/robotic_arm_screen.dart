@@ -184,7 +184,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
             ],
             body: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -196,7 +196,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                           return Expanded(
                             child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
+                                  const EdgeInsets.symmetric(horizontal: 1),
                               child: SizedBox(
                                 height: servoHeight,
                                 child: ServoCard(
@@ -218,12 +218,12 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                         }),
                       ),
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 2),
                     Expanded(
                       child: Scrollbar(
                         controller: provider.timelineScrollController,
                         thumbVisibility: true,
-                        thickness: 8,
+                        thickness: screenHeight * 0.006,
                         radius: const Radius.circular(4),
                         child: TimelineScrollView(
                           totalTimelineItems: provider.totalTimelineItems,

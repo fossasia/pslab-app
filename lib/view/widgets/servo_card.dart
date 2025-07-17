@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
@@ -27,24 +25,21 @@ class ServoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
     final provider = Provider.of<RoboticArmStateProvider>(context);
-
     final sliderSize =
-        provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.66;
+        provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.72;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade400),
+        border: Border.all(color: Colors.grey.shade500),
       ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Positioned(
-            top: 6,
-            left: 8,
+            top: 0,
+            left: 2,
             child: Text(
               label,
               style: const TextStyle(
@@ -55,8 +50,8 @@ class ServoCard extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 8,
-            right: 8,
+            top: 0,
+            right: 0,
             child: Draggable<Map<String, dynamic>>(
               data: {
                 'servoId': servoId,
@@ -69,10 +64,9 @@ class ServoCard extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.black,
-                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    '${value.floor()} ${appLocalizations.degreeSymbol}',
+                    '${value.floor()} °',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -125,8 +119,7 @@ class ServoCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      modifier: (val) =>
-                          '${val.toInt()}${appLocalizations.degreeSymbol}',
+                      modifier: (val) => '${val.round()}°',
                     ),
                   ),
                 ),
