@@ -3,8 +3,6 @@ package io.pslab.communication.sensors;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -19,16 +17,8 @@ public class TSL2561 {
 
     /* See https://github.com/adafruit/TSL2561-Arduino-Library/blob/master/TSL2561.h for all constants. */
 
-    private static final byte VISIBLE = 2;      // channel 0 - channel 1
-    private static final byte INFRARED = 1;     // channel 1
-    private static final byte FULLSPECTRUM = 0; // channel 0
-
-    private static final byte READBIT = 0x01;
-
     private static final byte COMMAND_BIT = (byte) 0x80; // Must be 1
-    private static final byte CLEAR_BIT = (0x40);        // Clears any pending interrupt (write 1 to clear)
     private static final byte WORD_BIT = (0x20);         // 1 = read/write word (rather than byte)
-    private static final byte BLOCK_BIT = (0x10);        // 1 = using block read/write
 
     private static final byte CONTROL_POWERON = 0x03;
     private static final byte CONTROL_POWEROFF = 0x00;
@@ -51,14 +41,11 @@ public class TSL2561 {
      * We use the normal address first before querying the alternatives.
      */
     private static final byte[] ADDRESSES = new byte[]{0x39, 0x29, 0x49};
-    private static final byte[] TIMINGS = new byte[]{INTEGRATIONTIME_13MS, INTEGRATIONTIME_101MS, INTEGRATIONTIME_402MS};
     private byte address;
     private byte timing = INTEGRATIONTIME_13MS;
     private byte gain = GAIN_16X;
 
     private final I2C i2c;
-    private final List<Serializable> setGain = Arrays.asList("1x", "16x");
-    private final List<Serializable> setTiming = Arrays.asList(0, 1, 2);
 
     public TSL2561(I2C i2c, ScienceLab scienceLab) throws IOException, InterruptedException {
         this.i2c = i2c;
@@ -116,12 +103,6 @@ public class TSL2561 {
         i2c.writeBulk(address, new int[]{COMMAND_BIT | REGISTER_TIMING, this.gain | timing});
     }
 
-    public void setTiming(int timing) throws IOException {
-        Log.v(TAG, new int[]{13, 101, 404}[timing] + "mS");
-        this.timing = TIMINGS[timing];
-        i2c.writeBulk(address, new int[]{COMMAND_BIT | REGISTER_TIMING, gain | timing});
-    }
-
     private void enable() throws IOException {
         i2c.writeBulk(address, new int[]{COMMAND_BIT | REGISTER_CONTROL, CONTROL_POWERON});
     }
@@ -140,6 +121,7 @@ public class TSL2561 {
                 TimeUnit.MILLISECONDS.sleep(102);
                 break;
             }
+            case INTEGRATIONTIME_402MS:
             default: {
                 TimeUnit.MILLISECONDS.sleep(403);
             }
