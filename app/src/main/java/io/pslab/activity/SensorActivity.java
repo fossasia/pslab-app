@@ -56,7 +56,7 @@ public class SensorActivity extends GuideActivity {
     private I2C i2c;
     private ScienceLab scienceLab;
     private final Map<Integer, List<String>> sensorAddr = new LinkedHashMap<>();
-    private final List<String> dataAddress = new ArrayList<>();
+    private final List<Integer> dataAddress = new ArrayList<>();
     private final List<String> dataName = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private ListView lvSensor;
@@ -83,15 +83,16 @@ public class SensorActivity extends GuideActivity {
         i2c = scienceLab.i2c;
 
         // Populate sensor addresses with multiple sensors mapped to the same address
-        sensorAddr.put(0x48, List.of("ADS1115"));
-        sensorAddr.put(0x77, List.of("BMP180"));
-        sensorAddr.put(0x5A, List.of("MLX90614", "CCS811"));
-        sensorAddr.put(0x1E, List.of("HMC5883L"));
-        sensorAddr.put(0x68, List.of("MPU6050"));
-        sensorAddr.put(0x40, List.of("SHT21"));
+        sensorAddr.put(0x29, List.of("TSL2561", "VL53L0X"));
         sensorAddr.put(0x39, List.of("TSL2561", "APDS9960"));
+        sensorAddr.put(0x40, List.of("SHT21"));
+        sensorAddr.put(0x48, List.of("ADS1115"));
+        sensorAddr.put(0x49, List.of("TSL2561"));
+        sensorAddr.put(0x68, List.of("MPU6050"));
         sensorAddr.put(0x69, List.of("MPU925x"));
-        sensorAddr.put(0x29, List.of("VL53L0X"));
+        sensorAddr.put(0x77, List.of("BMP180"));
+        sensorAddr.put(0x1E, List.of("HMC5883L"));
+        sensorAddr.put(0x5A, List.of("MLX90614", "CCS811"));
 
         adapter = new ArrayAdapter<>(getApplication(), R.layout.sensor_list_item, R.id.tv_sensor_list_item, dataName);
 
@@ -104,7 +105,7 @@ public class SensorActivity extends GuideActivity {
         if (savedInstanceState != null) {
             String savedScanResults = savedInstanceState.getString(KEY_VALUE_SCAN);
             List<String> savedNames = savedInstanceState.getStringArrayList(KEY_ENTRIES_NAMES);
-            List<String> savedAddresses = savedInstanceState.getStringArrayList(KEY_ENTRIES_ADDRESSES);
+            List<Integer> savedAddresses = savedInstanceState.getIntegerArrayList(KEY_ENTRIES_ADDRESSES);
             if (savedScanResults != null) tvSensorScan.setText(savedScanResults);
             if (savedNames != null) dataName.addAll(savedNames);
             if (savedAddresses != null) dataAddress.addAll(savedAddresses);
@@ -176,7 +177,7 @@ public class SensorActivity extends GuideActivity {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_VALUE_SCAN, tvSensorScan.getText().toString());
         outState.putStringArrayList(KEY_ENTRIES_NAMES, new ArrayList<>(dataName));
-        outState.putStringArrayList(KEY_ENTRIES_ADDRESSES, new ArrayList<>(dataAddress));
+        outState.putIntegerArrayList(KEY_ENTRIES_ADDRESSES, new ArrayList<>(dataAddress));
     }
 
     private class PopulateSensors extends AsyncTask<Void, Void, Void> {
@@ -210,22 +211,29 @@ public class SensorActivity extends GuideActivity {
             if (detectedSensors != null && scienceLab.isConnected()) {
                 for (Integer address : detectedSensors) {
                     if (address != null && sensorAddr.containsKey(address)) {
-                        dataAddress.add(String.valueOf(address));
+                        dataAddress.add(address);
                         dataName.addAll(sensorAddr.get(address));
                     }
                 }
 
                 // Build scan results for detected sensors
-                for (final String address : dataAddress) {
-                    scanResults.append(address).append(": ").append(sensorAddr.get(Integer.parseInt(address))).append("\n");
+                for (final Integer address : dataAddress) {
+                    scanResults
+                            .append("0x")
+                            .append(Integer.toHexString(address))
+                            .append(": ")
+                            .append(sensorAddr.get(address))
+                            .append("\n");
                 }
                 tvSensorScan.setText(scanResults);
             }
 
             // Ensure the full list of sensors is displayed, even if not connected
             for (List<String> sensors : sensorAddr.values()) {
-                if (!dataName.containsAll(sensors)) {
-                    dataName.addAll(sensors);
+                for (String sensor : sensors) {
+                    if (!dataName.contains(sensor)) {
+                        dataName.add(sensor);
+                    }
                 }
             }
 
