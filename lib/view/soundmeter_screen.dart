@@ -3,11 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
+import 'package:pslab/view/soundmeter_config_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/soundmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
-
+import '../providers/soundmeter_config_provider.dart';
 import '../theme/colors.dart';
 
 class SoundMeterScreen extends StatefulWidget {
@@ -46,6 +47,52 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     ];
   }
 
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(appLocalizations.showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'sound_meter_config',
+          child: Text(appLocalizations.soundmeterConfig),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            // TODO
+            break;
+          case 'sound_meter_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (context) => SoundMeterConfigProvider(),
+          child: const SoundMeterConfigScreen(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -59,11 +106,11 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
           CommonScaffold(
             title: appLocalizations.soundMeterTitle,
             onGuidePressed: _showInstrumentGuide,
+            onOptionsPressed: _showOptionsMenu,
             body: SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final isLargeScreen = constraints.maxWidth > 900;
-
                   if (isLargeScreen) {
                     return Row(
                       children: [

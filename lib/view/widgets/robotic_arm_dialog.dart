@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/providers/locator.dart';
-import 'package:pslab/theme/colors.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/locator.dart';
 
 class AngleInputTopDialog extends StatefulWidget {
   final int index;
@@ -20,15 +19,16 @@ class AngleInputTopDialog extends StatefulWidget {
 }
 
 class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late double currentValue;
   late TextEditingController controller;
-
+  late FocusNode _focusNode;
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   void initState() {
     super.initState();
     currentValue = widget.initialValue;
     controller = TextEditingController(text: currentValue.round().toString());
+    _focusNode = FocusNode();
   }
 
   void updateValue(double newVal) {
@@ -39,140 +39,172 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
+    final screenHeight = MediaQuery.of(context).size.height;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
     return Align(
       alignment: Alignment.topCenter,
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          width: screenWidth * 0.4,
-          margin: const EdgeInsets.only(top: 12),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: primaryRed, width: 1.2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${appLocalizations.setAngle} ${widget.index + 1}',
-                style: TextStyle(
-                  color: primaryRed,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove, size: 16),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () => updateValue(
-                        (double.tryParse(controller.text) ?? 0) - 1),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      style: const TextStyle(fontSize: 12),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 4),
-                        border: OutlineInputBorder(),
+      child: Container(
+        margin: EdgeInsets.only(
+            top: kToolbarHeight + MediaQuery.of(context).padding.top),
+        child: Material(
+          elevation: 4,
+          child: Container(
+            width: screenWidth * 0.40,
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.black54, width: 1),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove, size: 18),
+                      padding: EdgeInsets.zero,
+                      onPressed: () => updateValue(
+                          (double.tryParse(controller.text) ?? 0) - 1),
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        focusNode: _focusNode,
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(fontSize: 10),
+                        decoration: InputDecoration(
+                          labelText: 'Servo${widget.index + 1}',
+                          labelStyle:
+                              const TextStyle(fontSize: 8, color: Colors.black),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 12),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Colors.black87, width: 1.5),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        onChanged: (val) {
+                          final parsed = double.tryParse(val);
+                          if (parsed != null) {
+                            setState(() {
+                              currentValue = parsed.clamp(0, 360);
+                            });
+                          }
+                        },
                       ),
-                      onChanged: (val) {
-                        final parsed = double.tryParse(val);
-                        if (parsed != null) {
-                          setState(() {
-                            currentValue = parsed.clamp(0, 360);
-                          });
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add, size: 18),
+                      padding: EdgeInsets.zero,
+                      onPressed: () => updateValue(
+                          (double.tryParse(controller.text) ?? 0) + 1),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _angleButton(0),
+                    _angleButton(90),
+                    _angleButton(135),
+                    _angleButton(180),
+                    _angleButton(270),
+                    _angleButton(360),
+                  ],
+                ),
+                SizedBox(height: screenHeight * 0.020),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 6),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        side: const BorderSide(color: Colors.black26),
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        textStyle: const TextStyle(fontSize: 11),
+                      ),
+                      child: Text(appLocalizations.cancel),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () {
+                        final value = double.tryParse(controller.text);
+                        if (value != null && value >= 0 && value <= 360) {
+                          widget.onValueConfirmed(value.floorToDouble());
+                          Navigator.pop(context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text(appLocalizations.enterAngleRange)),
+                          );
                         }
                       },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        side: const BorderSide(color: Colors.black26),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        textStyle: const TextStyle(
+                            fontSize: 11, color: Colors.black26),
+                      ),
+                      child: Text(appLocalizations.ok),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    icon: const Icon(Icons.add, size: 16),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () => updateValue(
-                        (double.tryParse(controller.text) ?? 0) + 1),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 4,
-                runSpacing: 4,
-                children: [0, 45, 90, 135, 180, 270, 360].map((val) {
-                  return OutlinedButton(
-                    onPressed: () => updateValue(val.floorToDouble()),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: Size.zero,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      '$val${appLocalizations.degreeSymbol}',
-                      style: const TextStyle(fontSize: 11),
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      textStyle: const TextStyle(fontSize: 11),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(appLocalizations.cancel),
-                  ),
-                  const SizedBox(width: 6),
-                  TextButton(
-                    onPressed: () {
-                      final value = double.tryParse(controller.text);
-                      if (value != null && value >= 0 && value <= 360) {
-                        widget.onValueConfirmed(value.floorToDouble());
-                        Navigator.pop(context);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(appLocalizations.enterAngleRange)),
-                        );
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      textStyle: const TextStyle(fontSize: 11),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(appLocalizations.ok),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _angleButton(int angle) {
+    return TextButton(
+      onPressed: () => updateValue(angle.toDouble()),
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        backgroundColor: Colors.grey.shade200,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      child: Text(
+        '$angle°',
+        style: const TextStyle(
+          fontSize: 9,
+          color: Colors.black,
         ),
       ),
     );

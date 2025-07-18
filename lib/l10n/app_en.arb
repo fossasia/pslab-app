@@ -290,9 +290,9 @@
     "showLuxmeterConfig": "Lux Meter Configurations",
     "luxmeterConfigurations": "Lux Meter Configurations",
     "updatePeriod": "Update Period",
-    "updatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 1000 ms)",
+    "luxmeterUpdatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 1000 ms)",
     "highLimit": "High Limit",
-    "highLimitHint": "Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)",
+    "luxmeterHighLimitHint": "Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)",
     "sensorGain": "Sensor Gain",
     "sensorGainHint": "Please set gain of the sensor",
     "locationData": "Include Location Data",
@@ -311,5 +311,14 @@
     "celsius": "°C",
     "temperatureSensorError" : "Temperature sensor error:",
     "temperatureSensorInitialError" : "Temperature sensor initialization error:",
-    "temperatureSensorUnavailableMessage" : "Ambient temperature sensor is not available on this device"
+    "temperatureSensorUnavailableMessage" : "Ambient temperature sensor is not available on this device",
+    "soundmeterConfig" : "Soundmeter Configurations",
+    "barometerConfig" : "Barometer Configurations",
+    "baroUpdatePeriodHint" : "Please provide time interval at which data will be updated (100 ms to 2000 ms)",
+    "barometerHighLimitHint" : "Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)",
+    "gyroscopeConfigurations" : "Gyroscope Configurations",
+    "gyroscopeHighLimitHint" : "Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)",
+    "accelerometerConfigurations" : "Accelerometer Configurations",
+    "accelerometerUpdatePeriodHint" : "Please provide time interval at which data will be updated",
+    "accelerometerHighLimitHint" : "Please provide the maximum limit of lux value to be recorded"
 }

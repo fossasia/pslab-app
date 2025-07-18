@@ -11,6 +11,9 @@ import 'package:pslab/view/widgets/barometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 
+import '../providers/barometer_config_provider.dart';
+import 'barometer_config_screen.dart';
+
 class BarometerScreen extends StatefulWidget {
   const BarometerScreen({super.key});
   @override
@@ -68,6 +71,51 @@ class _BarometerScreenState extends State<BarometerScreen> {
     ];
   }
 
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(appLocalizations.showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'baro_meter_config',
+          child: Text(appLocalizations.barometerConfig),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            // TODO
+            break;
+          case 'baro_meter_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChangeNotifierProvider(
+            create: (context) => BarometerConfigProvider(),
+            child: const BarometerConfigScreen(),
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -81,6 +129,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
         CommonScaffold(
           title: appLocalizations.barometerTitle,
           onGuidePressed: _showInstrumentGuide,
+          onOptionsPressed: _showOptionsMenu,
           body: SafeArea(child: LayoutBuilder(builder: (context, constraints) {
             final isLargeScreen = constraints.maxWidth > 900;
             if (isLargeScreen) {

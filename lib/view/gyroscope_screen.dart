@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/providers/gyroscope_config_provider.dart';
 import 'package:pslab/providers/gyroscope_state_provider.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/gyroscope_card.dart';
@@ -7,6 +8,7 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import '../theme/colors.dart';
+import 'gyroscope_config_screen.dart';
 
 class GyroscopeScreen extends StatefulWidget {
   const GyroscopeScreen({super.key});
@@ -46,6 +48,51 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
     ];
   }
 
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(appLocalizations.showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'gyroscope_config',
+          child: Text(appLocalizations.gyroscopeConfigurations),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            // TODO
+            break;
+          case 'gyroscope_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChangeNotifierProvider(
+            create: (context) => GyroscopeConfigProvider(),
+            child: const GyroscopeConfigScreen(),
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -58,6 +105,7 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
         CommonScaffold(
           title: appLocalizations.gyroscopeTitle,
           onGuidePressed: _showInstrumentGuide,
+          onOptionsPressed: _showOptionsMenu,
           body: SafeArea(
             child: Column(
               children: [

@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/providers/locator.dart';
-import 'package:pslab/providers/luxmeter_config_provider.dart';
+import 'package:pslab/providers/barometer_config_provider.dart';
 import 'package:pslab/view/widgets/config_widgets.dart';
 
+import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
-class LuxMeterConfigScreen extends StatefulWidget {
-  const LuxMeterConfigScreen({super.key});
+class BarometerConfigScreen extends StatefulWidget {
+  const BarometerConfigScreen({super.key});
 
   @override
-  State<LuxMeterConfigScreen> createState() => _LuxMeterConfigScreenState();
+  State<BarometerConfigScreen> createState() => _BarometerConfigScreenState();
 }
 
-class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
   final TextEditingController _updatePeriodController = TextEditingController();
   final TextEditingController _highLimitController = TextEditingController();
   final TextEditingController _sensorGainController = TextEditingController();
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
-          Provider.of<LuxMeterConfigProvider>(context, listen: false);
+          Provider.of<BarometerConfigProvider>(context, listen: false);
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
-      _sensorGainController.text = provider.config.sensorGain.toString();
     });
   }
 
@@ -52,12 +51,12 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
           return IconButton(
             onPressed: () {
               if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/luxmeter') {
-                Navigator.popUntil(context, ModalRoute.withName('/luxmeter'));
+                  ModalRoute.of(context)?.settings.name == '/barometer') {
+                Navigator.popUntil(context, ModalRoute.withName('/barometer'));
               } else {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  '/luxmeter',
+                  '/barometer',
                   (route) => route.isFirst,
                 );
               }
@@ -70,7 +69,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
         }),
         backgroundColor: primaryRed,
         title: Text(
-          appLocalizations.luxmeterConfigurations,
+          appLocalizations.barometerConfig,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,
@@ -80,7 +79,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Consumer<LuxMeterConfigProvider>(
+          child: Consumer<BarometerConfigProvider>(
             builder: (context, provider, child) {
               return SingleChildScrollView(
                 child: Column(
@@ -95,7 +94,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                         final intValue = int.tryParse(value);
                         if (intValue != null &&
                             intValue >= 100 &&
-                            intValue <= 1000) {
+                            intValue <= 2000) {
                           provider.updateUpdatePeriod(intValue);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -108,19 +107,21 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: appLocalizations.luxmeterUpdatePeriodHint,
+                      hint: appLocalizations.baroUpdatePeriodHint,
                     ),
                     ConfigInputItem(
                       title: appLocalizations.highLimit,
                       value:
-                          '${provider.config.highLimit} ${appLocalizations.lx}',
+                          '${provider.config.highLimit} ${appLocalizations.atm}',
                       controller: _highLimitController,
                       onChanged: (value) {
-                        final intValue = int.tryParse(value);
-                        if (intValue != null &&
-                            intValue >= 10 &&
-                            intValue <= 10000) {
-                          provider.updateHighLimit(intValue);
+                        final doubleValue = double.tryParse(value);
+                        final regex = RegExp(r'^\d+(\.\d{1,2})?$');
+                        if (doubleValue != null &&
+                            doubleValue >= 0 &&
+                            doubleValue <= 1.10 &&
+                            regex.hasMatch(value)) {
+                          provider.updateHighLimit(doubleValue);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -132,7 +133,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: appLocalizations.luxmeterHighLimitHint,
+                      hint: appLocalizations.barometerHighLimitHint,
                     ),
                     ConfigDropdownItem(
                       title: appLocalizations.activeSensor,
@@ -141,24 +142,11 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                         ConfigOption(
                             value: 'In-built Sensor',
                             displayName: appLocalizations.inBuiltSensor),
-                        ConfigOption(value: 'BH1750', displayName: 'BH1750'),
-                        ConfigOption(value: 'TSL2561', displayName: 'TSL2561'),
+                        ConfigOption(value: 'BMP180', displayName: 'BMP180'),
                       ],
                       onChanged: (value) {
                         provider.updateActiveSensor(value);
                       },
-                    ),
-                    ConfigInputItem(
-                      title: appLocalizations.sensorGain,
-                      value: provider.config.sensorGain.toString(),
-                      controller: _sensorGainController,
-                      onChanged: (value) {
-                        final intValue = int.tryParse(value);
-                        if (intValue != null) {
-                          provider.updateSensorGain(intValue);
-                        }
-                      },
-                      hint: appLocalizations.sensorGainHint,
                     ),
                     ConfigCheckboxItem(
                       title: appLocalizations.locationData,

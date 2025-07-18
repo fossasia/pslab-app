@@ -1834,11 +1834,11 @@ abstract class AppLocalizations {
   /// **'Update Period'**
   String get updatePeriod;
 
-  /// No description provided for @updatePeriodHint.
+  /// No description provided for @luxmeterUpdatePeriodHint.
   ///
   /// In en, this message translates to:
   /// **'Please provide time interval at which data will be updated (100 ms to 1000 ms)'**
-  String get updatePeriodHint;
+  String get luxmeterUpdatePeriodHint;
 
   /// No description provided for @highLimit.
   ///
@@ -1846,11 +1846,11 @@ abstract class AppLocalizations {
   /// **'High Limit'**
   String get highLimit;
 
-  /// No description provided for @highLimitHint.
+  /// No description provided for @luxmeterHighLimitHint.
   ///
   /// In en, this message translates to:
   /// **'Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)'**
-  String get highLimitHint;
+  String get luxmeterHighLimitHint;
 
   /// No description provided for @sensorGain.
   ///
@@ -1965,6 +1965,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ambient temperature sensor is not available on this device'**
   String get temperatureSensorUnavailableMessage;
+
+  /// No description provided for @soundmeterConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Soundmeter Configurations'**
+  String get soundmeterConfig;
+
+  /// No description provided for @barometerConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Barometer Configurations'**
+  String get barometerConfig;
+
+  /// No description provided for @baroUpdatePeriodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be updated (100 ms to 2000 ms)'**
+  String get baroUpdatePeriodHint;
+
+  /// No description provided for @barometerHighLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)'**
+  String get barometerHighLimitHint;
+
+  /// No description provided for @gyroscopeConfigurations.
+  ///
+  /// In en, this message translates to:
+  /// **'Gyroscope Configurations'**
+  String get gyroscopeConfigurations;
+
+  /// No description provided for @gyroscopeHighLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)'**
+  String get gyroscopeHighLimitHint;
+
+  /// No description provided for @accelerometerConfigurations.
+  ///
+  /// In en, this message translates to:
+  /// **'Accelerometer Configurations'**
+  String get accelerometerConfigurations;
+
+  /// No description provided for @accelerometerUpdatePeriodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be updated'**
+  String get accelerometerUpdatePeriodHint;
+
+  /// No description provided for @accelerometerHighLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide the maximum limit of lux value to be recorded'**
+  String get accelerometerHighLimitHint;
 }
 
 class _AppLocalizationsDelegate

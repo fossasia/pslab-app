@@ -931,14 +931,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updatePeriod => 'Update Period';
 
   @override
-  String get updatePeriodHint =>
+  String get luxmeterUpdatePeriodHint =>
       'Please provide time interval at which data will be updated (100 ms to 1000 ms)';
 
   @override
   String get highLimit => 'High Limit';
 
   @override
-  String get highLimitHint =>
+  String get luxmeterHighLimitHint =>
       'Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)';
 
   @override
@@ -1006,4 +1006,35 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get temperatureSensorUnavailableMessage =>
       'Ambient temperature sensor is not available on this device';
+
+  String get soundmeterConfig => 'Soundmeter Configurations';
+
+  @override
+  String get barometerConfig => 'Barometer Configurations';
+
+  @override
+  String get baroUpdatePeriodHint =>
+      'Please provide time interval at which data will be updated (100 ms to 2000 ms)';
+
+  @override
+  String get barometerHighLimitHint =>
+      'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)';
+
+  @override
+  String get gyroscopeConfigurations => 'Gyroscope Configurations';
+
+  @override
+  String get gyroscopeHighLimitHint =>
+      'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)';
+
+  @override
+  String get accelerometerConfigurations => 'Accelerometer Configurations';
+
+  @override
+  String get accelerometerUpdatePeriodHint =>
+      'Please provide time interval at which data will be updated';
+
+  @override
+  String get accelerometerHighLimitHint =>
+      'Please provide the maximum limit of lux value to be recorded';
 }

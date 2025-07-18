@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
-
+import '../../l10n/app_localizations.dart';
+import '../../providers/locator.dart';
 import '../../providers/robotic_arm_state_provider.dart';
 
 class RoboticArmControls extends StatefulWidget {
@@ -16,8 +15,9 @@ class RoboticArmControls extends StatefulWidget {
 }
 
 class _RoboticArmControlsState extends State<RoboticArmControls> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  late bool manualChecked;
+  bool manualChecked = false;
+
+  late AppLocalizations appLocalizations;
   late String selectedDuration;
   late String selectedFrequency;
   late String selectedMaxAngle;
@@ -25,7 +25,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
   @override
   void initState() {
     super.initState();
-    manualChecked = false;
+    appLocalizations = getIt.get<AppLocalizations>();
     selectedDuration = appLocalizations.duration1Min;
     selectedFrequency = appLocalizations.frequency50Hz;
     selectedMaxAngle = appLocalizations.angle180;
@@ -34,25 +34,26 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RoboticArmStateProvider>(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Material(
         elevation: 8,
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: primaryRed, width: 1),
+          borderRadius: BorderRadius.circular(4),
+          side: BorderSide(color: Colors.black, width: 1),
         ),
         child: SizedBox(
-          width: 280,
-          height: MediaQuery.of(context).size.height * 0.65,
+          height: screenHeight * 0.63,
           child: Column(
             children: [
               Stack(
                 children: [
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 12),
+                      padding: const EdgeInsets.only(top: 8),
                       child: Text(
                         appLocalizations.controlsTitle,
                         style: TextStyle(
@@ -65,6 +66,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                   ),
                   Positioned(
                     top: 0,
+                    bottom: -2,
                     right: 0,
                     child: IconButton(
                       icon: Icon(Icons.close, color: primaryRed),
@@ -75,12 +77,14 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(
+                height: screenHeight * 0.030,
+              ),
               Row(
                 children: [
                   Expanded(
                     child: Container(
-                      height: 30,
+                      height: screenHeight * 0.083,
                       margin: const EdgeInsets.only(left: 6, right: 6),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
@@ -123,7 +127,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                   ),
                   Expanded(
                     child: Container(
-                      height: 30,
+                      height: screenHeight * 0.083,
                       margin: const EdgeInsets.only(left: 6, right: 6),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
@@ -152,66 +156,73 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(
+                height: screenHeight * 0.026,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Container(
-                    height: 45,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.black, width: 1.5),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Radio<String>(
-                                value: appLocalizations.duration1Min,
-                                groupValue: provider.selectedDuration,
-                                activeColor: primaryRed,
-                                onChanged: (value) {
-                                  provider.setSelectedDuration(value!);
-                                },
-                              ),
-                              Text(appLocalizations.duration1Min,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      height: screenHeight * 0.11,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.black, width: 1.5),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Radio<String>(
+                                  value: appLocalizations.duration1Min,
+                                  groupValue: provider.selectedDuration,
+                                  activeColor: primaryRed,
+                                  onChanged: (value) {
+                                    provider.setSelectedDuration(value!);
+                                  },
+                                ),
+                                Text(
+                                  appLocalizations.duration1Min,
                                   style: TextStyle(
-                                      color: Colors.black, fontSize: 12)),
-                            ],
+                                      color: Colors.black, fontSize: 12),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Radio<String>(
-                                value: appLocalizations.duration2Min,
-                                groupValue: provider.selectedDuration,
-                                activeColor: primaryRed,
-                                onChanged: (value) {
-                                  provider.setSelectedDuration(value!);
-                                },
-                              ),
-                              Text(appLocalizations.duration2Min,
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Radio<String>(
+                                  value: appLocalizations.duration2Min,
+                                  groupValue: provider.selectedDuration,
+                                  activeColor: primaryRed,
+                                  onChanged: (value) {
+                                    provider.setSelectedDuration(value!);
+                                  },
+                                ),
+                                Text(
+                                  appLocalizations.duration2Min,
                                   style: TextStyle(
-                                      color: Colors.black, fontSize: 12)),
-                            ],
+                                      color: Colors.black, fontSize: 12),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Consumer<RoboticArmStateProvider>(
-                            builder: (context, provider, _) {
-                              final hasValues = provider.timelineDegrees.any(
-                                (row) => row.any((val) => val != null),
-                              );
+                          Expanded(
+                            child: Consumer<RoboticArmStateProvider>(
+                              builder: (context, provider, _) {
+                                final hasValues = provider.timelineDegrees.any(
+                                  (row) => row.any((val) => val != null),
+                                );
 
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
+                                return Center(
+                                  child: TextButton(
                                     onPressed: hasValues
                                         ? () {
                                             showDialog(
@@ -225,25 +236,11 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                                   TextButton(
                                                     onPressed: () =>
                                                         Navigator.pop(context),
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 8),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .grey.shade300,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                      ),
-                                                      child: Text(
+                                                    child: Text(
                                                         appLocalizations.cancel,
                                                         style: TextStyle(
                                                             color:
-                                                                Colors.black),
-                                                      ),
-                                                    ),
+                                                                Colors.black)),
                                                   ),
                                                   TextButton(
                                                     onPressed: () {
@@ -261,23 +258,10 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                                       provider.setManualEnabled(
                                                           false);
                                                     },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 8),
-                                                      decoration: BoxDecoration(
-                                                        color: primaryRed,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                      ),
-                                                      child: Text(
-                                                        appLocalizations.clear,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
+                                                    child: Text(
+                                                      appLocalizations.clear,
+                                                      style: TextStyle(
+                                                          color: Colors.black),
                                                     ),
                                                   ),
                                                 ],
@@ -285,130 +269,229 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                             );
                                           }
                                         : null,
-                                    icon: Icon(
-                                      Icons.recycling,
-                                      color:
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor:
                                           hasValues ? primaryRed : Colors.black,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 4),
+                                      textStyle: const TextStyle(fontSize: 11),
+                                      minimumSize: Size.zero,
+                                      tapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      side: BorderSide(
+                                        color: hasValues
+                                            ? primaryRed
+                                            : Colors.black,
+                                        width: 1,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
                                     ),
-                                    tooltip:
-                                        appLocalizations.clearTimelineTooltip,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.refresh,
+                                          size: 14,
+                                          color: hasValues
+                                              ? primaryRed
+                                              : Colors.black,
+                                        ),
+                                        SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.009),
+                                        Text(
+                                          appLocalizations.clear,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              );
-                            },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: -4,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            'Timeline',
+                            style: TextStyle(fontSize: 8, color: Colors.black),
                           ),
                         ),
-                      ],
-                    )),
-              ),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Container(
-                  height: 45,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.black, width: 1.5),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Radio<String>(
-                        value: appLocalizations.frequency50Hz,
-                        groupValue: provider.selectedFrequency,
-                        activeColor: primaryRed,
-                        onChanged: (value) {
-                          if (provider.isPlaying) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(appLocalizations.frequencyChange),
-                                duration: Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.black87,
-                              ),
-                            );
-                            return;
-                          }
-                          provider.setSelectedFrequency(value!);
-                        },
                       ),
-                      Text(
-                        appLocalizations.frequency50Hz,
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                      const SizedBox(width: 16),
-                      Radio<String>(
-                        value: appLocalizations.frequency100Hz,
-                        groupValue: provider.selectedFrequency,
-                        activeColor: primaryRed,
-                        onChanged: (value) {
-                          if (provider.isPlaying) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(appLocalizations.frequencyChange),
-                                duration: Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.black87,
-                              ),
-                            );
-                            return;
-                          }
-                          provider.setSelectedFrequency(value!);
-                        },
-                      ),
-                      Text(
-                        appLocalizations.frequency100Hz,
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(
+                height: screenHeight * 0.026,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Container(
-                  height: 45,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.black, width: 1.5),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Radio<String>(
-                        value: appLocalizations.angle180,
-                        groupValue: provider.selectedMaxAngle,
-                        activeColor: primaryRed,
-                        onChanged: (value) {
-                          provider.setSelectedMaxAngle(value!);
-                        },
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      height: screenHeight * 0.11,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.black, width: 1.5),
                       ),
-                      Text(
-                        appLocalizations.angle180,
-                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Radio<String>(
+                            value: appLocalizations.frequency50Hz,
+                            groupValue: provider.selectedFrequency,
+                            activeColor: primaryRed,
+                            onChanged: (value) {
+                              if (provider.isPlaying) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text(appLocalizations.frequencyChange),
+                                    duration: Duration(seconds: 2),
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor: Colors.black87,
+                                  ),
+                                );
+                                return;
+                              }
+                              provider.setSelectedFrequency(value!);
+                            },
+                          ),
+                          Text(
+                            appLocalizations.frequency50Hz,
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                          const SizedBox(width: 16),
+                          Radio<String>(
+                            value: appLocalizations.frequency100Hz,
+                            groupValue: provider.selectedFrequency,
+                            activeColor: primaryRed,
+                            onChanged: (value) {
+                              if (provider.isPlaying) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text(appLocalizations.frequencyChange),
+                                    duration: Duration(seconds: 2),
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor: Colors.black87,
+                                  ),
+                                );
+                                return;
+                              }
+                              provider.setSelectedFrequency(value!);
+                            },
+                          ),
+                          Text(
+                            appLocalizations.frequency100Hz,
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Radio<String>(
-                        value: appLocalizations.angle360,
-                        groupValue: provider.selectedMaxAngle,
-                        activeColor: primaryRed,
-                        onChanged: (value) {
-                          provider.setSelectedMaxAngle(value!);
-                        },
+                    ),
+                    Positioned(
+                      top: -4,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            'Frequency',
+                            style: TextStyle(fontSize: 8, color: Colors.black),
+                          ),
+                        ),
                       ),
-                      Text(
-                        appLocalizations.angle360,
-                        style: TextStyle(color: Colors.black, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: screenHeight * 0.026,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      height: screenHeight * 0.11,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.black, width: 1.5),
                       ),
-                    ],
-                  ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Radio<String>(
+                            value: appLocalizations.angle180,
+                            groupValue: provider.selectedMaxAngle,
+                            activeColor: primaryRed,
+                            onChanged: (value) {
+                              provider.setSelectedMaxAngle(value!);
+                            },
+                          ),
+                          Text(
+                            appLocalizations.angle180,
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                          const SizedBox(width: 16),
+                          Radio<String>(
+                            value: appLocalizations.angle360,
+                            groupValue: provider.selectedMaxAngle,
+                            activeColor: primaryRed,
+                            onChanged: (value) {
+                              provider.setSelectedMaxAngle(value!);
+                            },
+                          ),
+                          Text(
+                            appLocalizations.angle360,
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: -4,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            'Maximum Angle',
+                            style: TextStyle(fontSize: 8, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

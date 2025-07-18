@@ -2,31 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/providers/locator.dart';
-import 'package:pslab/providers/luxmeter_config_provider.dart';
+import 'package:pslab/providers/accelerometer_config_provider.dart';
 import 'package:pslab/view/widgets/config_widgets.dart';
 
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
-class LuxMeterConfigScreen extends StatefulWidget {
-  const LuxMeterConfigScreen({super.key});
+class AccelerometerConfigScreen extends StatefulWidget {
+  const AccelerometerConfigScreen({super.key});
 
   @override
-  State<LuxMeterConfigScreen> createState() => _LuxMeterConfigScreenState();
+  State<AccelerometerConfigScreen> createState() =>
+      _AccelerometerConfigScreenState();
 }
 
-class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
   final TextEditingController _updatePeriodController = TextEditingController();
   final TextEditingController _highLimitController = TextEditingController();
   final TextEditingController _sensorGainController = TextEditingController();
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
-          Provider.of<LuxMeterConfigProvider>(context, listen: false);
+          Provider.of<AccelerometerConfigProvider>(context, listen: false);
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
       _sensorGainController.text = provider.config.sensorGain.toString();
@@ -52,12 +53,13 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
           return IconButton(
             onPressed: () {
               if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/luxmeter') {
-                Navigator.popUntil(context, ModalRoute.withName('/luxmeter'));
+                  ModalRoute.of(context)?.settings.name == '/accelerometer') {
+                Navigator.popUntil(
+                    context, ModalRoute.withName('/accelerometer'));
               } else {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  '/luxmeter',
+                  '/accelerometer',
                   (route) => route.isFirst,
                 );
               }
@@ -70,7 +72,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
         }),
         backgroundColor: primaryRed,
         title: Text(
-          appLocalizations.luxmeterConfigurations,
+          appLocalizations.accelerometerConfigurations,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,
@@ -80,7 +82,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Consumer<LuxMeterConfigProvider>(
+          child: Consumer<AccelerometerConfigProvider>(
             builder: (context, provider, child) {
               return SingleChildScrollView(
                 child: Column(
@@ -108,7 +110,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: appLocalizations.luxmeterUpdatePeriodHint,
+                      hint: appLocalizations.accelerometerUpdatePeriodHint,
                     ),
                     ConfigInputItem(
                       title: appLocalizations.highLimit,
@@ -132,7 +134,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                           );
                         }
                       },
-                      hint: appLocalizations.luxmeterHighLimitHint,
+                      hint: appLocalizations.accelerometerHighLimitHint,
                     ),
                     ConfigDropdownItem(
                       title: appLocalizations.activeSensor,
@@ -141,8 +143,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                         ConfigOption(
                             value: 'In-built Sensor',
                             displayName: appLocalizations.inBuiltSensor),
-                        ConfigOption(value: 'BH1750', displayName: 'BH1750'),
-                        ConfigOption(value: 'TSL2561', displayName: 'TSL2561'),
+                        ConfigOption(value: 'MPU6050', displayName: 'MPU6050'),
                       ],
                       onChanged: (value) {
                         provider.updateActiveSensor(value);

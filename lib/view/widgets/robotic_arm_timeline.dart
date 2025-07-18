@@ -27,8 +27,8 @@ class TimelineScrollView extends StatelessWidget {
     AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
     final screenWidth = MediaQuery.of(context).size.width;
     final boxWidth = (screenWidth / 6) - 2;
-    final timeLineHeight = (screenHeight - screenHeight / 2.3);
-    final boxHeight = timeLineHeight / 6.5;
+    final timeLineHeight = (screenHeight - screenHeight / 2.5);
+    final boxHeight = screenHeight / 11.1;
 
     return SizedBox(
       height: timeLineHeight,
@@ -44,10 +44,10 @@ class TimelineScrollView extends StatelessWidget {
                 children: [
                   Container(
                     width: boxWidth,
-                    height: 4,
+                    height: MediaQuery.of(context).size.height * 0.007,
                     color: isCurrent ? primaryRed : Colors.transparent,
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 1),
                   ...List.generate(4, (boxIndex) {
                     return Padding(
                       padding: const EdgeInsets.all(0.5),
@@ -67,15 +67,18 @@ class TimelineScrollView extends StatelessWidget {
                               child: Stack(
                                 children: [
                                   Positioned(
-                                    top: 0,
+                                    top: -MediaQuery.of(context).size.height *
+                                        0.005,
                                     left: 1,
                                     child: Text(
                                       timelineDegrees[index][boxIndex] != null
                                           ? '${timelineDegrees[index][boxIndex]!.toStringAsFixed(0)}${appLocalizations.degreeSymbol}'
                                           : '',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 18,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height *
+                                                0.05,
                                       ),
                                     ),
                                   ),
