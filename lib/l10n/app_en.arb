@@ -341,5 +341,8 @@
     "gyroscopeHighLimitHint" : "Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)",
     "accelerometerConfigurations" : "Accelerometer Configurations",
     "accelerometerUpdatePeriodHint" : "Please provide time interval at which data will be updated",
-    "accelerometerHighLimitHint" : "Please provide the maximum limit of lux value to be recorded"
+    "accelerometerHighLimitHint" : "Please provide the maximum limit of lux value to be recorded",
+    "documentationLink" : "https://docs.pslab.io/",
+    "documentationError" : "Could not open the documentation link",
+    "tapToEdit" : "Tap to edit"
 }

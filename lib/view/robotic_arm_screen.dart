@@ -83,7 +83,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
           final screenWidth = MediaQuery.of(context).size.width;
           final scrollAmount = (screenWidth / 6);
           return CommonScaffold(
-            title: appLocalizations.roboticArm,
+            title: appLocalizations.roboticArmTitle,
             actions: [
               IconButton(
                 icon: Icon(
