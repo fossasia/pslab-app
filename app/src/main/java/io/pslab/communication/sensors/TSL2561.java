@@ -52,13 +52,17 @@ public class TSL2561 {
         // set timing 101ms & 16x gain
         if (scienceLab.isConnected()) {
 
-            /* Here we check if any of the possible addresses has an ID in the expected format.
-             * If no sensor is available with teh given ID, the value 0xFFFFFFFF will be returned.
-             * If a different value is returned, we can check for teh expected value (see data sheet
+            /* Here we probe if any of the expected I2C addresses has an ID in the expected format.
+             * If no sensor is available with the given ID, the value 0xFFFFFFFF will be returned.
+             * If a different value is returned, we can check for the expected value (see data sheet
              * for details).
              */
             for (byte addr : ADDRESSES) {
                 address = addr;
+                /* We disable the sensor before probing since it will not return the expected value
+                 * if it is still active due to a previous data capture.
+                 */
+                disable();
                 Log.d(TAG, "Checking address 0x" + Integer.toHexString(address));
                 int id = i2c.readByte(address, REGISTER_ID);
                 if (id != 0xffffffff && (id & 0x0A) == 0x0A) {
