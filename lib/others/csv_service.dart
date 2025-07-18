@@ -5,12 +5,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/others/logger_service.dart';
-import 'package:pslab/view/about_us_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
+import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
+
 class CsvService {
-  static const String csvDirectory = 'PSLab';
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   Future<Directory> getInstrumentDirectory(String instrumentName) async {
     if (Platform.isAndroid) {
@@ -32,7 +34,7 @@ class CsvService {
       }
       return directory;
     } else {
-      throw UnsupportedError('Unsupported platform');
+      throw UnsupportedError(appLocalizations.unsupportedPlatform);
     }
   }
 
@@ -49,7 +51,7 @@ class CsvService {
       String instrumentName, String fileName, List<List<dynamic>> data) async {
     try {
       if (data.length <= 1) {
-        logger.w('No data recorded to save for $fileName');
+        logger.w('${appLocalizations.noDataRecorded} $fileName');
         return null;
       }
       final directory = await getInstrumentDirectory(instrumentName);
@@ -66,10 +68,10 @@ class CsvService {
 
       String csvData = const ListToCsvConverter().convert(data);
       await file.writeAsString(csvData);
-      logger.i('CSV file saved at: ${file.path}');
+      logger.i('${appLocalizations.csvFileSaved}: ${file.path}');
       return file;
     } catch (e) {
-      logger.e('Error saving CSV file: $e');
+      logger.e('${appLocalizations.csvSavingError}: $e');
       return null;
     }
   }
@@ -85,7 +87,7 @@ class CsvService {
           (a, b) => b.statSync().modified.compareTo(a.statSync().modified));
       return files;
     } catch (e) {
-      logger.e('Error getting saved files: $e');
+      logger.e('${appLocalizations.csvGettingError}: $e');
       return [];
     }
   }
@@ -95,10 +97,10 @@ class CsvService {
       final file = File(filePath);
       if (await file.exists()) {
         await file.delete();
-        logger.i('File deleted: $filePath');
+        logger.i('${appLocalizations.fileDeleted}: $filePath');
       }
     } catch (e) {
-      logger.e('Error deleting file: $e');
+      logger.e('${appLocalizations.csvDeletingError}: $e');
     }
   }
 
@@ -120,7 +122,7 @@ class CsvService {
       await SharePlus.instance.share(
           ShareParams(files: [xFile], text: appLocalizations.sharingMessage));
     } catch (e) {
-      logger.e('Error sharing file: $e');
+      logger.e('${appLocalizations.sharingError}: $e');
     }
   }
 
@@ -136,7 +138,7 @@ class CsvService {
         return await readCsvFromFile(file);
       }
     } catch (e) {
-      logger.e('Error picking or reading CSV file: $e');
+      logger.e('${appLocalizations.csvPickingError}: $e');
     }
     return null;
   }
@@ -150,7 +152,7 @@ class CsvService {
           .toList();
       return fields;
     } catch (e) {
-      logger.e('Error reading CSV from file: $e');
+      logger.e('${appLocalizations.csvReadingError}: $e');
       return [];
     }
   }

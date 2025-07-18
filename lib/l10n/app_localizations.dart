@@ -2031,6 +2031,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No valid data to display.'**
   String get noValidData;
+
+  /// No description provided for @csvPickingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking or reading CSV file'**
+  String get csvPickingError;
+
+  /// No description provided for @csvReadingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading CSV from file'**
+  String get csvReadingError;
+
+  /// No description provided for @sharingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error sharing file'**
+  String get sharingError;
+
+  /// No description provided for @csvGettingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error getting saved files'**
+  String get csvGettingError;
+
+  /// No description provided for @unsupportedPlatform.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported platform'**
+  String get unsupportedPlatform;
+
+  /// No description provided for @noDataRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No data recorded to save for'**
+  String get noDataRecorded;
+
+  /// No description provided for @csvFileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV file saved at'**
+  String get csvFileSaved;
+
+  /// No description provided for @csvSavingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving CSV file'**
+  String get csvSavingError;
+
+  /// No description provided for @csvDeletingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting file'**
+  String get csvDeletingError;
+
+  /// No description provided for @fileDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'File deleted'**
+  String get fileDeleted;
 }
 
 class _AppLocalizationsDelegate

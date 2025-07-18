@@ -1038,4 +1038,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noValidData => 'No valid data to display.';
+
+  @override
+  String get csvPickingError => 'Error picking or reading CSV file';
+
+  @override
+  String get csvReadingError => 'Error reading CSV from file';
+
+  @override
+  String get sharingError => 'Error sharing file';
+
+  @override
+  String get csvGettingError => 'Error getting saved files';
+
+  @override
+  String get unsupportedPlatform => 'Unsupported platform';
+
+  @override
+  String get noDataRecorded => 'No data recorded to save for';
+
+  @override
+  String get csvFileSaved => 'CSV file saved at';
+
+  @override
+  String get csvSavingError => 'Error saving CSV file';
+
+  @override
+  String get csvDeletingError => 'Error deleting file';
+
+  @override
+  String get fileDeleted => 'File deleted';
 }

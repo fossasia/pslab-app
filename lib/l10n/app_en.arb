@@ -322,5 +322,15 @@
     "fileName" : "Filename",
     "saveRecording" : "Save Recording",
     "recordingStarted" : "Recording started",
-    "noValidData" : "No valid data to display."
+    "noValidData" : "No valid data to display.",
+    "csvPickingError" : "Error picking or reading CSV file",
+    "csvReadingError" : "Error reading CSV from file",
+    "sharingError" : "Error sharing file",
+    "csvGettingError" : "Error getting saved files",
+    "unsupportedPlatform" : "Unsupported platform",
+    "noDataRecorded" : "No data recorded to save for",
+    "csvFileSaved" : "CSV file saved at",
+    "csvSavingError" : "Error saving CSV file",
+    "csvDeletingError" : "Error deleting file",
+    "fileDeleted" : "File deleted"
 }
