@@ -15,7 +15,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get multimeter => 'MULTIMETER';
 
   @override
-  String get logicAnalyzer => 'LOGIKANALYSATOR';
+  String get logicAnalyzer => 'LOGICANALYSER';
 
   @override
   String get sensors => 'SENSOREN';
@@ -24,7 +24,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get waveGenerator => 'WELLENGENERATOR';
 
   @override
-  String get powerSource => 'STROMVERSORGUNG';
+  String get powerSource => 'STROMQUELLE';
 
   @override
   String get luxMeter => 'LUX-METER';
@@ -51,7 +51,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get gasSensor => 'GASSENSOR';
 
   @override
-  String get dustSensor => 'STAUB-SENSOR';
+  String get dustSensor => 'STAUBSENSOR';
 
   @override
   String get soundMeter => 'SCHALLPEGELMESSER';
@@ -62,7 +62,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get multimeterDesc =>
-      'Messen Sie Spannung, Strom, Widerstand und Kapazität';
+      'Misst Spannung, Strom, Widerstand und Kapazität';
 
   @override
   String get logicAnalyzerDesc =>
@@ -70,7 +70,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sensorsDesc =>
-      'Ermöglicht die Protokollierung von Daten, die vom angeschlossenen Sensor zurückgegeben werden';
+      'Anzeige von Daten, die vom angeschlossenen Sensor zurückgegeben werden';
 
   @override
   String get waveGeneratorDesc =>
@@ -91,28 +91,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get compassDesc =>
-      'Dreiachsiger Magnetometer, der nach magnetisch Nord zeigt';
+      'Dreiachsiges Magnetometer, das zum magnetisch Nordpol zeigt';
 
   @override
-  String get gyroscopeDesc => 'Misst die Rotationsrate um die XYZ-Achse';
+  String get gyroscopeDesc => 'Misst die Rotation um die XYZ-Achsen';
 
   @override
-  String get thermometerDesc => 'Zur Messung der Umgebungstemperatur';
+  String get thermometerDesc => 'Misst die Umgebungstemperatur';
 
   @override
   String get roboticArmDesc => 'Steuert Servos eines Roboterarms';
 
   @override
   String get gasSensorDesc =>
-      'Luftqualitätssensor zur Erkennung einer Vielzahl von Gasen, einschließlich NH3, NOx, Alkohol, Benzol, Rauch und CO2';
+      'Erkennt eine Vielzahl von Gasen, einschließlich NH3, NOx, Alkohol, Benzol, Rauch und CO2';
 
   @override
   String get dustSensorDesc =>
-      'Der Staubsensor wird zur Messung der Luftqualität in Bezug auf Partikel pro Quadratmeter verwendet';
+      'Misst die Luftqualität in Bezug auf Partikel pro Quadratmeter';
 
   @override
   String get soundMeterDesc =>
-      'Zur Messung der Lautstärke in der Umgebung in Dezibel (dB)';
+      'Misst die Lautstärke in der Umgebung in Dezibel (dB)';
 
   @override
   String get yAxisRange16V => '+/-16V';
@@ -151,7 +151,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get channel3 => 'CH3';
 
   @override
-  String get mic => 'MIKROFON';
+  String get mic => 'MIC';
 
   @override
   String get capacitance => 'KAPAZITÄT';
@@ -227,14 +227,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get step1ConnectMicroUsb =>
-      '1. Verbinden Sie ein Micro-USB-Kabel (Mini B) mit PSLab';
+      '1. Verbinde ein Micro-USB-Kabel (Mini B) mit dem PSLab';
 
   @override
   String get step2ConnectOtg =>
-      '2. Verbinden Sie das andere Ende des Micro-USB-Kabels mit einem OTG';
+      '2. Verbinden das andere Ende des Micro-USB-Kabels mit einem OTG';
 
   @override
-  String get step3ConnectPhone => '3. Verbinden Sie den OTG mit dem Telefon';
+  String get step3ConnectPhone => '3. Verbinde den OTG mit dem Telefon';
 
   @override
   String get bluetoothWifiConnection => 'Verbinden über Bluetooth oder Wi-Fi';
@@ -246,13 +246,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get wifi => 'WIFI';
 
   @override
-  String get whatIsPslab => 'Was ist das PSLab-Gerät?';
+  String get whatIsPslab => 'Was ist das PSLab?';
 
   @override
   String get pslabUrl => 'https://pslab.io';
 
   @override
-  String get logicAnalyzerTitle => 'Logikanalysator';
+  String get logicAnalyzerTitle => 'Logicanalyser';
 
   @override
   String get channelSelection => 'Kanalauswahl';
@@ -314,7 +314,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get autoStartText =>
-      'App automatisch starten, wenn PSLab-Gerät verbunden ist';
+      'App automatisch starten, wenn PSLab verbunden ist';
 
   @override
   String get export => 'Datenformat exportieren';
@@ -336,10 +336,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get pslabDescription =>
-      'Das Ziel von PSLab ist es, ein Open Source Hardwaregerät (auf allen Ebenen offen) zu schaffen, das von Lehrern, Studenten und Bürgerwissenschaftlern für Experimente verwendet werden kann. Unser winziges Taschenlabor bietet eine Reihe von Sensoren für wissenschaftliche und technische Experimente. Es bietet Funktionen zahlreicher Messgeräte, darunter ein Oszilloskop, einen Wellenformgenerator, einen Frequenzgenerator, einen Frequenzzähler, eine programmierbare Spannungs- und Stromquelle sowie einen Datenlogger.';
+      'Das Ziel von PSLab ist es, ein Open Source Hardwaregerät (auf allen Ebenen offen) zu schaffen, das von Lehrern, Schülern, Studenten und wissenschaftlich interessierten Menschen für Experimente verwendet werden kann. Unser kleines Taschenlabor bietet eine Reihe von Sensoren für wissenschaftliche und technische Experimente. Es bietet Funktionen zahlreicher Messgeräte, darunter ein Oszilloskop, einen Wellenformgenerator, einen Frequenzgenerator, einen Frequenzzähler, eine programmierbare Spannungs- und Stromquelle sowie einen Datenlogger.';
 
   @override
-  String get feedbackNBugs => 'Feedback & Fehler';
+  String get feedbackNBugs => 'Feedback & Bugs';
 
   @override
   String get feedbackForm => 'https://goo.gl/forms/sHlmRAPFmzcGQ27u2';
@@ -368,25 +368,25 @@ class AppLocalizationsDe extends AppLocalizations {
       'https://github.com/fossasia/pslab-android/graphs/contributors';
 
   @override
-  String get connectWithUs => 'Verbinden Sie sich mit uns';
+  String get connectWithUs => 'Tritt mit uns in Verbindung';
 
   @override
-  String get contactUs => 'Kontaktieren Sie uns';
+  String get contactUs => 'Kontaktiere uns';
 
   @override
-  String get visitOurWebsite => 'Besuchen Sie unsere Website';
+  String get visitOurWebsite => 'Besuch unsere Website';
 
   @override
-  String get forkUsOnGithub => 'Forken Sie uns auf GitHub';
+  String get forkUsOnGithub => 'Fork uns auf GitHub';
 
   @override
-  String get likeUsOnFacebook => 'Liken Sie uns auf Facebook';
+  String get likeUsOnFacebook => 'Like uns auf Facebook';
 
   @override
-  String get followUsOnX => 'Folgen Sie uns auf X';
+  String get followUsOnX => 'Folge uns auf X';
 
   @override
-  String get watchUsOnYoutube => 'Sehen Sie uns auf Youtube';
+  String get watchUsOnYoutube => 'Besuch uns auf Youtube';
 
   @override
   String get developersLink => 'Entwickler';
@@ -396,7 +396,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tryDifferentSearchSuggestion =>
-      'Versuchen Sie einen anderen Suchbegriff';
+      'Probier einen anderen Suchbegriff';
 
   @override
   String get noInstrumentsFoundMessage => 'Keine Instrumente gefunden';
@@ -440,7 +440,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get faqReportBug =>
-      'Ich habe einen Fehler in einer Ihrer Apps oder Hardware gefunden. Was tun? Wo soll ich ihn melden?';
+      'Ich habe einen Fehler in einer eurer Apps oder Hardware gefunden. Was tun? Wo soll ich ihn melden?';
 
   @override
   String get faqRecordData =>
@@ -456,11 +456,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get faqWhatIsPslabAnswer =>
-      'Pocket Science Lab (PSLab) ist eine kleine USB-betriebene Hardwareplatine, die für Messungen und Experimente verwendet werden kann. Sie funktioniert als Erweiterung für Android-Telefone oder PCs. PSLab verfügt über ein integriertes Oszilloskop, Multimeter, Wellenformgenerator, Logikanalysator, Stromversorgung und viele weitere Instrumente. Es kann auch als Robotik-Steuerungs-App verwendet werden. Und wir fügen ständig weitere digitale Instrumente hinzu. PSLab ist viele Geräte in einem. Verbinden Sie einfach zwei Drähte mit den entsprechenden Pins (die Beschreibung befindet sich auf der Rückseite der PSLab-Platine) und beginnen Sie mit der Messung. Sie können unsere Open Source Android- oder Desktop-App verwenden, um die Daten anzuzeigen und zu sammeln. Sie können auch Hunderte von kompatiblen I²C-Standard-Sensoren an die PSLab-Pin-Steckplätze anschließen. Es funktioniert ohne Programmierung. Die Experimente, die Sie durchführen, sind also nur durch Ihre Vorstellungskraft begrenzt!';
+      'Pocket Science Lab (PSLab) ist eine kleine USB-betriebene Hardwareplatine, die für Messungen und Experimente verwendet werden kann. Sie funktioniert als Erweiterung für Android-Telefone oder PCs. PSLab verfügt über ein integriertes Oszilloskop, Multimeter, Wellenformgenerator, Logicanalyser, Stromversorgung und viele weitere Instrumente. Es kann auch als Robotik-Steuerungs-App verwendet werden. Und wir fügen ständig weitere digitale Instrumente hinzu. PSLab ist viele Geräte in einem. Verbinde einfach zwei Drähte mit den entsprechenden Pins (die Beschreibung befindet sich auf der Rückseite der PSLab-Platine) und beginne mit der Messung. Du kannst unsere Open Source Android- oder Desktop-App verwenden, um die Daten anzuzeigen und zu sammeln. Du kannst auch Hunderte von kompatiblen I²C-Standard-Sensoren an die PSLab-Pin-Steckplätze anschließen. Es funktioniert ohne Programmierung. Deine Experimente sind also nur durch Ihre Vorstellungskraft begrenzt!';
 
   @override
   String get faqWhereToBuyAnswer =>
-      'Es gibt eine Übersichtsseite für Shops, in denen Sie ein Pocket Science Lab-Gerät in verschiedenen Regionen kaufen können, auf der Website unter ';
+      'Es gibt eine Übersicht der Shops, in denen du ein Pocket Science Lab-Gerät in verschiedenen Regionen kaufen kannst, auf der Website ';
 
   @override
   String get faqWhereToBuyLinkText => 'https://pslab.io/shop/';
@@ -470,45 +470,45 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get faqDownloadAndroidAppAnswer =>
-      'Die App kann von F-Droid oder Play Store heruntergeladen werden. Klicken Sie einfach auf die Links, um weitergeleitet zu werden!';
+      'Die App kann von F-Droid oder aus dem Play Store heruntergeladen werden. Klick einfach auf die Links, um weitergeleitet zu werden!';
 
   @override
   String get faqDownloadAndroidAppLinkText => 'Playstore';
 
   @override
   String get faqDownloadAndroidAppLinkUrl =>
-      'https://play.google.com/store/apps/details?id=io.pslab&hl=en_IN';
+      'https://play.google.com/store/apps/details?id=io.pslab&hl=de_DE';
 
   @override
   String get faqDownloadDesktopAppAnswer =>
-      'Wir entwickeln eine Desktop-App für Windows, Linux und Mac in unserem Desktop-Git-Repository. Sie finden sie im Installationszweig des Projekts hier. Die App befindet sich noch in der Entwicklung. Wir verwenden Technologien wie Electron und Python, die auf allen Plattformen funktionieren. Um den endgültigen Installer jedoch überall zum Laufen zu bringen, sind hier und da einige Optimierungen und Verbesserungen erforderlich. Erwarten Sie also bitte einige Störungen. Sie können den Tracker im Repository verwenden, um Probleme, Fehler und Funktionsanfragen einzureichen.';
+      'Wir entwickeln eine Desktop-App für Windows, Linux und Mac in unserem Desktop-Git-Repository. Du findest sie im Installationszweig des Projekts hier. Die App befindet sich noch in der Entwicklung. Wir verwenden Technologien wie Electron und Python, die auf allen Plattformen funktionieren. Um den endgültigen Installer jedoch überall zum Laufen zu bringen, sind hier und da einige Optimierungen und Verbesserungen erforderlich. Es könenn also hier und da ein paar Probleme auftauchen. Du kannst den Tracker im Repository verwenden, um Probleme, Fehler und Funktionsanfragen einzureichen.';
 
   @override
   String get faqHowToConnectAnswer =>
-      'Um sich mit dem Gerät zu verbinden, benötigen Sie ein OTG-USB-Kabel (OTG = On the go), ein USB-Kabel, das es angeschlossenen Geräten ermöglicht, zwischen den Rollen von Host und Gerät hin und her zu wechseln. Nicht OTG-kompatible USB-Kabel funktionieren NICHT. Es ist auch möglich, das PSLab mit einem ESP-WiFi-Chip oder einem Bluetooth-Chip zu erweitern und über diese Gateways mit der Android-App zu kommunizieren. Weitere Details finden Sie in der Hardwaredokumentation und dem Code auf GitHub.';
+      'Um sich mit dem Gerät zu verbinden, benötigst du ein OTG-USB-Kabel (OTG = On the go), ein USB-Kabel, das es angeschlossenen Geräten ermöglicht, zwischen den Rollen von Host und Gerät hin und her zu wechseln. Nicht OTG-kompatible USB-Kabel funktionieren NICHT. Es ist auch möglich, das PSLab mit einem ESP-WiFi-Chip oder einem Bluetooth-Chip zu erweitern und über diese Gateways mit der Android-App zu kommunizieren. Weitere Details findest du in der Hardwaredokumentation und dem Code auf GitHub.';
 
   @override
   String get faqReportBugAnswer =>
-      'Wir haben Issue-Tracker in all unseren Projekten. Sie werden derzeit auf GitHub gehostet. Um einen Fehler oder eine Funktionsanfrage einzureichen, müssen Sie sich beim Dienst anmelden.';
+      'Wir haben Issue-Tracker für alle unsere Projekte. Sie werden derzeit auf GitHub gehostet. Um einen Fehler oder eine Funktionsanfrage einzureichen, musst du dich dort anmelden.';
 
   @override
   String get faqReportBugLinkText =>
-      'Eine Liste unserer PSLab-Repositories finden Sie hier';
+      'Eine Liste unserer PSLab-Repositories findest du hier';
 
   @override
   String get faqReportBugLinkUrl => 'https://github.com/fossasia';
 
   @override
   String get faqRecordDataAnswer =>
-      'Ja, wir haben eine Aufnahme- und Wiedergabefunktion oder eine Möglichkeit zum Speichern und Öffnen von Konfigurationen in den Instrumenten der Android- und Desktop-App implementiert. Aufgezeichnete Daten können in die Apps importiert und angezeigt werden. Diese Funktion befindet sich noch in intensiver Entwicklung, funktioniert aber an den meisten Stellen gut. Sie finden sie in der oberen Leiste der Apps. Es gibt Schaltflächen zum Aufzeichnen, Abspielen, Speichern und Öffnen von Daten.';
+      'Ja, wir haben eine Aufnahme- und Wiedergabefunktion oder eine Möglichkeit zum Speichern und Öffnen von Konfigurationen in den Instrumenten der Android- und Desktop-App implementiert. Aufgezeichnete Daten können in die Apps importiert und angezeigt werden. Diese Funktion befindet sich noch in intensiver Entwicklung, funktioniert aber an den meisten Stellen gut. Du findest sie in der oberen Leiste der Apps. Es gibt Schaltflächen zum Aufzeichnen, Abspielen, Speichern und Öffnen von Daten.';
 
   @override
   String get faqUsePhoneSensorsAnswer =>
-      'Ja, absolut. Sie können die PSLab-Android-App (Play Store, Fdroid) auf Ihrem Telefon installieren und sie mit Geräten wie Luxmeter oder Kompass verwenden. Wir erweitern Schritt für Schritt die Unterstützung für weitere integrierte Sensoren.';
+      'Ja, auf jeden Fall. Du kannst die PSLab-Android-App (Play Store, Fdroid) auf deinem Telefon installieren und sie mit Geräten wie Luxmeter oder Kompass verwenden. Wir erweitern Schritt für Schritt die Unterstützung für weitere integrierte Sensoren.';
 
   @override
   String get faqCompatibleSensorsAnswer =>
-      'In unseren Apps verwenden wir den Industriestandard I²C (Wikipedia). Sie können die Daten von Sensoren, die über den USB-Anschluss mit dem Gerät verbunden sind, mithilfe eines OTG-USB-Kabels (OTG = On-the-Go) abrufen, das ein USB-Kabel ist, das angeschlossenen Geräten ermöglicht, zwischen den Rollen von Host und Gerät hin und her zu wechseln. Für die Übertragung verwenden wir UART (universeller asynchroner Empfänger-Sender, Wikipedia). Viele Sensoren können mit bestimmten Instrumenten verwendet werden, z. B. Barometer, Thermometer, Gyroskop usw. Sie können die Konfiguration für Sensoren in den Instrumenteneinstellungen im oberen rechten Burgermenü jedes Instruments aufrufen. Alle Sensoren, die den I²C-Standard verwenden, sind mit dem Gerät kompatibel. Es gibt Anschlussstifte für analoge und digitale Sensoren. Die Beschreibung der Pins finden Sie auf der Rückseite des Geräts. Auch wenn es in einer unserer Apps noch kein spezifisches Instrument gibt, können Sie die Rohdaten mit der Oszilloskop-Instrumentenkomponente anzeigen und speichern. Es gibt eine Seite mit einer Liste empfohlener Sensoren auf der Website.';
+      'In unseren Apps verwenden wir den Industriestandard I²C (Wikipedia). Du kannst die Daten von Sensoren, die über den USB-Anschluss mit dem Gerät verbunden sind, mithilfe eines OTG-USB-Kabels (OTG = On-the-Go) abrufen, das ein USB-Kabel ist, das angeschlossenen Geräten ermöglicht, zwischen den Rollen von Host und Gerät hin und her zu wechseln. Für die Übertragung verwenden wir UART (universeller asynchroner Empfänger-Sender, Wikipedia). Viele Sensoren können mit bestimmten Instrumenten verwendet werden, z. B. Barometer, Thermometer, Gyroskop usw. Du kannst die Konfiguration für Sensoren in den Instrumenteneinstellungen im oberen rechten Burgermenü jedes Instruments aufrufen. Alle Sensoren, die den I²C-Standard verwenden, sind mit dem Gerät kompatibel. Es gibt Anschlussstifte für analoge und digitale Sensoren. Die Beschreibung der Pins findest du auf der Rückseite des Geräts. Auch wenn es in einer unserer Apps noch kein spezifisches Instrument gibt, kannst du die Rohdaten mit der Oszilloskop-Instrumentenkomponente anzeigen und speichern. Es gibt eine Seite mit einer Liste empfohlener Sensoren auf der Website.';
 
   @override
   String get accelerometerTitle => 'Beschleunigungssensor';
@@ -554,7 +554,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get servoValidNumberRange =>
-      'Bitte geben Sie eine gültige Zahl zwischen 0 und 360 ein';
+      'Bitte gib eine gültige Zahl zwischen 0 und 360 ein';
 
   @override
   String get ok => 'OK';
@@ -629,10 +629,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get channels => 'Kanäle';
 
   @override
-  String get pslabMic => 'PSLab MIKROFON';
+  String get pslabMic => 'PSLab MIKRO';
 
   @override
-  String get inBuiltMic => 'Integriertes MIKROFON';
+  String get inBuiltMic => 'Integriertes MIKRO';
 
   @override
   String get ch3Range => 'CH3 (+/- 3,3V)';
@@ -752,7 +752,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get clearTimelineConfirmation =>
-      'Möchten Sie die Zeitachse wirklich löschen?';
+      'Möchtest du die Zeitachse wirklich löschen?';
 
   @override
   String get avgAngleLabel => 'Durchschn. Winkel';
@@ -837,15 +837,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get luxMeterSensorIntro =>
-      'Wenn Sie den Sensor BH-1750 verwenden möchten, schließen Sie den Sensor wie unten gezeigt an das PSLab-Gerät an';
+      'Wenn du den Sensor BH-1750 verwenden möchtest, schließe den Sensor wie unten gezeigt an das PSLab-Gerät an';
 
   @override
   String get luxMeterBulletPoint1 =>
-      'Die obige Pin-Konfiguration muss bis auf den Pin GND gleich sein. GND steht für Masse, und jeder der GND-Pins des PSLab-Geräts kann verwendet werden, da sie gemeinsam sind.';
+      'Die obige Pin-Konfiguration muss bis auf den Pin GND gleich sein. GND steht für Masse, und jeder der GND-Pins des PSLab-Geräts kann verwendet werden, da sie intern verbunden sind.';
 
   @override
   String get luxMeterBulletPoint2 =>
-      'Wählen Sie den Sensor aus, indem Sie zum Tab \'Konfigurieren\' in der unteren Navigationsleiste gehen und im Dropdown-Menü unter \'Sensor auswählen\' BH-1750 auswählen.';
+      'Wähle den Sensor aus, indem du zum Tab \'Konfigurieren\' in der unteren Navigationsleiste gehst und im Dropdown-Menü unter \'Sensor auswählen\' BH-1750 auswählst.';
 
   @override
   String get gyroscopeIntro =>
@@ -869,15 +869,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get accelerometerBulletPoint1 =>
-      'Halten Sie das Gerät wie in der Abbildung gezeigt.';
+      'Halte das Gerät wie in der Abbildung gezeigt.';
 
   @override
   String get accelerometerBulletPoint2 =>
-      'Beschleunigen Sie das Gerät entlang einer oder mehrerer Achsen.';
+      'Beschleunige das Gerät entlang einer oder mehrerer Achsen.';
 
   @override
   String get accelerometerBulletPoint3 =>
-      'Beobachten Sie die Werte in den Karten oder im geplotteten Diagramm einer bestimmten Achse.';
+      'Beobachte die Werte in den Karten oder im geplotteten Diagramm einer bestimmten Achse.';
 
   @override
   String get accelerometerDescFull =>
@@ -885,7 +885,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get accelerometerNote =>
-      'HINWEIS: Beschleunigen Sie den Körper nicht, wenn das Gerät nicht richtig befestigt ist, da das Gerät sonst beschädigt werden könnte.';
+      'HINWEIS: Beschleunige den Körper nicht, wenn das Gerät nicht richtig befestigt ist, da das Gerät sonst beschädigt werden könnte.';
 
   @override
   String get hideGuide => 'Anleitung ausblenden';
@@ -940,21 +940,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get updatePeriodHint =>
-      'Bitte geben Sie das Zeitintervall an, in dem Daten aktualisiert werden sollen (100 ms bis 1000 ms)';
+      'Bitte gib das Zeitintervall an, in dem Daten aktualisiert werden sollen (100 ms bis 1000 ms)';
 
   @override
   String get highLimit => 'Obere Grenze';
 
   @override
   String get highLimitHint =>
-      'Bitte geben Sie die maximale Grenze des Lux-Werts an, der aufgezeichnet werden soll (10 Lx bis 10000 Lx)';
+      'Bitte gib die maximale Grenze des Lux-Werts an, der aufgezeichnet werden soll (10 Lx bis 10000 Lx)';
 
   @override
   String get sensorGain => 'Sensorverstärkung';
 
   @override
-  String get sensorGainHint =>
-      'Bitte stellen Sie die Verstärkung des Sensors ein';
+  String get sensorGainHint => 'Bitte stelle die Verstärkung des Sensors ein';
 
   @override
   String get locationData => 'Standortdaten einschließen';
@@ -986,13 +985,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get baroMeterBulletPoint2 =>
-      'Wenn Sie den Sensor BMP-180 verwenden möchten, schließen Sie den Sensor wie in der Abbildung gezeigt an das PSLab-Gerät an.';
+      'Wenn du den Sensor BMP-180 verwenden möchtest, schließe den Sensor wie in der Abbildung gezeigt an das PSLab-Gerät an.';
 
   @override
   String get baroMeterBulletPoint3 =>
-      'Die obige Pin-Konfiguration muss bis auf den Pin GND gleich sein. GND steht für Masse, und jeder der GND-Pins des PSLab-Geräts kann verwendet werden, da sie gemeinsam sind.';
+      'Die obige Pin-Konfiguration muss bis auf den Pin GND gleich sein. GND steht für Masse, und jeder der GND-Pins des PSLab-Geräts kann verwendet werden, da sie intern verbunden sind.';
 
   @override
   String get baroMeterBulletPoint4 =>
-      'Wählen Sie den Sensor aus, indem Sie zum Tab \'Konfigurieren\' in der unteren Navigationsleiste gehen und im Dropdown-Menü unter \'Sensor auswählen\' BMP-180 auswählen.';
+      'Wähle den Sensor aus, indem du zum Tab \'Konfigurieren\' in der unteren Navigationsleiste gehen und im Dropdown-Menü unter \'Sensor auswählen\' BMP-180 auswählen.';
 }
