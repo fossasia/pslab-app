@@ -309,7 +309,7 @@
     "magnetometerError" : "Magnetometer error:",
     "accelerometerError" : "Accelerometer error:",
     "compassTitle": "Compass",
-    "parallelToGround": "Select axes parallel to ground"
+    "parallelToGround": "Select axes parallel to ground",
     "soundmeterConfig" : "Soundmeter Configurations",
     "barometerConfig" : "Barometer Configurations",
     "baroUpdatePeriodHint" : "Please provide time interval at which data will be updated (100 ms to 2000 ms)",
