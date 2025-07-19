@@ -1966,6 +1966,168 @@ abstract class AppLocalizations {
   /// **'Ambient temperature sensor is not available on this device'**
   String get temperatureSensorUnavailableMessage;
 
+  /// No description provided for @sharingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing PSLab Data'**
+  String get sharingMessage;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this file?'**
+  String get deleteHint;
+
+  /// No description provided for @deleteFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete File'**
+  String get deleteFile;
+
+  /// No description provided for @deleteAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Data'**
+  String get deleteAllData;
+
+  /// No description provided for @deleteCautionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all logged data for this instrument?'**
+  String get deleteCautionMessage;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All'**
+  String get deleteAll;
+
+  /// No description provided for @noLoggedData.
+  ///
+  /// In en, this message translates to:
+  /// **'No logged data found.'**
+  String get noLoggedData;
+
+  /// No description provided for @importLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Log'**
+  String get importLog;
+
+  /// No description provided for @failedToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save file. No data was recorded.'**
+  String get failedToSave;
+
+  /// No description provided for @fileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved'**
+  String get fileSaved;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @enterFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter filename (leave empty for auto-generated name)'**
+  String get enterFileName;
+
+  /// No description provided for @fileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Filename'**
+  String get fileName;
+
+  /// No description provided for @saveRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Recording'**
+  String get saveRecording;
+
+  /// No description provided for @recordingStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording started'**
+  String get recordingStarted;
+
+  /// No description provided for @noValidData.
+  ///
+  /// In en, this message translates to:
+  /// **'No valid data to display.'**
+  String get noValidData;
+
+  /// No description provided for @csvPickingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking or reading CSV file'**
+  String get csvPickingError;
+
+  /// No description provided for @csvReadingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading CSV from file'**
+  String get csvReadingError;
+
+  /// No description provided for @sharingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error sharing file'**
+  String get sharingError;
+
+  /// No description provided for @csvGettingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error getting saved files'**
+  String get csvGettingError;
+
+  /// No description provided for @unsupportedPlatform.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported platform'**
+  String get unsupportedPlatform;
+
+  /// No description provided for @noDataRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No data recorded to save for'**
+  String get noDataRecorded;
+
+  /// No description provided for @csvFileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV file saved at'**
+  String get csvFileSaved;
+
+  /// No description provided for @csvSavingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving CSV file'**
+  String get csvSavingError;
+
+  /// No description provided for @csvDeletingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting file'**
+  String get csvDeletingError;
+
+  /// No description provided for @fileDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'File deleted'**
+  String get fileDeleted;
+
   /// No description provided for @soundmeterConfig.
   ///
   /// In en, this message translates to:

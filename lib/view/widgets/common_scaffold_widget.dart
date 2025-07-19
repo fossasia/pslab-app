@@ -10,14 +10,21 @@ class CommonScaffold extends StatefulWidget {
   final List<Widget>? actions;
   final VoidCallback? onGuidePressed;
   final VoidCallback? onOptionsPressed;
-  const CommonScaffold(
-      {super.key,
-      required this.body,
-      required this.title,
-      this.scaffoldKey,
-      this.actions,
-      this.onGuidePressed,
-      this.onOptionsPressed});
+  final VoidCallback? onRecordPressed;
+  final bool isRecording;
+  final String icRecord = 'assets/icons/ic_record_white.png';
+
+  const CommonScaffold({
+    super.key,
+    required this.body,
+    required this.title,
+    this.scaffoldKey,
+    this.actions,
+    this.onGuidePressed,
+    this.onOptionsPressed,
+    this.onRecordPressed,
+    this.isRecording = false,
+  });
   @override
   State<StatefulWidget> createState() => _CommonScaffoldState();
 }
@@ -60,6 +67,17 @@ class _CommonScaffoldState extends State<CommonScaffold> {
           ),
         ),
         actions: [
+          if (widget.onRecordPressed != null)
+            IconButton(
+              onPressed: widget.onRecordPressed,
+              icon: Image.asset(
+                widget.icRecord,
+                width: 24,
+                height: 24,
+              ),
+              tooltip:
+                  widget.isRecording ? 'Stop Recording' : 'Start Recording',
+            ),
           if (widget.onGuidePressed != null)
             IconButton(
               onPressed: widget.onGuidePressed,

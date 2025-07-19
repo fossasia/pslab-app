@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:light/light.dart';
@@ -19,12 +20,16 @@ class LuxMeterStateProvider extends ChangeNotifier {
   Light? _light;
   double _startTime = 0;
   double _currentTime = 0;
-  final int _maxLength = 50;
+  final int _chartMaxLength = 50;
   double _luxMin = 0;
   double _luxMax = 0;
   double _luxSum = 0;
   int _dataCount = 0;
   bool _sensorAvailable = false;
+  bool _isRecording = false;
+  List<List<dynamic>> _recordedData = [];
+  double _recordingStartTime = 0.0;
+  bool get isRecording => _isRecording;
 
   LuxMeterConfigProvider? _configProvider;
 
@@ -103,15 +108,26 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    if (!_sensorAvailable) return;
-
-    final lux = _currentLux;
+    final lux = _sensorAvailable ? _currentLux : null;
     final time = _currentTime;
-    _luxData.add(lux);
-    _timeData.add(time);
-    _luxSum += lux;
-    _dataCount++;
-    if (_luxData.length > _maxLength) {
+    if (lux != null) {
+      if (_isRecording) {
+        final relativeTime = time - _recordingStartTime;
+        final now = DateTime.now();
+        final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+        _recordedData.add([
+          dateFormat.format(now),
+          relativeTime.toStringAsFixed(2),
+          lux.toStringAsFixed(2),
+        ]);
+      }
+
+      _luxData.add(lux);
+      _timeData.add(time);
+      _luxSum += lux;
+      _dataCount++;
+    }
+    if (_luxData.length > _chartMaxLength) {
       final removedValue = _luxData.removeAt(0);
       _timeData.removeAt(0);
       _luxSum -= removedValue;
@@ -126,6 +142,19 @@ class LuxMeterStateProvider extends ChangeNotifier {
       luxChartData.add(FlSpot(_timeData[i], _luxData[i]));
     }
     notifyListeners();
+  }
+
+  void startRecording() {
+    _isRecording = true;
+    _recordingStartTime = _currentTime;
+    _recordedData = [];
+    notifyListeners();
+  }
+
+  List<List<dynamic>> stopRecording() {
+    _isRecording = false;
+    notifyListeners();
+    return _recordedData;
   }
 
   double getCurrentLux() => _currentLux;
