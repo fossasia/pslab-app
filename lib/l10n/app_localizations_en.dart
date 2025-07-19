@@ -998,6 +998,88 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get parallelToGround => 'Select axes parallel to ground';
 
+  String get sharingMessage => 'Sharing PSLab Data';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteHint => 'Are you sure you want to delete this file?';
+
+  @override
+  String get deleteFile => 'Delete File';
+
+  @override
+  String get deleteAllData => 'Delete All Data';
+
+  @override
+  String get deleteCautionMessage =>
+      'Are you sure you want to delete all logged data for this instrument?';
+
+  @override
+  String get deleteAll => 'Delete All';
+
+  @override
+  String get noLoggedData => 'No logged data found.';
+
+  @override
+  String get importLog => 'Import Log';
+
+  @override
+  String get failedToSave => 'Failed to save file. No data was recorded.';
+
+  @override
+  String get fileSaved => 'File saved';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get enterFileName =>
+      'Enter filename (leave empty for auto-generated name)';
+
+  @override
+  String get fileName => 'Filename';
+
+  @override
+  String get saveRecording => 'Save Recording';
+
+  @override
+  String get recordingStarted => 'Recording started';
+
+  @override
+  String get noValidData => 'No valid data to display.';
+
+  @override
+  String get csvPickingError => 'Error picking or reading CSV file';
+
+  @override
+  String get csvReadingError => 'Error reading CSV from file';
+
+  @override
+  String get sharingError => 'Error sharing file';
+
+  @override
+  String get csvGettingError => 'Error getting saved files';
+
+  @override
+  String get unsupportedPlatform => 'Unsupported platform';
+
+  @override
+  String get noDataRecorded => 'No data recorded to save for';
+
+  @override
+  String get csvFileSaved => 'CSV file saved at';
+
+  @override
+  String get csvSavingError => 'Error saving CSV file';
+
+  @override
+  String get csvDeletingError => 'Error deleting file';
+
+  @override
+  String get fileDeleted => 'File deleted';
+
   String get soundmeterConfig => 'Soundmeter Configurations';
 
   @override

@@ -4,12 +4,15 @@ import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
 import 'package:pslab/providers/luxmeter_config_provider.dart';
+import 'package:pslab/others/csv_service.dart';
+import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/luxmeter_config_screen.dart';
 
+import '../constants.dart';
 import '../theme/colors.dart';
 
 class LuxMeterScreen extends StatefulWidget {
@@ -21,6 +24,7 @@ class LuxMeterScreen extends StatefulWidget {
 class _LuxMeterScreenState extends State<LuxMeterScreen> {
   late LuxMeterStateProvider _provider;
   late LuxMeterConfigProvider _configProvider;
+  final CsvService _csvService = CsvService();
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
@@ -78,7 +82,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       if (value != null) {
         switch (value) {
           case 'show_logged_data':
-            // TODO
+            _navigateToLoggedData();
             break;
           case 'lux_meter_config':
             _navigateToConfig();
@@ -99,6 +103,99 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _navigateToLoggedData() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoggedDataScreen(
+          instrumentName: 'luxmeter',
+          appBarName: 'Lux Meter',
+          instrumentIcon: instrumentIcons[6],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_provider.isRecording) {
+      final data = _provider.stopRecording();
+      await _showSaveFileDialog(data);
+    } else {
+      _provider.startRecording();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${appLocalizations.recordingStarted}...',
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
+    final TextEditingController filenameController = TextEditingController();
+    final String defaultFilename = '';
+    filenameController.text = defaultFilename;
+
+    final String? fileName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(appLocalizations.saveRecording),
+          content: TextField(
+            controller: filenameController,
+            decoration: InputDecoration(
+              hintText: appLocalizations.enterFileName,
+              labelText: appLocalizations.fileName,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(appLocalizations.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, filenameController.text);
+              },
+              child: Text(appLocalizations.save),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (fileName != null) {
+      _csvService.writeMetaData('luxmeter', data);
+      final file = await _csvService.saveCsvFile('luxmeter', fileName, data);
+      if (mounted) {
+        if (file != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                appLocalizations.failedToSave,
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -147,40 +244,47 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             value: _configProvider),
       ],
       child: Stack(children: [
-        CommonScaffold(
-          title: appLocalizations.luxMeterTitle,
-          onOptionsPressed: _showOptionsMenu,
-          onGuidePressed: _showInstrumentGuide,
-          body: SafeArea(child: LayoutBuilder(builder: (context, constraints) {
-            final isLargeScreen = constraints.maxWidth > 900;
-            if (isLargeScreen) {
-              return Row(
-                children: [
-                  const Expanded(
-                    flex: 35,
-                    child: LuxMeterCard(),
-                  ),
-                  Expanded(
-                    flex: 65,
-                    child: _buildChartSection(),
-                  ),
-                ],
-              );
-            } else {
-              return Column(
-                children: [
-                  const Expanded(
-                    flex: 45,
-                    child: LuxMeterCard(),
-                  ),
-                  Expanded(
-                    flex: 55,
-                    child: _buildChartSection(),
-                  ),
-                ],
-              );
-            }
-          })),
+        Consumer<LuxMeterStateProvider>(
+          builder: (context, provider, child) {
+            return CommonScaffold(
+              title: appLocalizations.luxMeterTitle,
+              onOptionsPressed: _showOptionsMenu,
+              onGuidePressed: _showInstrumentGuide,
+              onRecordPressed: _toggleRecording,
+              isRecording: provider.isRecording,
+              body: SafeArea(
+                  child: LayoutBuilder(builder: (context, constraints) {
+                final isLargeScreen = constraints.maxWidth > 900;
+                if (isLargeScreen) {
+                  return Row(
+                    children: [
+                      const Expanded(
+                        flex: 35,
+                        child: LuxMeterCard(),
+                      ),
+                      Expanded(
+                        flex: 65,
+                        child: _buildChartSection(),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      const Expanded(
+                        flex: 45,
+                        child: LuxMeterCard(),
+                      ),
+                      Expanded(
+                        flex: 55,
+                        child: _buildChartSection(),
+                      ),
+                    ],
+                  );
+                }
+              })),
+            );
+          },
         ),
         if (_showGuide)
           InstrumentOverviewDrawer(
