@@ -121,12 +121,12 @@ class ScienceLab {
     if (getIt<BoardStateProvider>().pslabVersion == 6) {
       dacChannels['PCS'] = DACChannel('PCS', [0, 3.3], 0, 0);
       dacChannels['PV3'] = DACChannel('PV3', [0, 3.3], 1, 1);
-      dacChannels['PC2'] = DACChannel('PC2', [-3.3, 3.3], 2, 0);
+      dacChannels['PV2'] = DACChannel('PV2', [-3.3, 3.3], 2, 0);
       dacChannels['PV1'] = DACChannel('PV1', [-5, 5], 3, 1);
     } else {
       dacChannels['PCS'] = DACChannel('PCS', [0, 3.3], 0, 0);
       dacChannels['PV3'] = DACChannel('PV3', [0, 3.3], 1, 1);
-      dacChannels['PC2'] = DACChannel('PC2', [-3.3, 3.3], 2, 2);
+      dacChannels['PV2'] = DACChannel('PV2', [-3.3, 3.3], 2, 2);
       dacChannels['PV1'] = DACChannel('PV1', [-5, 5], 3, 3);
     }
 
