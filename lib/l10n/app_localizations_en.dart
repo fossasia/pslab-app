@@ -302,6 +302,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analysisOptionDisabled => 'DISABLED';
 
   @override
+  String get powerSourceTitle => 'Power Source';
+
+  @override
+  String get pinPV1 => 'PV1';
+
+  @override
+  String get pinPV2 => 'PV2';
+
+  @override
+  String get pinPV3 => 'PV3';
+
+  @override
+  String get pinPCS => 'PCS';
+
+  @override
   String get analyze => 'ANALYZE';
 
   @override

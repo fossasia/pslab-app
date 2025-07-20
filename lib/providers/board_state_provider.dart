@@ -15,6 +15,9 @@ class BoardStateProvider extends ChangeNotifier {
   bool hasPermission = false;
   late ScienceLabCommon scienceLabCommon;
   String pslabVersionID = 'Not Connected';
+  String pslabVersionIDV6 = 'PSLab V6';
+  String pslabVersionIDV5 = 'PSLab V5';
+  int pslabVersion = 0;
   late String exportFormat;
   bool autoStart = true;
 
@@ -67,6 +70,11 @@ class BoardStateProvider extends ChangeNotifier {
 
   Future<void> setPSLabVersionIDs() async {
     pslabVersionID = await getIt.get<ScienceLab>().getVersion();
+    if (pslabVersionID == pslabVersionIDV6) {
+      pslabVersion = 6;
+    } else if (pslabVersionID == pslabVersionIDV5) {
+      pslabVersion = 5;
+    }
     notifyListeners();
   }
 
