@@ -123,7 +123,7 @@ class _ServoCardState extends State<ServoCard> {
                         Text(
                           ' ${provider.maxAngle == 180 ? widget.value.clamp(0, 180).round() : widget.value.clamp(0, 360).round()}${appLocalizations.degreeSymbol}',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 25,
                             color: Colors.black,
                             fontWeight: FontWeight.normal,
                             decoration: TextDecoration.underline,
@@ -131,7 +131,7 @@ class _ServoCardState extends State<ServoCard> {
                         ),
                         Text(
                           appLocalizations.tapToEdit,
-                          style: TextStyle(fontSize: 8, color: Colors.grey),
+                          style: TextStyle(fontSize: 7, color: Colors.grey),
                         ),
                       ],
                     ),
