@@ -2145,6 +2145,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please provide the maximum limit of lux value to be recorded'**
   String get accelerometerHighLimitHint;
+
+  /// No description provided for @roboticArmIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'• A robotic arm is a programmable mechanical device that mimics the movement of a human arm.\n• It uses servo motors to control its motion, and these motors are operated using PWM signals.\n• The PSLab provides four PWM square wave generators (SQ1, SQ2, SQ3, SQ4), allowing control of up to four servo motors and enabling a robotic arm with up to four degrees of freedom.'**
+  String get roboticArmIntro;
+
+  /// No description provided for @roboticArmConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
+  String get roboticArmConnection;
 }
 
 class _AppLocalizationsDelegate
