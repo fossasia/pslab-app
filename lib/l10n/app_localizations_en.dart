@@ -1084,6 +1084,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get fileDeleted => 'File deleted';
 
+  @override
   String get soundmeterConfig => 'Soundmeter Configurations';
 
   @override
