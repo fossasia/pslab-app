@@ -87,7 +87,7 @@ class ConfigInputItem extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                appLocalizations.cancel,
+                appLocalizations.cancel.toUpperCase(),
                 style: TextStyle(color: primaryRed),
               ),
             ),
@@ -174,7 +174,7 @@ class ConfigDropdownItem extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                appLocalizations.cancel,
+                appLocalizations.cancel.toUpperCase(),
                 style: TextStyle(color: primaryRed),
               ),
             ),

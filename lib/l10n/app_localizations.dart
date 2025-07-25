@@ -97,97 +97,97 @@ abstract class AppLocalizations {
   /// No description provided for @oscilloscope.
   ///
   /// In en, this message translates to:
-  /// **'OSCILLOSCOPE'**
+  /// **'Oscilloscope'**
   String get oscilloscope;
 
   /// No description provided for @multimeter.
   ///
   /// In en, this message translates to:
-  /// **'MULTIMETER'**
+  /// **'Multimeter'**
   String get multimeter;
 
   /// No description provided for @logicAnalyzer.
   ///
   /// In en, this message translates to:
-  /// **'LOGIC ANALYZER'**
+  /// **'Logic Analyzer'**
   String get logicAnalyzer;
 
   /// No description provided for @sensors.
   ///
   /// In en, this message translates to:
-  /// **'SENSORS'**
+  /// **'Sensors'**
   String get sensors;
 
   /// No description provided for @waveGenerator.
   ///
   /// In en, this message translates to:
-  /// **'WAVE GENERATOR'**
+  /// **'Wave Generator'**
   String get waveGenerator;
 
   /// No description provided for @powerSource.
   ///
   /// In en, this message translates to:
-  /// **'POWER SOURCE'**
+  /// **'Power Source'**
   String get powerSource;
 
   /// No description provided for @luxMeter.
   ///
   /// In en, this message translates to:
-  /// **'LUX METER'**
+  /// **'Lux Meter'**
   String get luxMeter;
 
   /// No description provided for @accelerometer.
   ///
   /// In en, this message translates to:
-  /// **'ACCELEROMETER'**
+  /// **'Accelerometer'**
   String get accelerometer;
 
   /// No description provided for @barometer.
   ///
   /// In en, this message translates to:
-  /// **'BAROMETER'**
+  /// **'Barometer'**
   String get barometer;
 
   /// No description provided for @compass.
   ///
   /// In en, this message translates to:
-  /// **'COMPASS'**
+  /// **'Compass'**
   String get compass;
 
   /// No description provided for @gyroscope.
   ///
   /// In en, this message translates to:
-  /// **'GYROSCOPE'**
+  /// **'Gyroscope'**
   String get gyroscope;
 
   /// No description provided for @thermometer.
   ///
   /// In en, this message translates to:
-  /// **'THERMOMETER'**
+  /// **'Thermometer'**
   String get thermometer;
 
   /// No description provided for @roboticArm.
   ///
   /// In en, this message translates to:
-  /// **'ROBOTIC ARM'**
+  /// **'Robotic Arm'**
   String get roboticArm;
 
   /// No description provided for @gasSensor.
   ///
   /// In en, this message translates to:
-  /// **'GAS SENSOR'**
+  /// **'Gas Sensor'**
   String get gasSensor;
 
   /// No description provided for @dustSensor.
   ///
   /// In en, this message translates to:
-  /// **'DUST SENSOR'**
+  /// **'Dust Sensor'**
   String get dustSensor;
 
   /// No description provided for @soundMeter.
   ///
   /// In en, this message translates to:
-  /// **'SOUND METER'**
+  /// **'Sound Meter'**
   String get soundMeter;
 
   /// No description provided for @oscilloscopeDesc.
@@ -535,13 +535,13 @@ abstract class AppLocalizations {
   /// No description provided for @bluetooth.
   ///
   /// In en, this message translates to:
-  /// **'BLUETOOTH'**
+  /// **'Bluetooth'**
   String get bluetooth;
 
   /// No description provided for @wifi.
   ///
   /// In en, this message translates to:
-  /// **'WIFI'**
+  /// **'Wifi'**
   String get wifi;
 
   /// No description provided for @whatIsPslab.
@@ -631,31 +631,31 @@ abstract class AppLocalizations {
   /// No description provided for @analysisOptionEveryEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY EDGE'**
+  /// **'Every Edge'**
   String get analysisOptionEveryEdge;
 
   /// No description provided for @analysisOptionEveryFallingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY FALLING EDGE'**
+  /// **'Every Falling Edge'**
   String get analysisOptionEveryFallingEdge;
 
   /// No description provided for @analysisOptionEveryRisingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY RISING EDGE'**
+  /// **'Every Rising Edge'**
   String get analysisOptionEveryRisingEdge;
 
   /// No description provided for @analysisOptionEveryFourthRisingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY FOURTH RISING EDGE'**
+  /// **'Every Fourth Rising Edge'**
   String get analysisOptionEveryFourthRisingEdge;
 
   /// No description provided for @analysisOptionDisabled.
   ///
   /// In en, this message translates to:
-  /// **'DISABLED'**
+  /// **'Disabled'**
   String get analysisOptionDisabled;
 
   /// No description provided for @powerSourceTitle.
@@ -691,7 +691,7 @@ abstract class AppLocalizations {
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:
-  /// **'ANALYZE'**
+  /// **'Analyze'**
   String get analyze;
 
   /// No description provided for @settings.
@@ -733,7 +733,7 @@ abstract class AppLocalizations {
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
-  /// **'CANCEL'**
+  /// **'Cancel'**
   String get cancel;
 
   /// No description provided for @currentFormat.
@@ -1507,13 +1507,13 @@ abstract class AppLocalizations {
   /// No description provided for @low.
   ///
   /// In en, this message translates to:
-  /// **'LOW'**
+  /// **'Low'**
   String get low;
 
   /// No description provided for @high.
   ///
   /// In en, this message translates to:
-  /// **'HIGH'**
+  /// **'High'**
   String get high;
 
   /// No description provided for @clearTimelineTitle.
