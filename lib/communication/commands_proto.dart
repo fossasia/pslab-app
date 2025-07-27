@@ -72,6 +72,7 @@ class CommandsProto {
   int dac = 6;
   int setDac = 1;
   int setCalibratedDac = 2;
+  int setPower = 3;
 
   int wavegen = 7;
   int setWg = 1;
