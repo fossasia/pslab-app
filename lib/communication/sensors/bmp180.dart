@@ -87,6 +87,10 @@ class BMP180 {
   Future<int> readInt16(int registerAddress) async {
     try {
       List<int> data = await i2c.readBulk(address, registerAddress, 2);
+      if (data.length < 2) {
+        throw Exception(
+            "Expected 2 bytes but got ${data.length} from register $registerAddress");
+      }
       int value = ((data[0] & 0xFF) << 8) | (data[1] & 0xFF);
       if (value >= 0x8000) value -= 0x10000;
       return value;
@@ -99,6 +103,10 @@ class BMP180 {
   Future<int> readUInt16(int registerAddress) async {
     try {
       List<int> data = await i2c.readBulk(address, registerAddress, 2);
+      if (data.length < 2) {
+        throw Exception(
+            "Expected 2 bytes but got ${data.length} from register $registerAddress");
+      }
       return ((data[0] & 0xFF) << 8) | (data[1] & 0xFF);
     } catch (e) {
       logger.e("Error reading uint16 from register $registerAddress: $e");
@@ -141,8 +149,9 @@ class BMP180 {
   Future<int> readRawPressure() async {
     try {
       List<int> delays = [5, 8, 14, 26];
+      int safeOversampling = oversampling.clamp(0, 3);
       await i2c.write(address, [readPressureCmd + (mode << 6)], control);
-      await Future.delayed(Duration(milliseconds: delays[oversampling]));
+      await Future.delayed(Duration(milliseconds: delays[safeOversampling]));
 
       int msb = await i2c.readByte(address, pressData) & 0xFF;
       int lsb = await i2c.readByte(address, pressData + 1) & 0xFF;

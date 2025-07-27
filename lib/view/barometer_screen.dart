@@ -12,6 +12,7 @@ import 'package:pslab/view/widgets/barometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 
+import '../others/logger_service.dart';
 import '../providers/barometer_config_provider.dart';
 import 'barometer_config_screen.dart';
 
@@ -42,7 +43,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
         _i2c = I2C(_scienceLab!.mPacketHandler);
       }
     } catch (e) {
-      //
+      logger.e('Error initializing ScienceLab: $e');
     }
   }
 

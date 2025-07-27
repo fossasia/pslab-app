@@ -17,7 +17,7 @@ class BarometerStateProvider extends ChangeNotifier {
 
   double _currentPressure = 0.0;
   double _currentTemperature = 0.0;
-  double _currentAltitude = 0.0;
+  double? _currentAltitude;
   Timer? _timeTimer;
   Timer? _dataTimer;
   final List<double> _pressureData = [];
@@ -76,7 +76,7 @@ class BarometerStateProvider extends ChangeNotifier {
     _pressureMax = 0;
     _currentPressure = 0.0;
     _currentTemperature = 0.0;
-    _currentAltitude = 0.0;
+    _currentAltitude = null;
     _sensorAvailable = false;
     notifyListeners();
   }
@@ -211,7 +211,7 @@ class BarometerStateProvider extends ChangeNotifier {
       final data = await _bmp180Sensor!.getRawData();
       _currentTemperature = data['temperature'] ?? 0.0;
       _currentPressure = (data['pressure'] ?? 0.0) / 101325.0;
-      _currentAltitude = data['altitude'] ?? 0.0;
+      _currentAltitude = data['altitude'];
 
       logger.d(
           "BMP180 data - Temp: $_currentTemperature°C, Pressure: $_currentPressure atm, Altitude: $_currentAltitude m");
@@ -300,8 +300,8 @@ class BarometerStateProvider extends ChangeNotifier {
       _dataCount > 0 ? _pressureSum / _dataCount : 0.0;
 
   double getCurrentAltitude() {
-    if (_currentSensorType == 'BMP180' && _currentAltitude != 0.0) {
-      return _currentAltitude;
+    if (_currentSensorType == 'BMP180' && _currentAltitude != null) {
+      return _currentAltitude!;
     }
     return _pressureToAltitude(_currentPressure);
   }
