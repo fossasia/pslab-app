@@ -51,10 +51,30 @@ class BMP180 {
   static const double seaLevelPressure = 101325.0;
 
   BMP180._(this.i2c);
+  bool _validateCalibrationValues() {
+    if (ac1 == 0 || ac2 == 0 || ac3 == 0 || ac4 == 0 || ac5 == 0 || ac6 == 0) {
+      return false;
+    }
+    if (ac1 < -32768 || ac1 > 32767) return false;
+    if (ac2 < -32768 || ac2 > 32767) return false;
+    if (ac3 < -32768 || ac3 > 32767) return false;
+    if (ac4 < 0 || ac4 > 65535) return false;
+    if (ac5 < 0 || ac5 > 65535) return false;
+    if (ac6 < 0 || ac6 > 65535) return false;
+    if (b1 < -32768 || b1 > 32767) return false;
+    if (b2 < -32768 || b2 > 32767) return false;
+    if (mb < -32768 || mb > 32767) return false;
+    if (mc < -32768 || mc > 32767) return false;
+    if (md < -32768 || md > 32767) return false;
+    return true;
+  }
 
   static Future<BMP180> create(I2C i2c, ScienceLab scienceLab) async {
     final bmp180 = BMP180._(i2c);
     await bmp180._initializeCalibrationValues(scienceLab);
+    if (!bmp180._validateCalibrationValues()) {
+      throw Exception('BMP180 calibration values are invalid or out of range.');
+    }
     return bmp180;
   }
 
@@ -126,9 +146,9 @@ class BMP180 {
     }
   }
 
-  Future<double> readTemperature() async {
+  Future<double> readTemperature({int? rawTemp}) async {
     try {
-      int ut = await readRawTemperature();
+      int ut = rawTemp ?? await readRawTemperature();
 
       int x1 = ((ut - ac6) * ac5) >> 15;
       int x2 = (mc << 11) ~/ (x1 + md);
@@ -153,9 +173,14 @@ class BMP180 {
       await i2c.write(address, [readPressureCmd + (mode << 6)], control);
       await Future.delayed(Duration(milliseconds: delays[safeOversampling]));
 
-      int msb = await i2c.readByte(address, pressData) & 0xFF;
-      int lsb = await i2c.readByte(address, pressData + 1) & 0xFF;
-      int xlsb = await i2c.readByte(address, pressData + 2) & 0xFF;
+      List<int> data = await i2c.readBulk(address, pressData, 3);
+      if (data.length < 3) {
+        throw Exception(
+            "Expected 3 bytes but got ${data.length} from pressure data");
+      }
+      int msb = data[0] & 0xFF;
+      int lsb = data[1] & 0xFF;
+      int xlsb = data[2] & 0xFF;
 
       return ((msb << 16) + (lsb << 8) + xlsb) >> (8 - mode);
     } catch (e) {
@@ -164,9 +189,9 @@ class BMP180 {
     }
   }
 
-  Future<double> readPressure() async {
+  Future<double> readPressure({int? rawTemp}) async {
     try {
-      int ut = await readRawTemperature();
+      int ut = rawTemp ?? await readRawTemperature();
       int up = await readRawPressure();
 
       int x1 = ((ut - ac6) * ac5) >> 15;
@@ -214,8 +239,9 @@ class BMP180 {
 
   Future<Map<String, double>> getRawData() async {
     try {
-      temperature = await readTemperature();
-      pressure = await readPressure();
+      int rawTemp = await readRawTemperature();
+      temperature = await readTemperature(rawTemp: rawTemp);
+      pressure = await readPressure(rawTemp: rawTemp);
       double alt = altitude();
 
       return {
