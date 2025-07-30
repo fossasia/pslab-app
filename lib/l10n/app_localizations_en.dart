@@ -242,7 +242,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bluetooth => 'Bluetooth';
 
   @override
-  String get wifi => 'Wifi';
+  String get wifi => 'Wi-Fi';
 
   @override
   String get whatIsPslab => 'What is PSLab Device?';

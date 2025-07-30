@@ -541,7 +541,7 @@ abstract class AppLocalizations {
   /// No description provided for @wifi.
   ///
   /// In en, this message translates to:
-  /// **'Wifi'**
+  /// **'Wi-Fi'**
   String get wifi;
 
   /// No description provided for @whatIsPslab.
