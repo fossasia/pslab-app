@@ -142,40 +142,48 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   Future<void> _openFile(File file) async {
     final data = await _csvService.readCsvFromFile(file);
     if (mounted) {
-      final config = _getChartConfig();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoggedDataChartScreen(
-            data: data,
-            fileName: file.path.split('/').last,
-            xAxisLabel: config['xAxisLabel'],
-            yAxisLabel: config['yAxisLabel'],
-            xDataColumnIndex: config['xDataColumnIndex'],
-            yDataColumnIndex: config['yDataColumnIndex'],
+      if (widget.instrumentName.toLowerCase() == 'robotic arm') {
+        Navigator.pop(context, data);
+      } else {
+        final config = _getChartConfig();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoggedDataChartScreen(
+              data: data,
+              fileName: file.path.split('/').last,
+              xAxisLabel: config['xAxisLabel'],
+              yAxisLabel: config['yAxisLabel'],
+              xDataColumnIndex: config['xDataColumnIndex'],
+              yDataColumnIndex: config['yDataColumnIndex'],
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
   Future<void> _pickAndImportFile() async {
     final data = await _csvService.pickAndReadCsvFile();
     if (data != null && mounted) {
-      final config = _getChartConfig();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoggedDataChartScreen(
-            data: data,
-            fileName: 'Imported Log',
-            xAxisLabel: config['xAxisLabel'],
-            yAxisLabel: config['yAxisLabel'],
-            xDataColumnIndex: config['xDataColumnIndex'],
-            yDataColumnIndex: config['yDataColumnIndex'],
+      if (widget.instrumentName.toLowerCase() == 'robotic arm') {
+        Navigator.pop(context, data);
+      } else {
+        final config = _getChartConfig();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoggedDataChartScreen(
+              data: data,
+              fileName: 'Imported Log',
+              xAxisLabel: config['xAxisLabel'],
+              yAxisLabel: config['yAxisLabel'],
+              xDataColumnIndex: config['xDataColumnIndex'],
+              yDataColumnIndex: config['yDataColumnIndex'],
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
