@@ -658,6 +658,36 @@ abstract class AppLocalizations {
   /// **'DISABLED'**
   String get analysisOptionDisabled;
 
+  /// No description provided for @powerSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Source'**
+  String get powerSourceTitle;
+
+  /// No description provided for @pinPV1.
+  ///
+  /// In en, this message translates to:
+  /// **'PV1'**
+  String get pinPV1;
+
+  /// No description provided for @pinPV2.
+  ///
+  /// In en, this message translates to:
+  /// **'PV2'**
+  String get pinPV2;
+
+  /// No description provided for @pinPV3.
+  ///
+  /// In en, this message translates to:
+  /// **'PV3'**
+  String get pinPV3;
+
+  /// No description provided for @pinPCS.
+  ///
+  /// In en, this message translates to:
+  /// **'PCS'**
+  String get pinPCS;
+
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:
