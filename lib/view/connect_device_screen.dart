@@ -138,7 +138,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  appLocalizations.bluetooth,
+                                  appLocalizations.bluetooth.toUpperCase(),
                                   style: TextStyle(color: buttonTextColor),
                                 ),
                               ),
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  appLocalizations.wifi,
+                                  appLocalizations.wifi.toUpperCase(),
                                   style: TextStyle(color: buttonTextColor),
                                 ),
                               ),

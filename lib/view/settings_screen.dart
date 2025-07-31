@@ -85,7 +85,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 20, bottom: 5),
                   child: Text(
-                    appLocalizations.cancel,
+                    appLocalizations.cancel.toUpperCase(),
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ),
