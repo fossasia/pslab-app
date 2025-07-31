@@ -184,7 +184,6 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
               IconButton(
                 icon: const Icon(Icons.save, color: Colors.white),
                 tooltip: appLocalizations.saveData,
-
                 onPressed: () async {
                   final TextEditingController fileNameController =
                       TextEditingController();
@@ -296,7 +295,6 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                     );
                   }
                 },
-
               ),
               IconButton(
                 icon: const Icon(Icons.info, color: Colors.white),
