@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/view/widgets/bmp180_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../theme/colors.dart';
@@ -22,9 +23,6 @@ class _SensorsScreenState extends State<SensorsScreen> {
       builder: (context, boardProvider, child) {
         return CommonScaffold(
           title: 'Sensors',
-          onGuidePressed: () {
-            // TODO
-          },
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -214,6 +212,27 @@ class _SensorsScreenState extends State<SensorsScreen> {
   }
 
   void _onSensorTap(String sensorName) {
-    // TODO
+    Widget? targetScreen;
+
+    switch (sensorName) {
+      case 'BMP180':
+        targetScreen = const BMP180Screen();
+        break;
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$sensorName screen not implemented yet'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => targetScreen!,
+      ),
+    );
   }
 }
