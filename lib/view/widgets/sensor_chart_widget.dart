@@ -22,7 +22,6 @@ class SensorChartWidget extends StatelessWidget {
   final String? unit;
   final int? maxDataPoints;
   final Widget? customNoDataWidget;
-
   const SensorChartWidget({
     super.key,
     required this.title,
@@ -43,6 +42,14 @@ class SensorChartWidget extends StatelessWidget {
     this.maxDataPoints,
     this.customNoDataWidget,
   });
+  List<ChartDataPoint> get _validData {
+    return data.where((point) {
+      return point.x.isFinite &&
+          point.y.isFinite &&
+          !point.x.isNaN &&
+          !point.y.isNaN;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +104,7 @@ class SensorChartWidget extends StatelessWidget {
           bottomRight: Radius.zero,
         ),
       ),
-      child: data.isEmpty ? _buildNoDataView() : _buildLineChart(),
+      child: _validData.isEmpty ? _buildNoDataView() : _buildLineChart(),
     );
   }
 
@@ -121,6 +128,9 @@ class SensorChartWidget extends StatelessWidget {
   }
 
   Widget _buildLineChart() {
+    if (_validData.isEmpty) {
+      return _buildNoDataView();
+    }
     return Stack(
       children: [
         _buildAxisLabels(),
@@ -158,7 +168,9 @@ class SensorChartWidget extends StatelessWidget {
               maxY: _getMaxY(),
               lineBarsData: [
                 LineChartBarData(
-                  spots: data.map((point) => FlSpot(point.x, point.y)).toList(),
+                  spots: _validData
+                      .map((point) => FlSpot(point.x, point.y))
+                      .toList(),
                   isCurved: isCurved,
                   color: lineColor,
                   barWidth: lineWidth,
@@ -185,8 +197,14 @@ class SensorChartWidget extends StatelessWidget {
                 touchTooltipData: LineTouchTooltipData(
                   getTooltipItems: (touchedSpots) {
                     return touchedSpots.map((spot) {
+                      final yValue = spot.y.isFinite
+                          ? spot.y.toStringAsFixed(2)
+                          : appLocalizations.notAvailable;
+                      final xValue = spot.x.isFinite
+                          ? spot.x.toStringAsFixed(1)
+                          : appLocalizations.notAvailable;
                       return LineTooltipItem(
-                        '$yAxisLabel: ${spot.y.toStringAsFixed(2)}${unit ?? ''}\n${appLocalizations.time}: ${spot.x.toStringAsFixed(1)}',
+                        '$yAxisLabel: $yValue${unit ?? ''}\n${appLocalizations.time}: $xValue',
                         TextStyle(
                           color: chartTextColor,
                           fontSize: 12,
@@ -258,7 +276,7 @@ class SensorChartWidget extends StatelessWidget {
             ),
           ),
         ),
-        if (data.isNotEmpty)
+        if (_validData.isNotEmpty)
           Positioned(
             top: 12,
             right: 20,
@@ -269,7 +287,7 @@ class SensorChartWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                '${data.last.y.toStringAsFixed(2)}${unit ?? ''}',
+                '${_validData.last.y.toStringAsFixed(2)}${unit ?? ''}',
                 style: TextStyle(
                   color: chartTextColor,
                   fontSize: 12,
@@ -284,58 +302,58 @@ class SensorChartWidget extends StatelessWidget {
 
   double _getMinX() {
     if (minX != null) return minX!;
-    if (data.isEmpty) return 0;
-    return data.first.x;
+    if (_validData.isEmpty) return 0;
+    return _validData.first.x;
   }
 
   double _getMaxX() {
     if (maxX != null) return maxX!;
-    if (data.isEmpty) return 10;
-    return data.last.x;
+    if (_validData.isEmpty) return 10;
+    return _validData.last.x;
   }
 
   double _getMinY() {
     if (minY != null) return minY!;
-    if (data.isEmpty) return 0;
-
-    final values = data.map((e) => e.y).toList();
+    if (_validData.isEmpty) return 0;
+    final values = _validData.map((e) => e.y).toList();
     final dataMin = values.reduce((a, b) => a < b ? a : b);
     final range = _getDataRange();
-    return dataMin - (range * 0.1);
+    final result = dataMin - (range * 0.1);
+    return result.isFinite ? result : 0;
   }
 
   double _getMaxY() {
     if (maxY != null) return maxY!;
-    if (data.isEmpty) return 100;
-
-    final values = data.map((e) => e.y).toList();
+    if (_validData.isEmpty) return 100;
+    final values = _validData.map((e) => e.y).toList();
     final dataMax = values.reduce((a, b) => a > b ? a : b);
     final range = _getDataRange();
-    return dataMax + (range * 0.1);
+    final result = dataMax + (range * 0.1);
+    return result.isFinite ? result : 100;
   }
 
   double _getDataRange() {
-    if (data.isEmpty) return 1;
-
-    final values = data.map((e) => e.y).toList();
+    if (_validData.isEmpty) return 1;
+    final values = _validData.map((e) => e.y).toList();
     final dataMin = values.reduce((a, b) => a < b ? a : b);
     final dataMax = values.reduce((a, b) => a > b ? a : b);
     final range = dataMax - dataMin;
-
-    return range == 0 ? dataMax.abs() : range;
+    if (!range.isFinite || range <= 0) {
+      return dataMax.abs().isFinite ? dataMax.abs() : 1;
+    }
+    return range;
   }
 
   double _calculateGridInterval() {
     final range = _getMaxY() - _getMinY();
-    if (range <= 0) return 1;
-
+    if (range <= 0 || !range.isFinite) return 1;
     final interval = range / 5;
-
+    if (!interval.isFinite) return 1;
     if (interval >= 1000) return (interval / 1000).ceilToDouble() * 1000;
     if (interval >= 100) return (interval / 100).ceilToDouble() * 100;
     if (interval >= 10) return (interval / 10).ceilToDouble() * 10;
     if (interval >= 1) return interval.ceilToDouble();
-
-    return (interval * 10).ceilToDouble() / 10;
+    final result = (interval * 10).ceilToDouble() / 10;
+    return result.isFinite ? result : 1;
   }
 }

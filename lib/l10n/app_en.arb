@@ -368,5 +368,6 @@
     "pressureUnitLabel" : "Pa",
     "temperatureUnitLabel" : "°C",
     "altitudeUnitLabel" : "m",
-    "time" : "Time"
+    "time" : "Time",
+    "notAvailable" : "N/A"
 }

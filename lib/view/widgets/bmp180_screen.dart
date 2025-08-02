@@ -241,8 +241,8 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                 ),
                 const SizedBox(width: 24),
                 SizedBox(
-                  width: 100,
-                  height: 100,
+                  width: 80,
+                  height: 80,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
@@ -280,7 +280,6 @@ class _BMP180ScreenState extends State<BMP180Screen> {
             ),
           ),
         ),
-        const SizedBox(width: 8),
         Expanded(
           flex: 3,
           child: Container(
