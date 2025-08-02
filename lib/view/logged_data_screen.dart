@@ -60,7 +60,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: Text(appLocalizations.cancel),
+                    child: Text(appLocalizations.cancel.toUpperCase()),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(true),
@@ -89,7 +89,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text(appLocalizations.cancel),
+              child: Text(appLocalizations.cancel.toUpperCase()),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),

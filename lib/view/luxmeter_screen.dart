@@ -156,7 +156,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(appLocalizations.cancel),
+              child: Text(appLocalizations.cancel.toUpperCase()),
             ),
             ElevatedButton(
               onPressed: () {
