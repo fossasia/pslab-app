@@ -8,6 +8,7 @@ import 'package:pslab/view/widgets/robotic_arm_dialog.dart';
 import 'package:pslab/view/widgets/robotic_arm_summary.dart';
 import 'package:pslab/view/widgets/robotic_arm_timeline.dart';
 import '../providers/robotic_arm_state_provider.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 import 'widgets/servo_card.dart';
 
 class RoboticArmScreen extends StatefulWidget {
@@ -20,6 +21,8 @@ class RoboticArmScreen extends StatefulWidget {
 class _RoboticArmScreenState extends State<RoboticArmScreen> {
   late RoboticArmStateProvider provider;
   late List<String> servoLabels;
+  bool _showGuide = false;
+  static const imagePath = 'assets/images/robotic_arm_guide.png';
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   void initState() {
@@ -44,6 +47,26 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
         ),
       );
     };
+  }
+
+  void _hideInstrumentGuide() {
+    setState(() {
+      _showGuide = false;
+    });
+  }
+
+  List<Widget> _getRoboticArmContent() {
+    return [
+      InstrumentIntroText(
+        text: appLocalizations.roboticArmIntro,
+      ),
+      const InstrumentImage(
+        imagePath: imagePath,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.roboticArmConnection,
+      ),
+    ];
   }
 
   void _showAngleInputDialog(BuildContext context, int index) {
@@ -83,7 +106,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
           final screenWidth = MediaQuery.of(context).size.width;
           final scrollAmount = (screenWidth / 6);
           return CommonScaffold(
-            title: appLocalizations.roboticArm,
+            title: appLocalizations.roboticArmTitle,
             actions: [
               IconButton(
                 icon: Icon(
@@ -160,12 +183,16 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
               IconButton(
                 icon: const Icon(Icons.save, color: Colors.white),
                 tooltip: appLocalizations.saveData,
-                onPressed: () {}, //TODO
+                onPressed: () {}, // TODO
               ),
               IconButton(
                 icon: const Icon(Icons.info, color: Colors.white),
                 tooltip: appLocalizations.showGuide,
-                onPressed: () {}, //TODO
+                onPressed: () {
+                  setState(() {
+                    _showGuide = !_showGuide;
+                  });
+                },
               ),
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.white),
@@ -182,67 +209,78 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                 ],
               ),
             ],
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: servoHeight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(4, (index) {
-                          return Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: SizedBox(
-                                height: servoHeight,
-                                child: ServoCard(
-                                  value: provider.servoValues[index],
-                                  label: servoLabels[index],
-                                  servoId: index,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      provider.updateServoValue(index, val);
-                                    });
-                                  },
-                                  onTap: () =>
-                                      _showAngleInputDialog(context, index),
-                                  cardHeight: servoHeight,
+            body: Stack(
+              children: [
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: servoHeight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(4, (index) {
+                              return Expanded(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 1),
+                                  child: SizedBox(
+                                    height: servoHeight,
+                                    child: ServoCard(
+                                      value: provider.servoValues[index],
+                                      label: servoLabels[index],
+                                      servoId: index,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          provider.updateServoValue(index, val);
+                                        });
+                                      },
+                                      onTap: () =>
+                                          _showAngleInputDialog(context, index),
+                                      cardHeight: servoHeight,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Expanded(
-                      child: Scrollbar(
-                        controller: provider.timelineScrollController,
-                        thumbVisibility: true,
-                        thickness: 8,
-                        radius: const Radius.circular(4),
-                        child: TimelineScrollView(
-                          totalTimelineItems: provider.totalTimelineItems,
-                          screenHeight: screenHeight,
-                          timelinePosition: provider.timelinePosition,
-                          timelineDegrees: provider.timelineDegrees,
-                          scrollController: provider.timelineScrollController,
-                          onUpdate: (index, servo, value) {
-                            setState(() {
-                              provider.updateTimelineDegree(
-                                  index, servo, value);
-                            });
-                          },
+                              );
+                            }),
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                        const SizedBox(height: 2),
+                        Expanded(
+                          child: Scrollbar(
+                            controller: provider.timelineScrollController,
+                            thumbVisibility: true,
+                            thickness: screenHeight * 0.006,
+                            radius: const Radius.circular(4),
+                            child: TimelineScrollView(
+                              totalTimelineItems: provider.totalTimelineItems,
+                              screenHeight: screenHeight,
+                              timelinePosition: provider.timelinePosition,
+                              timelineDegrees: provider.timelineDegrees,
+                              scrollController:
+                                  provider.timelineScrollController,
+                              onUpdate: (index, servo, value) {
+                                setState(() {
+                                  provider.updateTimelineDegree(
+                                      index, servo, value);
+                                });
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                if (_showGuide)
+                  InstrumentOverviewDrawer(
+                    instrumentName: appLocalizations.roboticArmTitle,
+                    content: _getRoboticArmContent(),
+                    onHide: _hideInstrumentGuide,
+                  ),
+              ],
             ),
           );
         },

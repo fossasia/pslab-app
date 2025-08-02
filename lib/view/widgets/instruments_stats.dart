@@ -61,12 +61,12 @@ class Instrumentstats extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         StatItem(
-                          label: '${appLocalizations.maxValue} ($unit)',
+                          label: '${appLocalizations.maxLabel} ($unit)',
                           value: maxValue,
                           fontSize: statFontSize,
                         ),
                         StatItem(
-                          label: '${appLocalizations.minValue} ($unit)',
+                          label: '${appLocalizations.minLabel} ($unit)',
                           value: minValue,
                           fontSize: statFontSize,
                         ),

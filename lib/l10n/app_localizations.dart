@@ -97,97 +97,97 @@ abstract class AppLocalizations {
   /// No description provided for @oscilloscope.
   ///
   /// In en, this message translates to:
-  /// **'OSCILLOSCOPE'**
+  /// **'Oscilloscope'**
   String get oscilloscope;
 
   /// No description provided for @multimeter.
   ///
   /// In en, this message translates to:
-  /// **'MULTIMETER'**
+  /// **'Multimeter'**
   String get multimeter;
 
   /// No description provided for @logicAnalyzer.
   ///
   /// In en, this message translates to:
-  /// **'LOGIC ANALYZER'**
+  /// **'Logic Analyzer'**
   String get logicAnalyzer;
 
   /// No description provided for @sensors.
   ///
   /// In en, this message translates to:
-  /// **'SENSORS'**
+  /// **'Sensors'**
   String get sensors;
 
   /// No description provided for @waveGenerator.
   ///
   /// In en, this message translates to:
-  /// **'WAVE GENERATOR'**
+  /// **'Wave Generator'**
   String get waveGenerator;
 
   /// No description provided for @powerSource.
   ///
   /// In en, this message translates to:
-  /// **'POWER SOURCE'**
+  /// **'Power Source'**
   String get powerSource;
 
   /// No description provided for @luxMeter.
   ///
   /// In en, this message translates to:
-  /// **'LUX METER'**
+  /// **'Lux Meter'**
   String get luxMeter;
 
   /// No description provided for @accelerometer.
   ///
   /// In en, this message translates to:
-  /// **'ACCELEROMETER'**
+  /// **'Accelerometer'**
   String get accelerometer;
 
   /// No description provided for @barometer.
   ///
   /// In en, this message translates to:
-  /// **'BAROMETER'**
+  /// **'Barometer'**
   String get barometer;
 
   /// No description provided for @compass.
   ///
   /// In en, this message translates to:
-  /// **'COMPASS'**
+  /// **'Compass'**
   String get compass;
 
   /// No description provided for @gyroscope.
   ///
   /// In en, this message translates to:
-  /// **'GYROSCOPE'**
+  /// **'Gyroscope'**
   String get gyroscope;
 
   /// No description provided for @thermometer.
   ///
   /// In en, this message translates to:
-  /// **'THERMOMETER'**
+  /// **'Thermometer'**
   String get thermometer;
 
   /// No description provided for @roboticArm.
   ///
   /// In en, this message translates to:
-  /// **'ROBOTIC ARM'**
+  /// **'Robotic Arm'**
   String get roboticArm;
 
   /// No description provided for @gasSensor.
   ///
   /// In en, this message translates to:
-  /// **'GAS SENSOR'**
+  /// **'Gas Sensor'**
   String get gasSensor;
 
   /// No description provided for @dustSensor.
   ///
   /// In en, this message translates to:
-  /// **'DUST SENSOR'**
+  /// **'Dust Sensor'**
   String get dustSensor;
 
   /// No description provided for @soundMeter.
   ///
   /// In en, this message translates to:
-  /// **'SOUND METER'**
+  /// **'Sound Meter'**
   String get soundMeter;
 
   /// No description provided for @oscilloscopeDesc.
@@ -535,13 +535,13 @@ abstract class AppLocalizations {
   /// No description provided for @bluetooth.
   ///
   /// In en, this message translates to:
-  /// **'BLUETOOTH'**
+  /// **'Bluetooth'**
   String get bluetooth;
 
   /// No description provided for @wifi.
   ///
   /// In en, this message translates to:
-  /// **'WIFI'**
+  /// **'Wi-Fi'**
   String get wifi;
 
   /// No description provided for @whatIsPslab.
@@ -631,37 +631,67 @@ abstract class AppLocalizations {
   /// No description provided for @analysisOptionEveryEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY EDGE'**
+  /// **'Every Edge'**
   String get analysisOptionEveryEdge;
 
   /// No description provided for @analysisOptionEveryFallingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY FALLING EDGE'**
+  /// **'Every Falling Edge'**
   String get analysisOptionEveryFallingEdge;
 
   /// No description provided for @analysisOptionEveryRisingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY RISING EDGE'**
+  /// **'Every Rising Edge'**
   String get analysisOptionEveryRisingEdge;
 
   /// No description provided for @analysisOptionEveryFourthRisingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY FOURTH RISING EDGE'**
+  /// **'Every Fourth Rising Edge'**
   String get analysisOptionEveryFourthRisingEdge;
 
   /// No description provided for @analysisOptionDisabled.
   ///
   /// In en, this message translates to:
-  /// **'DISABLED'**
+  /// **'Disabled'**
   String get analysisOptionDisabled;
+
+  /// No description provided for @powerSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Source'**
+  String get powerSourceTitle;
+
+  /// No description provided for @pinPV1.
+  ///
+  /// In en, this message translates to:
+  /// **'PV1'**
+  String get pinPV1;
+
+  /// No description provided for @pinPV2.
+  ///
+  /// In en, this message translates to:
+  /// **'PV2'**
+  String get pinPV2;
+
+  /// No description provided for @pinPV3.
+  ///
+  /// In en, this message translates to:
+  /// **'PV3'**
+  String get pinPV3;
+
+  /// No description provided for @pinPCS.
+  ///
+  /// In en, this message translates to:
+  /// **'PCS'**
+  String get pinPCS;
 
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:
-  /// **'ANALYZE'**
+  /// **'Analyze'**
   String get analyze;
 
   /// No description provided for @settings.
@@ -703,7 +733,7 @@ abstract class AppLocalizations {
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
-  /// **'CANCEL'**
+  /// **'Cancel'**
   String get cancel;
 
   /// No description provided for @currentFormat.
@@ -1477,13 +1507,13 @@ abstract class AppLocalizations {
   /// No description provided for @low.
   ///
   /// In en, this message translates to:
-  /// **'LOW'**
+  /// **'Low'**
   String get low;
 
   /// No description provided for @high.
   ///
   /// In en, this message translates to:
-  /// **'HIGH'**
+  /// **'High'**
   String get high;
 
   /// No description provided for @clearTimelineTitle.
@@ -1834,11 +1864,11 @@ abstract class AppLocalizations {
   /// **'Update Period'**
   String get updatePeriod;
 
-  /// No description provided for @updatePeriodHint.
+  /// No description provided for @luxmeterUpdatePeriodHint.
   ///
   /// In en, this message translates to:
   /// **'Please provide time interval at which data will be updated (100 ms to 1000 ms)'**
-  String get updatePeriodHint;
+  String get luxmeterUpdatePeriodHint;
 
   /// No description provided for @highLimit.
   ///
@@ -1846,11 +1876,11 @@ abstract class AppLocalizations {
   /// **'High Limit'**
   String get highLimit;
 
-  /// No description provided for @highLimitHint.
+  /// No description provided for @luxmeterHighLimitHint.
   ///
   /// In en, this message translates to:
   /// **'Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)'**
-  String get highLimitHint;
+  String get luxmeterHighLimitHint;
 
   /// No description provided for @sensorGain.
   ///
@@ -1929,6 +1959,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.'**
   String get baroMeterBulletPoint4;
+
+  /// No description provided for @sharingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing PSLab Data'**
+  String get sharingMessage;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this file?'**
+  String get deleteHint;
+
+  /// No description provided for @deleteFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete File'**
+  String get deleteFile;
+
+  /// No description provided for @deleteAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Data'**
+  String get deleteAllData;
+
+  /// No description provided for @deleteCautionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all logged data for this instrument?'**
+  String get deleteCautionMessage;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All'**
+  String get deleteAll;
+
+  /// No description provided for @noLoggedData.
+  ///
+  /// In en, this message translates to:
+  /// **'No logged data found.'**
+  String get noLoggedData;
+
+  /// No description provided for @importLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Log'**
+  String get importLog;
+
+  /// No description provided for @failedToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save file. No data was recorded.'**
+  String get failedToSave;
+
+  /// No description provided for @fileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved'**
+  String get fileSaved;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @enterFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter filename (leave empty for auto-generated name)'**
+  String get enterFileName;
+
+  /// No description provided for @fileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Filename'**
+  String get fileName;
+
+  /// No description provided for @saveRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Recording'**
+  String get saveRecording;
+
+  /// No description provided for @recordingStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording started'**
+  String get recordingStarted;
+
+  /// No description provided for @noValidData.
+  ///
+  /// In en, this message translates to:
+  /// **'No valid data to display.'**
+  String get noValidData;
+
+  /// No description provided for @csvPickingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking or reading CSV file'**
+  String get csvPickingError;
+
+  /// No description provided for @csvReadingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading CSV from file'**
+  String get csvReadingError;
+
+  /// No description provided for @sharingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error sharing file'**
+  String get sharingError;
+
+  /// No description provided for @csvGettingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error getting saved files'**
+  String get csvGettingError;
+
+  /// No description provided for @unsupportedPlatform.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported platform'**
+  String get unsupportedPlatform;
+
+  /// No description provided for @noDataRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No data recorded to save for'**
+  String get noDataRecorded;
+
+  /// No description provided for @csvFileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV file saved at'**
+  String get csvFileSaved;
+
+  /// No description provided for @csvSavingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving CSV file'**
+  String get csvSavingError;
+
+  /// No description provided for @csvDeletingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting file'**
+  String get csvDeletingError;
+
+  /// No description provided for @fileDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'File deleted'**
+  String get fileDeleted;
+
+  /// No description provided for @soundmeterConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Soundmeter Configurations'**
+  String get soundmeterConfig;
+
+  /// No description provided for @barometerConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Barometer Configurations'**
+  String get barometerConfig;
+
+  /// No description provided for @baroUpdatePeriodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be updated (100 ms to 2000 ms)'**
+  String get baroUpdatePeriodHint;
+
+  /// No description provided for @barometerHighLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)'**
+  String get barometerHighLimitHint;
+
+  /// No description provided for @gyroscopeConfigurations.
+  ///
+  /// In en, this message translates to:
+  /// **'Gyroscope Configurations'**
+  String get gyroscopeConfigurations;
+
+  /// No description provided for @gyroscopeHighLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)'**
+  String get gyroscopeHighLimitHint;
+
+  /// No description provided for @accelerometerConfigurations.
+  ///
+  /// In en, this message translates to:
+  /// **'Accelerometer Configurations'**
+  String get accelerometerConfigurations;
+
+  /// No description provided for @accelerometerUpdatePeriodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be updated'**
+  String get accelerometerUpdatePeriodHint;
+
+  /// No description provided for @accelerometerHighLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide the maximum limit of lux value to be recorded'**
+  String get accelerometerHighLimitHint;
+
+  /// No description provided for @roboticArmIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'• A robotic arm is a programmable mechanical device that mimics the movement of a human arm.\n• It uses servo motors to control its motion, and these motors are operated using PWM signals.\n• The PSLab provides four PWM square wave generators (SQ1, SQ2, SQ3, SQ4), allowing control of up to four servo motors and enabling a robotic arm with up to four degrees of freedom.'**
+  String get roboticArmIntro;
+
+  /// No description provided for @roboticArmConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
+  String get roboticArmConnection;
 }
 
 class _AppLocalizationsDelegate

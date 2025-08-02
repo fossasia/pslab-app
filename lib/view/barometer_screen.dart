@@ -1,5 +1,6 @@
 import 'dart:math';
-
+import 'package:pslab/communication/peripherals/i2c.dart';
+import 'package:pslab/communication/science_lab.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -10,6 +11,13 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/barometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
+import 'package:pslab/others/csv_service.dart';
+import 'package:pslab/view/logged_data_screen.dart';
+
+import '../others/logger_service.dart';
+import '../providers/barometer_config_provider.dart';
+import '../constants.dart';
+import 'barometer_config_screen.dart';
 
 class BarometerScreen extends StatefulWidget {
   const BarometerScreen({super.key});
@@ -19,8 +27,31 @@ class BarometerScreen extends StatefulWidget {
 
 class _BarometerScreenState extends State<BarometerScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  final CsvService _csvService = CsvService();
+  late BarometerStateProvider _provider;
   bool _showGuide = false;
   static const imagePath = 'assets/images/bmp180_schematic.png';
+
+  I2C? _i2c;
+  ScienceLab? _scienceLab;
+  BarometerConfigProvider? _configProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeScienceLab();
+  }
+
+  void _initializeScienceLab() async {
+    try {
+      _scienceLab = getIt.get<ScienceLab>();
+      if (_scienceLab != null && _scienceLab!.isConnected()) {
+        _i2c = I2C(_scienceLab!.mPacketHandler);
+      }
+    } catch (e) {
+      logger.e('Error initializing ScienceLab: $e');
+    }
+  }
 
   void _showSensorErrorSnackbar(String message) {
     if (mounted) {
@@ -68,49 +99,223 @@ class _BarometerScreenState extends State<BarometerScreen> {
     ];
   }
 
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(appLocalizations.showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'baro_meter_config',
+          child: Text(appLocalizations.barometerConfig),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            _navigateToLoggedData();
+            break;
+          case 'baro_meter_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  Future<void> _navigateToLoggedData() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoggedDataScreen(
+          instrumentName: 'barometer',
+          appBarName: 'Barometer',
+          instrumentIcon: instrumentIcons[7], // Assuming barometer icon index
+        ),
+      ),
+    );
+  }
+
+  void _navigateToConfig() {
+    if (_configProvider != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChangeNotifierProvider.value(
+            value: _configProvider,
+            child: const BarometerConfigScreen(),
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_provider.isRecording) {
+      final data = _provider.stopRecording();
+      await _showSaveFileDialog(data);
+    } else {
+      _provider.startRecording();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${appLocalizations.recordingStarted}...',
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
+    final TextEditingController filenameController = TextEditingController();
+    final String defaultFilename = '';
+    filenameController.text = defaultFilename;
+
+    final String? fileName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(appLocalizations.saveRecording),
+          content: TextField(
+            controller: filenameController,
+            decoration: InputDecoration(
+              hintText: appLocalizations.enterFileName,
+              labelText: appLocalizations.fileName,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(appLocalizations.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, filenameController.text);
+              },
+              child: Text(appLocalizations.save),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (fileName != null) {
+      _csvService.writeMetaData('barometer', data);
+      final file = await _csvService.saveCsvFile('barometer', fileName, data);
+      if (mounted) {
+        if (file != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                appLocalizations.failedToSave,
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _provider.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<BarometerStateProvider>(
-          create: (_) => BarometerStateProvider()
-            ..initializeSensors(onError: _showSensorErrorSnackbar),
+        ChangeNotifierProvider<BarometerConfigProvider>(
+          create: (_) {
+            _configProvider = BarometerConfigProvider();
+            return _configProvider!;
+          },
+        ),
+        ChangeNotifierProxyProvider<BarometerConfigProvider,
+            BarometerStateProvider>(
+          create: (context) {
+            final configProvider =
+                Provider.of<BarometerConfigProvider>(context, listen: false);
+            _provider = BarometerStateProvider(configProvider)
+              ..initializeSensors(
+                onError: _showSensorErrorSnackbar,
+                i2c: _i2c,
+                scienceLab: _scienceLab,
+              );
+            return _provider;
+          },
+          update: (context, configProvider, previous) {
+            return previous!;
+          },
         ),
       ],
       child: Stack(children: [
-        CommonScaffold(
-          title: appLocalizations.barometerTitle,
-          onGuidePressed: _showInstrumentGuide,
-          body: SafeArea(child: LayoutBuilder(builder: (context, constraints) {
-            final isLargeScreen = constraints.maxWidth > 900;
-            if (isLargeScreen) {
-              return Row(
-                children: [
-                  const Expanded(
-                    flex: 35,
-                    child: BarometerCard(),
-                  ),
-                  Expanded(
-                    flex: 65,
-                    child: _buildChartSection(),
-                  ),
-                ],
-              );
-            } else {
-              return Column(
-                children: [
-                  const Expanded(
-                    flex: 45,
-                    child: BarometerCard(),
-                  ),
-                  Expanded(
-                    flex: 55,
-                    child: _buildChartSection(),
-                  ),
-                ],
-              );
-            }
-          })),
+        Consumer<BarometerStateProvider>(
+          builder: (context, provider, child) {
+            return CommonScaffold(
+              title: appLocalizations.barometerTitle,
+              onGuidePressed: _showInstrumentGuide,
+              onOptionsPressed: _showOptionsMenu,
+              onRecordPressed: _toggleRecording,
+              isRecording: provider.isRecording,
+              body: SafeArea(
+                  child: LayoutBuilder(builder: (context, constraints) {
+                final isLargeScreen = constraints.maxWidth > 900;
+                if (isLargeScreen) {
+                  return Row(
+                    children: [
+                      const Expanded(
+                        flex: 35,
+                        child: BarometerCard(),
+                      ),
+                      Expanded(
+                        flex: 65,
+                        child: _buildChartSection(),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      const Expanded(
+                        flex: 45,
+                        child: BarometerCard(),
+                      ),
+                      Expanded(
+                        flex: 55,
+                        child: _buildChartSection(),
+                      ),
+                    ],
+                  );
+                }
+              })),
+            );
+          },
         ),
         if (_showGuide)
           InstrumentOverviewDrawer(

@@ -9,52 +9,52 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get oscilloscope => 'OSCILLOSCOPE';
+  String get oscilloscope => 'Oscilloscope';
 
   @override
-  String get multimeter => 'MULTIMETER';
+  String get multimeter => 'Multimeter';
 
   @override
-  String get logicAnalyzer => 'LOGIC ANALYZER';
+  String get logicAnalyzer => 'Logic Analyzer';
 
   @override
-  String get sensors => 'SENSORS';
+  String get sensors => 'Sensors';
 
   @override
-  String get waveGenerator => 'WAVE GENERATOR';
+  String get waveGenerator => 'Wave Generator';
 
   @override
-  String get powerSource => 'POWER SOURCE';
+  String get powerSource => 'Power Source';
 
   @override
-  String get luxMeter => 'LUX METER';
+  String get luxMeter => 'Lux Meter';
 
   @override
-  String get accelerometer => 'ACCELEROMETER';
+  String get accelerometer => 'Accelerometer';
 
   @override
-  String get barometer => 'BAROMETER';
+  String get barometer => 'Barometer';
 
   @override
-  String get compass => 'COMPASS';
+  String get compass => 'Compass';
 
   @override
-  String get gyroscope => 'GYROSCOPE';
+  String get gyroscope => 'Gyroscope';
 
   @override
-  String get thermometer => 'THERMOMETER';
+  String get thermometer => 'Thermometer';
 
   @override
-  String get roboticArm => 'ROBOTIC ARM';
+  String get roboticArm => 'Robotic Arm';
 
   @override
-  String get gasSensor => 'GAS SENSOR';
+  String get gasSensor => 'Gas Sensor';
 
   @override
-  String get dustSensor => 'DUST SENSOR';
+  String get dustSensor => 'Dust Sensor';
 
   @override
-  String get soundMeter => 'SOUND METER';
+  String get soundMeter => 'Sound Meter';
 
   @override
   String get oscilloscopeDesc =>
@@ -239,10 +239,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bluetoothWifiConnection => 'Connect using Bluetooth or Wi-Fi';
 
   @override
-  String get bluetooth => 'BLUETOOTH';
+  String get bluetooth => 'Bluetooth';
 
   @override
-  String get wifi => 'WIFI';
+  String get wifi => 'Wi-Fi';
 
   @override
   String get whatIsPslab => 'What is PSLab Device?';
@@ -287,22 +287,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get channelLA4 => 'LA4';
 
   @override
-  String get analysisOptionEveryEdge => 'EVERY EDGE';
+  String get analysisOptionEveryEdge => 'Every Edge';
 
   @override
-  String get analysisOptionEveryFallingEdge => 'EVERY FALLING EDGE';
+  String get analysisOptionEveryFallingEdge => 'Every Falling Edge';
 
   @override
-  String get analysisOptionEveryRisingEdge => 'EVERY RISING EDGE';
+  String get analysisOptionEveryRisingEdge => 'Every Rising Edge';
 
   @override
-  String get analysisOptionEveryFourthRisingEdge => 'EVERY FOURTH RISING EDGE';
+  String get analysisOptionEveryFourthRisingEdge => 'Every Fourth Rising Edge';
 
   @override
-  String get analysisOptionDisabled => 'DISABLED';
+  String get analysisOptionDisabled => 'Disabled';
 
   @override
-  String get analyze => 'ANALYZE';
+  String get powerSourceTitle => 'Power Source';
+
+  @override
+  String get pinPV1 => 'PV1';
+
+  @override
+  String get pinPV2 => 'PV2';
+
+  @override
+  String get pinPV3 => 'PV3';
+
+  @override
+  String get pinPCS => 'PCS';
+
+  @override
+  String get analyze => 'Analyze';
 
   @override
   String get settings => 'Settings';
@@ -323,7 +338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get csvFormat => 'CSV Format';
 
   @override
-  String get cancel => 'CANCEL';
+  String get cancel => 'Cancel';
 
   @override
   String get currentFormat => 'Current format is ';
@@ -735,10 +750,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeMillisecond => 'Time (ms)';
 
   @override
-  String get low => 'LOW';
+  String get low => 'Low';
 
   @override
-  String get high => 'HIGH';
+  String get high => 'High';
 
   @override
   String get clearTimelineTitle => 'Clear Timeline?';
@@ -931,14 +946,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updatePeriod => 'Update Period';
 
   @override
-  String get updatePeriodHint =>
+  String get luxmeterUpdatePeriodHint =>
       'Please provide time interval at which data will be updated (100 ms to 1000 ms)';
 
   @override
   String get highLimit => 'High Limit';
 
   @override
-  String get highLimitHint =>
+  String get luxmeterHighLimitHint =>
       'Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)';
 
   @override
@@ -985,4 +1000,127 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get baroMeterBulletPoint4 =>
       'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';
+
+  @override
+  String get sharingMessage => 'Sharing PSLab Data';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteHint => 'Are you sure you want to delete this file?';
+
+  @override
+  String get deleteFile => 'Delete File';
+
+  @override
+  String get deleteAllData => 'Delete All Data';
+
+  @override
+  String get deleteCautionMessage =>
+      'Are you sure you want to delete all logged data for this instrument?';
+
+  @override
+  String get deleteAll => 'Delete All';
+
+  @override
+  String get noLoggedData => 'No logged data found.';
+
+  @override
+  String get importLog => 'Import Log';
+
+  @override
+  String get failedToSave => 'Failed to save file. No data was recorded.';
+
+  @override
+  String get fileSaved => 'File saved';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get enterFileName =>
+      'Enter filename (leave empty for auto-generated name)';
+
+  @override
+  String get fileName => 'Filename';
+
+  @override
+  String get saveRecording => 'Save Recording';
+
+  @override
+  String get recordingStarted => 'Recording started';
+
+  @override
+  String get noValidData => 'No valid data to display.';
+
+  @override
+  String get csvPickingError => 'Error picking or reading CSV file';
+
+  @override
+  String get csvReadingError => 'Error reading CSV from file';
+
+  @override
+  String get sharingError => 'Error sharing file';
+
+  @override
+  String get csvGettingError => 'Error getting saved files';
+
+  @override
+  String get unsupportedPlatform => 'Unsupported platform';
+
+  @override
+  String get noDataRecorded => 'No data recorded to save for';
+
+  @override
+  String get csvFileSaved => 'CSV file saved at';
+
+  @override
+  String get csvSavingError => 'Error saving CSV file';
+
+  @override
+  String get csvDeletingError => 'Error deleting file';
+
+  @override
+  String get fileDeleted => 'File deleted';
+
+  @override
+  String get soundmeterConfig => 'Soundmeter Configurations';
+
+  @override
+  String get barometerConfig => 'Barometer Configurations';
+
+  @override
+  String get baroUpdatePeriodHint =>
+      'Please provide time interval at which data will be updated (100 ms to 2000 ms)';
+
+  @override
+  String get barometerHighLimitHint =>
+      'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)';
+
+  @override
+  String get gyroscopeConfigurations => 'Gyroscope Configurations';
+
+  @override
+  String get gyroscopeHighLimitHint =>
+      'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)';
+
+  @override
+  String get accelerometerConfigurations => 'Accelerometer Configurations';
+
+  @override
+  String get accelerometerUpdatePeriodHint =>
+      'Please provide time interval at which data will be updated';
+
+  @override
+  String get accelerometerHighLimitHint =>
+      'Please provide the maximum limit of lux value to be recorded';
+
+  @override
+  String get roboticArmIntro =>
+      '• A robotic arm is a programmable mechanical device that mimics the movement of a human arm.\n• It uses servo motors to control its motion, and these motors are operated using PWM signals.\n• The PSLab provides four PWM square wave generators (SQ1, SQ2, SQ3, SQ4), allowing control of up to four servo motors and enabling a robotic arm with up to four degrees of freedom.';
+
+  @override
+  String get roboticArmConnection =>
+      '• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.';
 }
