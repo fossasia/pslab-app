@@ -63,7 +63,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
                     color: sensorStatusBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: senosrStatusBorder,
+                      color: sensorStatusBorder,
                       width: 1,
                     ),
                   ),

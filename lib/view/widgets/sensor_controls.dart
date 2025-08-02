@@ -193,7 +193,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
               ? primaryRed.withAlpha(26)
               : sensorStatusBackgroundColor,
           border: Border.all(
-            color: widget.isLooping ? primaryRed : senosrStatusBorder,
+            color: widget.isLooping ? primaryRed : sensorStatusBorder,
             width: 1,
           ),
           borderRadius: BorderRadius.circular(6),
@@ -236,7 +236,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
           decoration: BoxDecoration(
             color: sensorStatusBackgroundColor,
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: senosrStatusBorder),
+            border: Border.all(color: sensorStatusBorder),
           ),
           child: Icon(
             icon,
@@ -264,7 +264,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: primaryRed,
-              inactiveTrackColor: senosrStatusBorder,
+              inactiveTrackColor: sensorStatusBorder,
               thumbColor: primaryRed,
               overlayColor: primaryRed.withAlpha(50),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
