@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pslab/view/about_us_screen.dart';
 import '../../theme/colors.dart';
 
 class SensorControlsWidget extends StatefulWidget {
@@ -76,13 +77,13 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBackgroundColor,
         border: Border(
-          top: BorderSide(color: primaryRed, width: 3),
+          top: BorderSide(color: primaryRed, width: 2),
         ),
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
+          topLeft: Radius.zero,
+          topRight: Radius.zero,
         ),
         boxShadow: [
           BoxShadow(
@@ -139,7 +140,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
         ),
         child: Icon(
           widget.isPlaying ? Icons.pause : Icons.play_arrow,
-          color: Colors.white,
+          color: buttonTextColor,
           size: 24,
         ),
       ),
@@ -150,9 +151,9 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
     return Container(
       height: 40,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade400),
+        border: Border.all(color: sensorControlsTextBox),
         borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
+        color: cardBackgroundColor,
       ),
       child: TextField(
         controller: _numberController,
@@ -163,16 +164,18 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
           LengthLimitingTextInputFormatter(4),
         ],
         textAlign: TextAlign.center,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
-          color: Colors.black87,
+          color: blackTextColor,
           fontWeight: FontWeight.w500,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          hintText: '100',
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          hintText: appLocalizations.numberOfSampes,
         ),
+        cursorColor: blackTextColor,
         onChanged: _onNumberChanged,
         onSubmitted: _onTextFieldSubmitted,
       ),
@@ -183,21 +186,22 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
     return GestureDetector(
       onTap: widget.onLoop,
       child: Container(
-        width: 48,
-        height: 48,
+        width: 36,
+        height: 36,
         decoration: BoxDecoration(
-          color:
-              widget.isLooping ? primaryRed.withAlpha(26) : Colors.transparent,
+          color: widget.isLooping
+              ? primaryRed.withAlpha(26)
+              : sensorStatusBackgroundColor,
           border: Border.all(
-            color: widget.isLooping ? primaryRed : Colors.grey.shade400,
-            width: 2,
+            color: widget.isLooping ? primaryRed : senosrStatusBorder,
+            width: 1,
           ),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(6),
         ),
         child: Icon(
           Icons.all_inclusive,
-          color: widget.isLooping ? primaryRed : Colors.grey.shade600,
-          size: 24,
+          color: widget.isLooping ? primaryRed : sensorControlIconColor,
+          size: 18,
         ),
       ),
     );
@@ -211,7 +215,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
           _buildActionButton(
             icon: Icons.clear_all,
             onTap: widget.onClearData!,
-            tooltip: 'Clear Data',
+            tooltip: appLocalizations.clearData,
           ),
       ],
     );
@@ -230,13 +234,13 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: sensorStatusBackgroundColor,
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: senosrStatusBorder),
           ),
           child: Icon(
             icon,
-            color: Colors.grey.shade600,
+            color: sensorControlIconColor,
             size: 18,
           ),
         ),
@@ -247,12 +251,12 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
   Widget _buildTimegapSlider() {
     return Row(
       children: [
-        const Text(
-          'Time gap',
+        Text(
+          appLocalizations.timeGap,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: blackTextColor,
           ),
         ),
         const SizedBox(width: 12),
@@ -260,14 +264,13 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
               activeTrackColor: primaryRed,
-              inactiveTrackColor: Colors.grey.shade300,
+              inactiveTrackColor: senosrStatusBorder,
               thumbColor: primaryRed,
               overlayColor: primaryRed.withAlpha(50),
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-              trackHeight: 4,
+              trackHeight: 2,
               valueIndicatorColor: primaryRed,
               valueIndicatorTextStyle: const TextStyle(
-                color: Colors.white,
                 fontSize: 12,
               ),
             ),
@@ -275,8 +278,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
               value: widget.timegapMs.toDouble(),
               min: 200,
               max: 1000,
-              divisions: 19,
-              label: '${widget.timegapMs}ms',
+              label: '${widget.timegapMs}${appLocalizations.ms}',
               onChanged: (value) => widget.onTimegapChanged(value.toInt()),
             ),
           ),
@@ -285,15 +287,15 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: sensorStatusBackgroundColor,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
-            '${widget.timegapMs}ms',
-            style: const TextStyle(
+            '${widget.timegapMs}${appLocalizations.ms}',
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: blackTextColor,
             ),
           ),
         ),

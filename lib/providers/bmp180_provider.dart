@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/view/about_us_screen.dart';
 import '../communication/sensors/bmp180.dart';
 import '../models/chart_data_points.dart';
 import 'package:pslab/others/logger_service.dart';
@@ -51,12 +52,14 @@ class BMP180Provider extends ChangeNotifier {
   }) async {
     try {
       if (i2c == null || scienceLab == null) {
-        onError('I2C or ScienceLab not available');
+        onError(appLocalizations.pslabNotConnected);
+        logger.w('I2C or ScienceLab not available');
         return;
       }
 
       if (!scienceLab.isConnected()) {
-        onError('ScienceLab not connected');
+        onError(appLocalizations.pslabNotConnected);
+        logger.w("Sciencelab not connected");
         return;
       }
 
@@ -64,7 +67,6 @@ class BMP180Provider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       logger.e('Error initializing BMP180: $e');
-      onError('Failed to initialize BMP180 sensor: $e');
     }
   }
 

@@ -2187,6 +2187,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
   String get roboticArmConnection;
+
+  /// No description provided for @autoscan.
+  ///
+  /// In en, this message translates to:
+  /// **'Autoscan'**
+  String get autoscan;
+
+  /// No description provided for @selectSensor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Sensor'**
+  String get selectSensor;
+
+  /// No description provided for @notConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Connected'**
+  String get notConnected;
+
+  /// No description provided for @autoScanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Autoscan button to find connected sensors to PSLab device'**
+  String get autoScanHint;
+
+  /// No description provided for @noSensorDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No sensors detected'**
+  String get noSensorDetected;
+
+  /// No description provided for @screenNotImplemented.
+  ///
+  /// In en, this message translates to:
+  /// **'screen not implemented yet'**
+  String get screenNotImplemented;
+
+  /// No description provided for @timeGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Time gap'**
+  String get timeGap;
+
+  /// No description provided for @pslabNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'PSLab not connected'**
+  String get pslabNotConnected;
+
+  /// No description provided for @clearData.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Data'**
+  String get clearData;
+
+  /// No description provided for @numberOfSampes.
+  ///
+  /// In en, this message translates to:
+  /// **'No. of samples'**
+  String get numberOfSampes;
+
+  /// No description provided for @pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Pressure'**
+  String get pressure;
+
+  /// No description provided for @temperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature'**
+  String get temperature;
+
+  /// No description provided for @bmp180.
+  ///
+  /// In en, this message translates to:
+  /// **'BMP180'**
+  String get bmp180;
+
+  /// No description provided for @plot.
+  ///
+  /// In en, this message translates to:
+  /// **'Plot'**
+  String get plot;
+
+  /// No description provided for @dataCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Data cleared successfully'**
+  String get dataCleared;
+
+  /// No description provided for @rawData.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw Data'**
+  String get rawData;
+
+  /// No description provided for @pressureUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pa'**
+  String get pressureUnitLabel;
+
+  /// No description provided for @temperatureUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'°C'**
+  String get temperatureUnitLabel;
+
+  /// No description provided for @altitudeUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get altitudeUnitLabel;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
 }
 
 class _AppLocalizationsDelegate

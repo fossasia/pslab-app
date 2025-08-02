@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/view/about_us_screen.dart';
 import '../../models/chart_data_points.dart';
 import '../../theme/colors.dart';
 
@@ -27,8 +28,8 @@ class SensorChartWidget extends StatelessWidget {
     required this.title,
     required this.yAxisLabel,
     required this.data,
-    this.xAxisLabel = 'Time (sec)',
-    this.lineColor = Colors.blue,
+    this.xAxisLabel = 'Time (s)',
+    this.lineColor = chartLineColor,
     this.backgroundColor,
     this.minY,
     this.maxY,
@@ -72,8 +73,8 @@ class SensorChartWidget extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: chartTextColor,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -89,8 +90,8 @@ class SensorChartWidget extends StatelessWidget {
       width: double.infinity,
       height: 220,
       decoration: BoxDecoration(
-        color: backgroundColor ?? Colors.black,
-        border: Border.all(color: Colors.grey.shade300),
+        color: backgroundColor ?? chartBackgroundColor,
+        border: Border.all(color: chartTextColor),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.zero,
           bottomRight: Radius.zero,
@@ -106,10 +107,10 @@ class SensorChartWidget extends StatelessWidget {
         _buildAxisLabels(),
         Center(
           child: customNoDataWidget ??
-              const Text(
-                'No Data Available',
+              Text(
+                appLocalizations.noData,
                 style: TextStyle(
-                  color: Colors.yellow,
+                  color: chartHintTextColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -169,7 +170,7 @@ class SensorChartWidget extends StatelessWidget {
                         radius: 2,
                         color: lineColor,
                         strokeWidth: 1,
-                        strokeColor: Colors.white,
+                        strokeColor: chartTextColor,
                       );
                     },
                   ),
@@ -185,9 +186,9 @@ class SensorChartWidget extends StatelessWidget {
                   getTooltipItems: (touchedSpots) {
                     return touchedSpots.map((spot) {
                       return LineTooltipItem(
-                        '$yAxisLabel: ${spot.y.toStringAsFixed(2)}${unit ?? ''}\n${xAxisLabel ?? 'Time'}: ${spot.x.toStringAsFixed(1)}',
-                        const TextStyle(
-                          color: Colors.white,
+                        '$yAxisLabel: ${spot.y.toStringAsFixed(2)}${unit ?? ''}\n${appLocalizations.time}: ${spot.x.toStringAsFixed(1)}',
+                        TextStyle(
+                          color: chartTextColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -221,9 +222,9 @@ class SensorChartWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  xAxisLabel ?? 'Time (sec)',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  appLocalizations.timeAxisLabel,
+                  style: TextStyle(
+                    color: chartTextColor,
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -247,8 +248,8 @@ class SensorChartWidget extends StatelessWidget {
                 ),
                 child: Text(
                   yAxisLabel,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: chartTextColor,
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                   ),
@@ -269,8 +270,8 @@ class SensorChartWidget extends StatelessWidget {
               ),
               child: Text(
                 '${data.last.y.toStringAsFixed(2)}${unit ?? ''}',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: chartTextColor,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/sensor_controls.dart';
 import 'package:pslab/communication/peripherals/i2c.dart';
@@ -18,6 +19,7 @@ class BMP180Screen extends StatefulWidget {
 }
 
 class _BMP180ScreenState extends State<BMP180Screen> {
+  String sensorImage = 'assets/images/bmp180.jpg';
   I2C? _i2c;
   ScienceLab? _scienceLab;
   late BMP180Provider _provider;
@@ -43,9 +45,12 @@ class _BMP180ScreenState extends State<BMP180Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 4),
+          content: Text(
+            message,
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+          duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -56,9 +61,12 @@ class _BMP180ScreenState extends State<BMP180Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 2),
+          content: Text(
+            message,
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+          duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -80,7 +88,7 @@ class _BMP180ScreenState extends State<BMP180Screen> {
       child: Consumer<BMP180Provider>(
         builder: (context, provider, child) {
           return CommonScaffold(
-            title: 'BMP180',
+            title: appLocalizations.bmp180,
             body: Column(
               children: [
                 Expanded(
@@ -92,31 +100,37 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                         _buildRawDataSection(provider),
                         const SizedBox(height: 24),
                         SensorChartWidget(
-                          title: 'Plot - Temperature',
-                          yAxisLabel: 'Temp. (°C)',
+                          title:
+                              '${appLocalizations.plot} - ${appLocalizations.temperature}',
+                          yAxisLabel:
+                              '${appLocalizations.temperature} (${appLocalizations.temperatureUnitLabel})',
                           data: provider.temperatureData,
-                          lineColor: Colors.blue,
-                          unit: '°C',
+                          lineColor: bmp180ChartColors[0],
+                          unit: appLocalizations.temperatureUnitLabel,
                           maxDataPoints: provider.numberOfReadings,
                           showDots: true,
                         ),
                         const SizedBox(height: 20),
                         SensorChartWidget(
-                          title: 'Plot - Altitude',
-                          yAxisLabel: 'Alt. (m)',
+                          title:
+                              '${appLocalizations.plot} - ${appLocalizations.altitudeLabel}',
+                          yAxisLabel:
+                              '${appLocalizations.altitudeLabel} (${appLocalizations.altitudeUnitLabel})',
                           data: provider.altitudeData,
-                          lineColor: Colors.green,
-                          unit: 'm',
+                          lineColor: bmp180ChartColors[1],
+                          unit: appLocalizations.altitudeLabel,
                           maxDataPoints: provider.numberOfReadings,
                           showDots: true,
                         ),
                         const SizedBox(height: 20),
                         SensorChartWidget(
-                          title: 'Plot - Pressure',
-                          yAxisLabel: 'Pressure (Pa)',
+                          title:
+                              '${appLocalizations.plot} - ${appLocalizations.pressure}',
+                          yAxisLabel:
+                              '${appLocalizations.pressure} (${appLocalizations.pressureUnitLabel})',
                           data: provider.pressureData,
-                          lineColor: Colors.red,
-                          unit: ' Pa',
+                          lineColor: bmp180ChartColors[2],
+                          unit: appLocalizations.pressureUnitLabel,
                           maxDataPoints: provider.numberOfReadings,
                           showDots: true,
                         ),
@@ -131,9 +145,6 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                   timegapMs: provider.timegapMs,
                   numberOfReadings: provider.numberOfReadings,
                   onPlayPause: () {
-                    if (provider.isCollectionComplete && !provider.isRunning) {
-                      _showSuccessSnackbar('Data collection completed!');
-                    }
                     provider.toggleDataCollection();
                   },
                   onLoop: provider.toggleLooping,
@@ -141,7 +152,7 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                   onNumberOfReadingsChanged: provider.setNumberOfReadings,
                   onClearData: () {
                     provider.clearData();
-                    _showSuccessSnackbar('Data cleared successfully');
+                    _showSuccessSnackbar(appLocalizations.dataCleared);
                   },
                 ),
               ],
@@ -156,7 +167,7 @@ class _BMP180ScreenState extends State<BMP180Screen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBackgroundColor,
         borderRadius: BorderRadius.zero,
         boxShadow: [
           BoxShadow(
@@ -180,10 +191,10 @@ class _BMP180ScreenState extends State<BMP180Screen> {
             ),
             child: Row(
               children: [
-                const Text(
-                  'Raw Data',
+                Text(
+                  appLocalizations.rawData,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: appBarContentColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -193,8 +204,8 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: appBarContentColor,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -212,39 +223,36 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                   child: Column(
                     children: [
                       _buildDataCard(
-                        'Temperature',
+                        appLocalizations.temperature,
                         provider.temperature.toStringAsFixed(2),
-                        '°C',
                       ),
                       const SizedBox(height: 16),
                       _buildDataCard(
-                        'Altitude',
+                        appLocalizations.altitudeLabel,
                         provider.altitude.toStringAsFixed(2),
-                        'm',
                       ),
                       const SizedBox(height: 16),
                       _buildDataCard(
-                        'Pressure',
+                        appLocalizations.pressure,
                         provider.pressure.toStringAsFixed(0),
-                        'Pa',
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 24),
                 SizedBox(
-                  width: 120,
-                  height: 120,
+                  width: 100,
+                  height: 100,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
-                      'assets/images/bmp180.jpg',
+                      sensorImage,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Icon(
                           Icons.sensors,
                           size: 40,
-                          color: Colors.grey.shade400,
+                          color: sensorControlsTextBox,
                         );
                       },
                     ),
@@ -258,17 +266,17 @@ class _BMP180ScreenState extends State<BMP180Screen> {
     );
   }
 
-  Widget _buildDataCard(String label, String value, String unit) {
+  Widget _buildDataCard(String label, String value) {
     return Row(
       children: [
         SizedBox(
           width: 100,
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              color: blackTextColor,
             ),
           ),
         ),
@@ -279,17 +287,17 @@ class _BMP180ScreenState extends State<BMP180Screen> {
             height: 36,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
+              border: Border.all(color: sensorControlsTextBox),
               borderRadius: BorderRadius.circular(4),
-              color: Colors.white,
+              color: cardBackgroundColor,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black87,
+                  color: blackTextColor,
                 ),
               ),
             ),

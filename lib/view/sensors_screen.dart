@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/bmp180_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
+import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
 class SensorsScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class SensorsScreen extends StatefulWidget {
 }
 
 class _SensorsScreenState extends State<SensorsScreen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool _hasScanned = false;
   List<String> _detectedSensors = [];
   Map<String, String> _sensorAddresses = {};
@@ -22,7 +25,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
     return Consumer<BoardStateProvider>(
       builder: (context, boardProvider, child) {
         return CommonScaffold(
-          title: 'Sensors',
+          title: appLocalizations.sensors,
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -36,14 +39,14 @@ class _SensorsScreenState extends State<SensorsScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryRed,
-                      foregroundColor: Colors.white,
+                      foregroundColor: buttonTextColor,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
-                    child: const Text(
-                      'AUTOSCAN',
+                    child: Text(
+                      appLocalizations.autoscan.toUpperCase(),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -57,30 +60,30 @@ class _SensorsScreenState extends State<SensorsScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: sensorStatusBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: Colors.grey[300]!,
+                      color: senosrStatusBorder,
                       width: 1,
                     ),
                   ),
                   child: Text(
                     _getStatusText(boardProvider),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: Colors.black87,
+                      color: blackTextColor,
                     ),
                   ),
                 ),
                 if (_hasScanned) ...[
                   const SizedBox(height: 30),
-                  const Text(
-                    'SELECT SENSOR',
+                  Text(
+                    appLocalizations.selectSensor.toUpperCase(),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: blackTextColor,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -98,15 +101,15 @@ class _SensorsScreenState extends State<SensorsScreen> {
 
   String _getStatusText(BoardStateProvider boardProvider) {
     if (!boardProvider.pslabIsConnected) {
-      return 'Not Connected';
+      return appLocalizations.notConnected;
     }
 
     if (!_hasScanned) {
-      return 'Use Autoscan button to find connected sensors to PSLab device';
+      return appLocalizations.autoScanHint;
     }
 
     if (_detectedSensors.isEmpty) {
-      return 'No sensors detected';
+      return appLocalizations.noSensorDetected;
     }
 
     String result = '';
@@ -191,14 +194,14 @@ class _SensorsScreenState extends State<SensorsScreen> {
                 decoration: BoxDecoration(
                   color: primaryRed,
                   border: isDetected
-                      ? Border.all(color: Colors.white, width: 2)
+                      ? Border.all(color: buttonTextColor, width: 2)
                       : null,
                 ),
                 child: Text(
                   sensor,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: buttonTextColor,
                     fontSize: 16,
                     fontWeight: isDetected ? FontWeight.w600 : FontWeight.w500,
                   ),
@@ -221,8 +224,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$sensorName screen not implemented yet'),
-            duration: const Duration(seconds: 2),
+            content:
+                Text('$sensorName ${appLocalizations.screenNotImplemented}'),
+            duration: const Duration(milliseconds: 500),
           ),
         );
         return;
