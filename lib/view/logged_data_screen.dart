@@ -112,14 +112,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
           'yAxisLabel': appLocalizations.lx,
-          'xDataColumnIndex': 1,
+          'xDataColumnIndex': 0,
           'yDataColumnIndex': 2,
         };
       case 'soundmeter':
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
           'yAxisLabel': appLocalizations.db,
-          'xDataColumnIndex': 1,
+          'xDataColumnIndex': 0,
           'yDataColumnIndex': 2,
         };
       case 'barometer':

@@ -20,7 +20,7 @@ class LoggedDataChartScreen extends StatefulWidget {
     required this.fileName,
     this.xAxisLabel = 'Time (s)',
     this.yAxisLabel = 'Value',
-    this.xDataColumnIndex = 1,
+    this.xDataColumnIndex = 0,
     this.yDataColumnIndex = 2,
   });
 
@@ -105,18 +105,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: reservedSizeBottom,
-                getTitlesWidget: (value, meta) {
-                  return SideTitleWidget(
-                    meta: meta,
-                    child: Text(
-                      value.toStringAsFixed(1),
-                      style: TextStyle(
-                        color: blackTextColor,
-                        fontSize: chartFontSize,
-                      ),
-                    ),
-                  );
-                },
+                getTitlesWidget: _sideTitleWidgets,
                 interval: timeInterval,
               ),
             ),
@@ -195,6 +184,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
     double maxY = 0;
     double maxX = 0;
     double minX = 0;
+    double? startTime;
 
     for (int i = 1; i < widget.data.length; i++) {
       final row = widget.data[i];
@@ -204,10 +194,16 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
         final yValue = _parseDouble(row[widget.yDataColumnIndex]);
 
         if (xValue != null && yValue != null) {
-          spots.add(FlSpot(xValue, yValue));
+          if (startTime == null) {
+            startTime = xValue;
+            minX = 0;
+          }
+
+          final relativeTime = ((xValue - startTime) / 1000.0);
+
+          spots.add(FlSpot(relativeTime, yValue));
           if (yValue > maxY) maxY = yValue;
-          if (xValue > maxX) maxX = xValue;
-          if (spots.length == 1 || xValue < minX) minX = xValue;
+          if (relativeTime > maxX) maxX = relativeTime;
         }
       }
     }
@@ -249,6 +245,41 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                   ),
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget _sideTitleWidgets(double value, TitleMeta meta) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final fontSize = screenWidth < 400
+        ? 7.0
+        : screenWidth < 600
+            ? 8.0
+            : 9.0;
+    final style = TextStyle(
+      color: blackTextColor,
+      fontSize: fontSize,
+    );
+
+    String timeText;
+    if (value < 60) {
+      timeText = '${value.toInt()}s';
+    } else if (value < 3600) {
+      int minutes = (value / 60).floor();
+      int seconds = (value % 60).toInt();
+      timeText = '${minutes}m${seconds}s';
+    } else {
+      int hours = (value / 3600).floor();
+      int minutes = ((value % 3600) / 60).floor();
+      timeText = '${hours}h${minutes}m';
+    }
+
+    return SideTitleWidget(
+      meta: meta,
+      child: Text(
+        maxLines: 1,
+        timeText,
+        style: style,
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:intl/intl.dart';
 
 class GyroscopeProvider extends ChangeNotifier {
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
@@ -22,6 +23,9 @@ class GyroscopeProvider extends ChangeNotifier {
   double _yMin = 0, _yMax = 0;
   double _zMin = 0, _zMax = 0;
 
+  bool _isRecording = false;
+  List<List<dynamic>> _recordedData = [];
+
   double get xValue => _gyroscopeEvent.x;
   double get yValue => _gyroscopeEvent.y;
   double get zValue => _gyroscopeEvent.z;
@@ -34,6 +38,7 @@ class GyroscopeProvider extends ChangeNotifier {
   double get zMax => _zMax;
 
   bool get isListening => _gyroscopeSubscription != null;
+  bool get isRecording => _isRecording;
 
   void initializeSensors() {
     if (_gyroscopeSubscription != null) return;
@@ -61,6 +66,20 @@ class GyroscopeProvider extends ChangeNotifier {
     final y = _gyroscopeEvent.y;
     final z = _gyroscopeEvent.z;
 
+    if (_isRecording) {
+      final now = DateTime.now();
+      final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+      _recordedData.add([
+        now.millisecondsSinceEpoch.toString(),
+        dateFormat.format(now),
+        x.toStringAsFixed(6),
+        y.toStringAsFixed(6),
+        z.toStringAsFixed(6),
+        0,
+        0
+      ]);
+    }
+
     _xData.add(x);
     _yData.add(y);
     _zData.add(z);
@@ -86,6 +105,28 @@ class GyroscopeProvider extends ChangeNotifier {
       zData.add(FlSpot(i.toDouble(), _zData[i]));
     }
     notifyListeners();
+  }
+
+  void startRecording() {
+    _isRecording = true;
+    _recordedData = [
+      [
+        'Timestamp',
+        'DateTime',
+        'ReadingsX',
+        'ReadingsY',
+        'ReadingsZ',
+        'Latitude',
+        'Longitude'
+      ]
+    ];
+    notifyListeners();
+  }
+
+  List<List<dynamic>> stopRecording() {
+    _isRecording = false;
+    notifyListeners();
+    return _recordedData;
   }
 
   List<FlSpot> getAxisData(String axis) {
