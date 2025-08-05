@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
@@ -16,9 +15,8 @@ class CsvService {
 
   Future<Directory> getInstrumentDirectory(String instrumentName) async {
     if (Platform.isAndroid) {
-      await requestStoragePermission();
-      final directory =
-          Directory('/storage/emulated/0/Android/media/PSLab/$instrumentName');
+      final externalDir = await getExternalStorageDirectory();
+      final directory = Directory('${externalDir?.path}/PSLab/$instrumentName');
       if (!await directory.exists()) {
         await directory.create(recursive: true);
       }
@@ -35,15 +33,6 @@ class CsvService {
       return directory;
     } else {
       throw UnsupportedError(appLocalizations.unsupportedPlatform);
-    }
-  }
-
-  Future<void> requestStoragePermission() async {
-    if (Platform.isAndroid) {
-      final status = await Permission.manageExternalStorage.request();
-      if (!status.isGranted) {
-        await openAppSettings();
-      }
     }
   }
 
