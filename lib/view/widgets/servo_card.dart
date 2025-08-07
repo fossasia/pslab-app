@@ -27,7 +27,7 @@ class ServoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<RoboticArmStateProvider>(context);
     final sliderSize =
-    provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.75;
+        provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.75;
 
     return Container(
       decoration: BoxDecoration(
@@ -61,7 +61,7 @@ class ServoCard extends StatelessWidget {
                 color: Colors.transparent,
                 child: Container(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.black,
                   ),
@@ -76,9 +76,9 @@ class ServoCard extends StatelessWidget {
                 ),
               ),
               childWhenDragging:
-              const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
+                  const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
               child:
-              const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
+                  const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
             ),
           ),
           Positioned.fill(
