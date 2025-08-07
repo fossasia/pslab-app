@@ -156,7 +156,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                   return SideTitleWidget(
                     meta: meta,
                     child: Text(
-                      value.toStringAsFixed(value.abs() < 10 ? 1 : 0),
+                      value.toStringAsFixed(1),
                       style: TextStyle(
                         color: blackTextColor,
                         fontSize: chartFontSize,
