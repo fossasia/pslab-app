@@ -57,6 +57,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           );
         }
         break;
+      case 5:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/powerSource') {
+          Navigator.popUntil(context, ModalRoute.withName('/powerSource'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/powerSource',
+            (route) => route.isFirst,
+          );
+        }
+        break;
       case 6:
         if (Navigator.canPop(context) &&
             ModalRoute.of(context)?.settings.name == '/luxmeter') {
@@ -153,22 +165,22 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   void initState() {
     super.initState();
     instrumentHeadings = [
-      appLocalizations.oscilloscope,
-      appLocalizations.multimeter,
-      appLocalizations.logicAnalyzer,
-      appLocalizations.sensors,
-      appLocalizations.waveGenerator,
-      appLocalizations.powerSource,
-      appLocalizations.luxMeter,
-      appLocalizations.accelerometer,
-      appLocalizations.barometer,
-      appLocalizations.compass,
-      appLocalizations.gyroscope,
-      appLocalizations.thermometer,
-      appLocalizations.roboticArm,
-      appLocalizations.gasSensor,
-      appLocalizations.dustSensor,
-      appLocalizations.soundMeter,
+      appLocalizations.oscilloscope.toUpperCase(),
+      appLocalizations.multimeter.toUpperCase(),
+      appLocalizations.logicAnalyzer.toUpperCase(),
+      appLocalizations.sensors.toUpperCase(),
+      appLocalizations.waveGenerator.toUpperCase(),
+      appLocalizations.powerSource.toUpperCase(),
+      appLocalizations.luxMeter.toUpperCase(),
+      appLocalizations.accelerometer.toUpperCase(),
+      appLocalizations.barometer.toUpperCase(),
+      appLocalizations.compass.toUpperCase(),
+      appLocalizations.gyroscope.toUpperCase(),
+      appLocalizations.thermometer.toUpperCase(),
+      appLocalizations.roboticArm.toUpperCase(),
+      appLocalizations.gasSensor.toUpperCase(),
+      appLocalizations.dustSensor.toUpperCase(),
+      appLocalizations.soundMeter.toUpperCase(),
     ];
     instrumentDesc = [
       appLocalizations.oscilloscopeDesc,

@@ -145,7 +145,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         ),
                         textStyle: const TextStyle(fontSize: 11),
                       ),
-                      child: Text(appLocalizations.cancel),
+                      child: Text(appLocalizations.cancel.toUpperCase()),
                     ),
                     const SizedBox(width: 8),
                     TextButton(

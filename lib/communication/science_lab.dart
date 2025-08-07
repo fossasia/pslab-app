@@ -5,8 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/packet_handler.dart';
+import 'package:pslab/communication/peripherals/dac_channel.dart';
 import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
 
 import 'analogChannel/analog_acquisition_channel.dart';
@@ -35,6 +37,7 @@ class ScienceLab {
   Map<String, String> waveType = {};
   List<AnalogAcquisitionChannel> aChannels = [];
   List<DigitalChannel> dChannels = [];
+  Map<String, DACChannel> dacChannels = {};
   static final double capacitorDischargeVoltage = 0.01 * 3.3;
 
   late CommunicationHandler mCommunicationHandler;
@@ -115,6 +118,17 @@ class ScienceLab {
     squareWaveFrequency['SQR2'] = 0.0;
     squareWaveFrequency['SQR3'] = 0.0;
     squareWaveFrequency['SQR4'] = 0.0;
+    if (getIt<BoardStateProvider>().pslabVersion == 6) {
+      dacChannels['PCS'] = DACChannel('PCS', [0, 3.3], 0, 0);
+      dacChannels['PV3'] = DACChannel('PV3', [0, 3.3], 1, 1);
+      dacChannels['PV2'] = DACChannel('PV2', [-3.3, 3.3], 2, 0);
+      dacChannels['PV1'] = DACChannel('PV1', [-5, 5], 3, 1);
+    } else {
+      dacChannels['PCS'] = DACChannel('PCS', [0, 3.3], 0, 0);
+      dacChannels['PV3'] = DACChannel('PV3', [0, 3.3], 1, 1);
+      dacChannels['PV2'] = DACChannel('PV2', [-3.3, 3.3], 2, 2);
+      dacChannels['PV1'] = DACChannel('PV1', [-5, 5], 3, 3);
+    }
 
     if (isConnected()) {
       await runInitSequence(true);
@@ -1022,6 +1036,58 @@ class ScienceLab {
       logger.e("Error in getCapacitance: $e");
     }
     return null;
+  }
+
+  Future<void> setVoltage(String channel, double voltage) async {
+    DACChannel dacChannel = dacChannels[channel]!;
+    int v = dacChannel.vToCode(voltage).toInt();
+    try {
+      mPacketHandler.sendByte(mCommandsProto.dac);
+      mPacketHandler.sendByte(mCommandsProto.setPower);
+      mPacketHandler.sendByte(dacChannel.channelCode);
+      mPacketHandler.sendInt(v);
+      await mPacketHandler.getAcknowledgement();
+    } catch (e) {
+      logger.e("Error in setVoltage: $e");
+    }
+  }
+
+  Future<void> setCurrent(double current) async {
+    DACChannel dacChannel = dacChannels['PCS']!;
+    int v = (3300 - dacChannel.vToCode(current)).toInt();
+    try {
+      mPacketHandler.sendByte(mCommandsProto.dac);
+      mPacketHandler.sendByte(mCommandsProto.setPower);
+      mPacketHandler.sendByte(dacChannel.channelCode);
+      mPacketHandler.sendInt(v);
+      await mPacketHandler.getAcknowledgement();
+    } catch (e) {
+      logger.e("Error in setCurrent: $e");
+    }
+  }
+
+  Future<void> setPV1(double voltage) async {
+    if (isConnected()) {
+      await setVoltage('PV1', voltage);
+    }
+  }
+
+  Future<void> setPV2(double voltage) async {
+    if (isConnected()) {
+      await setVoltage('PV2', voltage);
+    }
+  }
+
+  Future<void> setPV3(double voltage) async {
+    if (isConnected()) {
+      await setVoltage('PV3', voltage);
+    }
+  }
+
+  Future<void> setPCS(double current) async {
+    if (isConnected()) {
+      await setCurrent(current);
+    }
   }
 
   Future<void> servo4(

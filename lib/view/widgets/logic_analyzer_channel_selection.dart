@@ -29,11 +29,11 @@ class _LogicAnalyzerChannelSelectionState
       appLocalizations.channelLA4,
     ];
     analysisOptions = [
-      appLocalizations.analysisOptionEveryEdge,
-      appLocalizations.analysisOptionEveryFallingEdge,
-      appLocalizations.analysisOptionEveryRisingEdge,
-      appLocalizations.analysisOptionEveryFourthRisingEdge,
-      appLocalizations.analysisOptionDisabled,
+      appLocalizations.analysisOptionEveryEdge.toUpperCase(),
+      appLocalizations.analysisOptionEveryFallingEdge.toUpperCase(),
+      appLocalizations.analysisOptionEveryRisingEdge.toUpperCase(),
+      appLocalizations.analysisOptionEveryFourthRisingEdge.toUpperCase(),
+      appLocalizations.analysisOptionDisabled.toUpperCase(),
     ];
   }
 
@@ -451,7 +451,7 @@ class _LogicAnalyzerChannelSelectionState
                   ),
                 ),
                 child: Text(
-                  appLocalizations.analyze,
+                  appLocalizations.analyze.toUpperCase(),
                   style: TextStyle(
                     color: primaryRed,
                     fontWeight: FontWeight.bold,

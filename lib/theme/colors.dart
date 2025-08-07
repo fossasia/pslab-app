@@ -76,3 +76,5 @@ List<Color> logicAnalyzerChannelColors = [
 Color logicAnalyzerChannelsTextColor = Colors.black;
 Color logicAnalyzerTextColor = Colors.white;
 Color logicAnalyzerGraphTextColor = Colors.amber;
+Color powerSourceBorderLightRed = Color.fromARGB(255, 240, 162, 162);
+Color powerSourceKnobColor = Colors.grey.shade100;

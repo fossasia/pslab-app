@@ -97,97 +97,97 @@ abstract class AppLocalizations {
   /// No description provided for @oscilloscope.
   ///
   /// In en, this message translates to:
-  /// **'OSCILLOSCOPE'**
+  /// **'Oscilloscope'**
   String get oscilloscope;
 
   /// No description provided for @multimeter.
   ///
   /// In en, this message translates to:
-  /// **'MULTIMETER'**
+  /// **'Multimeter'**
   String get multimeter;
 
   /// No description provided for @logicAnalyzer.
   ///
   /// In en, this message translates to:
-  /// **'LOGIC ANALYZER'**
+  /// **'Logic Analyzer'**
   String get logicAnalyzer;
 
   /// No description provided for @sensors.
   ///
   /// In en, this message translates to:
-  /// **'SENSORS'**
+  /// **'Sensors'**
   String get sensors;
 
   /// No description provided for @waveGenerator.
   ///
   /// In en, this message translates to:
-  /// **'WAVE GENERATOR'**
+  /// **'Wave Generator'**
   String get waveGenerator;
 
   /// No description provided for @powerSource.
   ///
   /// In en, this message translates to:
-  /// **'POWER SOURCE'**
+  /// **'Power Source'**
   String get powerSource;
 
   /// No description provided for @luxMeter.
   ///
   /// In en, this message translates to:
-  /// **'LUX METER'**
+  /// **'Lux Meter'**
   String get luxMeter;
 
   /// No description provided for @accelerometer.
   ///
   /// In en, this message translates to:
-  /// **'ACCELEROMETER'**
+  /// **'Accelerometer'**
   String get accelerometer;
 
   /// No description provided for @barometer.
   ///
   /// In en, this message translates to:
-  /// **'BAROMETER'**
+  /// **'Barometer'**
   String get barometer;
 
   /// No description provided for @compass.
   ///
   /// In en, this message translates to:
-  /// **'COMPASS'**
+  /// **'Compass'**
   String get compass;
 
   /// No description provided for @gyroscope.
   ///
   /// In en, this message translates to:
-  /// **'GYROSCOPE'**
+  /// **'Gyroscope'**
   String get gyroscope;
 
   /// No description provided for @thermometer.
   ///
   /// In en, this message translates to:
-  /// **'THERMOMETER'**
+  /// **'Thermometer'**
   String get thermometer;
 
   /// No description provided for @roboticArm.
   ///
   /// In en, this message translates to:
-  /// **'ROBOTIC ARM'**
+  /// **'Robotic Arm'**
   String get roboticArm;
 
   /// No description provided for @gasSensor.
   ///
   /// In en, this message translates to:
-  /// **'GAS SENSOR'**
+  /// **'Gas Sensor'**
   String get gasSensor;
 
   /// No description provided for @dustSensor.
   ///
   /// In en, this message translates to:
-  /// **'DUST SENSOR'**
+  /// **'Dust Sensor'**
   String get dustSensor;
 
   /// No description provided for @soundMeter.
   ///
   /// In en, this message translates to:
-  /// **'SOUND METER'**
+  /// **'Sound Meter'**
   String get soundMeter;
 
   /// No description provided for @oscilloscopeDesc.
@@ -535,13 +535,13 @@ abstract class AppLocalizations {
   /// No description provided for @bluetooth.
   ///
   /// In en, this message translates to:
-  /// **'BLUETOOTH'**
+  /// **'Bluetooth'**
   String get bluetooth;
 
   /// No description provided for @wifi.
   ///
   /// In en, this message translates to:
-  /// **'WIFI'**
+  /// **'Wi-Fi'**
   String get wifi;
 
   /// No description provided for @whatIsPslab.
@@ -631,37 +631,67 @@ abstract class AppLocalizations {
   /// No description provided for @analysisOptionEveryEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY EDGE'**
+  /// **'Every Edge'**
   String get analysisOptionEveryEdge;
 
   /// No description provided for @analysisOptionEveryFallingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY FALLING EDGE'**
+  /// **'Every Falling Edge'**
   String get analysisOptionEveryFallingEdge;
 
   /// No description provided for @analysisOptionEveryRisingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY RISING EDGE'**
+  /// **'Every Rising Edge'**
   String get analysisOptionEveryRisingEdge;
 
   /// No description provided for @analysisOptionEveryFourthRisingEdge.
   ///
   /// In en, this message translates to:
-  /// **'EVERY FOURTH RISING EDGE'**
+  /// **'Every Fourth Rising Edge'**
   String get analysisOptionEveryFourthRisingEdge;
 
   /// No description provided for @analysisOptionDisabled.
   ///
   /// In en, this message translates to:
-  /// **'DISABLED'**
+  /// **'Disabled'**
   String get analysisOptionDisabled;
+
+  /// No description provided for @powerSourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Source'**
+  String get powerSourceTitle;
+
+  /// No description provided for @pinPV1.
+  ///
+  /// In en, this message translates to:
+  /// **'PV1'**
+  String get pinPV1;
+
+  /// No description provided for @pinPV2.
+  ///
+  /// In en, this message translates to:
+  /// **'PV2'**
+  String get pinPV2;
+
+  /// No description provided for @pinPV3.
+  ///
+  /// In en, this message translates to:
+  /// **'PV3'**
+  String get pinPV3;
+
+  /// No description provided for @pinPCS.
+  ///
+  /// In en, this message translates to:
+  /// **'PCS'**
+  String get pinPCS;
 
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:
-  /// **'ANALYZE'**
+  /// **'Analyze'**
   String get analyze;
 
   /// No description provided for @settings.
@@ -703,7 +733,7 @@ abstract class AppLocalizations {
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
-  /// **'CANCEL'**
+  /// **'Cancel'**
   String get cancel;
 
   /// No description provided for @currentFormat.
@@ -1477,13 +1507,13 @@ abstract class AppLocalizations {
   /// No description provided for @low.
   ///
   /// In en, this message translates to:
-  /// **'LOW'**
+  /// **'Low'**
   String get low;
 
   /// No description provided for @high.
   ///
   /// In en, this message translates to:
-  /// **'HIGH'**
+  /// **'High'**
   String get high;
 
   /// No description provided for @clearTimelineTitle.
@@ -2158,11 +2188,18 @@ abstract class AppLocalizations {
   /// **'Could not open the documentation link'**
   String get documentationError;
 
-  /// No description provided for @tapToEdit.
+  /// No description provided for @roboticArmIntro.
   ///
   /// In en, this message translates to:
-  /// **'Tap to edit'**
-  String get tapToEdit;
+  /// **'• A robotic arm is a programmable mechanical device that mimics the movement of a human arm.\n• It uses servo motors to control its motion, and these motors are operated using PWM signals.\n• The PSLab provides four PWM square wave generators (SQ1, SQ2, SQ3, SQ4), allowing control of up to four servo motors and enabling a robotic arm with up to four degrees of freedom.'**
+  String get roboticArmIntro;
+
+  /// No description provided for @roboticArmConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
+  String get roboticArmConnection;
+
 }
 
 class _AppLocalizationsDelegate

@@ -273,13 +273,15 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                               getTitlesWidget: (value, _) {
                                                 if (value == 1) {
                                                   return Text(
-                                                      appLocalizations.high,
+                                                      appLocalizations.high
+                                                          .toUpperCase(),
                                                       style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 8));
                                                 } else if (value == 0) {
                                                   return Text(
-                                                      appLocalizations.low,
+                                                      appLocalizations.low
+                                                          .toUpperCase(),
                                                       style: const TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 8));
