@@ -120,7 +120,7 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
       MaterialPageRoute(
         builder: (context) => LoggedDataScreen(
           instrumentName: 'accelerometer',
-          appBarName: 'Accelerometer',
+          appBarName: appLocalizations.accelerometer,
           instrumentIcon: instrumentIcons[7],
         ),
       ),
