@@ -153,6 +153,17 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           );
         }
         break;
+      case 4:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/waveGenerator') {
+          Navigator.popUntil(context, ModalRoute.withName('/waveGenerator'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/waveGenerator',
+            (route) => route.isFirst,
+          );
+        }
       default:
         break;
     }
