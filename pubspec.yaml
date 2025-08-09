@@ -45,7 +45,7 @@ dependencies:
     git:
       url: https://github.com/AsCress/usbserial.git
       ref: master
-  get_it: ^8.1.0
+  get_it: ^8.2.0
   flutter_audio_capture:
     git:
       url: https://github.com/AsCress/flutter_audio_capture.git
