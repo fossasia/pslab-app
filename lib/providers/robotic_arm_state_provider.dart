@@ -45,10 +45,10 @@ class RoboticArmStateProvider extends ChangeNotifier {
   VoidCallback? onPlaybackEnd;
 
   RoboticArmStateProvider() {
-    _initTimelineDegrees();
     _selectedFrequency = appLocalizations.frequency50Hz;
     _selectedMaxAngle = appLocalizations.angle180;
     _selectedDuration = appLocalizations.duration1Min;
+    _initTimelineDegrees();
   }
 
   void _initTimelineDegrees() {

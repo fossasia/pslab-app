@@ -1153,6 +1153,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please provide the maximum limit of lux value to be recorded';
 
   @override
+  String get documentationLink => 'https://docs.pslab.io/';
+
+  @override
+  String get documentationError => 'Could not open the documentation link';
+
+  @override
   String get roboticArmIntro =>
       '• A robotic arm is a programmable mechanical device that mimics the movement of a human arm.\n• It uses servo motors to control its motion, and these motors are operated using PWM signals.\n• The PSLab provides four PWM square wave generators (SQ1, SQ2, SQ3, SQ4), allowing control of up to four servo motors and enabling a robotic arm with up to four degrees of freedom.';
 

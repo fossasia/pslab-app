@@ -326,6 +326,8 @@
     "sharingMessage": "Sharing PSLab Data",
     "delete": "Delete",
     "deleteHint": "Are you sure you want to delete this file?",
+    "documentationLink" : "https://docs.pslab.io/",
+    "documentationError" : "Could not open the documentation link",
     "deleteFile": "Delete File",
     "deleteAllData": "Delete All Data",
     "deleteCautionMessage": "Are you sure you want to delete all logged data for this instrument?",
