@@ -9,52 +9,52 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get oscilloscope => 'OSCILLOSCOPE';
+  String get oscilloscope => 'Oscilloscope';
 
   @override
-  String get multimeter => 'MULTIMETER';
+  String get multimeter => 'Multimeter';
 
   @override
-  String get logicAnalyzer => 'LOGIC ANALYZER';
+  String get logicAnalyzer => 'Logic Analyzer';
 
   @override
-  String get sensors => 'SENSORS';
+  String get sensors => 'Sensors';
 
   @override
-  String get waveGenerator => 'WAVE GENERATOR';
+  String get waveGenerator => 'Wave Generator';
 
   @override
-  String get powerSource => 'POWER SOURCE';
+  String get powerSource => 'Power Source';
 
   @override
-  String get luxMeter => 'LUX METER';
+  String get luxMeter => 'Lux Meter';
 
   @override
-  String get accelerometer => 'ACCELEROMETER';
+  String get accelerometer => 'Accelerometer';
 
   @override
-  String get barometer => 'BAROMETER';
+  String get barometer => 'Barometer';
 
   @override
-  String get compass => 'COMPASS';
+  String get compass => 'Compass';
 
   @override
-  String get gyroscope => 'GYROSCOPE';
+  String get gyroscope => 'Gyroscope';
 
   @override
-  String get thermometer => 'THERMOMETER';
+  String get thermometer => 'Thermometer';
 
   @override
-  String get roboticArm => 'ROBOTIC ARM';
+  String get roboticArm => 'Robotic Arm';
 
   @override
-  String get gasSensor => 'GAS SENSOR';
+  String get gasSensor => 'Gas Sensor';
 
   @override
-  String get dustSensor => 'DUST SENSOR';
+  String get dustSensor => 'Dust Sensor';
 
   @override
-  String get soundMeter => 'SOUND METER';
+  String get soundMeter => 'Sound Meter';
 
   @override
   String get oscilloscopeDesc =>
@@ -239,10 +239,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bluetoothWifiConnection => 'Connect using Bluetooth or Wi-Fi';
 
   @override
-  String get bluetooth => 'BLUETOOTH';
+  String get bluetooth => 'Bluetooth';
 
   @override
-  String get wifi => 'WIFI';
+  String get wifi => 'Wi-Fi';
 
   @override
   String get whatIsPslab => 'What is PSLab Device?';
@@ -287,19 +287,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get channelLA4 => 'LA4';
 
   @override
-  String get analysisOptionEveryEdge => 'EVERY EDGE';
+  String get analysisOptionEveryEdge => 'Every Edge';
 
   @override
-  String get analysisOptionEveryFallingEdge => 'EVERY FALLING EDGE';
+  String get analysisOptionEveryFallingEdge => 'Every Falling Edge';
 
   @override
-  String get analysisOptionEveryRisingEdge => 'EVERY RISING EDGE';
+  String get analysisOptionEveryRisingEdge => 'Every Rising Edge';
 
   @override
-  String get analysisOptionEveryFourthRisingEdge => 'EVERY FOURTH RISING EDGE';
+  String get analysisOptionEveryFourthRisingEdge => 'Every Fourth Rising Edge';
 
   @override
-  String get analysisOptionDisabled => 'DISABLED';
+  String get analysisOptionDisabled => 'Disabled';
 
   @override
   String get powerSourceTitle => 'Power Source';
@@ -317,7 +317,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pinPCS => 'PCS';
 
   @override
-  String get analyze => 'ANALYZE';
+  String get analyze => 'Analyze';
 
   @override
   String get analog => 'Analog';
@@ -374,7 +374,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get csvFormat => 'CSV Format';
 
   @override
-  String get cancel => 'CANCEL';
+  String get cancel => 'Cancel';
 
   @override
   String get currentFormat => 'Current format is ';
@@ -786,10 +786,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeMillisecond => 'Time (ms)';
 
   @override
-  String get low => 'LOW';
+  String get low => 'Low';
 
   @override
-  String get high => 'HIGH';
+  String get high => 'High';
 
   @override
   String get clearTimelineTitle => 'Clear Timeline?';
@@ -1151,4 +1151,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accelerometerHighLimitHint =>
       'Please provide the maximum limit of lux value to be recorded';
+
+  @override
+  String get roboticArmIntro =>
+      '• A robotic arm is a programmable mechanical device that mimics the movement of a human arm.\n• It uses servo motors to control its motion, and these motors are operated using PWM signals.\n• The PSLab provides four PWM square wave generators (SQ1, SQ2, SQ3, SQ4), allowing control of up to four servo motors and enabling a robotic arm with up to four degrees of freedom.';
+
+  @override
+  String get roboticArmConnection =>
+      '• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.';
 }
