@@ -688,6 +688,78 @@ abstract class AppLocalizations {
   /// **'PCS'**
   String get pinPCS;
 
+  /// No description provided for @analog.
+  ///
+  /// In en, this message translates to:
+  /// **'Analog'**
+  String get analog;
+
+  /// No description provided for @digital.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital'**
+  String get digital;
+
+  /// No description provided for @wave1.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave 1'**
+  String get wave1;
+
+  /// No description provided for @wave2.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave 2'**
+  String get wave2;
+
+  /// No description provided for @sqr1.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr1'**
+  String get sqr1;
+
+  /// No description provided for @sqr2.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr2'**
+  String get sqr2;
+
+  /// No description provided for @sqr3.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr3'**
+  String get sqr3;
+
+  /// No description provided for @sqr4.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr4'**
+  String get sqr4;
+
+  /// No description provided for @freq.
+  ///
+  /// In en, this message translates to:
+  /// **'Freq'**
+  String get freq;
+
+  /// No description provided for @phase.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase'**
+  String get phase;
+
+  /// No description provided for @duty.
+  ///
+  /// In en, this message translates to:
+  /// **'Duty'**
+  String get duty;
+
+  /// No description provided for @produceSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Produce Sound'**
+  String get produceSound;
+
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:

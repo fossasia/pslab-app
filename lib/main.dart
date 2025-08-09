@@ -20,6 +20,7 @@ import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
 import 'package:pslab/theme/app_theme.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
+import 'package:pslab/view/wave_generator_screen.dart';
 import 'constants.dart';
 
 void main() {
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const InstrumentsScreen(),
         '/oscilloscope': (context) => const OscilloscopeScreen(),
         '/multimeter': (context) => const MultimeterScreen(),
+        '/waveGenerator': (context) => const WaveGeneratorScreen(),
         '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
         '/powerSource': (context) => const PowerSourceScreen(),
         '/connectDevice': (context) => const ConnectDeviceScreen(),
