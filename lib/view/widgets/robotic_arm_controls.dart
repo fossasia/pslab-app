@@ -237,7 +237,8 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                                     onPressed: () =>
                                                         Navigator.pop(context),
                                                     child: Text(
-                                                        appLocalizations.cancel,
+                                                        appLocalizations.cancel
+                                                            .toUpperCase(),
                                                         style: TextStyle(
                                                             color:
                                                                 Colors.black)),
