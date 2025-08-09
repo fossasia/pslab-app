@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/view/widgets/bmp180_screen.dart';
+import 'package:pslab/view/bmp180_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';

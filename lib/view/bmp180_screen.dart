@@ -7,9 +7,9 @@ import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/logger_service.dart';
-import '../../theme/colors.dart';
-import '../widgets/sensor_chart_widget.dart';
-import '../../providers/bmp180_provider.dart';
+import '../theme/colors.dart';
+import 'widgets/sensor_chart_widget.dart';
+import '../providers/bmp180_provider.dart';
 
 class BMP180Screen extends StatefulWidget {
   const BMP180Screen({super.key});
@@ -118,7 +118,7 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                               '${appLocalizations.altitudeLabel} (${appLocalizations.altitudeUnitLabel})',
                           data: provider.altitudeData,
                           lineColor: bmp180ChartColors[1],
-                          unit: appLocalizations.altitudeLabel,
+                          unit: appLocalizations.altitudeUnitLabel,
                           maxDataPoints: provider.numberOfReadings,
                           showDots: true,
                         ),
