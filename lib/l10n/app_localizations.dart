@@ -688,12 +688,6 @@ abstract class AppLocalizations {
   /// **'PCS'**
   String get pinPCS;
 
-  /// No description provided for @analyze.
-  ///
-  /// In en, this message translates to:
-  /// **'Analyze'**
-  String get analyze;
-
   /// No description provided for @analog.
   ///
   /// In en, this message translates to:
@@ -765,6 +759,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Produce Sound'**
   String get produceSound;
+
+  /// No description provided for @analyze.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze'**
+  String get analyze;
 
   /// No description provided for @settings.
   ///

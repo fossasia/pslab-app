@@ -317,9 +317,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pinPCS => 'PCS';
 
   @override
-  String get analyze => 'Analyze';
-
-  @override
   String get analog => 'Analog';
 
   @override
@@ -354,6 +351,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get produceSound => 'Produce Sound';
+
+  @override
+  String get analyze => 'Analyze';
 
   @override
   String get settings => 'Settings';
