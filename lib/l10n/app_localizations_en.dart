@@ -317,6 +317,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pinPCS => 'PCS';
 
   @override
+  String get analog => 'Analog';
+
+  @override
+  String get digital => 'Digital';
+
+  @override
+  String get wave1 => 'Wave 1';
+
+  @override
+  String get wave2 => 'Wave 2';
+
+  @override
+  String get sqr1 => 'sqr1';
+
+  @override
+  String get sqr2 => 'sqr2';
+
+  @override
+  String get sqr3 => 'sqr3';
+
+  @override
+  String get sqr4 => 'sqr4';
+
+  @override
+  String get freq => 'Freq';
+
+  @override
+  String get phase => 'Phase';
+
+  @override
+  String get duty => 'Duty';
+
+  @override
+  String get produceSound => 'Produce Sound';
+
+  @override
   String get analyze => 'Analyze';
 
   @override
