@@ -760,6 +760,48 @@ abstract class AppLocalizations {
   /// **'Produce Sound'**
   String get produceSound;
 
+  /// No description provided for @frequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequency;
+
+  /// No description provided for @phaseOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase Offset'**
+  String get phaseOffset;
+
+  /// No description provided for @unitDeg.
+  ///
+  /// In en, this message translates to:
+  /// **'°'**
+  String get unitDeg;
+
+  /// No description provided for @unitPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'%'**
+  String get unitPercentage;
+
+  /// No description provided for @sine.
+  ///
+  /// In en, this message translates to:
+  /// **'Sine'**
+  String get sine;
+
+  /// No description provided for @tri.
+  ///
+  /// In en, this message translates to:
+  /// **'Tri'**
+  String get tri;
+
+  /// No description provided for @pwm.
+  ///
+  /// In en, this message translates to:
+  /// **'pwm'**
+  String get pwm;
+
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:

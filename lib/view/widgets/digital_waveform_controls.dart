@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/wave_generator_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
 class DigitalWaveformControls extends StatefulWidget {
@@ -14,6 +16,8 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
+    WaveGeneratorStateProvider waveGeneratorStateProvider =
+        Provider.of<WaveGeneratorStateProvider>(context);
     return Stack(
       children: [
         Container(
@@ -25,86 +29,128 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
           ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+              SizedBox(
+                height: 40,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              waveGeneratorStateProvider.selectedDigitalWave ==
+                                      WaveConst.sqr1
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        appLocalizations.sqr1.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                        child: Text(
+                          appLocalizations.sqr1.toUpperCase(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
                         ),
+                        onPressed: () => {
+                          setState(() {
+                            waveGeneratorStateProvider
+                                .setDigitalSelectedWave(WaveConst.sqr1);
+                          })
+                        },
                       ),
-                      onPressed: () => {},
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              waveGeneratorStateProvider.selectedDigitalWave ==
+                                      WaveConst.sqr2
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        appLocalizations.sqr2.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                        child: Text(
+                          appLocalizations.sqr2.toUpperCase(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
                         ),
+                        onPressed: () => {
+                          setState(() {
+                            waveGeneratorStateProvider
+                                .setDigitalSelectedWave(WaveConst.sqr2);
+                          })
+                        },
                       ),
-                      onPressed: () => {},
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              waveGeneratorStateProvider.selectedDigitalWave ==
+                                      WaveConst.sqr3
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        appLocalizations.sqr3.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                        child: Text(
+                          appLocalizations.sqr3.toUpperCase(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
                         ),
+                        onPressed: () => {
+                          setState(() {
+                            waveGeneratorStateProvider
+                                .setDigitalSelectedWave(WaveConst.sqr3);
+                          })
+                        },
                       ),
-                      onPressed: () => {},
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              waveGeneratorStateProvider.selectedDigitalWave ==
+                                      WaveConst.sqr4
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        appLocalizations.sqr4.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                        child: Text(
+                          appLocalizations.sqr4.toUpperCase(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
                         ),
+                        onPressed: () => {
+                          setState(() {
+                            waveGeneratorStateProvider
+                                .setDigitalSelectedWave(WaveConst.sqr4);
+                          })
+                        },
                       ),
-                      onPressed: () => {},
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              IntrinsicHeight(
+              const SizedBox(height: 4),
+              SizedBox(
+                height: 40,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -112,7 +158,11 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                       flex: 35,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: primaryRed,
+                          backgroundColor:
+                              waveGeneratorStateProvider.propSelected ==
+                                      WaveConst.frequency
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -124,35 +174,56 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                             fontSize: 14,
                           ),
                         ),
-                        onPressed: () => {},
+                        onPressed: () => {
+                          setState(() {
+                            waveGeneratorStateProvider
+                                .setPropSelected(WaveConst.frequency);
+                          })
+                        },
                       ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      flex: 35,
+                      child: waveGeneratorStateProvider.selectedDigitalWave !=
+                              WaveConst.sqr1
+                          ? TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor:
+                                    waveGeneratorStateProvider.propSelected ==
+                                            WaveConst.phase
+                                        ? buttonEnabledColor
+                                        : buttonDisabledColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                              child: Text(
+                                appLocalizations.phase,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              onPressed: () => {
+                                setState(() {
+                                  waveGeneratorStateProvider
+                                      .setPropSelected(WaveConst.phase);
+                                })
+                              },
+                            )
+                          : Container(),
                     ),
                     const SizedBox(width: 4),
                     Expanded(
                       flex: 35,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: primaryRed,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                        child: Text(
-                          appLocalizations.phase,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                        ),
-                        onPressed: () => {},
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      flex: 35,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: primaryRed,
+                          backgroundColor:
+                              waveGeneratorStateProvider.propSelected ==
+                                      WaveConst.duty
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -164,7 +235,12 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                             fontSize: 14,
                           ),
                         ),
-                        onPressed: () => {},
+                        onPressed: () => {
+                          setState(() {
+                            waveGeneratorStateProvider
+                                .setPropSelected(WaveConst.duty);
+                          })
+                        },
                       ),
                     ),
                   ],

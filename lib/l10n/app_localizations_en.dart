@@ -353,6 +353,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get produceSound => 'Produce Sound';
 
   @override
+  String get frequency => 'Frequency';
+
+  @override
+  String get phaseOffset => 'Phase Offset';
+
+  @override
+  String get unitDeg => '°';
+
+  @override
+  String get unitPercentage => '%';
+
+  @override
+  String get sine => 'Sine';
+
+  @override
+  String get tri => 'Tri';
+
+  @override
+  String get pwm => 'pwm';
+
+  @override
   String get analyze => 'Analyze';
 
   @override

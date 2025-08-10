@@ -157,7 +157,7 @@ class ScienceLab {
       for (String temp in ['CH1', 'CH2']) {
         await setGain(temp, 0, true);
       }
-      for (String temp in ['SI1', 'SI1']) {
+      for (String temp in ['SI1', 'SI2']) {
         await loadEquation(temp, 'sine');
       }
     }
@@ -1088,6 +1088,282 @@ class ScienceLab {
     if (isConnected()) {
       await setCurrent(current);
     }
+  }
+
+  Future<double> setSI1(double frequency, String? waveType) async {
+    double freqLowLimit = 0.1;
+    int highRes, tableSize;
+
+    if (frequency < freqLowLimit) {
+      logger.e("frequency too low");
+      return -1;
+    } else if (frequency < 1100) {
+      highRes = 1;
+      tableSize = 512;
+    } else {
+      highRes = 0;
+      tableSize = 32;
+    }
+
+    if (waveType != null) {
+      if (waveType == "sine" || waveType == "tria") {
+        if (this.waveType["SI1"] != waveType) {
+          loadEquation("SI1", waveType);
+        }
+      } else {
+        logger.e("Not a valid waveform. try sine or tria");
+      }
+    }
+
+    List<int> p = [1, 8, 64, 256];
+    int prescalar = 0;
+    int wavelength = 0;
+
+    while (prescalar <= 3) {
+      wavelength = (64e6 ~/ frequency ~/ p[prescalar] ~/ tableSize);
+      frequency = 64e6 / wavelength / p[prescalar] / tableSize;
+      if (wavelength < 65525) break;
+      prescalar++;
+    }
+
+    if (prescalar == 4) {
+      logger.e("Out of range");
+      return -1;
+    }
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.wavegen);
+      mPacketHandler.sendByte(mCommandsProto.setSine1);
+      mPacketHandler.sendByte(highRes | (prescalar << 1));
+      mPacketHandler.sendInt(wavelength - 1);
+      await mPacketHandler.getAcknowledgement();
+
+      sin1Frequency = frequency;
+      return sin1Frequency;
+    } catch (e) {
+      logger.e("Error setting SI1: $e");
+    }
+
+    return -1;
+  }
+
+  Future<double> setSI2(double frequency, String? waveType) async {
+    double freqLowLimit = 0.1;
+    int highRes, tableSize;
+
+    if (frequency < freqLowLimit) {
+      logger.e("frequency too low");
+      return -1;
+    } else if (frequency < 1100) {
+      highRes = 1;
+      tableSize = 512;
+    } else {
+      highRes = 0;
+      tableSize = 32;
+    }
+
+    if (waveType != null) {
+      if (waveType == "sine" || waveType == "tria") {
+        if (this.waveType["SI2"] != waveType) {
+          loadEquation("SI2", waveType);
+        }
+      } else {
+        logger.e("Not a valid waveform. try sine or tria");
+      }
+    }
+
+    List<int> p = [1, 8, 64, 256];
+    int prescalar = 0;
+    int wavelength = 0;
+
+    while (prescalar <= 3) {
+      wavelength = (64e6 ~/ frequency ~/ p[prescalar] ~/ tableSize);
+      frequency = 64e6 / wavelength / p[prescalar] / tableSize;
+      if (wavelength < 65525) break;
+      prescalar++;
+    }
+
+    if (prescalar == 4) {
+      logger.e("Out of range");
+      return -1;
+    }
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.wavegen);
+      mPacketHandler.sendByte(mCommandsProto.setSine2);
+      mPacketHandler.sendByte(highRes | (prescalar << 1));
+      mPacketHandler.sendInt(wavelength - 1);
+      await mPacketHandler.getAcknowledgement();
+
+      sin2Frequency = frequency;
+      return sin2Frequency;
+    } catch (e) {
+      logger.e("Error setting SI2: $e");
+    }
+
+    return -1;
+  }
+
+  Future<double> setWaves(
+      double frequency, double phase, double frequency2) async {
+    int highRes, tableSize, highRes2, tableSize2;
+    int wavelength = 0, wavelength2 = 0;
+
+    if (frequency2 == -1) frequency2 = frequency;
+
+    if (frequency < 0.1) {
+      logger.e("frequency 1 too low");
+      return -1;
+    } else if (frequency < 1100) {
+      highRes = 1;
+      tableSize = 512;
+    } else {
+      highRes = 0;
+      tableSize = 32;
+    }
+
+    if (frequency2 < 0.1) {
+      logger.e("frequency 2 too low");
+      return -1;
+    } else if (frequency2 < 1100) {
+      highRes2 = 1;
+      tableSize2 = 512;
+    } else {
+      highRes2 = 0;
+      tableSize2 = 32;
+    }
+
+    if (frequency < 1 || frequency2 < 1) {
+      logger.e(
+          "extremely low frequencies will have reduced amplitudes due to AC coupling restrictions");
+    }
+
+    List<int> p = [1, 8, 64, 256];
+
+    int prescalar = 0;
+    double retFrequency = 0;
+    while (prescalar <= 3) {
+      wavelength = (64e6 ~/ frequency ~/ p[prescalar] ~/ tableSize);
+      retFrequency = 64e6 / wavelength / p[prescalar] / tableSize;
+      if (wavelength < 65525) break;
+      prescalar++;
+    }
+    if (prescalar == 4) {
+      logger.e("#1 out of range");
+      return -1;
+    }
+
+    int prescalar2 = 0;
+    double retFrequency2 = 0;
+    while (prescalar2 <= 3) {
+      wavelength2 = (64e6 ~/ frequency2 ~/ p[prescalar2] ~/ tableSize2);
+      retFrequency2 = 64e6 / wavelength2 / p[prescalar2] / tableSize2;
+      if (wavelength2 < 65525) break;
+      prescalar2++;
+    }
+    if (prescalar2 == 4) {
+      logger.e("#2 out of range");
+      return -1;
+    }
+
+    int phaseCoarse = (tableSize2 * (phase) / 360).toInt();
+    int phaseFine = (wavelength2 *
+            (phase - (phaseCoarse) * 360 / tableSize2) /
+            (360 / tableSize2))
+        .toInt();
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.wavegen);
+      mPacketHandler.sendByte(mCommandsProto.setBothWg);
+      mPacketHandler.sendInt(wavelength - 1);
+      mPacketHandler.sendInt(wavelength2 - 1);
+      mPacketHandler.sendInt(phaseCoarse);
+      mPacketHandler.sendInt(phaseFine);
+      mPacketHandler.sendByte(
+          (prescalar2 << 4) | (prescalar << 2) | (highRes2 << 1) | (highRes));
+      await mPacketHandler.getAcknowledgement();
+
+      sin1Frequency = retFrequency;
+      sin2Frequency = retFrequency2;
+      return retFrequency;
+    } catch (e) {
+      logger.e("Error setting waves: $e");
+    }
+
+    return -1;
+  }
+
+  Future<double> sqrPWM(
+    double frequency,
+    double h0,
+    double p1,
+    double h1,
+    double p2,
+    double h2,
+    double p3,
+    double h3,
+    bool pulse,
+  ) async {
+    if (frequency == 0) return -1;
+
+    if (h0 == 0) h0 = 0.1;
+    if (h1 == 0) h1 = 0.1;
+    if (h2 == 0) h2 = 0.1;
+    if (h3 == 0) h3 = 0.1;
+
+    if (frequency > 10e6) {
+      logger.e(
+        "Frequency is greater than 10MHz. Please use map_reference_clock for 16 & 32MHz outputs",
+      );
+      return -1;
+    }
+
+    List<int> p = [1, 8, 64, 256];
+    int prescalar = 0;
+    int wavelength = 0;
+
+    while (prescalar <= 3) {
+      wavelength = (64e6 ~/ frequency ~/ p[prescalar]);
+      if (wavelength < 65525) break;
+      prescalar++;
+    }
+
+    if (prescalar == 4 || wavelength == 0) {
+      logger.e("Out of Range");
+      return -1;
+    }
+
+    if (!pulse) prescalar |= (1 << 5);
+
+    int a1 = ((p1 % 1) * wavelength).toInt();
+    int b1 = (((h1 + p1) % 1) * wavelength).toInt();
+    int a2 = ((p2 % 1) * wavelength).toInt();
+    int b2 = (((h2 + p2) % 1) * wavelength).toInt();
+    int a3 = ((p3 % 1) * wavelength).toInt();
+    int b3 = (((h3 + p3) % 1) * wavelength).toInt();
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.wavegen);
+      mPacketHandler.sendByte(mCommandsProto.sqr4);
+      mPacketHandler.sendInt(wavelength - 1);
+      mPacketHandler.sendInt((wavelength * h0).toInt() - 1);
+      mPacketHandler.sendInt(a1 > 0 ? a1 - 1 : 0);
+      mPacketHandler.sendInt(b1 > 1 ? b1 - 1 : 1);
+      mPacketHandler.sendInt(a2 > 0 ? a2 - 1 : 0);
+      mPacketHandler.sendInt(b2 > 1 ? b2 - 1 : 1);
+      mPacketHandler.sendInt(a3 > 0 ? a3 - 1 : 0);
+      mPacketHandler.sendInt(b3 > 1 ? b3 - 1 : 1);
+      mPacketHandler.sendByte(prescalar);
+      await mPacketHandler.getAcknowledgement();
+    } catch (e) {
+      logger.e("Error sending data: $e");
+    }
+
+    for (var channel in ["SQR1", "SQR2", "SQR3", "SQR4"]) {
+      squareWaveFrequency[channel] = 64e6 / wavelength / p[prescalar & 0x3];
+    }
+
+    return (64e6 / wavelength / p[prescalar & 0x3]);
   }
 
   Future<void> servo4(
