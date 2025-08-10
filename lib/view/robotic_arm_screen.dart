@@ -8,6 +8,7 @@ import 'package:pslab/view/widgets/robotic_arm_dialog.dart';
 import 'package:pslab/view/widgets/robotic_arm_summary.dart';
 import 'package:pslab/view/widgets/robotic_arm_timeline.dart';
 import '../providers/robotic_arm_state_provider.dart';
+import 'logged_data_screen.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'widgets/servo_card.dart';
 
@@ -183,7 +184,117 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
               IconButton(
                 icon: const Icon(Icons.save, color: Colors.white),
                 tooltip: appLocalizations.saveData,
-                onPressed: () {}, // TODO
+                onPressed: () async {
+                  final TextEditingController fileNameController =
+                      TextEditingController();
+
+                  final String? enteredFileName = await showDialog<String>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return Dialog(
+                        insetPadding: EdgeInsets.zero,
+                        backgroundColor: Colors.transparent,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            margin: EdgeInsets.zero,
+                            padding: const EdgeInsets.all(8),
+                            width: 220,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  appLocalizations.enterFileName,
+                                  style: TextStyle(fontSize: 9),
+                                ),
+                                const SizedBox(height: 2),
+                                TextField(
+                                  controller: fileNameController,
+                                  style: const TextStyle(fontSize: 12),
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 6),
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      height: 26,
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6),
+                                          minimumSize: Size.zero,
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(null),
+                                        child: Text(appLocalizations.cancel,
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.black)),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    SizedBox(
+                                      height: 26,
+                                      child: TextButton(
+                                        style: TextButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6),
+                                          minimumSize: Size.zero,
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(
+                                              fileNameController.text.trim());
+                                        },
+                                        child: Text(appLocalizations.save,
+                                            style: TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.black)),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+
+                  try {
+                    await provider.exportTimelineToCsv(
+                      instrumentName: appLocalizations.roboticArmTitle,
+                      fileName: (enteredFileName!),
+                    );
+
+                    if (!context.mounted) return;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(appLocalizations.fileSaved)),
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(appLocalizations.csvSavingError)),
+                    );
+                  }
+                },
               ),
               IconButton(
                 icon: const Icon(Icons.info, color: Colors.white),
@@ -196,9 +307,24 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
               ),
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.white),
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == appLocalizations.showLoggedData) {
-                    // TODO
+                    final List<List<dynamic>>? data = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => LoggedDataScreen(
+                          instrumentName: appLocalizations.roboticArmTitle,
+                          appBarName: appLocalizations.showLoggedData,
+                          instrumentIcon: 'assets/icons/robotic_arm.png',
+                        ),
+                      ),
+                    );
+
+                    if (data != null) {
+                      setState(() {
+                        provider.importTimelineFromCsv(data);
+                      });
+                    }
                   }
                 },
                 itemBuilder: (BuildContext context) => [
