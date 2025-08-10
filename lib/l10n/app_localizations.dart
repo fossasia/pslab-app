@@ -688,6 +688,78 @@ abstract class AppLocalizations {
   /// **'PCS'**
   String get pinPCS;
 
+  /// No description provided for @analog.
+  ///
+  /// In en, this message translates to:
+  /// **'Analog'**
+  String get analog;
+
+  /// No description provided for @digital.
+  ///
+  /// In en, this message translates to:
+  /// **'Digital'**
+  String get digital;
+
+  /// No description provided for @wave1.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave 1'**
+  String get wave1;
+
+  /// No description provided for @wave2.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave 2'**
+  String get wave2;
+
+  /// No description provided for @sqr1.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr1'**
+  String get sqr1;
+
+  /// No description provided for @sqr2.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr2'**
+  String get sqr2;
+
+  /// No description provided for @sqr3.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr3'**
+  String get sqr3;
+
+  /// No description provided for @sqr4.
+  ///
+  /// In en, this message translates to:
+  /// **'sqr4'**
+  String get sqr4;
+
+  /// No description provided for @freq.
+  ///
+  /// In en, this message translates to:
+  /// **'Freq'**
+  String get freq;
+
+  /// No description provided for @phase.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase'**
+  String get phase;
+
+  /// No description provided for @duty.
+  ///
+  /// In en, this message translates to:
+  /// **'Duty'**
+  String get duty;
+
+  /// No description provided for @produceSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Produce Sound'**
+  String get produceSound;
+
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:
@@ -2176,6 +2248,18 @@ abstract class AppLocalizations {
   /// **'Please provide the maximum limit of lux value to be recorded'**
   String get accelerometerHighLimitHint;
 
+  /// No description provided for @documentationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://docs.pslab.io/'**
+  String get documentationLink;
+
+  /// No description provided for @documentationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the documentation link'**
+  String get documentationError;
+
   /// No description provided for @roboticArmIntro.
   ///
   /// In en, this message translates to:
@@ -2187,6 +2271,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
   String get roboticArmConnection;
+
 }
 
 class _AppLocalizationsDelegate
