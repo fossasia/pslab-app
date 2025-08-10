@@ -273,7 +273,6 @@ class _VL53L0XScreenState extends State<VL53L0XScreen> {
 
   @override
   void dispose() {
-    _provider.dispose();
     super.dispose();
   }
 }
