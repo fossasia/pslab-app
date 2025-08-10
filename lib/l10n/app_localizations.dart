@@ -2398,17 +2398,11 @@ abstract class AppLocalizations {
   /// **'N/A'**
   String get notAvailable;
 
-  /// No description provided for @distance.
+  /// No description provided for @estimated.
   ///
   /// In en, this message translates to:
-  /// **'Distance'**
-  String get distance;
-
-  /// No description provided for @distanceUnitLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'mm'**
-  String get distanceUnitLabel;
+  /// **'Estimated'**
+  String get estimated;
 }
 
 class _AppLocalizationsDelegate

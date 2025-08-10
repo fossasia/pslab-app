@@ -1231,8 +1231,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notAvailable => 'N/A';
 
   @override
-  String get distance => 'Distance';
-
-  @override
-  String get distanceUnitLabel => 'mm';
+  String get estimated => 'Estimated';
 }

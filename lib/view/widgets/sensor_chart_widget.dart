@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:pslab/view/about_us_screen.dart';
+import '../../l10n/app_localizations.dart';
 import '../../models/chart_data_points.dart';
+import '../../providers/locator.dart';
 import '../../theme/colors.dart';
+
+AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
 class SensorChartWidget extends StatelessWidget {
   final String title;

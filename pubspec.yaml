@@ -38,14 +38,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.2.0
-  google_fonts: ^6.2.1
+  google_fonts: ^6.3.0
   fl_chart: ^1.0.0
   provider: ^6.1.5
   usb_serial:
     git:
       url: https://github.com/AsCress/usbserial.git
       ref: master
-  get_it: ^8.1.0
+  get_it: ^8.2.0
   flutter_audio_capture:
     git:
       url: https://github.com/AsCress/flutter_audio_capture.git
@@ -54,7 +54,7 @@ dependencies:
   permission_handler: ^12.0.1
   logger: ^2.6.1
   url_launcher: ^6.3.2
-  font_awesome_flutter: ^10.8.0
+  font_awesome_flutter: ^10.9.0
   package_info_plus: ^8.3.0
   sensors_plus: ^6.1.1
   sleek_circular_slider: ^2.1.0
@@ -67,7 +67,7 @@ dependencies:
   csv: ^6.0.0
   share_plus: ^11.0.0
   path_provider: ^2.1.5
-  file_picker: ^10.2.0
+  file_picker: ^10.2.4
 
 
 dev_dependencies:

@@ -4,6 +4,8 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/locator.dart';
 import '../../theme/colors.dart';
 
+AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+
 class SensorControlsWidget extends StatefulWidget {
   final bool isPlaying;
   final bool isLooping;
@@ -35,7 +37,6 @@ class SensorControlsWidget extends StatefulWidget {
 }
 
 class _SensorControlsWidgetState extends State<SensorControlsWidget> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late TextEditingController _numberController;
   late FocusNode _textFieldFocusNode;
 

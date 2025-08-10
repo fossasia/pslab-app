@@ -384,6 +384,5 @@
     "altitudeUnitLabel" : "m",
     "time" : "Time",
     "notAvailable" : "N/A",
-    "distance" : "Distance",
-    "distanceUnitLabel" : "mm"
+    "estimated" : "Estimated"
 }
