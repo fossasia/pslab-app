@@ -1047,6 +1047,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteHint => 'Are you sure you want to delete this file?';
 
   @override
+  String get documentationLink => 'https://docs.pslab.io/';
+
+  @override
+  String get documentationError => 'Could not open the documentation link';
+
+  @override
   String get deleteFile => 'Delete File';
 
   @override
@@ -1151,12 +1157,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accelerometerHighLimitHint =>
       'Please provide the maximum limit of lux value to be recorded';
-
-  @override
-  String get documentationLink => 'https://docs.pslab.io/';
-
-  @override
-  String get documentationError => 'Could not open the documentation link';
 
   @override
   String get roboticArmIntro =>
