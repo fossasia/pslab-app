@@ -1038,6 +1038,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';
 
   @override
+  String get thermometerTitle => 'Thermometer';
+
+  @override
+  String get thermometerIntro =>
+      'Thermometer instrument is used to measure ambient temprature. It can be measured using inbuilt ambient temprature sensor or through SHT21.';
+
+  @override
+  String get celsius => '°C';
+
+  @override
+  String get temperatureSensorError => 'Temperature sensor error:';
+
+  @override
+  String get temperatureSensorInitialError =>
+      'Temperature sensor initialization error:';
+
+  @override
+  String get temperatureSensorUnavailableMessage =>
+      'Ambient temperature sensor is not available on this device';
+
   String get sharingMessage => 'Sharing PSLab Data';
 
   @override
@@ -1165,4 +1185,71 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get roboticArmConnection =>
       '• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.';
+
+  @override
+  String get autoscan => 'Autoscan';
+
+  @override
+  String get selectSensor => 'Select Sensor';
+
+  @override
+  String get notConnected => 'Not Connected';
+
+  @override
+  String get autoScanHint =>
+      'Use Autoscan button to find connected sensors to PSLab device';
+
+  @override
+  String get noSensorDetected => 'No sensors detected';
+
+  @override
+  String get screenNotImplemented => 'screen not implemented yet';
+
+  @override
+  String get timeGap => 'Time gap';
+
+  @override
+  String get pslabNotConnected => 'PSLab not connected';
+
+  @override
+  String get clearData => 'Clear Data';
+
+  @override
+  String get numberOfSampes => 'No. of samples';
+
+  @override
+  String get pressure => 'Pressure';
+
+  @override
+  String get temperature => 'Temperature';
+
+  @override
+  String get bmp180 => 'BMP180';
+
+  @override
+  String get plot => 'Plot';
+
+  @override
+  String get dataCleared => 'Data cleared successfully';
+
+  @override
+  String get rawData => 'Raw Data';
+
+  @override
+  String get pressureUnitLabel => 'Pa';
+
+  @override
+  String get temperatureUnitLabel => '°C';
+
+  @override
+  String get altitudeUnitLabel => 'm';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get notAvailable => 'N/A';
+
+  @override
+  String get estimated => 'Estimated';
 }

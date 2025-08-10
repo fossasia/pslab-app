@@ -15,11 +15,13 @@ import 'package:pslab/view/multimeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/robotic_arm_screen.dart';
+import 'package:pslab/view/sensors_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
 import 'package:pslab/theme/app_theme.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
+import 'package:pslab/view/thermometer_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
 import 'constants.dart';
 
@@ -75,6 +77,8 @@ class MyApp extends StatelessWidget {
         '/luxmeter': (context) => const LuxMeterScreen(),
         '/barometer': (context) => const BarometerScreen(),
         '/soundmeter': (context) => const SoundMeterScreen(),
+        '/thermometer': (context) => const ThermometerScreen(),
+        '/sensors': (context) => const SensorsScreen()
       },
     );
   }
