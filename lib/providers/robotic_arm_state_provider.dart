@@ -2,15 +2,20 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
-import '../others/science_lab_common.dart';
+import 'package:pslab/others/science_lab_common.dart';
 import 'package:vibration/vibration.dart';
+
+import '../others/csv_service.dart';
 
 class RoboticArmStateProvider extends ChangeNotifier {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  final CsvService _csvService = CsvService();
+
   final List<double> servoValues = [0, 0, 0, 0];
   List<List<double?>> timelineDegrees = [];
   List<List<double?>> pwmData = [];
@@ -30,13 +35,9 @@ class RoboticArmStateProvider extends ChangeNotifier {
   late String _selectedDuration;
 
   int get maxAngle => int.tryParse(_selectedMaxAngle) ?? 180;
-
   String get selectedFrequency => _selectedFrequency;
-
   String get selectedMaxAngle => _selectedMaxAngle;
-
   String get selectedDuration => _selectedDuration;
-
   bool get showControlBox => _showControlBox;
 
   int get totalTimelineItems =>
@@ -45,10 +46,10 @@ class RoboticArmStateProvider extends ChangeNotifier {
   VoidCallback? onPlaybackEnd;
 
   RoboticArmStateProvider() {
-    _initTimelineDegrees();
     _selectedFrequency = appLocalizations.frequency50Hz;
     _selectedMaxAngle = appLocalizations.angle180;
     _selectedDuration = appLocalizations.duration1Min;
+    _initTimelineDegrees();
   }
 
   void _initTimelineDegrees() {
@@ -210,6 +211,57 @@ class RoboticArmStateProvider extends ChangeNotifier {
 
   void hideControlBox() {
     _showControlBox = false;
+    notifyListeners();
+  }
+
+  Future<void> exportTimelineToCsv({
+    required String instrumentName,
+    required String fileName,
+  }) async {
+    List<List<dynamic>> csvData = [];
+
+    csvData
+        .add(['Timestamp', 'Servo1', 'Servo2', 'Servo3', 'Servo4', 'DateTime']);
+
+    final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+
+    for (int i = 0; i < timelineDegrees.length; i++) {
+      final row = timelineDegrees[i];
+      final timestamp = i;
+      final dateTime = dateFormat.format(DateTime.now());
+
+      csvData.add([
+        timestamp,
+        row[0]?.toString() ?? 'null',
+        row[1]?.toString() ?? 'null',
+        row[2]?.toString() ?? 'null',
+        row[3]?.toString() ?? 'null',
+        dateTime
+      ]);
+    }
+
+    await _csvService.saveCsvFile(instrumentName, fileName, csvData);
+  }
+
+  Future<void> importTimelineFromCsv(List<List<dynamic>> csv) async {
+    if (csv.length <= 2) return;
+
+    final dataRows = csv.skip(1).toList();
+
+    for (int i = 0; i < totalTimelineItems; i++) {
+      if (i < dataRows.length && dataRows[i].length >= 5) {
+        final row = dataRows[i];
+        timelineDegrees[i] = [
+          double.tryParse(row[1].toString()),
+          double.tryParse(row[2].toString()),
+          double.tryParse(row[3].toString()),
+          double.tryParse(row[4].toString()),
+        ];
+      } else {
+        timelineDegrees[i] = [null, null, null, null];
+      }
+    }
+
     notifyListeners();
   }
 

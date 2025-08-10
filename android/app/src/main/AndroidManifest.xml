@@ -10,8 +10,7 @@
         android:name="${applicationName}"
         android:icon="@drawable/launcher_icon"
         android:roundIcon="@drawable/launcher_icon_round"
-        android:requestLegacyExternalStorage="true"
-        tools:ignore="ScopedStorage">
+        >
         <activity
             android:name=".MainActivity"
             android:exported="true"
