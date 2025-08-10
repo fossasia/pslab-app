@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pslab/view/about_us_screen.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/locator.dart';
 import '../../theme/colors.dart';
+
+AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
 class SensorControlsWidget extends StatefulWidget {
   final bool isPlaying;

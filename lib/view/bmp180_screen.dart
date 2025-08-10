@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/sensor_controls.dart';
 import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/logger_service.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/colors.dart';
 import 'widgets/sensor_chart_widget.dart';
 import '../providers/bmp180_provider.dart';
@@ -19,6 +19,7 @@ class BMP180Screen extends StatefulWidget {
 }
 
 class _BMP180ScreenState extends State<BMP180Screen> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   String sensorImage = 'assets/images/bmp180.jpg';
   I2C? _i2c;
   ScienceLab? _scienceLab;
