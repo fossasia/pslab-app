@@ -57,6 +57,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           );
         }
         break;
+      case 3:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/sensors') {
+          Navigator.popUntil(context, ModalRoute.withName('/sensors'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/sensors',
+            (route) => route.isFirst,
+          );
+        }
+        break;
       case 5:
         if (Navigator.canPop(context) &&
             ModalRoute.of(context)?.settings.name == '/powerSource') {

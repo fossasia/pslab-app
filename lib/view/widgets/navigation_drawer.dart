@@ -253,8 +253,15 @@ class _NavDrawerState extends State<NavDrawer> {
                   fontSize: 14,
                 ),
               ),
-              onTap: () {
-                /**/
+              onTap: () async {
+                final launched = await launchUrl(
+                    Uri.parse(appLocalizations.documentationLink));
+                if (!launched && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(appLocalizations.documentationError)),
+                  );
+                }
               },
             ),
             ListTile(
