@@ -27,7 +27,7 @@ class ServoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<RoboticArmStateProvider>(context);
     final sliderSize =
-        provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.72;
+        provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.75;
 
     return Container(
       decoration: BoxDecoration(
@@ -108,7 +108,7 @@ class ServoCard extends StatelessWidget {
                     ),
                     infoProperties: InfoProperties(
                       mainLabelStyle: TextStyle(
-                        fontSize: 22,
+                        fontSize: 25,
                         color: Colors.black,
                         fontWeight: FontWeight.normal,
                         shadows: [

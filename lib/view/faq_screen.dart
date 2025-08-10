@@ -124,7 +124,7 @@ class FAQScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     const SizedBox(
-                      width: 25,
+                      width: 15,
                     ),
                     Text(
                       faq.linkText!,
