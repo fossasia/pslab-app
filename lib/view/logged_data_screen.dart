@@ -146,17 +146,17 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         Navigator.pop(context, data);
       } else {
         final config = _getChartConfig();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoggedDataChartScreen(
-            data: data,
-            fileName: file.path.split('/').last,
-            xAxisLabel: config['xAxisLabel'],
-            yAxisLabel: config['yAxisLabel'],
-            xDataColumnIndex: config['xDataColumnIndex'],
-            yDataColumnIndex: config['yDataColumnIndex'],
-            instrumentName: widget.instrumentName,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoggedDataChartScreen(
+              data: data,
+              fileName: file.path.split('/').last,
+              xAxisLabel: config['xAxisLabel'],
+              yAxisLabel: config['yAxisLabel'],
+              xDataColumnIndex: config['xDataColumnIndex'],
+              yDataColumnIndex: config['yDataColumnIndex'],
+              instrumentName: widget.instrumentName,
             ),
           ),
         );
@@ -171,17 +171,17 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         Navigator.pop(context, data);
       } else {
         final config = _getChartConfig();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoggedDataChartScreen(
-            data: data,
-            fileName: 'Imported Log',
-            xAxisLabel: config['xAxisLabel'],
-            yAxisLabel: config['yAxisLabel'],
-            xDataColumnIndex: config['xDataColumnIndex'],
-            yDataColumnIndex: config['yDataColumnIndex'],
-            instrumentName: widget.instrumentName,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoggedDataChartScreen(
+              data: data,
+              fileName: 'Imported Log',
+              xAxisLabel: config['xAxisLabel'],
+              yAxisLabel: config['yAxisLabel'],
+              xDataColumnIndex: config['xDataColumnIndex'],
+              yDataColumnIndex: config['yDataColumnIndex'],
+              instrumentName: widget.instrumentName,
             ),
           ),
         );
