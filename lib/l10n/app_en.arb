@@ -383,5 +383,6 @@
     "temperatureUnitLabel" : "°C",
     "altitudeUnitLabel" : "m",
     "time" : "Time",
-    "notAvailable" : "N/A"
+    "notAvailable" : "N/A",
+    "estimated" : "Estimated"
 }

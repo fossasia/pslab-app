@@ -114,7 +114,7 @@ class _BMP180ScreenState extends State<BMP180Screen> {
                         const SizedBox(height: 20),
                         SensorChartWidget(
                           title:
-                              '${appLocalizations.plot} - ${appLocalizations.altitudeLabel}',
+                              '${appLocalizations.plot} - ${appLocalizations.estimated} ${appLocalizations.altitudeLabel}',
                           yAxisLabel:
                               '${appLocalizations.altitudeLabel} (${appLocalizations.altitudeUnitLabel})',
                           data: provider.altitudeData,
