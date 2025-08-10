@@ -30,6 +30,8 @@
 	<string>Main</string>
 	<key>NSMicrophoneUsageDescription</key>
     <string>App needs Microphone access to capture audio</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>App needs access to photo library</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
