@@ -1038,6 +1038,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';
 
   @override
+  String get thermometerTitle => 'Thermometer';
+
+  @override
+  String get thermometerIntro =>
+      'Thermometer instrument is used to measure ambient temprature. It can be measured using inbuilt ambient temprature sensor or through SHT21.';
+
+  @override
+  String get celsius => '°C';
+
+  @override
+  String get temperatureSensorError => 'Temperature sensor error:';
+
+  @override
+  String get temperatureSensorInitialError =>
+      'Temperature sensor initialization error:';
+
+  @override
+  String get temperatureSensorUnavailableMessage =>
+      'Ambient temperature sensor is not available on this device';
+
   String get sharingMessage => 'Sharing PSLab Data';
 
   @override
