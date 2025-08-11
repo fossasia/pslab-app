@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
@@ -247,8 +248,9 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
       children: [
         CustomPaint(
           painter: InnerDialFillPainter(),
-          child: Container(
-            width: 300,
+          child: SizedBox(
+            width: 300.w,
+            height: 300.h,
           ),
         ),
         GestureDetector(
@@ -267,8 +269,8 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
               color: pointerColor,
             ),
             child: SizedBox(
-              width: 430,
-              height: 450,
+              width: 360.w,
+              height: 360.h,
             ),
           ),
         ),
@@ -276,8 +278,9 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
           ignoring: true,
           child: CustomPaint(
             painter: InnerDialPainter(),
-            child: Container(
-              width: 300,
+            child: SizedBox(
+              height: 300.h,
+              width: 300.w,
             ),
           ),
         ),
@@ -287,11 +290,7 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
             painter: RadialLabelPainter(
               labels: knobMarker,
               labelColors: knobLabelColors,
-              radius: 112,
-            ),
-            child: SizedBox(
-              width: 430,
-              height: 450,
+              radius: 112.r,
             ),
           ),
         )

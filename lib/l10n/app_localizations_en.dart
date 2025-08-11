@@ -1069,6 +1069,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get temperatureSensorUnavailableMessage =>
       'Ambient temperature sensor is not available on this device';
 
+  @override
   String get sharingMessage => 'Sharing PSLab Data';
 
   @override

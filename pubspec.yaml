@@ -68,6 +68,7 @@ dependencies:
   share_plus: ^11.0.0
   path_provider: ^2.1.5
   file_picker: ^10.2.4
+  flutter_screenutil: ^5.9.3
 
 
 dev_dependencies:
