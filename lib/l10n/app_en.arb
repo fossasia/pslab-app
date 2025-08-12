@@ -223,7 +223,7 @@
     "automatedMeasurements": "Automated Measurements",
     "luxMeterTitle": "Lux Meter",
     "builtIn": "Built-In",
-    "lx": "Lx",
+    "lx": "lx",
     "maxScaleError": "Max Scale",
     "lightSensorError": "Light sensor error:",
     "lightSensorInitialError": "Failed to initialize light sensor:",
@@ -390,5 +390,15 @@
     "altitudeUnitLabel" : "m",
     "time" : "Time",
     "notAvailable" : "N/A",
-    "estimated" : "Estimated"
+    "estimated" : "Estimated",
+    "gesture" : "Gesture",
+    "blueLabel" : "Blue",
+    "greenLabel" : "Green",
+    "proxLabel" : "Prox",
+    "redLabel" : "Red",
+    "mode" : "Mode",
+    "configure" : "Configure",
+    "proximity": "Proximity",
+    "light" : "Light",
+    "lux" : "Lux"
 }

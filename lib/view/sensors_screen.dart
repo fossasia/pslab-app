@@ -6,6 +6,7 @@ import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import '../theme/colors.dart';
+import 'apds9960_screen.dart';
 
 class SensorsScreen extends StatefulWidget {
   const SensorsScreen({super.key});
@@ -220,6 +221,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
     switch (sensorName) {
       case 'BMP180':
         targetScreen = const BMP180Screen();
+        break;
+      case 'APDS9960':
+        targetScreen = const APDS9960Screen();
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(

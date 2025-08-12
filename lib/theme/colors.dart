@@ -84,3 +84,4 @@ Color sensorControlsTextBox = Colors.grey.shade400;
 Color sensorControlIconColor = Colors.grey.shade600;
 List<Color> bmp180ChartColors = [Colors.blue, Colors.green, Colors.red];
 Color chartHintTextColor = Colors.yellow;
+List<Color> apds990ChartColors = [Colors.blue, Colors.yellow];

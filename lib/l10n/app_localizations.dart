@@ -1435,7 +1435,7 @@ abstract class AppLocalizations {
   /// No description provided for @lx.
   ///
   /// In en, this message translates to:
-  /// **'Lx'**
+  /// **'lx'**
   String get lx;
 
   /// No description provided for @maxScaleError.
@@ -2439,6 +2439,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Estimated'**
   String get estimated;
+
+  /// No description provided for @gesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Gesture'**
+  String get gesture;
+
+  /// No description provided for @blueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get blueLabel;
+
+  /// No description provided for @greenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get greenLabel;
+
+  /// No description provided for @proxLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prox'**
+  String get proxLabel;
+
+  /// No description provided for @redLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get redLabel;
+
+  /// No description provided for @mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode'**
+  String get mode;
+
+  /// No description provided for @configure.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure'**
+  String get configure;
+
+  /// No description provided for @proximity.
+  ///
+  /// In en, this message translates to:
+  /// **'Proximity'**
+  String get proximity;
+
+  /// No description provided for @light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get light;
+
+  /// No description provided for @lux.
+  ///
+  /// In en, this message translates to:
+  /// **'Lux'**
+  String get lux;
 }
 
 class _AppLocalizationsDelegate
