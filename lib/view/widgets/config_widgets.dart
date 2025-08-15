@@ -155,19 +155,20 @@ class ConfigDropdownItem extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: options.map((option) {
-              return RadioListTile<String>(
-                title: Text(option.displayName),
-                value: option.value,
-                groupValue: selectedValue,
-                onChanged: (String? value) {
-                  if (value != null) {
-                    onChanged(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-                activeColor: primaryRed,
-                contentPadding: EdgeInsets.zero,
-              );
+              return RadioGroup(
+                  groupValue: selectedValue,
+                  onChanged: (String? value) {
+                    if (value != null) {
+                      onChanged(value);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: RadioListTile<String>(
+                    title: Text(option.displayName),
+                    value: option.value,
+                    activeColor: primaryRed,
+                    contentPadding: EdgeInsets.zero,
+                  ));
             }).toList(),
           ),
           actions: [

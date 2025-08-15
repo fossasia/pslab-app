@@ -42,11 +42,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style:
                   const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           children: [
-            RadioListTile<bool>(
-              title: Text(appLocalizations.txtFormat),
-              value: true,
+            RadioGroup(
               groupValue: isTxtFormatSelected,
-              activeColor: primaryRed,
               onChanged: (bool? value) {
                 setState(
                   () {
@@ -58,12 +55,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 );
               },
+              child: RadioListTile<bool>(
+                  title: Text(appLocalizations.txtFormat),
+                  value: true,
+                  activeColor: primaryRed),
             ),
-            RadioListTile<bool>(
-              title: Text(appLocalizations.csvFormat),
-              value: true,
+            RadioGroup(
               groupValue: isCsvFormatSelected,
-              activeColor: primaryRed,
               onChanged: (bool? value) {
                 setState(
                   () {
@@ -75,6 +73,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 );
               },
+              child: RadioListTile<bool>(
+                title: Text(appLocalizations.csvFormat),
+                value: true,
+                activeColor: primaryRed,
+              ),
             ),
             Align(
               alignment: Alignment.bottomRight,

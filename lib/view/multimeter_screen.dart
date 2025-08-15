@@ -143,7 +143,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                             Transform.scale(
                                               scale: 0.75,
                                               child: Switch(
-                                                activeColor:
+                                                activeThumbColor:
                                                     multimeterBorderBlack,
                                                 value: provider.isSwitchChecked,
                                                 onChanged: (bool value) {},
