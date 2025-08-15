@@ -243,13 +243,9 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Radio<bool>(
-                      activeColor: radioButtonActiveColor,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: true,
+                    RadioGroup(
                       groupValue:
                           oscilloscopeStateProvider.isInBuiltMICSelected,
-                      toggleable: true,
                       onChanged: (bool? value) {
                         setState(
                           () {
@@ -276,6 +272,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                           },
                         );
                       },
+                      child: Radio<bool>(
+                        activeColor: radioButtonActiveColor,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        value: true,
+                        toggleable: true,
+                      ),
                     ),
                     Text(
                       appLocalizations.inBuiltMic,
@@ -286,12 +288,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         fontStyle: FontStyle.normal,
                       ),
                     ),
-                    Radio<bool>(
-                      activeColor: radioButtonActiveColor,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: true,
+                    RadioGroup(
                       groupValue: oscilloscopeStateProvider.isMICSelected,
-                      toggleable: true,
                       onChanged: (bool? value) {
                         setState(
                           () {
@@ -309,6 +307,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                           },
                         );
                       },
+                      child: Radio<bool>(
+                        activeColor: radioButtonActiveColor,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        value: true,
+                        toggleable: true,
+                      ),
                     ),
                     Text(
                       appLocalizations.pslabMic,
