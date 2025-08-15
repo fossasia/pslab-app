@@ -105,8 +105,8 @@ jobs:
 
           echo "Copying new build files"
 
-          find ../build/app/outputs/flutter-apk -type f \( -name '*.apk' -o -name '*.aab' \) -exec cp -v {} . \;
-          find ../build/app/outputs/bundle -type f \( -name '*.apk' -o -name '*.aab' \) -exec cp -v {} . \;
+          find ../build/app/outputs/flutter-apk -type f \( -name '*release.apk' -o -name '*release.aab' \) -exec cp -v {} . \;
+          find ../build/app/outputs/bundle -type f \( -name '*release.apk' -o -name '*release.aab' \) -exec cp -v {} . \;
 
           ls
 
