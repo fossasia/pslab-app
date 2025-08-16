@@ -2110,18 +2110,6 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to delete this file?'**
   String get deleteHint;
 
-  /// No description provided for @documentationLink.
-  ///
-  /// In en, this message translates to:
-  /// **'https://docs.pslab.io/'**
-  String get documentationLink;
-
-  /// No description provided for @documentationError.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open the documentation link'**
-  String get documentationError;
-
   /// No description provided for @deleteFile.
   ///
   /// In en, this message translates to:
@@ -2320,6 +2308,18 @@ abstract class AppLocalizations {
   /// **'Please provide the maximum limit of lux value to be recorded'**
   String get accelerometerHighLimitHint;
 
+  /// No description provided for @soundmeterSnackBarMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to access sound sensor'**
+  String get soundmeterSnackBarMessage;
+
+  /// No description provided for @dangerous.
+  ///
+  /// In en, this message translates to:
+  /// **'Dangerous'**
+  String get dangerous;
+
   /// No description provided for @roboticArmIntro.
   ///
   /// In en, this message translates to:
@@ -2331,6 +2331,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
   String get roboticArmConnection;
+
+  /// No description provided for @documentationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://docs.pslab.io/'**
+  String get documentationLink;
+
+  /// No description provided for @documentationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the documentation link'**
+  String get documentationError;
 
   /// No description provided for @autoscan.
   ///
