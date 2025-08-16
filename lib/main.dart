@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
@@ -46,39 +47,44 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _preCacheImages(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
       builder: (context, child) {
-        registerAppLocalizations(AppLocalizations.of(context)!);
-        getIt<BoardStateProvider>().initialize();
-        return child!;
-      },
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const InstrumentsScreen(),
-        '/oscilloscope': (context) => const OscilloscopeScreen(),
-        '/multimeter': (context) => const MultimeterScreen(),
-        '/waveGenerator': (context) => const WaveGeneratorScreen(),
-        '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
-        '/powerSource': (context) => const PowerSourceScreen(),
-        '/connectDevice': (context) => const ConnectDeviceScreen(),
-        '/faq': (context) => FAQScreen(),
-        '/settings': (context) => const SettingsScreen(),
-        '/aboutUs': (context) => const AboutUsScreen(),
-        '/softwareLicenses': (context) => SoftwareLicensesScreen(),
-        '/accelerometer': (context) => const AccelerometerScreen(),
-        '/gyroscope': (context) => const GyroscopeScreen(),
-        '/roboticArm': (context) => const RoboticArmScreen(),
-        '/luxmeter': (context) => const LuxMeterScreen(),
-        '/barometer': (context) => const BarometerScreen(),
-        '/soundmeter': (context) => const SoundMeterScreen(),
-        '/thermometer': (context) => const ThermometerScreen(),
-        '/sensors': (context) => const SensorsScreen()
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+            registerAppLocalizations(AppLocalizations.of(context)!);
+            getIt<BoardStateProvider>().initialize();
+            return child!;
+          },
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const InstrumentsScreen(),
+            '/oscilloscope': (context) => const OscilloscopeScreen(),
+            '/multimeter': (context) => const MultimeterScreen(),
+            '/waveGenerator': (context) => const WaveGeneratorScreen(),
+            '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
+            '/powerSource': (context) => const PowerSourceScreen(),
+            '/connectDevice': (context) => const ConnectDeviceScreen(),
+            '/faq': (context) => FAQScreen(),
+            '/settings': (context) => const SettingsScreen(),
+            '/aboutUs': (context) => const AboutUsScreen(),
+            '/softwareLicenses': (context) => SoftwareLicensesScreen(),
+            '/accelerometer': (context) => const AccelerometerScreen(),
+            '/gyroscope': (context) => const GyroscopeScreen(),
+            '/roboticArm': (context) => const RoboticArmScreen(),
+            '/luxmeter': (context) => const LuxMeterScreen(),
+            '/barometer': (context) => const BarometerScreen(),
+            '/soundmeter': (context) => const SoundMeterScreen(),
+            '/thermometer': (context) => const ThermometerScreen(),
+            '/sensors': (context) => const SensorsScreen()
+          },
+        );
       },
     );
   }

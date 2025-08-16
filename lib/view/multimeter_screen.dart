@@ -143,7 +143,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                             Transform.scale(
                                               scale: 0.75,
                                               child: Switch(
-                                                activeColor:
+                                                activeThumbColor:
                                                     multimeterBorderBlack,
                                                 value: provider.isSwitchChecked,
                                                 onChanged: (bool value) {},
@@ -194,7 +194,16 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                             ),
                           ],
                         ),
-                        MultimeterKnob(),
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: MultimeterKnob(),
+                          ),
+                        ),
                       ],
                     ),
                   ),
