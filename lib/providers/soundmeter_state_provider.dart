@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:flutter/foundation.dart';
@@ -18,13 +19,20 @@ class SoundMeterStateProvider extends ChangeNotifier {
   AudioJack? _audioJack;
   double _startTime = 0;
   double _currentTime = 0;
-  final int _maxLength = 50;
+  final int _chartMaxLength = 50;
   double _dbMin = 0;
   double _dbMax = 0;
   double _dbSum = 0;
   int _dataCount = 0;
+  bool _isRecording = false;
+  List<List<dynamic>> _recordedData = [];
+  bool get isRecording => _isRecording;
 
-  void initializeSensors() async {
+  Function(String)? onSensorError;
+
+  void initializeSensors({Function(String)? onError}) async {
+    onSensorError = onError;
+
     try {
       _audioJack = AudioJack();
       await _audioJack!.initialize();
@@ -50,7 +58,13 @@ class SoundMeterStateProvider extends ChangeNotifier {
       });
     } catch (e) {
       logger.e("${appLocalizations.soundMeterInitialError} $e");
+      _handleSensorError(e);
     }
+  }
+
+  void _handleSensorError(dynamic error) {
+    onSensorError?.call(appLocalizations.soundmeterSnackBarMessage);
+    logger.e("${appLocalizations.soundMeterInitialError} $error");
   }
 
   double _calculateDecibels(List<double> audioData) {
@@ -87,11 +101,22 @@ class SoundMeterStateProvider extends ChangeNotifier {
   void _updateData() {
     final db = _currentDb;
     final time = _currentTime;
+    if (_isRecording) {
+      final now = DateTime.now();
+      final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+      _recordedData.add([
+        now.millisecondsSinceEpoch.toString(),
+        dateFormat.format(now),
+        db.toStringAsFixed(2),
+        0,
+        0
+      ]);
+    }
     _dbData.add(db);
     _timeData.add(time);
     _dbSum += db;
     _dataCount++;
-    if (_dbData.length > _maxLength) {
+    if (_dbData.length > _chartMaxLength) {
       final removedValue = _dbData.removeAt(0);
       _timeData.removeAt(0);
       _dbSum -= removedValue;
@@ -106,6 +131,20 @@ class SoundMeterStateProvider extends ChangeNotifier {
       dbChartData.add(FlSpot(_timeData[i], _dbData[i]));
     }
     notifyListeners();
+  }
+
+  void startRecording() {
+    _isRecording = true;
+    _recordedData = [
+      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']
+    ];
+    notifyListeners();
+  }
+
+  List<List<dynamic>> stopRecording() {
+    _isRecording = false;
+    notifyListeners();
+    return _recordedData;
   }
 
   double getCurrentDb() => _currentDb;

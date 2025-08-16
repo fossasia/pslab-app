@@ -237,6 +237,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
 
           if (yValue > maxY) maxY = yValue;
           if (yValue < minY) minY = yValue;
+
           if (relativeTime > maxX) maxX = relativeTime;
         }
       }
