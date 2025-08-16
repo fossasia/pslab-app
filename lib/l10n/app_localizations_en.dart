@@ -374,6 +374,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pwm => 'pwm';
 
   @override
+  String get waveGeneratorIntro =>
+      'The wave generator can be used to generate different types of waves like Sine wave, square wave and saw-tooth wave allow us to change their characteristics like frequency, phase and duty. It also allows us to produce PWM signals having different phase and duty.';
+
+  @override
+  String get sineWaveCaption => 'To generate Sine wave or Saw-Tooth wave:';
+
+  @override
+  String get sineWaveBulletPoint1 =>
+      'Connect the Wave pins S1 and S2 to the channel pins CH1, CH2 as shown in the above figure.';
+
+  @override
+  String get sineWaveBulletPoint2 =>
+      'Select the Wave1 button for S1 pin and Wave2 button for S2 pin.';
+
+  @override
+  String get sineWaveBulletPoint3 =>
+      'Press Sine image button for Sine wave and Saw-Tooth image button for Saw-Tooth wave.';
+
+  @override
+  String get sineWaveBulletPoint4 =>
+      'Set their respective frequencies and phase difference(optional) using buttons in waveform panel.';
+
+  @override
+  String get sineWaveBulletPoint5 =>
+      'Press the View button to view the waves in oscilloscope.';
+
+  @override
+  String get squareWaveCaption => 'To generate Square wave:';
+
+  @override
+  String get squareWaveBulletPoint1 =>
+      'Connect the Wave pins SQ1 to the channel pin CH1 as shown in the above figure.';
+
+  @override
+  String get squareWaveBulletPoint2 =>
+      'Ensure the mode is selected to the Square, if not press the mode button to switch to Square mode.';
+
+  @override
+  String get squareWaveBulletPoint3 => 'Select the SQ1 button';
+
+  @override
+  String get squareWaveBulletPoint4 => 'Set its Frequency and Duty Cycle';
+
+  @override
+  String get squareWaveBulletPoint5 =>
+      'Press the View button to view the square wave in oscilloscope.';
+
+  @override
+  String get pwmCaption => 'Similarly, to produce four different PWM signals:';
+
+  @override
+  String get pwmBulletPoint1 =>
+      'Switch over to PWM mode(In this mode S1 and S2 pin will be disabled).';
+
+  @override
+  String get pwmBulletPoint2 => 'Set the common frequency for all the SQ pins.';
+
+  @override
+  String get pwmBulletPoint3 => 'Set the duty and phase for all the SQ pins.';
+
+  @override
+  String get pwmBulletPoint4 =>
+      'Press View button to generate the PWM signals.';
+
+  @override
   String get analyze => 'Analyze';
 
   @override
