@@ -2032,6 +2032,66 @@ abstract class AppLocalizations {
   /// **'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.'**
   String get baroMeterBulletPoint4;
 
+  /// No description provided for @magnetometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnetometer error:'**
+  String get magnetometerError;
+
+  /// No description provided for @accelerometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Accelerometer error:'**
+  String get accelerometerError;
+
+  /// No description provided for @compassTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get compassTitle;
+
+  /// No description provided for @parallelToGround.
+  ///
+  /// In en, this message translates to:
+  /// **'Select axes parallel to ground'**
+  String get parallelToGround;
+
+  /// No description provided for @thermometerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermometer'**
+  String get thermometerTitle;
+
+  /// No description provided for @thermometerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermometer instrument is used to measure ambient temprature. It can be measured using inbuilt ambient temprature sensor or through SHT21.'**
+  String get thermometerIntro;
+
+  /// No description provided for @celsius.
+  ///
+  /// In en, this message translates to:
+  /// **'°C'**
+  String get celsius;
+
+  /// No description provided for @temperatureSensorError.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature sensor error:'**
+  String get temperatureSensorError;
+
+  /// No description provided for @temperatureSensorInitialError.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature sensor initialization error:'**
+  String get temperatureSensorInitialError;
+
+  /// No description provided for @temperatureSensorUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient temperature sensor is not available on this device'**
+  String get temperatureSensorUnavailableMessage;
+
   /// No description provided for @sharingMessage.
   ///
   /// In en, this message translates to:
@@ -2049,18 +2109,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this file?'**
   String get deleteHint;
-
-  /// No description provided for @documentationLink.
-  ///
-  /// In en, this message translates to:
-  /// **'https://docs.pslab.io/'**
-  String get documentationLink;
-
-  /// No description provided for @documentationError.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open the documentation link'**
-  String get documentationError;
 
   /// No description provided for @deleteFile.
   ///
@@ -2260,6 +2308,18 @@ abstract class AppLocalizations {
   /// **'Please provide the maximum limit of lux value to be recorded'**
   String get accelerometerHighLimitHint;
 
+  /// No description provided for @soundmeterSnackBarMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to access sound sensor'**
+  String get soundmeterSnackBarMessage;
+
+  /// No description provided for @dangerous.
+  ///
+  /// In en, this message translates to:
+  /// **'Dangerous'**
+  String get dangerous;
+
   /// No description provided for @roboticArmIntro.
   ///
   /// In en, this message translates to:
@@ -2271,6 +2331,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
   String get roboticArmConnection;
+
+  /// No description provided for @documentationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://docs.pslab.io/'**
+  String get documentationLink;
+
+  /// No description provided for @documentationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the documentation link'**
+  String get documentationError;
+
+  /// No description provided for @autoscan.
+  ///
+  /// In en, this message translates to:
+  /// **'Autoscan'**
+  String get autoscan;
+
+  /// No description provided for @selectSensor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Sensor'**
+  String get selectSensor;
+
+  /// No description provided for @notConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Connected'**
+  String get notConnected;
+
+  /// No description provided for @autoScanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Autoscan button to find connected sensors to PSLab device'**
+  String get autoScanHint;
+
+  /// No description provided for @noSensorDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No sensors detected'**
+  String get noSensorDetected;
+
+  /// No description provided for @screenNotImplemented.
+  ///
+  /// In en, this message translates to:
+  /// **'screen not implemented yet'**
+  String get screenNotImplemented;
+
+  /// No description provided for @timeGap.
+  ///
+  /// In en, this message translates to:
+  /// **'Time gap'**
+  String get timeGap;
+
+  /// No description provided for @pslabNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'PSLab not connected'**
+  String get pslabNotConnected;
+
+  /// No description provided for @clearData.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Data'**
+  String get clearData;
+
+  /// No description provided for @numberOfSampes.
+  ///
+  /// In en, this message translates to:
+  /// **'No. of samples'**
+  String get numberOfSampes;
+
+  /// No description provided for @pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Pressure'**
+  String get pressure;
+
+  /// No description provided for @temperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature'**
+  String get temperature;
+
+  /// No description provided for @bmp180.
+  ///
+  /// In en, this message translates to:
+  /// **'BMP180'**
+  String get bmp180;
+
+  /// No description provided for @plot.
+  ///
+  /// In en, this message translates to:
+  /// **'Plot'**
+  String get plot;
+
+  /// No description provided for @dataCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Data cleared successfully'**
+  String get dataCleared;
+
+  /// No description provided for @rawData.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw Data'**
+  String get rawData;
+
+  /// No description provided for @pressureUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pa'**
+  String get pressureUnitLabel;
+
+  /// No description provided for @temperatureUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'°C'**
+  String get temperatureUnitLabel;
+
+  /// No description provided for @altitudeUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get altitudeUnitLabel;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// No description provided for @notAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get notAvailable;
+
+  /// No description provided for @estimated.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated'**
+  String get estimated;
 }
 
 class _AppLocalizationsDelegate

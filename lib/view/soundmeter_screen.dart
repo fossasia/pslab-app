@@ -8,7 +8,10 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/soundmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/others/csv_service.dart';
+import 'package:pslab/view/logged_data_screen.dart';
 import '../providers/soundmeter_config_provider.dart';
+import '../constants.dart';
 import '../theme/colors.dart';
 
 class SoundMeterScreen extends StatefulWidget {
@@ -19,8 +22,11 @@ class SoundMeterScreen extends StatefulWidget {
 
 class _SoundMeterScreenState extends State<SoundMeterScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  final CsvService _csvService = CsvService();
+  late SoundMeterStateProvider _provider;
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
+
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -71,7 +77,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       if (value != null) {
         switch (value) {
           case 'show_logged_data':
-            // TODO
+            _navigateToLoggedData();
             break;
           case 'sound_meter_config':
             _navigateToConfig();
@@ -93,54 +99,182 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     );
   }
 
+  Future<void> _navigateToLoggedData() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoggedDataScreen(
+          instrumentName: 'soundmeter',
+          appBarName: 'Sound Meter',
+          instrumentIcon: instrumentIcons[15],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_provider.isRecording) {
+      final data = _provider.stopRecording();
+      await _showSaveFileDialog(data);
+    } else {
+      _provider.startRecording();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${appLocalizations.recordingStarted}...',
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
+    final TextEditingController filenameController = TextEditingController();
+    final String defaultFilename = '';
+    filenameController.text = defaultFilename;
+
+    final String? fileName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(appLocalizations.saveRecording),
+          content: TextField(
+            controller: filenameController,
+            decoration: InputDecoration(
+              hintText: appLocalizations.enterFileName,
+              labelText: appLocalizations.fileName,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(appLocalizations.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, filenameController.text);
+              },
+              child: Text(appLocalizations.save),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (fileName != null) {
+      _csvService.writeMetaData('soundmeter', data);
+      final file = await _csvService.saveCsvFile('soundmeter', fileName, data);
+      if (mounted) {
+        if (file != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                appLocalizations.failedToSave,
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _provider = SoundMeterStateProvider();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _provider.initializeSensors(onError: _showSensorErrorSnackbar);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _provider.dispose();
+    super.dispose();
+  }
+
+  void _showSensorErrorSnackbar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+          duration: const Duration(seconds: 4),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<SoundMeterStateProvider>(
-          create: (_) => SoundMeterStateProvider()..initializeSensors(),
-        ),
-      ],
+    return ChangeNotifierProvider<SoundMeterStateProvider>.value(
+      value: _provider,
       child: Stack(
         children: [
-          CommonScaffold(
-            title: appLocalizations.soundMeterTitle,
-            onGuidePressed: _showInstrumentGuide,
-            onOptionsPressed: _showOptionsMenu,
-            body: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final isLargeScreen = constraints.maxWidth > 900;
-                  if (isLargeScreen) {
-                    return Row(
-                      children: [
-                        const Expanded(
-                          flex: 35,
-                          child: SoundMeterCard(),
-                        ),
-                        Expanded(
-                          flex: 65,
-                          child: _buildChartSection(),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      children: [
-                        const Expanded(
-                          flex: 45,
-                          child: SoundMeterCard(),
-                        ),
-                        Expanded(
-                          flex: 55,
-                          child: _buildChartSection(),
-                        ),
-                      ],
-                    );
-                  }
-                },
-              ),
-            ),
+          Consumer<SoundMeterStateProvider>(
+            builder: (context, provider, child) {
+              return CommonScaffold(
+                title: appLocalizations.soundMeterTitle,
+                onGuidePressed: _showInstrumentGuide,
+                onOptionsPressed: _showOptionsMenu,
+                onRecordPressed: _toggleRecording,
+                isRecording: provider.isRecording,
+                body: SafeArea(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isLargeScreen = constraints.maxWidth > 900;
+                      if (isLargeScreen) {
+                        return Row(
+                          children: [
+                            const Expanded(
+                              flex: 35,
+                              child: SoundMeterCard(),
+                            ),
+                            Expanded(
+                              flex: 65,
+                              child: _buildChartSection(),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            const Expanded(
+                              flex: 45,
+                              child: SoundMeterCard(),
+                            ),
+                            Expanded(
+                              flex: 55,
+                              child: _buildChartSection(),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
           ),
           if (_showGuide)
             InstrumentOverviewDrawer(
@@ -318,7 +452,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
                     color: soundMeterSafeLimitColor,
                     fontSize: 12,
                   ),
-                  labelResolver: (line) => '"Dangerous"',
+                  labelResolver: (line) => appLocalizations.dangerous,
                 ),
               ),
             ],

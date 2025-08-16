@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
@@ -15,11 +16,14 @@ import 'package:pslab/view/multimeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/robotic_arm_screen.dart';
+import 'package:pslab/view/sensors_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
+import 'package:pslab/view/compass_screen.dart';
 import 'package:pslab/theme/app_theme.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
+import 'package:pslab/view/thermometer_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
 import 'constants.dart';
 
@@ -44,37 +48,45 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _preCacheImages(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
       builder: (context, child) {
-        registerAppLocalizations(AppLocalizations.of(context)!);
-        getIt<BoardStateProvider>().initialize();
-        return child!;
-      },
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const InstrumentsScreen(),
-        '/oscilloscope': (context) => const OscilloscopeScreen(),
-        '/multimeter': (context) => const MultimeterScreen(),
-        '/waveGenerator': (context) => const WaveGeneratorScreen(),
-        '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
-        '/powerSource': (context) => const PowerSourceScreen(),
-        '/connectDevice': (context) => const ConnectDeviceScreen(),
-        '/faq': (context) => FAQScreen(),
-        '/settings': (context) => const SettingsScreen(),
-        '/aboutUs': (context) => const AboutUsScreen(),
-        '/softwareLicenses': (context) => SoftwareLicensesScreen(),
-        '/accelerometer': (context) => const AccelerometerScreen(),
-        '/gyroscope': (context) => const GyroscopeScreen(),
-        '/roboticArm': (context) => const RoboticArmScreen(),
-        '/luxmeter': (context) => const LuxMeterScreen(),
-        '/barometer': (context) => const BarometerScreen(),
-        '/soundmeter': (context) => const SoundMeterScreen(),
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+            registerAppLocalizations(AppLocalizations.of(context)!);
+            getIt<BoardStateProvider>().initialize();
+            return child!;
+          },
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const InstrumentsScreen(),
+            '/oscilloscope': (context) => const OscilloscopeScreen(),
+            '/multimeter': (context) => const MultimeterScreen(),
+            '/waveGenerator': (context) => const WaveGeneratorScreen(),
+            '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
+            '/powerSource': (context) => const PowerSourceScreen(),
+            '/compass': (context) => const CompassScreen(),
+            '/connectDevice': (context) => const ConnectDeviceScreen(),
+            '/faq': (context) => FAQScreen(),
+            '/settings': (context) => const SettingsScreen(),
+            '/aboutUs': (context) => const AboutUsScreen(),
+            '/softwareLicenses': (context) => SoftwareLicensesScreen(),
+            '/accelerometer': (context) => const AccelerometerScreen(),
+            '/gyroscope': (context) => const GyroscopeScreen(),
+            '/roboticArm': (context) => const RoboticArmScreen(),
+            '/luxmeter': (context) => const LuxMeterScreen(),
+            '/barometer': (context) => const BarometerScreen(),
+            '/soundmeter': (context) => const SoundMeterScreen(),
+            '/thermometer': (context) => const ThermometerScreen(),
+            '/sensors': (context) => const SensorsScreen()
+          },
+        );
       },
     );
   }

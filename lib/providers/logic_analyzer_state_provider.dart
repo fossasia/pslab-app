@@ -77,10 +77,10 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     channelSelectSpinner2 = channelNames[1];
     channelSelectSpinner3 = channelNames[2];
     channelSelectSpinner4 = channelNames[3];
-    edgeSelectSpinner1 = appLocalizations.analysisOptionEveryEdge;
-    edgeSelectSpinner2 = appLocalizations.analysisOptionEveryEdge;
-    edgeSelectSpinner3 = appLocalizations.analysisOptionEveryEdge;
-    edgeSelectSpinner4 = appLocalizations.analysisOptionEveryEdge;
+    edgeSelectSpinner1 = appLocalizations.analysisOptionEveryEdge.toUpperCase();
+    edgeSelectSpinner2 = appLocalizations.analysisOptionEveryEdge.toUpperCase();
+    edgeSelectSpinner3 = appLocalizations.analysisOptionEveryEdge.toUpperCase();
+    edgeSelectSpinner4 = appLocalizations.analysisOptionEveryEdge.toUpperCase();
 
     maxY = singleChannelAxisMax;
     minY = singleChannelAxisMin;
