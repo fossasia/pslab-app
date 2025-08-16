@@ -760,6 +760,156 @@ abstract class AppLocalizations {
   /// **'Produce Sound'**
   String get produceSound;
 
+  /// No description provided for @frequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequency;
+
+  /// No description provided for @phaseOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase Offset'**
+  String get phaseOffset;
+
+  /// No description provided for @unitDeg.
+  ///
+  /// In en, this message translates to:
+  /// **'°'**
+  String get unitDeg;
+
+  /// No description provided for @unitPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'%'**
+  String get unitPercentage;
+
+  /// No description provided for @sine.
+  ///
+  /// In en, this message translates to:
+  /// **'Sine'**
+  String get sine;
+
+  /// No description provided for @tri.
+  ///
+  /// In en, this message translates to:
+  /// **'Tri'**
+  String get tri;
+
+  /// No description provided for @pwm.
+  ///
+  /// In en, this message translates to:
+  /// **'pwm'**
+  String get pwm;
+
+  /// No description provided for @waveGeneratorIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The wave generator can be used to generate different types of waves like Sine wave, square wave and saw-tooth wave allow us to change their characteristics like frequency, phase and duty. It also allows us to produce PWM signals having different phase and duty.'**
+  String get waveGeneratorIntro;
+
+  /// No description provided for @sineWaveCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate Sine wave or Saw-Tooth wave:'**
+  String get sineWaveCaption;
+
+  /// No description provided for @sineWaveBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the Wave pins S1 and S2 to the channel pins CH1, CH2 as shown in the above figure.'**
+  String get sineWaveBulletPoint1;
+
+  /// No description provided for @sineWaveBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the Wave1 button for S1 pin and Wave2 button for S2 pin.'**
+  String get sineWaveBulletPoint2;
+
+  /// No description provided for @sineWaveBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Press Sine image button for Sine wave and Saw-Tooth image button for Saw-Tooth wave.'**
+  String get sineWaveBulletPoint3;
+
+  /// No description provided for @sineWaveBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set their respective frequencies and phase difference(optional) using buttons in waveform panel.'**
+  String get sineWaveBulletPoint4;
+
+  /// No description provided for @sineWaveBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the View button to view the waves in oscilloscope.'**
+  String get sineWaveBulletPoint5;
+
+  /// No description provided for @squareWaveCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate Square wave:'**
+  String get squareWaveCaption;
+
+  /// No description provided for @squareWaveBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the Wave pins SQ1 to the channel pin CH1 as shown in the above figure.'**
+  String get squareWaveBulletPoint1;
+
+  /// No description provided for @squareWaveBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure the mode is selected to the Square, if not press the mode button to switch to Square mode.'**
+  String get squareWaveBulletPoint2;
+
+  /// No description provided for @squareWaveBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the SQ1 button'**
+  String get squareWaveBulletPoint3;
+
+  /// No description provided for @squareWaveBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set its Frequency and Duty Cycle'**
+  String get squareWaveBulletPoint4;
+
+  /// No description provided for @squareWaveBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the View button to view the square wave in oscilloscope.'**
+  String get squareWaveBulletPoint5;
+
+  /// No description provided for @pwmCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Similarly, to produce four different PWM signals:'**
+  String get pwmCaption;
+
+  /// No description provided for @pwmBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch over to PWM mode(In this mode S1 and S2 pin will be disabled).'**
+  String get pwmBulletPoint1;
+
+  /// No description provided for @pwmBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the common frequency for all the SQ pins.'**
+  String get pwmBulletPoint2;
+
+  /// No description provided for @pwmBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the duty and phase for all the SQ pins.'**
+  String get pwmBulletPoint3;
+
+  /// No description provided for @pwmBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Press View button to generate the PWM signals.'**
+  String get pwmBulletPoint4;
+
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:
