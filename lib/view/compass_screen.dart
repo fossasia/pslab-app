@@ -180,15 +180,17 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Radio<String>(
-              value: axis,
+            RadioGroup(
               groupValue: compassProvider.selectedAxis,
               onChanged: (String? value) {
                 if (value != null) {
                   compassProvider.onAxisSelected(value);
                 }
               },
-              activeColor: radioButtonActiveColor,
+              child: Radio<String>(
+                value: axis,
+                activeColor: radioButtonActiveColor,
+              ),
             ),
             Text(
               label,
