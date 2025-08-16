@@ -20,6 +20,7 @@ class BoardStateProvider extends ChangeNotifier {
   int pslabVersion = 0;
   late String exportFormat;
   bool autoStart = true;
+  bool _isProcessing = false;
 
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
@@ -27,16 +28,22 @@ class BoardStateProvider extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
+    if (_isProcessing) return;
+    _isProcessing = true;
     await scienceLabCommon.initialize();
     pslabIsConnected = await scienceLabCommon.openDevice();
     setPSLabVersionIDs();
+    _isProcessing = false;
     if (autoStart) {
       UsbSerial.usbEventStream?.listen(
         (UsbEvent usbEvent) async {
           if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
+            if (_isProcessing) return;
+            _isProcessing = true;
             if (await attemptToConnectPSLab()) {
               pslabIsConnected = await scienceLabCommon.openDevice();
               setPSLabVersionIDs();
+              _isProcessing = false;
             }
           } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
               !scienceLabCommon.isWiFiConnected()) {
