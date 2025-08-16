@@ -340,6 +340,108 @@ abstract class AppLocalizations {
   /// **'+/-160V'**
   String get yAxisRange160V;
 
+  /// No description provided for @oscilloscopeBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Oscilloscope in PSLab gives out many of the functionalities of a commercially available Oscilloscope. It has 4-channels with a MIC in, 2 Sine wave generators and 4 PWM square wave generators, can change the timebase, analyses signal and does Sine and Square wave fitting and plots channel to channel voltage.'**
+  String get oscilloscopeBulletPoint1;
+
+  /// No description provided for @oscilloscopeBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'To read from a Sine wave or a square wave, you can connect the Output wave pin and a Channel to the Oscilloscope as follows.'**
+  String get oscilloscopeBulletPoint2;
+
+  /// No description provided for @oscilloscopeBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Above shown figure has a connection from SQ1 to CH1 and SI1 to CH2.'**
+  String get oscilloscopeBulletPoint3;
+
+  /// No description provided for @oscilloscopeBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Once you have generated a wave from the Wave Generator instrument connect the relevant pins and observe it from the Oscilloscope by ticking the relevant channel in Channel parameters. If you are using CH1 pin, select CH1 from channel parameters.'**
+  String get oscilloscopeBulletPoint4;
+
+  /// No description provided for @channelParameters.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel Parameters'**
+  String get channelParameters;
+
+  /// No description provided for @channelParametersIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'From this Setting, you can change the Channel that needs to be osbserved from the plot.'**
+  String get channelParametersIntro;
+
+  /// No description provided for @channelParametersBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick the check boxes to plot the relevant Channel.'**
+  String get channelParametersBulletPoint1;
+
+  /// No description provided for @channelParametersBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Can change the Y-axis voltage range in the plot using the spinner next to the Channel.'**
+  String get channelParametersBulletPoint2;
+
+  /// No description provided for @channelParametersBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'For the fourth Channel, you can choose either In-built microphone or an external mic. If you are to use an external microphone, the connection is as follows.'**
+  String get channelParametersBulletPoint3;
+
+  /// No description provided for @channelParametersBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'The Positive terminal of the MIC should be connected with the MIC pin and negative terminal should be conneted with the GND pin of PSLab device.'**
+  String get channelParametersBulletPoint4;
+
+  /// No description provided for @timebaseIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'This setting gives you the control of the range of Time axis(X-axis).'**
+  String get timebaseIntro;
+
+  /// No description provided for @timebaseBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'The timebase slidder can be used to increase or decrease the signal capturing time. Can change the range from 875.0 micro seconds to 102.4 milli seconds.'**
+  String get timebaseBulletPoint1;
+
+  /// No description provided for @timebaseBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'This will be useful to capture periodic wave signals in the given range for analysis.'**
+  String get timebaseBulletPoint2;
+
+  /// No description provided for @timebaseBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use the trigger to set voltage value, so that when the signal exceeds the given value, plot will halt.'**
+  String get timebaseBulletPoint3;
+
+  /// No description provided for @dataAnalysisBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Using this Setting, the mathematical function of the analysed signal can be found. Can choose the Wave type from Sine or Square and the Channel that needs to be analyzed.'**
+  String get dataAnalysisBulletPoint1;
+
+  /// No description provided for @dataAnalysisBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Furthermore, analyzed signal\'s Fourier transform can be observed by checking Fourier Transforms check box.'**
+  String get dataAnalysisBulletPoint2;
+
+  /// No description provided for @xyPlotBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'This is used to plot the Channel to Channel voltage in a X-Y plot having voltage as the unit for the both axes relevant for the corresponding Channels.'**
+  String get xyPlotBulletPoint1;
+
   /// No description provided for @channel1.
   ///
   /// In en, this message translates to:
@@ -687,6 +789,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PCS'**
   String get pinPCS;
+
+  /// No description provided for @powerSourceIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'PSLab device can generate voltages from +5V to -5V at a resolution of 10mV'**
+  String get powerSourceIntro;
+
+  /// No description provided for @powerSourceBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect one wire to PV1 and another wire to GND to generate voltages between +5V to -5V.'**
+  String get powerSourceBulletPoint1;
+
+  /// No description provided for @powerSourceBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Similarly connect wires between PV2 to generate voltages between +3.3V to -3.3V.'**
+  String get powerSourceBulletPoint2;
+
+  /// No description provided for @powerSourceBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Use PV3 pin to generate voltages between 0V to +3.3V.'**
+  String get powerSourceBulletPoint3;
+
+  /// No description provided for @powerSourceBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.'**
+  String get powerSourceBulletPoint4;
 
   /// No description provided for @analog.
   ///
