@@ -5,10 +5,12 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/multimeter_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/multimeter_knob.dart';
 
 class MultimeterScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
+  final multimeterCircuit = 'assets/images/multimeter_circuit.png';
   const MultimeterScreen({super.key});
 
   @override
@@ -17,6 +19,20 @@ class MultimeterScreen extends StatefulWidget {
 
 class _MultimeterScreenState extends State<MultimeterScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  bool _showGuide = false;
+
+  void _hideInstrumentGuide() {
+    setState(() {
+      _showGuide = false;
+    });
+  }
+
+  List<Widget> _getMultimeterContent() {
+    return [
+      InstrumentImage(imagePath: widget.multimeterCircuit),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -27,205 +43,227 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
       ],
       child: Consumer<MultimeterStateProvider>(
         builder: (context, provider, _) {
-          return CommonScaffold(
-            title: appLocalizations.multimeterTitle,
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 23,
-                    child: Container(
-                      margin: const EdgeInsets.all(10),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            width: 1, color: multimeterBorderLightRed),
-                      ),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            flex: 75,
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.only(right: 10, bottom: 10),
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                provider.value,
-                                style: TextStyle(
-                                  fontSize: 50,
-                                  fontStyle: FontStyle.italic,
-                                  fontFamily: 'Digital-7',
-                                  color: multimeterBorderBlack,
-                                ),
-                              ),
-                            ),
+          return Stack(
+            children: [
+              CommonScaffold(
+                title: appLocalizations.multimeterTitle,
+                body: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 23,
+                        child: Container(
+                          margin: const EdgeInsets.all(10),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                width: 1, color: multimeterBorderLightRed),
                           ),
-                          Divider(
-                            height: 1,
-                            color: multimeterDividerColor,
-                          ),
-                          Expanded(
-                            flex: 25,
-                            child: Container(
-                              alignment: Alignment.center,
-                              child: Text(
-                                provider.unit,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 77,
-                    child: Stack(
-                      children: [
-                        Column(
-                          children: [
-                            Expanded(
-                              flex: 47,
-                              child: Container(
-                                width: double.infinity,
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  border: Border.all(
-                                      width: 3, color: multimeterBorderRed),
-                                ),
-                                child: Text(appLocalizations.voltage,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                flex: 75,
+                                child: Container(
+                                  padding: const EdgeInsets.only(
+                                      right: 10, bottom: 10),
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    provider.value,
                                     style: TextStyle(
-                                        fontSize: 15,
-                                        color: multimeterBorderRed,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 53,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 67,
-                                    child: Container(
-                                      height: double.infinity,
-                                      margin: const EdgeInsets.only(
-                                          top: 5,
-                                          left: 10,
-                                          right: 2,
-                                          bottom: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                            width: 3, color: Colors.black),
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              appLocalizations.unitHz,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: multimeterBorderBlack,
-                                                  fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Transform.scale(
-                                              scale: 0.75,
-                                              child: Switch(
-                                                activeThumbColor:
-                                                    multimeterBorderBlack,
-                                                value: provider.isSwitchChecked,
-                                                onChanged: (bool value) {},
-                                              ),
-                                            ),
-                                            Text(
-                                              appLocalizations.countPulse,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: multimeterBorderBlack,
-                                                  fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      fontSize: 50,
+                                      fontStyle: FontStyle.italic,
+                                      fontFamily: 'Digital-7',
+                                      color: multimeterBorderBlack,
                                     ),
                                   ),
-                                  Expanded(
-                                    flex: 33,
-                                    child: Container(
-                                      height: double.infinity,
-                                      margin: const EdgeInsets.only(
-                                          top: 5,
-                                          left: 2,
-                                          right: 10,
-                                          bottom: 10),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                            width: 3,
-                                            color: multimeterBorderBlack),
-                                      ),
-                                      child: Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: Text(appLocalizations.measure,
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: multimeterBorderBlack,
-                                                fontWeight: FontWeight.bold),
-                                            textAlign: TextAlign.center),
-                                      ),
+                                ),
+                              ),
+                              Divider(
+                                height: 1,
+                                color: multimeterDividerColor,
+                              ),
+                              Expanded(
+                                flex: 25,
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    provider.unit,
+                                    style: TextStyle(
+                                      fontSize: 20,
                                     ),
-                                  )
-                                ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 77,
+                        child: Stack(
+                          children: [
+                            Column(
+                              children: [
+                                Expanded(
+                                  flex: 47,
+                                  child: Container(
+                                    width: double.infinity,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      border: Border.all(
+                                          width: 3, color: multimeterBorderRed),
+                                    ),
+                                    child: Text(appLocalizations.voltage,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: multimeterBorderRed,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 53,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 67,
+                                        child: Container(
+                                          height: double.infinity,
+                                          margin: const EdgeInsets.only(
+                                              top: 5,
+                                              left: 10,
+                                              right: 2,
+                                              bottom: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                            border: Border.all(
+                                                width: 3, color: Colors.black),
+                                          ),
+                                          child: Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  appLocalizations.unitHz,
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color:
+                                                          multimeterBorderBlack,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                Transform.scale(
+                                                  scale: 0.75,
+                                                  child: Switch(
+                                                    activeThumbColor:
+                                                        multimeterBorderBlack,
+                                                    value: provider
+                                                        .isSwitchChecked,
+                                                    onChanged: (bool value) {},
+                                                  ),
+                                                ),
+                                                Text(
+                                                  appLocalizations.countPulse,
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color:
+                                                          multimeterBorderBlack,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 33,
+                                        child: Container(
+                                          height: double.infinity,
+                                          margin: const EdgeInsets.only(
+                                              top: 5,
+                                              left: 2,
+                                              right: 10,
+                                              bottom: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                            border: Border.all(
+                                                width: 3,
+                                                color: multimeterBorderBlack),
+                                          ),
+                                          child: Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: Text(
+                                                appLocalizations.measure,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color:
+                                                        multimeterBorderBlack,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                textAlign: TextAlign.center),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: MultimeterKnob(),
                               ),
                             ),
                           ],
                         ),
-                        Positioned(
-                          left: 0,
-                          top: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: MultimeterKnob(),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
+                actions: [
+                  IconButton(
+                    icon: Image.asset(
+                      widget.icRecord,
+                      width: 24,
+                      height: 24,
+                    ),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.info, color: multimeterIconColor),
+                    onPressed: () {
+                      setState(() {
+                        _showGuide = !_showGuide;
+                      });
+                    },
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.more_vert, color: multimeterIconColor),
+                      onPressed: () {}),
                 ],
               ),
-            ),
-            actions: [
-              IconButton(
-                icon: Image.asset(
-                  widget.icRecord,
-                  width: 24,
-                  height: 24,
+              if (_showGuide)
+                InstrumentOverviewDrawer(
+                  instrumentName: appLocalizations.multimeter,
+                  content: _getMultimeterContent(),
+                  onHide: _hideInstrumentGuide,
                 ),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: Icon(Icons.info, color: multimeterIconColor),
-                onPressed: () {},
-              ),
-              IconButton(
-                  icon: Icon(Icons.more_vert, color: multimeterIconColor),
-                  onPressed: () {}),
             ],
           );
         },

@@ -142,6 +142,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yAxisRange160V => '+/-160V';
 
   @override
+  String get oscilloscopeBulletPoint1 =>
+      'Oscilloscope in PSLab gives out many of the functionalities of a commercially available Oscilloscope. It has 4-channels with a MIC in, 2 Sine wave generators and 4 PWM square wave generators, can change the timebase, analyses signal and does Sine and Square wave fitting and plots channel to channel voltage.';
+
+  @override
+  String get oscilloscopeBulletPoint2 =>
+      'To read from a Sine wave or a square wave, you can connect the Output wave pin and a Channel to the Oscilloscope as follows.';
+
+  @override
+  String get oscilloscopeBulletPoint3 =>
+      'Above shown figure has a connection from SQ1 to CH1 and SI1 to CH2.';
+
+  @override
+  String get oscilloscopeBulletPoint4 =>
+      'Once you have generated a wave from the Wave Generator instrument connect the relevant pins and observe it from the Oscilloscope by ticking the relevant channel in Channel parameters. If you are using CH1 pin, select CH1 from channel parameters.';
+
+  @override
+  String get channelParameters => 'Channel Parameters';
+
+  @override
+  String get channelParametersIntro =>
+      'From this Setting, you can change the Channel that needs to be osbserved from the plot.';
+
+  @override
+  String get channelParametersBulletPoint1 =>
+      'Tick the check boxes to plot the relevant Channel.';
+
+  @override
+  String get channelParametersBulletPoint2 =>
+      'Can change the Y-axis voltage range in the plot using the spinner next to the Channel.';
+
+  @override
+  String get channelParametersBulletPoint3 =>
+      'For the fourth Channel, you can choose either In-built microphone or an external mic. If you are to use an external microphone, the connection is as follows.';
+
+  @override
+  String get channelParametersBulletPoint4 =>
+      'The Positive terminal of the MIC should be connected with the MIC pin and negative terminal should be conneted with the GND pin of PSLab device.';
+
+  @override
+  String get timebaseIntro =>
+      'This setting gives you the control of the range of Time axis(X-axis).';
+
+  @override
+  String get timebaseBulletPoint1 =>
+      'The timebase slidder can be used to increase or decrease the signal capturing time. Can change the range from 875.0 micro seconds to 102.4 milli seconds.';
+
+  @override
+  String get timebaseBulletPoint2 =>
+      'This will be useful to capture periodic wave signals in the given range for analysis.';
+
+  @override
+  String get timebaseBulletPoint3 =>
+      'You can use the trigger to set voltage value, so that when the signal exceeds the given value, plot will halt.';
+
+  @override
+  String get dataAnalysisBulletPoint1 =>
+      'Using this Setting, the mathematical function of the analysed signal can be found. Can choose the Wave type from Sine or Square and the Channel that needs to be analyzed.';
+
+  @override
+  String get dataAnalysisBulletPoint2 =>
+      'Furthermore, analyzed signal\'s Fourier transform can be observed by checking Fourier Transforms check box.';
+
+  @override
+  String get xyPlotBulletPoint1 =>
+      'This is used to plot the Channel to Channel voltage in a X-Y plot having voltage as the unit for the both axes relevant for the corresponding Channels.';
+
+  @override
   String get channel1 => 'CH1';
 
   @override
@@ -315,6 +382,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pinPCS => 'PCS';
+
+  @override
+  String get powerSourceIntro =>
+      'PSLab device can generate voltages from +5V to -5V at a resolution of 10mV';
+
+  @override
+  String get powerSourceBulletPoint1 =>
+      'Connect one wire to PV1 and another wire to GND to generate voltages between +5V to -5V.';
+
+  @override
+  String get powerSourceBulletPoint2 =>
+      'Similarly connect wires between PV2 to generate voltages between +3.3V to -3.3V.';
+
+  @override
+  String get powerSourceBulletPoint3 =>
+      'Use PV3 pin to generate voltages between 0V to +3.3V.';
+
+  @override
+  String get powerSourceBulletPoint4 =>
+      'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.';
 
   @override
   String get analog => 'Analog';
