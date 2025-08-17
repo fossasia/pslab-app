@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/power_source_state_provider.dart';
@@ -50,6 +51,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
             children: [
               CommonScaffold(
                 title: appLocalizations.powerSourceTitle,
+                key: const Key(powerSourceScreenTitleKey),
                 body: ScrollConfiguration(
                   behavior: ScrollBehavior(),
                   child: ListView(

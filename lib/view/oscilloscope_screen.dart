@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/channel_parameters_widget.dart';
@@ -117,6 +118,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
             children: [
               CommonScaffold(
                 title: appLocalizations.oscilloscope,
+                key: const Key(oscilloscopeScreenTitleKey),
                 body: SafeArea(
                   minimum: const EdgeInsets.only(right: 0, bottom: 0),
                   child: Container(

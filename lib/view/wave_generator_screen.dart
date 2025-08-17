@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/wave_generator_state_provider.dart';
@@ -81,6 +82,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
             children: [
               CommonScaffold(
                 title: appLocalizations.waveGenerator,
+                key: const Key(waveGeneratorScreenTitleKey),
                 body: SafeArea(
                   child: Container(
                     margin:
