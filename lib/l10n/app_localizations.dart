@@ -2206,6 +2206,18 @@ abstract class AppLocalizations {
   /// **'Select axes parallel to ground'**
   String get parallelToGround;
 
+  /// No description provided for @sharingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing PSLab Data'**
+  String get sharingMessage;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
   /// No description provided for @thermometerTitle.
   ///
   /// In en, this message translates to:
@@ -2241,18 +2253,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ambient temperature sensor is not available on this device'**
   String get temperatureSensorUnavailableMessage;
-
-  /// No description provided for @sharingMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Sharing PSLab Data'**
-  String get sharingMessage;
-
-  /// No description provided for @delete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get delete;
 
   /// No description provided for @deleteHint.
   ///

@@ -1135,6 +1135,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get parallelToGround => 'Select axes parallel to ground';
 
+  @override
+  String get sharingMessage => 'Sharing PSLab Data';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
   String get thermometerTitle => 'Thermometer';
 
   @override
@@ -1154,12 +1161,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get temperatureSensorUnavailableMessage =>
       'Ambient temperature sensor is not available on this device';
-
-  @override
-  String get sharingMessage => 'Sharing PSLab Data';
-
-  @override
-  String get delete => 'Delete';
 
   @override
   String get deleteHint => 'Are you sure you want to delete this file?';
