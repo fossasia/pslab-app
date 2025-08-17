@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/wave_generator_state_provider.dart';
@@ -14,6 +15,8 @@ import 'package:pslab/view/widgets/wave_generator_main_controls.dart';
 class WaveGeneratorScreen extends StatefulWidget {
   final String sineWaveCircuit = 'assets/images/sin_wave_circuit.png';
   final String squareWaveCircuit = 'assets/images/square_wave_circuit.png';
+  final String oscilloscopeIcon = 'assets/icons/icon_oscilloscope_white.png';
+  final String logicAnalyzerIcon = 'assets/icons/icon_logic_analyzer_white.png';
   const WaveGeneratorScreen({super.key});
 
   @override
@@ -66,20 +69,20 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider<WaveGeneratorStateProvider>(
-            create: (_) => WaveGeneratorStateProvider(),
-          ),
-        ],
-        child: Consumer<WaveGeneratorStateProvider>(
-          builder: (context, provider, _) {
-            return Stack(
-              children: [
-                CommonScaffold(
-                  title: appLocalizations.waveGenerator,
-                  body: Container(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<WaveGeneratorStateProvider>(
+          create: (_) => WaveGeneratorStateProvider(),
+        ),
+      ],
+      child: Consumer<WaveGeneratorStateProvider>(
+        builder: (context, provider, _) {
+          return Stack(
+            children: [
+              CommonScaffold(
+                title: appLocalizations.waveGenerator,
+                body: SafeArea(
+                  child: Container(
                     margin:
                         const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
                     child: Column(
@@ -203,43 +206,124 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                       ],
                     ),
                   ),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.play_arrow, color: Colors.white),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.save, color: Colors.white),
-                      onPressed: () {},
-                    ),
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert, color: Colors.white),
-                      onSelected: (value) {
-                        if (value == appLocalizations.showGuide) {
-                          setState(() {
-                            _showGuide = !_showGuide;
-                          });
-                        }
-                      },
-                      itemBuilder: (BuildContext context) => [
-                        PopupMenuItem<String>(
-                          value: appLocalizations.showGuide,
-                          child: Text(appLocalizations.showGuide),
-                        ),
-                      ],
-                    )
-                  ],
                 ),
-                if (_showGuide)
-                  InstrumentOverviewDrawer(
-                    instrumentName: appLocalizations.waveGenerator,
-                    content: _getWaveGeneratorContent(),
-                    onHide: _hideInstrumentGuide,
+                actions: [
+                  PopupMenuButton<String>(
+                    color: primaryRed,
+                    icon: const Icon(Icons.play_arrow, color: Colors.white),
+                    onSelected: (value) {
+                      if (value == appLocalizations.oscilloscope) {
+                        if (getIt.get<ScienceLab>().isConnected()) {
+                          if (Navigator.canPop(context) &&
+                              ModalRoute.of(context)?.settings.name ==
+                                  '/oscilloscope') {
+                            Navigator.popUntil(
+                                context, ModalRoute.withName('/oscilloscope'));
+                          } else {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/oscilloscope',
+                              (route) => route.isFirst,
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                appLocalizations.notConnected,
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        if (getIt.get<ScienceLab>().isConnected()) {
+                          if (Navigator.canPop(context) &&
+                              ModalRoute.of(context)?.settings.name ==
+                                  '/logicAnalyzer') {
+                            Navigator.popUntil(
+                                context, ModalRoute.withName('/logicAnalyzer'));
+                          } else {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/logicAnalyzer',
+                              (route) => route.isFirst,
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                appLocalizations.notConnected,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      PopupMenuItem<String>(
+                        value: appLocalizations.oscilloscope,
+                        child: ListTile(
+                          dense: true,
+                          leading: Image.asset(
+                            widget.oscilloscopeIcon,
+                          ),
+                          title: Text(
+                            appLocalizations.oscilloscope,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: appLocalizations.logicAnalyzer,
+                        child: ListTile(
+                          dense: true,
+                          leading: Image.asset(
+                            widget.logicAnalyzerIcon,
+                          ),
+                          title: Text(
+                            appLocalizations.logicAnalyzer,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-              ],
-            );
-          },
-        ),
+                  IconButton(
+                    icon: Icon(Icons.save, color: Colors.white),
+                    onPressed: () {},
+                  ),
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    onSelected: (value) {
+                      if (value == appLocalizations.showGuide) {
+                        setState(() {
+                          _showGuide = !_showGuide;
+                        });
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      PopupMenuItem<String>(
+                        value: appLocalizations.showGuide,
+                        child: Text(appLocalizations.showGuide),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              if (_showGuide)
+                InstrumentOverviewDrawer(
+                  instrumentName: appLocalizations.waveGenerator,
+                  content: _getWaveGeneratorContent(),
+                  onHide: _hideInstrumentGuide,
+                ),
+            ],
+          );
+        },
       ),
     );
   }
