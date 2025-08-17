@@ -112,28 +112,28 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
           'yAxisLabel': appLocalizations.lx,
-          'xDataColumnIndex': 1,
+          'xDataColumnIndex': 0,
           'yDataColumnIndex': 2,
         };
       case 'soundmeter':
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
           'yAxisLabel': appLocalizations.db,
-          'xDataColumnIndex': 1,
+          'xDataColumnIndex': 0,
           'yDataColumnIndex': 2,
         };
       case 'barometer':
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
           'yAxisLabel': appLocalizations.atm,
-          'xDataColumnIndex': 1,
+          'xDataColumnIndex': 0,
           'yDataColumnIndex': 2,
         };
       default:
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
           'yAxisLabel': 'Value',
-          'xDataColumnIndex': 1,
+          'xDataColumnIndex': 0,
           'yDataColumnIndex': 2,
         };
     }
@@ -156,6 +156,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
               yAxisLabel: config['yAxisLabel'],
               xDataColumnIndex: config['xDataColumnIndex'],
               yDataColumnIndex: config['yDataColumnIndex'],
+              instrumentName: widget.instrumentName,
             ),
           ),
         );
@@ -180,6 +181,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
               yAxisLabel: config['yAxisLabel'],
               xDataColumnIndex: config['xDataColumnIndex'],
               yDataColumnIndex: config['yDataColumnIndex'],
+              instrumentName: widget.instrumentName,
             ),
           ),
         );

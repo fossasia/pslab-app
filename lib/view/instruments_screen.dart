@@ -165,6 +165,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           );
         }
         break;
+      case 9:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/compass') {
+          Navigator.popUntil(context, ModalRoute.withName('/compass'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/compass',
+            (route) => route.isFirst,
+          );
+        }
+        break;
       case 4:
         if (Navigator.canPop(context) &&
             ModalRoute.of(context)?.settings.name == '/waveGenerator') {

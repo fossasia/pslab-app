@@ -760,6 +760,156 @@ abstract class AppLocalizations {
   /// **'Produce Sound'**
   String get produceSound;
 
+  /// No description provided for @frequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequency;
+
+  /// No description provided for @phaseOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase Offset'**
+  String get phaseOffset;
+
+  /// No description provided for @unitDeg.
+  ///
+  /// In en, this message translates to:
+  /// **'°'**
+  String get unitDeg;
+
+  /// No description provided for @unitPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'%'**
+  String get unitPercentage;
+
+  /// No description provided for @sine.
+  ///
+  /// In en, this message translates to:
+  /// **'Sine'**
+  String get sine;
+
+  /// No description provided for @tri.
+  ///
+  /// In en, this message translates to:
+  /// **'Tri'**
+  String get tri;
+
+  /// No description provided for @pwm.
+  ///
+  /// In en, this message translates to:
+  /// **'pwm'**
+  String get pwm;
+
+  /// No description provided for @waveGeneratorIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The wave generator can be used to generate different types of waves like Sine wave, square wave and saw-tooth wave allow us to change their characteristics like frequency, phase and duty. It also allows us to produce PWM signals having different phase and duty.'**
+  String get waveGeneratorIntro;
+
+  /// No description provided for @sineWaveCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate Sine wave or Saw-Tooth wave:'**
+  String get sineWaveCaption;
+
+  /// No description provided for @sineWaveBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the Wave pins S1 and S2 to the channel pins CH1, CH2 as shown in the above figure.'**
+  String get sineWaveBulletPoint1;
+
+  /// No description provided for @sineWaveBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the Wave1 button for S1 pin and Wave2 button for S2 pin.'**
+  String get sineWaveBulletPoint2;
+
+  /// No description provided for @sineWaveBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Press Sine image button for Sine wave and Saw-Tooth image button for Saw-Tooth wave.'**
+  String get sineWaveBulletPoint3;
+
+  /// No description provided for @sineWaveBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set their respective frequencies and phase difference(optional) using buttons in waveform panel.'**
+  String get sineWaveBulletPoint4;
+
+  /// No description provided for @sineWaveBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the View button to view the waves in oscilloscope.'**
+  String get sineWaveBulletPoint5;
+
+  /// No description provided for @squareWaveCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate Square wave:'**
+  String get squareWaveCaption;
+
+  /// No description provided for @squareWaveBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the Wave pins SQ1 to the channel pin CH1 as shown in the above figure.'**
+  String get squareWaveBulletPoint1;
+
+  /// No description provided for @squareWaveBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure the mode is selected to the Square, if not press the mode button to switch to Square mode.'**
+  String get squareWaveBulletPoint2;
+
+  /// No description provided for @squareWaveBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the SQ1 button'**
+  String get squareWaveBulletPoint3;
+
+  /// No description provided for @squareWaveBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set its Frequency and Duty Cycle'**
+  String get squareWaveBulletPoint4;
+
+  /// No description provided for @squareWaveBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the View button to view the square wave in oscilloscope.'**
+  String get squareWaveBulletPoint5;
+
+  /// No description provided for @pwmCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Similarly, to produce four different PWM signals:'**
+  String get pwmCaption;
+
+  /// No description provided for @pwmBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch over to PWM mode(In this mode S1 and S2 pin will be disabled).'**
+  String get pwmBulletPoint1;
+
+  /// No description provided for @pwmBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the common frequency for all the SQ pins.'**
+  String get pwmBulletPoint2;
+
+  /// No description provided for @pwmBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the duty and phase for all the SQ pins.'**
+  String get pwmBulletPoint3;
+
+  /// No description provided for @pwmBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Press View button to generate the PWM signals.'**
+  String get pwmBulletPoint4;
+
   /// No description provided for @analyze.
   ///
   /// In en, this message translates to:
@@ -2032,6 +2182,30 @@ abstract class AppLocalizations {
   /// **'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.'**
   String get baroMeterBulletPoint4;
 
+  /// No description provided for @magnetometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnetometer error:'**
+  String get magnetometerError;
+
+  /// No description provided for @accelerometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Accelerometer error:'**
+  String get accelerometerError;
+
+  /// No description provided for @compassTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get compassTitle;
+
+  /// No description provided for @parallelToGround.
+  ///
+  /// In en, this message translates to:
+  /// **'Select axes parallel to ground'**
+  String get parallelToGround;
+
   /// No description provided for @thermometerTitle.
   ///
   /// In en, this message translates to:
@@ -2085,18 +2259,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this file?'**
   String get deleteHint;
-
-  /// No description provided for @documentationLink.
-  ///
-  /// In en, this message translates to:
-  /// **'https://docs.pslab.io/'**
-  String get documentationLink;
-
-  /// No description provided for @documentationError.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open the documentation link'**
-  String get documentationError;
 
   /// No description provided for @deleteFile.
   ///
@@ -2296,6 +2458,18 @@ abstract class AppLocalizations {
   /// **'Please provide the maximum limit of lux value to be recorded'**
   String get accelerometerHighLimitHint;
 
+  /// No description provided for @soundmeterSnackBarMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to access sound sensor'**
+  String get soundmeterSnackBarMessage;
+
+  /// No description provided for @dangerous.
+  ///
+  /// In en, this message translates to:
+  /// **'Dangerous'**
+  String get dangerous;
+
   /// No description provided for @roboticArmIntro.
   ///
   /// In en, this message translates to:
@@ -2307,6 +2481,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
   String get roboticArmConnection;
+
+  /// No description provided for @documentationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://docs.pslab.io/'**
+  String get documentationLink;
+
+  /// No description provided for @documentationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the documentation link'**
+  String get documentationError;
 
   /// No description provided for @autoscan.
   ///

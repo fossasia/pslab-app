@@ -28,7 +28,6 @@ class LuxMeterStateProvider extends ChangeNotifier {
   bool _sensorAvailable = false;
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
-  double _recordingStartTime = 0.0;
   bool get isRecording => _isRecording;
 
   LuxMeterConfigProvider? _configProvider;
@@ -112,13 +111,14 @@ class LuxMeterStateProvider extends ChangeNotifier {
     final time = _currentTime;
     if (lux != null) {
       if (_isRecording) {
-        final relativeTime = time - _recordingStartTime;
         final now = DateTime.now();
         final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
         _recordedData.add([
+          now.millisecondsSinceEpoch.toString(),
           dateFormat.format(now),
-          relativeTime.toStringAsFixed(2),
           lux.toStringAsFixed(2),
+          0,
+          0
         ]);
       }
 
@@ -146,8 +146,9 @@ class LuxMeterStateProvider extends ChangeNotifier {
 
   void startRecording() {
     _isRecording = true;
-    _recordingStartTime = _currentTime;
-    _recordedData = [];
+    _recordedData = [
+      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']
+    ];
     notifyListeners();
   }
 

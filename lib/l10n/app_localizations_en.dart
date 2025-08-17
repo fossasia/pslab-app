@@ -353,6 +353,92 @@ class AppLocalizationsEn extends AppLocalizations {
   String get produceSound => 'Produce Sound';
 
   @override
+  String get frequency => 'Frequency';
+
+  @override
+  String get phaseOffset => 'Phase Offset';
+
+  @override
+  String get unitDeg => '°';
+
+  @override
+  String get unitPercentage => '%';
+
+  @override
+  String get sine => 'Sine';
+
+  @override
+  String get tri => 'Tri';
+
+  @override
+  String get pwm => 'pwm';
+
+  @override
+  String get waveGeneratorIntro =>
+      'The wave generator can be used to generate different types of waves like Sine wave, square wave and saw-tooth wave allow us to change their characteristics like frequency, phase and duty. It also allows us to produce PWM signals having different phase and duty.';
+
+  @override
+  String get sineWaveCaption => 'To generate Sine wave or Saw-Tooth wave:';
+
+  @override
+  String get sineWaveBulletPoint1 =>
+      'Connect the Wave pins S1 and S2 to the channel pins CH1, CH2 as shown in the above figure.';
+
+  @override
+  String get sineWaveBulletPoint2 =>
+      'Select the Wave1 button for S1 pin and Wave2 button for S2 pin.';
+
+  @override
+  String get sineWaveBulletPoint3 =>
+      'Press Sine image button for Sine wave and Saw-Tooth image button for Saw-Tooth wave.';
+
+  @override
+  String get sineWaveBulletPoint4 =>
+      'Set their respective frequencies and phase difference(optional) using buttons in waveform panel.';
+
+  @override
+  String get sineWaveBulletPoint5 =>
+      'Press the View button to view the waves in oscilloscope.';
+
+  @override
+  String get squareWaveCaption => 'To generate Square wave:';
+
+  @override
+  String get squareWaveBulletPoint1 =>
+      'Connect the Wave pins SQ1 to the channel pin CH1 as shown in the above figure.';
+
+  @override
+  String get squareWaveBulletPoint2 =>
+      'Ensure the mode is selected to the Square, if not press the mode button to switch to Square mode.';
+
+  @override
+  String get squareWaveBulletPoint3 => 'Select the SQ1 button';
+
+  @override
+  String get squareWaveBulletPoint4 => 'Set its Frequency and Duty Cycle';
+
+  @override
+  String get squareWaveBulletPoint5 =>
+      'Press the View button to view the square wave in oscilloscope.';
+
+  @override
+  String get pwmCaption => 'Similarly, to produce four different PWM signals:';
+
+  @override
+  String get pwmBulletPoint1 =>
+      'Switch over to PWM mode(In this mode S1 and S2 pin will be disabled).';
+
+  @override
+  String get pwmBulletPoint2 => 'Set the common frequency for all the SQ pins.';
+
+  @override
+  String get pwmBulletPoint3 => 'Set the duty and phase for all the SQ pins.';
+
+  @override
+  String get pwmBulletPoint4 =>
+      'Press View button to generate the PWM signals.';
+
+  @override
   String get analyze => 'Analyze';
 
   @override
@@ -1038,6 +1124,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.';
 
   @override
+  String get magnetometerError => 'Magnetometer error:';
+
+  @override
+  String get accelerometerError => 'Accelerometer error:';
+
+  @override
+  String get compassTitle => 'Compass';
+
+  @override
+  String get parallelToGround => 'Select axes parallel to ground';
+
   String get thermometerTitle => 'Thermometer';
 
   @override
@@ -1066,12 +1163,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteHint => 'Are you sure you want to delete this file?';
-
-  @override
-  String get documentationLink => 'https://docs.pslab.io/';
-
-  @override
-  String get documentationError => 'Could not open the documentation link';
 
   @override
   String get deleteFile => 'Delete File';
@@ -1180,12 +1271,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please provide the maximum limit of lux value to be recorded';
 
   @override
+  String get soundmeterSnackBarMessage => 'Unable to access sound sensor';
+
+  @override
+  String get dangerous => 'Dangerous';
+
+  @override
   String get roboticArmIntro =>
       '• A robotic arm is a programmable mechanical device that mimics the movement of a human arm.\n• It uses servo motors to control its motion, and these motors are operated using PWM signals.\n• The PSLab provides four PWM square wave generators (SQ1, SQ2, SQ3, SQ4), allowing control of up to four servo motors and enabling a robotic arm with up to four degrees of freedom.';
 
   @override
   String get roboticArmConnection =>
       '• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.';
+
+  @override
+  String get documentationLink => 'https://docs.pslab.io/';
+
+  @override
+  String get documentationError => 'Could not open the documentation link';
 
   @override
   String get autoscan => 'Autoscan';
