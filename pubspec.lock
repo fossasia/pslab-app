@@ -117,10 +117,10 @@ packages:
     dependency: "direct main"
     description:
       name: data
-      sha256: d17d8b5346afbb8d32a4039fc5d10f536fcbe3f9958879576d1fd56c5ee67f4f
+      sha256: "01b2314569cc0c02599e27e3b60131502a5ce6b95b8480b63010891f6c6e3ef0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.14.0"
+    version: "0.15.1"
   dbus:
     dependency: transitive
     description:
@@ -426,10 +426,10 @@ packages:
     dependency: transitive
     description:
       name: more
-      sha256: d3908d710f78ee5470d2ae9d7599a11aeb00a17909cc36cbd0f23a0b659ca375
+      sha256: "3850edf0e3f5f89709eef8a007ac3a6d4dbaef10b01fd25c66dfd5b7a62e1872"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.0"
+    version: "4.6.1"
   nested:
     dependency: transitive
     description:
