@@ -119,72 +119,81 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                 title: appLocalizations.oscilloscope,
                 body: SafeArea(
                   minimum: const EdgeInsets.only(right: 0, bottom: 0),
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 5, top: 5),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 87,
-                          child: Container(
-                            margin: const EdgeInsets.only(right: 5),
-                            child: Stack(
-                              children: [
-                                Column(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Container(
+                        margin: const EdgeInsets.only(left: 5, top: 5),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 87,
+                              child: Container(
+                                margin: const EdgeInsets.only(right: 5),
+                                child: Stack(
                                   children: [
-                                    Expanded(
-                                      flex: 66,
-                                      child: Container(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        color: Colors.black,
-                                        child: const OscilloscopeGraph(),
-                                      ),
+                                    Column(
+                                      children: [
+                                        Expanded(
+                                          flex: constraints.maxHeight < 600
+                                              ? 66
+                                              : 80,
+                                          child: Container(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 20),
+                                            color: Colors.black,
+                                            child: const OscilloscopeGraph(),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: constraints.maxHeight < 600
+                                              ? 34
+                                              : 20,
+                                          child: Selector<
+                                              OscilloscopeStateProvider, int>(
+                                            selector: (context, provider) =>
+                                                provider.selectedIndex,
+                                            builder:
+                                                (context, selectedIndex, _) {
+                                              switch (selectedIndex) {
+                                                case 0:
+                                                  return const ChannelParametersWidget();
+                                                case 1:
+                                                  return const TimebaseTriggerWidget();
+                                                case 2:
+                                                  return const DataAnalysisWidget();
+                                                case 3:
+                                                  return const XYPlotWidget();
+                                                default:
+                                                  return const ChannelParametersWidget();
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Expanded(
-                                      flex: 34,
-                                      child: Selector<OscilloscopeStateProvider,
-                                          int>(
-                                        selector: (context, provider) =>
-                                            provider.selectedIndex,
-                                        builder: (context, selectedIndex, _) {
-                                          switch (selectedIndex) {
-                                            case 0:
-                                              return const ChannelParametersWidget();
-                                            case 1:
-                                              return const TimebaseTriggerWidget();
-                                            case 2:
-                                              return const DataAnalysisWidget();
-                                            case 3:
-                                              return const XYPlotWidget();
-                                            default:
-                                              return const ChannelParametersWidget();
-                                          }
-                                        },
-                                      ),
-                                    ),
+                                    provider.isMeasurementsChecked
+                                        ? Positioned(
+                                            right: 0,
+                                            top: 0,
+                                            child: SizedBox(
+                                                width: 135,
+                                                child: MeasurementsList(
+                                                    dataParamsChannels: provider
+                                                        .dataParamsChannels)),
+                                          )
+                                        : const SizedBox.shrink(),
                                   ],
                                 ),
-                                provider.isMeasurementsChecked
-                                    ? Positioned(
-                                        right: 0,
-                                        top: 0,
-                                        child: SizedBox(
-                                            width: 135,
-                                            child: MeasurementsList(
-                                                dataParamsChannels: provider
-                                                    .dataParamsChannels)),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ],
+                              ),
                             ),
-                          ),
+                            const Expanded(
+                              flex: 13,
+                              child: OscilloscopeScreenTabs(),
+                            )
+                          ],
                         ),
-                        const Expanded(
-                          flex: 13,
-                          child: OscilloscopeScreenTabs(),
-                        )
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
                 actions: [
