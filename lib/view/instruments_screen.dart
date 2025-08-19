@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
@@ -253,7 +252,6 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
       _setOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
-    Permission.microphone.request();
   }
 
   void _setOrientation() {
@@ -267,6 +265,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   Widget build(BuildContext context) {
     return MainScaffold(
       index: 0,
+      scaffoldKey: const Key(instrumentsScreenTitleKey),
       title: appLocalizations.instrumentsTitle,
       showSearch: true,
       onSearchChanged: _filterInstruments,

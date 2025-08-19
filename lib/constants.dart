@@ -1,5 +1,12 @@
 import 'dart:core';
 
+const instrumentsScreenTitleKey = 'instruments_screen_title';
+const accelerometerScreenTitleKey = 'accelerometer_screen_title';
+const powerSourceScreenTitleKey = 'power_source_screen_title';
+const multimeterScreenTitleKey = 'multimeter_screen_title';
+const waveGeneratorScreenTitleKey = 'wave_generator_screen_title';
+const oscilloscopeScreenTitleKey = 'oscilloscope_screen_title';
+
 List<String> instrumentHeadings = [
   'OSCILLOSCOPE',
   'MULTIMETER',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
@@ -246,7 +247,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     RadioGroup(
                       groupValue:
                           oscilloscopeStateProvider.isInBuiltMICSelected,
-                      onChanged: (bool? value) {
+                      onChanged: (bool? value) async {
+                        await Permission.microphone.request();
                         setState(
                           () {
                             if (value == null) {

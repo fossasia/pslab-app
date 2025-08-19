@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
@@ -11,7 +12,6 @@ import 'package:pslab/view/logged_data_screen.dart';
 
 import '../providers/accelerometer_config_provider.dart';
 import '../theme/colors.dart';
-import '../constants.dart';
 import 'accelerometer_config_screen.dart';
 
 class AccelerometerScreen extends StatefulWidget {
@@ -229,6 +229,7 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
           builder: (context, provider, child) {
             return CommonScaffold(
               title: appLocalizations.accelerometerTitle,
+              key: const Key(accelerometerScreenTitleKey),
               onGuidePressed: _showInstrumentGuide,
               onOptionsPressed: _showOptionsMenu,
               onRecordPressed: _toggleRecording,

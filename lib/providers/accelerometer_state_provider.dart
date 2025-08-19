@@ -15,9 +15,9 @@ class AccelerometerStateProvider extends ChangeNotifier {
   final List<double> _yData = [];
   final List<double> _zData = [];
 
-  final List<FlSpot> xData = [];
-  final List<FlSpot> yData = [];
-  final List<FlSpot> zData = [];
+  final List<FlSpot> xData = [const FlSpot(0, 0)];
+  final List<FlSpot> yData = [const FlSpot(0, 0)];
+  final List<FlSpot> zData = [const FlSpot(0, 0)];
 
   final int _maxLength = 50;
   double _xMin = 0, _xMax = 0;

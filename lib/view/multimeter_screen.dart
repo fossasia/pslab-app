@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/multimeter_state_provider.dart';
@@ -47,6 +48,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
             children: [
               CommonScaffold(
                 title: appLocalizations.multimeterTitle,
+                key: const Key(multimeterScreenTitleKey),
                 body: SafeArea(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
