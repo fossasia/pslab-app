@@ -431,5 +431,16 @@
     "next" : "Next",
     "previous" : "Previous",
     "step" : "Step",
-    "experimentCompleted" : "Experiment Completed"
+    "experimentCompleted" : "Experiment Completed",
+    "setUp": "Setup",
+    "lightExperimentSetUpContent" : "Place your device near a light source (lamp, window, or flashlight).",
+    "preparation" : "Preparation",
+    "lightExperimentPreparationContent" : "Make sure you have space to move towards the light source gradually.",
+    "instructions" : "Instructions",
+    "lightExperimentInstructionContent" : "You will measure light intensity at different distances. Follow the on-screen prompts to move closer or farther from the light source.",
+    "moveTowardsLight" : "Move towards the light source",
+    "moveAwayFromLight" : "Move away from the light source",
+    "holdPosition" : "Hold your position and let the reading stabilize",
+    "followInstructions" : "Follow the on-screen instructions to set up your experiment."
+
 }

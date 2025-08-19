@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pslab/view/about_us_screen.dart';
+import '../l10n/app_localizations.dart';
 import '../models/experiment_step.dart';
 import '../models/experiment_config.dart';
+import '../providers/locator.dart';
+
+AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
 class MoveTowardsLightStep extends ExperimentStep {
   MoveTowardsLightStep()
       : super(
           id: 'move_towards',
-          instruction: 'Move towards the light source',
+          instruction: appLocalizations.moveTowardsLight,
         );
 
   @override
@@ -31,7 +34,7 @@ class MoveAwayFromLightStep extends ExperimentStep {
   MoveAwayFromLightStep()
       : super(
           id: 'move_away',
-          instruction: 'Move away from the light source',
+          instruction: appLocalizations.moveAwayFromLight,
         );
 
   @override
@@ -55,7 +58,7 @@ class StabilizeReadingStep extends ExperimentStep {
   StabilizeReadingStep()
       : super(
           id: 'stabilize',
-          instruction: 'Hold your position and let the reading stabilize',
+          instruction: appLocalizations.holdPosition,
         );
 
   @override
@@ -83,22 +86,19 @@ final lightDistanceExperiment = ExperimentConfig(
   targetScreen: '/luxmeter',
   guideSteps: [
     {
-      'title': 'Setup',
-      'content':
-          'Place your device near a light source (lamp, window, or flashlight).',
-      'image': 'assets/images/Untitled design (1).gif',
+      'title': appLocalizations.setUp,
+      'content': appLocalizations.lightExperimentSetUpContent,
+      'image': 'assets/images/lightDistance1.gif',
     },
     {
-      'title': 'Preparation',
-      'content':
-          'Make sure you have space to move towards the light source gradually.',
-      'image': 'assets/images/Untitled design.gif',
+      'title': appLocalizations.preparation,
+      'content': appLocalizations.lightExperimentPreparationContent,
+      'image': 'assets/images/lightDistance2.gif',
     },
     {
-      'title': 'Instructions',
-      'content':
-          'You will measure light intensity at different distances. Follow the on-screen prompts to move closer or farther from the light source.',
-      'image': 'assets/images/Untitled design (2).gif',
+      'title': appLocalizations.instructions,
+      'content': appLocalizations.lightExperimentInstructionContent,
+      'image': 'assets/images/lightDistance3.gif',
     },
   ],
   experimentSteps: [

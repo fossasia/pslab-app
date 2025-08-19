@@ -1388,4 +1388,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get experimentCompleted => 'Experiment Completed';
+
+  @override
+  String get setUp => 'Setup';
+
+  @override
+  String get lightExperimentSetUpContent =>
+      'Place your device near a light source (lamp, window, or flashlight).';
+
+  @override
+  String get preparation => 'Preparation';
+
+  @override
+  String get lightExperimentPreparationContent =>
+      'Make sure you have space to move towards the light source gradually.';
+
+  @override
+  String get instructions => 'Instructions';
+
+  @override
+  String get lightExperimentInstructionContent =>
+      'You will measure light intensity at different distances. Follow the on-screen prompts to move closer or farther from the light source.';
+
+  @override
+  String get moveTowardsLight => 'Move towards the light source';
+
+  @override
+  String get moveAwayFromLight => 'Move away from the light source';
+
+  @override
+  String get holdPosition => 'Hold your position and let the reading stabilize';
+
+  @override
+  String get followInstructions =>
+      'Follow the on-screen instructions to set up your experiment.';
 }

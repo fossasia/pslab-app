@@ -15,12 +15,11 @@ class ExperimentsScreen extends StatefulWidget {
 class _ExperimentsScreenState extends State<ExperimentsScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
-  final List<Map<String, dynamic>> experiments = [
+  late final List<Map<String, dynamic>> experiments = [
     {
       'id': 'light_distance',
-      'title': 'Light Intensity vs Distance',
-      'description':
-          'Measure how light intensity changes with distance from the source',
+      'title': appLocalizations.lightIntensityVsDistance,
+      'description': appLocalizations.lightIntensityVsDistanceDesc,
       'icon': Icons.lightbulb,
       'route': '/luxmeter',
     },

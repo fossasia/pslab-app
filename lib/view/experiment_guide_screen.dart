@@ -45,8 +45,7 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
         guideSteps = [
           {
             'title': 'Setup',
-            'content':
-                'Follow the on-screen instructions to set up your experiment.',
+            'content': appLocalizations.followInstructions,
             'image': '',
           }
         ];

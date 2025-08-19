@@ -2685,6 +2685,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Experiment Completed'**
   String get experimentCompleted;
+
+  /// No description provided for @setUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup'**
+  String get setUp;
+
+  /// No description provided for @lightExperimentSetUpContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Place your device near a light source (lamp, window, or flashlight).'**
+  String get lightExperimentSetUpContent;
+
+  /// No description provided for @preparation.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparation'**
+  String get preparation;
+
+  /// No description provided for @lightExperimentPreparationContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure you have space to move towards the light source gradually.'**
+  String get lightExperimentPreparationContent;
+
+  /// No description provided for @instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get instructions;
+
+  /// No description provided for @lightExperimentInstructionContent.
+  ///
+  /// In en, this message translates to:
+  /// **'You will measure light intensity at different distances. Follow the on-screen prompts to move closer or farther from the light source.'**
+  String get lightExperimentInstructionContent;
+
+  /// No description provided for @moveTowardsLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Move towards the light source'**
+  String get moveTowardsLight;
+
+  /// No description provided for @moveAwayFromLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Move away from the light source'**
+  String get moveAwayFromLight;
+
+  /// No description provided for @holdPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold your position and let the reading stabilize'**
+  String get holdPosition;
+
+  /// No description provided for @followInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the on-screen instructions to set up your experiment.'**
+  String get followInstructions;
 }
 
 class _AppLocalizationsDelegate

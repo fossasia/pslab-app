@@ -20,7 +20,7 @@ class ExperimentOverlayWidget extends StatefulWidget {
 }
 
 class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
-  Offset _position = const Offset(16, 100);
+  late Offset _position = Offset(MediaQuery.of(context).size.width / 8, 100);
   bool _hasCompletionBeenTriggered = false;
 
   @override
