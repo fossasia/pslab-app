@@ -309,18 +309,43 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
               )
             : ScrollConfiguration(
                 behavior: const ScrollBehavior(),
-                child: ListView.builder(
-                  itemCount: _filteredIndices.length,
-                  itemBuilder: (context, index) {
-                    final int originalIndex = _filteredIndices[index];
-                    return GestureDetector(
-                      onTap: () => _onItemTapped(originalIndex),
-                      child: ApplicationsListItem(
-                        heading: instrumentHeadings[originalIndex],
-                        description: instrumentDesc[originalIndex],
-                        instrumentIcon: instrumentIcons[originalIndex],
-                      ),
-                    );
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return constraints.maxWidth < constraints.maxHeight
+                        ? ListView.builder(
+                            itemCount: _filteredIndices.length,
+                            itemBuilder: (context, index) {
+                              final int originalIndex = _filteredIndices[index];
+                              return GestureDetector(
+                                onTap: () => _onItemTapped(originalIndex),
+                                child: ApplicationsListItem(
+                                  heading: instrumentHeadings[originalIndex],
+                                  description: instrumentDesc[originalIndex],
+                                  instrumentIcon:
+                                      instrumentIcons[originalIndex],
+                                ),
+                              );
+                            },
+                          )
+                        : GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 2.5,
+                            ),
+                            itemBuilder: (context, index) {
+                              final int originalIndex = _filteredIndices[index];
+                              return GestureDetector(
+                                onTap: () => _onItemTapped(originalIndex),
+                                child: ApplicationsListItem(
+                                  heading: instrumentHeadings[originalIndex],
+                                  description: instrumentDesc[originalIndex],
+                                  instrumentIcon:
+                                      instrumentIcons[originalIndex],
+                                ),
+                              );
+                            },
+                          );
                   },
                 ),
               ),

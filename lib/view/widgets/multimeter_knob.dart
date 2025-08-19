@@ -243,58 +243,68 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
       });
     }
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        CustomPaint(
-          painter: InnerDialFillPainter(),
-          child: SizedBox(
-            width: 300.w,
-            height: 300.h,
-          ),
-        ),
-        GestureDetector(
-          onPanUpdate: (details) {
-            if (isDragging) {
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
-              Offset localPosition =
-                  renderBox.globalToLocal(details.globalPosition);
-              updateAngle(localPosition, renderBox.size);
-            }
-          },
-          child: CustomPaint(
-            painter: InnerPointerPainter(
-              value: multimeterStateProvider.getSelectedIndex().toDouble(),
-              max: maxValue,
-              color: pointerColor,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            CustomPaint(
+              painter: InnerDialFillPainter(),
+              child: SizedBox(
+                width: 300.w,
+                height: 300.h,
+              ),
             ),
-            child: SizedBox(
-              width: 360.w,
-              height: 360.h,
+            GestureDetector(
+              onPanUpdate: (details) {
+                if (isDragging) {
+                  RenderBox renderBox = context.findRenderObject() as RenderBox;
+                  Offset localPosition =
+                      renderBox.globalToLocal(details.globalPosition);
+                  updateAngle(localPosition, renderBox.size);
+                }
+              },
+              child: CustomPaint(
+                painter: InnerPointerPainter(
+                  value: multimeterStateProvider.getSelectedIndex().toDouble(),
+                  max: maxValue,
+                  color: pointerColor,
+                ),
+                child: SizedBox(
+                  width: constraints.maxWidth < 600 ||
+                          constraints.maxWidth > constraints.maxHeight
+                      ? 360.w
+                      : 385.w,
+                  height: constraints.maxWidth < 600 ||
+                          constraints.maxWidth > constraints.maxHeight
+                      ? 360.h
+                      : 385.h,
+                ),
+              ),
             ),
-          ),
-        ),
-        IgnorePointer(
-          ignoring: true,
-          child: CustomPaint(
-            painter: InnerDialPainter(),
-            child: SizedBox(
-              height: 300.h,
-              width: 300.w,
+            IgnorePointer(
+              ignoring: true,
+              child: CustomPaint(
+                painter: InnerDialPainter(),
+                child: SizedBox(
+                  height: 300.h,
+                  width: 300.w,
+                ),
+              ),
             ),
-          ),
-        ),
-        IgnorePointer(
-          ignoring: true,
-          child: CustomPaint(
-            painter: RadialLabelPainter(
-              labels: knobMarker,
-              labelColors: knobLabelColors,
-              radius: 112.r,
-            ),
-          ),
-        )
-      ],
+            IgnorePointer(
+              ignoring: true,
+              child: CustomPaint(
+                painter: RadialLabelPainter(
+                  labels: knobMarker,
+                  labelColors: knobLabelColors,
+                  radius: 112.r,
+                ),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }
