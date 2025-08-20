@@ -328,7 +328,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
                 final data = _provider.stopRecording();
                 await _showSaveFileDialog(data);
               }
-              if (mounted && context.mounted) {
+              if (context.mounted) {
                 Navigator.pop(context);
               }
             },

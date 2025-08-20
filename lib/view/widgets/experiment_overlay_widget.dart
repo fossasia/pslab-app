@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
-import 'package:pslab/view/about_us_screen.dart';
 import '/providers/experiment_provider.dart';
 import '/theme/colors.dart';
 
@@ -20,13 +19,12 @@ class ExperimentOverlayWidget extends StatefulWidget {
 }
 
 class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late Offset _position = Offset(MediaQuery.of(context).size.width / 8, 100);
   bool _hasCompletionBeenTriggered = false;
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-
     return Consumer<ExperimentProvider>(
       builder: (context, experimentProvider, child) {
         if (!experimentProvider.isExperimentActive &&
@@ -54,7 +52,6 @@ class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
 
         return _buildDraggableInstructionOverlay(
           context,
-          appLocalizations,
           currentStep.instruction,
           experimentProvider.isStepCompleted,
           experimentProvider.currentStepIndex + 1,
@@ -66,7 +63,6 @@ class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
 
   Widget _buildDraggableInstructionOverlay(
     BuildContext context,
-    AppLocalizations appLocalizations,
     String instruction,
     bool isCompleted,
     int currentStep,
