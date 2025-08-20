@@ -1,0 +1,76 @@
+name: "iOS Screenshots Workflow"
+
+inputs:
+  IPHONE_DEVICE_MODEL:
+    description: 'Model of the iPhone device to be used when running tests'
+    required: false
+    default: iPhone 16 Pro Max
+  IPAD_DEVICE_MODEL:
+    description: 'Model of the iPad device to be used when running tests'
+    required: false
+    default: iPad Pro 13-inch (M4)
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+
+    - name: Update Podfile
+      shell: bash
+      run: |
+        cd ./iOS
+        flutter pub get
+        pod install --repo-update
+
+    - name: Create iPhone Simulator
+      uses: futureware-tech/simulator-action@v4
+      with:
+        model: ${{ inputs.IPHONE_DEVICE_MODEL }}
+        wait_for_boot: true
+
+    - name: Create iPad Simulator
+      uses: futureware-tech/simulator-action@v4
+      with:
+        model: ${{ inputs.IPAD_DEVICE_MODEL }}
+        wait_for_boot: true
+
+    - name: Capture iPhone Screenshots
+      shell: bash
+      run: |
+        DEVICE_NAME="${{ inputs.IPHONE_DEVICE_MODEL }}" flutter drive --driver=test_integration/test_driver.dart --target=test_integration/screenshots.dart -d "${{ inputs.IPHONE_DEVICE_MODEL }}"
+
+    - name: Capture iPad Screenshots
+      shell: bash
+      run: |
+        DEVICE_NAME="${{ inputs.IPAD_DEVICE_MODEL }}" flutter drive --driver=test_integration/test_driver.dart --target=test_integration/screenshots.dart -d "${{ inputs.IPAD_DEVICE_MODEL }}"
+
+    - name: Update Fastlane Metadata
+      if: ${{ github.event_name == 'push' }}
+      shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        cd ./iOS
+        git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
+        cd fastlane
+        
+        rm -rf screenshots/*
+        cp -r ../../screenshots/. screenshots/
+        
+        # Force push to fastlane branch
+        git checkout --orphan temporary
+        git add --all .
+        git commit -am "[Auto] Update screenshots ($(date +%Y-%m-%d.%H:%M:%S))"
+        git branch -D fastlane-ios
+        git branch -m fastlane-ios
+        git push --force origin fastlane-ios
+
+    - name: Upload Screenshots
+      uses: actions/upload-artifact@v4
+      with:
+        name: iOS Screenshots
+        path: screenshots/*
