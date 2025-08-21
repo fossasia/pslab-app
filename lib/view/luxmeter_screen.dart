@@ -229,7 +229,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     if (!widget.isExperiment) return;
 
     final experimentProvider = context.read<ExperimentProvider>();
-    if (experimentProvider.isExperimentActive) {
+    if (experimentProvider.state == ExperimentState.running) {
       final luxData =
           _provider.getLuxChartData().map((spot) => spot.y).toList();
       final timeData =

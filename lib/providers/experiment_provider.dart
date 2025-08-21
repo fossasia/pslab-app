@@ -3,20 +3,23 @@ import 'dart:async';
 import 'package:pslab/models/experiment_config.dart';
 import 'package:pslab/models/experiment_step.dart';
 
+enum ExperimentState {
+  idle,
+  running,
+  stepCompleted,
+  finished,
+}
+
 class ExperimentProvider extends ChangeNotifier {
   ExperimentConfig? _currentExperiment;
   int _currentStepIndex = 0;
-  bool _isExperimentActive = false;
-  bool _isStepCompleted = false;
+  ExperimentState _state = ExperimentState.idle;
   Timer? _stepTimer;
   DateTime? _stepStartTime;
-  bool _isExperimentCompleted = false;
 
   ExperimentConfig? get currentExperiment => _currentExperiment;
   int get currentStepIndex => _currentStepIndex;
-  bool get isExperimentActive => _isExperimentActive;
-  bool get isStepCompleted => _isStepCompleted;
-  bool get isExperimentCompleted => _isExperimentCompleted;
+  ExperimentState get state => _state;
 
   ExperimentStep? get currentStep => _currentExperiment != null &&
           _currentStepIndex < _currentExperiment!.experimentSteps.length
@@ -26,15 +29,13 @@ class ExperimentProvider extends ChangeNotifier {
   void startExperiment(ExperimentConfig experiment) {
     _currentExperiment = experiment;
     _currentStepIndex = 0;
-    _isExperimentActive = true;
-    _isStepCompleted = false;
-    _isExperimentCompleted = false;
+    _state = ExperimentState.running;
     _stepStartTime = DateTime.now();
     notifyListeners();
   }
 
   void checkStepCondition(List<double> values, List<double> timeData) {
-    if (!_isExperimentActive || _isStepCompleted || currentStep == null) return;
+    if (_state != ExperimentState.running || currentStep == null) return;
 
     if (_stepStartTime != null &&
         DateTime.now().difference(_stepStartTime!).inSeconds < 3) {
@@ -42,7 +43,7 @@ class ExperimentProvider extends ChangeNotifier {
     }
 
     if (currentStep!.checkCondition(values, timeData)) {
-      _isStepCompleted = true;
+      _state = ExperimentState.stepCompleted;
 
       _stepTimer = Timer(const Duration(seconds: 2), () {
         nextStep();
@@ -58,11 +59,10 @@ class ExperimentProvider extends ChangeNotifier {
     if (_currentStepIndex <
         (_currentExperiment?.experimentSteps.length ?? 0) - 1) {
       _currentStepIndex++;
-      _isStepCompleted = false;
+      _state = ExperimentState.running;
       _stepStartTime = DateTime.now();
     } else {
-      _isExperimentActive = false;
-      _isExperimentCompleted = true;
+      _state = ExperimentState.finished;
     }
 
     notifyListeners();
@@ -72,9 +72,7 @@ class ExperimentProvider extends ChangeNotifier {
     _stepTimer?.cancel();
     _currentExperiment = null;
     _currentStepIndex = 0;
-    _isExperimentActive = false;
-    _isStepCompleted = false;
-    _isExperimentCompleted = false;
+    _state = ExperimentState.idle;
     _stepStartTime = null;
     notifyListeners();
   }

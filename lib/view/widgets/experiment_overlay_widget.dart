@@ -27,8 +27,7 @@ class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
   Widget build(BuildContext context) {
     return Consumer<ExperimentProvider>(
       builder: (context, experimentProvider, child) {
-        if (!experimentProvider.isExperimentActive &&
-            experimentProvider.isExperimentCompleted &&
+        if (experimentProvider.state == ExperimentState.finished &&
             !_hasCompletionBeenTriggered &&
             experimentProvider.currentExperiment != null) {
           _hasCompletionBeenTriggered = true;
@@ -37,11 +36,11 @@ class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
           });
         }
 
-        if (experimentProvider.isExperimentActive &&
+        if (experimentProvider.state == ExperimentState.running &&
             _hasCompletionBeenTriggered) {
           _hasCompletionBeenTriggered = false;
         }
-        if (!experimentProvider.isExperimentActive) {
+        if (experimentProvider.state == ExperimentState.idle) {
           return const SizedBox.shrink();
         }
 
@@ -53,7 +52,7 @@ class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
         return _buildDraggableInstructionOverlay(
           context,
           currentStep.instruction,
-          experimentProvider.isStepCompleted,
+          experimentProvider.state == ExperimentState.stepCompleted,
           experimentProvider.currentStepIndex + 1,
           experimentProvider.currentExperiment?.experimentSteps.length ?? 0,
         );
