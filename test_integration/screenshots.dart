@@ -37,6 +37,8 @@ void main() async {
       final backButton = find.byIcon(Icons.arrow_back);
 
       await pumpUntilFound(tester, instrumentsScreenTitle);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
       await binding.takeScreenshot('1_instruments_screen');
 
       ScaffoldState state = tester.firstState(find.byType(Scaffold));

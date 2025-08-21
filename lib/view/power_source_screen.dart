@@ -513,6 +513,24 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                     },
                   ),
                 ),
+                actions: [
+                  IconButton(
+                    icon: Image.asset(
+                      widget.icRecord,
+                      width: 24,
+                      height: 24,
+                    ),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.info, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        _showGuide = !_showGuide;
+                      });
+                    },
+                  ),
+                ],
               ),
               if (_showGuide)
                 InstrumentOverviewDrawer(

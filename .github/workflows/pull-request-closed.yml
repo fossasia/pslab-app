@@ -1,0 +1,33 @@
+name: Delete Screenshots
+
+on:
+  pull_request_target:
+    branches: [ "flutter" ]
+    types:
+      - closed
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  delete_screenshots:
+    name: Delete Screenshots
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Screenshots
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git clone --branch=pr-screenshots --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} pr-screenshots
+          cd pr-screenshots
+
+          rm -f ${{ github.event.number }}_*.png
+
+          # Force push to pr-screenshots branch
+          git checkout --orphan temporary
+          git add --all .
+          git commit -am "[Auto] Delete screenshots for #${{ github.event.number }} ($(date +%Y-%m-%d.%H:%M:%S))"
+          git branch -D pr-screenshots
+          git branch -m pr-screenshots
+          git push --force origin pr-screenshots
