@@ -148,26 +148,6 @@ jobs:
           git branch -m apk
           git push --force origin apk
 
-      - name: Update app in Open Testing track
-        if: ${{ github.repository == 'fossasia/pslab-android' }}
-        run: |
-          git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
-          bundle exec fastlane uploadToOpenTesting
-          if [[ $? -ne 0 ]]; then
-              exit 1
-          fi
-
-      - name: Run Release Drafter
-        id: run-release-drafter
-        uses: release-drafter/release-drafter@v6
-        with:
-          version: ${{ steps.android-version.outputs.VERSION_NAME }}
-
-      - name: Create and Upload Assets
-        run: |
-          echo "${{ steps.android-version.outputs.VERSION_CODE }}" > ./versionCode.txt
-          gh release upload ${{ steps.run-release-drafter.outputs.tag_name }} apk/pslab-development-release.apk ./versionCode.txt --clobber
-
   screenshots:
     name: Screenshots
     runs-on: ubuntu-latest
