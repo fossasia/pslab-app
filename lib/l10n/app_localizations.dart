@@ -5,7 +5,20 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_he.dart';
+import 'app_localizations_hi.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_nb.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
+import 'app_localizations_uk.dart';
+import 'app_localizations_vi.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +105,26 @@ abstract class AppLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('he'),
+    Locale('hi'),
+    Locale('id'),
+    Locale('ja'),
+    Locale('nb'),
+    Locale('nb', 'NO'),
+    Locale('pt'),
+    Locale('pt', 'BR'),
+    Locale('ru'),
+    Locale('uk'),
+    Locale('vi'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
+  ];
 
   /// No description provided for @oscilloscope.
   ///
@@ -2769,18 +2801,92 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'de',
+        'en',
+        'es',
+        'fr',
+        'he',
+        'hi',
+        'id',
+        'ja',
+        'nb',
+        'pt',
+        'ru',
+        'uk',
+        'vi',
+        'zh'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hans':
+            return AppLocalizationsZhHans();
+          case 'Hant':
+            return AppLocalizationsZhHant();
+        }
+        break;
+      }
+  }
+
+  // Lookup logic when language+country codes are specified.
+  switch (locale.languageCode) {
+    case 'nb':
+      {
+        switch (locale.countryCode) {
+          case 'NO':
+            return AppLocalizationsNbNo();
+        }
+        break;
+      }
+    case 'pt':
+      {
+        switch (locale.countryCode) {
+          case 'BR':
+            return AppLocalizationsPtBr();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'he':
+      return AppLocalizationsHe();
+    case 'hi':
+      return AppLocalizationsHi();
+    case 'id':
+      return AppLocalizationsId();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'nb':
+      return AppLocalizationsNb();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
+    case 'uk':
+      return AppLocalizationsUk();
+    case 'vi':
+      return AppLocalizationsVi();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(
