@@ -7,6 +7,7 @@ import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import '../theme/colors.dart';
+import 'apds9960_screen.dart';
 
 class SensorsScreen extends StatefulWidget {
   const SensorsScreen({super.key});
@@ -222,6 +223,8 @@ class _SensorsScreenState extends State<SensorsScreen> {
       case 'BMP180':
         targetScreen = const BMP180Screen();
         break;
+      case 'APDS9960':
+        targetScreen = const APDS9960Screen();
       case 'VL53L0X':
         targetScreen = const VL53L0XScreen();
         break;

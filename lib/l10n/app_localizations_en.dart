@@ -884,7 +884,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get builtIn => 'Built-In';
 
   @override
-  String get lx => 'Lx';
+  String get lx => 'lx';
 
   @override
   String get maxScaleError => 'Max Scale';
@@ -1509,6 +1509,36 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get followInstructions =>
       'Follow the on-screen instructions to set up your experiment.';
+
+  @override
+  String get gesture => 'Gesture';
+
+  @override
+  String get blueLabel => 'Blue';
+
+  @override
+  String get greenLabel => 'Green';
+
+  @override
+  String get proxLabel => 'Prox';
+
+  @override
+  String get redLabel => 'Red';
+
+  @override
+  String get mode => 'Mode';
+
+  @override
+  String get configure => 'Configure';
+
+  @override
+  String get proximity => 'Proximity';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get lux => 'Lux';
 
   @override
   String get distance => 'Distance';
