@@ -130,7 +130,7 @@ class _MainScaffoldState extends State<MainScaffold>
                   cursorColor: appBarContentColor,
                 )
               : Text(
-                  key: ValueKey('title_${widget.title}'),
+                  key: widget.scaffoldKey,
                   widget.title,
                   style: TextStyle(
                     color: appBarContentColor,

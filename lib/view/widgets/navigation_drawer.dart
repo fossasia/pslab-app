@@ -23,7 +23,7 @@ class _NavDrawerState extends State<NavDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: MediaQuery.of(context).orientation == Orientation.portrait
+      width: MediaQuery.of(context).size.width < 600
           ? MediaQuery.of(context).size.width * 0.75
           : MediaQuery.of(context).size.width * 0.45,
       shape: const RoundedRectangleBorder(

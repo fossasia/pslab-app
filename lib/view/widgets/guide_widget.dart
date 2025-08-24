@@ -199,6 +199,31 @@ class InstrumentIntroText extends StatelessWidget {
   }
 }
 
+class InstrumentHeading extends StatelessWidget {
+  final String text;
+  final TextStyle? style;
+  const InstrumentHeading({
+    super.key,
+    required this.text,
+    this.style,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Text(
+        text,
+        style: style ??
+            TextStyle(
+              fontSize: 20.0,
+              color: guideDrawerHeadingColor,
+              fontWeight: FontWeight.bold,
+            ),
+      ),
+    );
+  }
+}
+
 class InstrumentBulletPoint extends StatelessWidget {
   final String text;
   final TextStyle? style;
@@ -254,7 +279,7 @@ class InstrumentImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 18.0),
       child: Column(
         children: [
           SizedBox(

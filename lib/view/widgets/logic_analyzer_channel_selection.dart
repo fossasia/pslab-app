@@ -440,7 +440,7 @@ class _LogicAnalyzerChannelSelectionState
               ),
               TextButton(
                 style: TextButton.styleFrom(
-                  fixedSize: const Size(200, 40),
+                  fixedSize: const Size(double.maxFinite, 40),
                   backgroundColor: logicAnalyzerTextColor,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,

@@ -5,7 +5,20 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_he.dart';
+import 'app_localizations_hi.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_nb.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
+import 'app_localizations_uk.dart';
+import 'app_localizations_vi.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +105,26 @@ abstract class AppLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('he'),
+    Locale('hi'),
+    Locale('id'),
+    Locale('ja'),
+    Locale('nb'),
+    Locale('nb', 'NO'),
+    Locale('pt'),
+    Locale('pt', 'BR'),
+    Locale('ru'),
+    Locale('uk'),
+    Locale('vi'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
+  ];
 
   /// No description provided for @oscilloscope.
   ///
@@ -339,6 +371,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+/-160V'**
   String get yAxisRange160V;
+
+  /// No description provided for @oscilloscopeBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Oscilloscope in PSLab gives out many of the functionalities of a commercially available Oscilloscope. It has 4-channels with a MIC in, 2 Sine wave generators and 4 PWM square wave generators, can change the timebase, analyses signal and does Sine and Square wave fitting and plots channel to channel voltage.'**
+  String get oscilloscopeBulletPoint1;
+
+  /// No description provided for @oscilloscopeBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'To read from a Sine wave or a square wave, you can connect the Output wave pin and a Channel to the Oscilloscope as follows.'**
+  String get oscilloscopeBulletPoint2;
+
+  /// No description provided for @oscilloscopeBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Above shown figure has a connection from SQ1 to CH1 and SI1 to CH2.'**
+  String get oscilloscopeBulletPoint3;
+
+  /// No description provided for @oscilloscopeBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Once you have generated a wave from the Wave Generator instrument connect the relevant pins and observe it from the Oscilloscope by ticking the relevant channel in Channel parameters. If you are using CH1 pin, select CH1 from channel parameters.'**
+  String get oscilloscopeBulletPoint4;
+
+  /// No description provided for @channelParameters.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel Parameters'**
+  String get channelParameters;
+
+  /// No description provided for @channelParametersIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'From this Setting, you can change the Channel that needs to be osbserved from the plot.'**
+  String get channelParametersIntro;
+
+  /// No description provided for @channelParametersBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick the check boxes to plot the relevant Channel.'**
+  String get channelParametersBulletPoint1;
+
+  /// No description provided for @channelParametersBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Can change the Y-axis voltage range in the plot using the spinner next to the Channel.'**
+  String get channelParametersBulletPoint2;
+
+  /// No description provided for @channelParametersBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'For the fourth Channel, you can choose either In-built microphone or an external mic. If you are to use an external microphone, the connection is as follows.'**
+  String get channelParametersBulletPoint3;
+
+  /// No description provided for @channelParametersBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'The Positive terminal of the MIC should be connected with the MIC pin and negative terminal should be conneted with the GND pin of PSLab device.'**
+  String get channelParametersBulletPoint4;
+
+  /// No description provided for @timebaseIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'This setting gives you the control of the range of Time axis(X-axis).'**
+  String get timebaseIntro;
+
+  /// No description provided for @timebaseBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'The timebase slidder can be used to increase or decrease the signal capturing time. Can change the range from 875.0 micro seconds to 102.4 milli seconds.'**
+  String get timebaseBulletPoint1;
+
+  /// No description provided for @timebaseBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'This will be useful to capture periodic wave signals in the given range for analysis.'**
+  String get timebaseBulletPoint2;
+
+  /// No description provided for @timebaseBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use the trigger to set voltage value, so that when the signal exceeds the given value, plot will halt.'**
+  String get timebaseBulletPoint3;
+
+  /// No description provided for @dataAnalysisBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Using this Setting, the mathematical function of the analysed signal can be found. Can choose the Wave type from Sine or Square and the Channel that needs to be analyzed.'**
+  String get dataAnalysisBulletPoint1;
+
+  /// No description provided for @dataAnalysisBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Furthermore, analyzed signal\'s Fourier transform can be observed by checking Fourier Transforms check box.'**
+  String get dataAnalysisBulletPoint2;
+
+  /// No description provided for @xyPlotBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'This is used to plot the Channel to Channel voltage in a X-Y plot having voltage as the unit for the both axes relevant for the corresponding Channels.'**
+  String get xyPlotBulletPoint1;
 
   /// No description provided for @channel1.
   ///
@@ -688,6 +822,36 @@ abstract class AppLocalizations {
   /// **'PCS'**
   String get pinPCS;
 
+  /// No description provided for @powerSourceIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'PSLab device can generate voltages from +5V to -5V at a resolution of 10mV'**
+  String get powerSourceIntro;
+
+  /// No description provided for @powerSourceBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect one wire to PV1 and another wire to GND to generate voltages between +5V to -5V.'**
+  String get powerSourceBulletPoint1;
+
+  /// No description provided for @powerSourceBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Similarly connect wires between PV2 to generate voltages between +3.3V to -3.3V.'**
+  String get powerSourceBulletPoint2;
+
+  /// No description provided for @powerSourceBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Use PV3 pin to generate voltages between 0V to +3.3V.'**
+  String get powerSourceBulletPoint3;
+
+  /// No description provided for @powerSourceBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.'**
+  String get powerSourceBulletPoint4;
+
   /// No description provided for @analog.
   ///
   /// In en, this message translates to:
@@ -759,6 +923,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Produce Sound'**
   String get produceSound;
+
+  /// No description provided for @frequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequency;
+
+  /// No description provided for @phaseOffset.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase Offset'**
+  String get phaseOffset;
+
+  /// No description provided for @unitDeg.
+  ///
+  /// In en, this message translates to:
+  /// **'°'**
+  String get unitDeg;
+
+  /// No description provided for @unitPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'%'**
+  String get unitPercentage;
+
+  /// No description provided for @sine.
+  ///
+  /// In en, this message translates to:
+  /// **'Sine'**
+  String get sine;
+
+  /// No description provided for @tri.
+  ///
+  /// In en, this message translates to:
+  /// **'Tri'**
+  String get tri;
+
+  /// No description provided for @pwm.
+  ///
+  /// In en, this message translates to:
+  /// **'pwm'**
+  String get pwm;
+
+  /// No description provided for @waveGeneratorIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The wave generator can be used to generate different types of waves like Sine wave, square wave and saw-tooth wave allow us to change their characteristics like frequency, phase and duty. It also allows us to produce PWM signals having different phase and duty.'**
+  String get waveGeneratorIntro;
+
+  /// No description provided for @sineWaveCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate Sine wave or Saw-Tooth wave:'**
+  String get sineWaveCaption;
+
+  /// No description provided for @sineWaveBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the Wave pins S1 and S2 to the channel pins CH1, CH2 as shown in the above figure.'**
+  String get sineWaveBulletPoint1;
+
+  /// No description provided for @sineWaveBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the Wave1 button for S1 pin and Wave2 button for S2 pin.'**
+  String get sineWaveBulletPoint2;
+
+  /// No description provided for @sineWaveBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Press Sine image button for Sine wave and Saw-Tooth image button for Saw-Tooth wave.'**
+  String get sineWaveBulletPoint3;
+
+  /// No description provided for @sineWaveBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set their respective frequencies and phase difference(optional) using buttons in waveform panel.'**
+  String get sineWaveBulletPoint4;
+
+  /// No description provided for @sineWaveBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the View button to view the waves in oscilloscope.'**
+  String get sineWaveBulletPoint5;
+
+  /// No description provided for @squareWaveCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate Square wave:'**
+  String get squareWaveCaption;
+
+  /// No description provided for @squareWaveBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the Wave pins SQ1 to the channel pin CH1 as shown in the above figure.'**
+  String get squareWaveBulletPoint1;
+
+  /// No description provided for @squareWaveBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure the mode is selected to the Square, if not press the mode button to switch to Square mode.'**
+  String get squareWaveBulletPoint2;
+
+  /// No description provided for @squareWaveBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the SQ1 button'**
+  String get squareWaveBulletPoint3;
+
+  /// No description provided for @squareWaveBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set its Frequency and Duty Cycle'**
+  String get squareWaveBulletPoint4;
+
+  /// No description provided for @squareWaveBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the View button to view the square wave in oscilloscope.'**
+  String get squareWaveBulletPoint5;
+
+  /// No description provided for @pwmCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Similarly, to produce four different PWM signals:'**
+  String get pwmCaption;
+
+  /// No description provided for @pwmBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch over to PWM mode(In this mode S1 and S2 pin will be disabled).'**
+  String get pwmBulletPoint1;
+
+  /// No description provided for @pwmBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the common frequency for all the SQ pins.'**
+  String get pwmBulletPoint2;
+
+  /// No description provided for @pwmBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the duty and phase for all the SQ pins.'**
+  String get pwmBulletPoint3;
+
+  /// No description provided for @pwmBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Press View button to generate the PWM signals.'**
+  String get pwmBulletPoint4;
 
   /// No description provided for @analyze.
   ///
@@ -2032,6 +2346,42 @@ abstract class AppLocalizations {
   /// **'Select the sensor by going to the Configure tab from the bottom navigation bar and choose BMP-180 in the drop down menu under Select Sensor.'**
   String get baroMeterBulletPoint4;
 
+  /// No description provided for @magnetometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Magnetometer error:'**
+  String get magnetometerError;
+
+  /// No description provided for @accelerometerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Accelerometer error:'**
+  String get accelerometerError;
+
+  /// No description provided for @compassTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get compassTitle;
+
+  /// No description provided for @parallelToGround.
+  ///
+  /// In en, this message translates to:
+  /// **'Select axes parallel to ground'**
+  String get parallelToGround;
+
+  /// No description provided for @sharingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing PSLab Data'**
+  String get sharingMessage;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
   /// No description provided for @thermometerTitle.
   ///
   /// In en, this message translates to:
@@ -2068,35 +2418,11 @@ abstract class AppLocalizations {
   /// **'Ambient temperature sensor is not available on this device'**
   String get temperatureSensorUnavailableMessage;
 
-  /// No description provided for @sharingMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Sharing PSLab Data'**
-  String get sharingMessage;
-
-  /// No description provided for @delete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get delete;
-
   /// No description provided for @deleteHint.
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this file?'**
   String get deleteHint;
-
-  /// No description provided for @documentationLink.
-  ///
-  /// In en, this message translates to:
-  /// **'https://docs.pslab.io/'**
-  String get documentationLink;
-
-  /// No description provided for @documentationError.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not open the documentation link'**
-  String get documentationError;
 
   /// No description provided for @deleteFile.
   ///
@@ -2296,6 +2622,18 @@ abstract class AppLocalizations {
   /// **'Please provide the maximum limit of lux value to be recorded'**
   String get accelerometerHighLimitHint;
 
+  /// No description provided for @soundmeterSnackBarMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to access sound sensor'**
+  String get soundmeterSnackBarMessage;
+
+  /// No description provided for @dangerous.
+  ///
+  /// In en, this message translates to:
+  /// **'Dangerous'**
+  String get dangerous;
+
   /// No description provided for @roboticArmIntro.
   ///
   /// In en, this message translates to:
@@ -2307,6 +2645,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• In the above figure, SQ1 is connected to the signal pin of the first servo motor. The servo\'s GND pin is connected to both the PSLab’s GND and the external power supply GND, while the VCC pin is connected to the external power supply VCC.\n• Similarly, connect the remaining servos to SQ2, SQ3, and SQ4 along with their respective GND and power supply connections.\n• Once connected, each servo can be controlled using either circular sliders for manual control or a timeline-based sequence for automated movement.'**
   String get roboticArmConnection;
+
+  /// No description provided for @documentationLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://docs.pslab.io/'**
+  String get documentationLink;
+
+  /// No description provided for @documentationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the documentation link'**
+  String get documentationError;
 
   /// No description provided for @autoscan.
   ///
@@ -2511,18 +2861,92 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'de',
+        'en',
+        'es',
+        'fr',
+        'he',
+        'hi',
+        'id',
+        'ja',
+        'nb',
+        'pt',
+        'ru',
+        'uk',
+        'vi',
+        'zh'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hans':
+            return AppLocalizationsZhHans();
+          case 'Hant':
+            return AppLocalizationsZhHant();
+        }
+        break;
+      }
+  }
+
+  // Lookup logic when language+country codes are specified.
+  switch (locale.languageCode) {
+    case 'nb':
+      {
+        switch (locale.countryCode) {
+          case 'NO':
+            return AppLocalizationsNbNo();
+        }
+        break;
+      }
+    case 'pt':
+      {
+        switch (locale.countryCode) {
+          case 'BR':
+            return AppLocalizationsPtBr();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'he':
+      return AppLocalizationsHe();
+    case 'hi':
+      return AppLocalizationsHi();
+    case 'id':
+      return AppLocalizationsId();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'nb':
+      return AppLocalizationsNb();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
+    case 'uk':
+      return AppLocalizationsUk();
+    case 'vi':
+      return AppLocalizationsVi();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

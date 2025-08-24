@@ -1,0 +1,96 @@
+name: "Android Screenshots Workflow"
+
+inputs:
+  ANDROID_EMULATOR_API:
+    description: 'Emulator API to be used when running tests'
+    required: false
+    default: 34
+  ANDROID_EMULATOR_ARCH:
+    description: 'Emulator architecture to be used when running tests'
+    required: false
+    default: x86_64
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: 'adopt'
+        cache: 'gradle'
+
+    - name: Enable KVM group perms
+      shell: bash
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: Cache AVD
+      uses: actions/cache@v4
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ inputs.ANDROID_EMULATOR_API }}-${{ inputs.ANDROID_EMULATOR_ARCH }}
+
+    - name: Create AVD and Cache Snapshot
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.ANDROID_EMULATOR_API }}
+        arch: ${{ inputs.ANDROID_EMULATOR_ARCH }}
+        profile: pixel_6
+        avd-name: pixel_6
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "Generated AVD snapshot for caching."
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+
+    - name: Create Android Screenshots
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.ANDROID_EMULATOR_API }}
+        arch: ${{ inputs.ANDROID_EMULATOR_ARCH }}
+        profile: pixel_6
+        avd-name: pixel_6
+        force-avd-creation: false
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: true
+        script: |
+          DEVICE_NAME="Pixel 6" flutter drive --driver=test_integration/test_driver.dart --target=test_integration/screenshots.dart -d emulator
+
+    - name: Update Fastlane Metadata
+      if: ${{ github.event_name == 'push' }}
+      shell: bash
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        cd ./android
+        git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
+        cd fastlane
+        
+        rm -rf metadata/android/en-US/images/phoneScreenshots/*
+        cp -r ../../screenshots/. metadata/android/en-US/images/phoneScreenshots/
+        
+        # Force push to fastlane branch
+        git checkout --orphan temporary
+        git add --all .
+        git commit -am "[Auto] Update screenshots ($(date +%Y-%m-%d.%H:%M:%S))"
+        git branch -D fastlane-android
+        git branch -m fastlane-android
+        git push --force origin fastlane-android
+
+    - name: Upload Screenshots
+      uses: actions/upload-artifact@v4
+      with:
+        name: Android Screenshots
+        path: screenshots/*

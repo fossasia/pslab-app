@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/providers/accelerometer_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/accelerometer_card.dart';
+import 'package:pslab/others/csv_service.dart';
+import 'package:pslab/view/logged_data_screen.dart';
 
 import '../providers/accelerometer_config_provider.dart';
 import '../theme/colors.dart';
@@ -22,6 +25,27 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
+  final CsvService _csvService = CsvService();
+  late AccelerometerStateProvider _provider;
+
+  @override
+  void initState() {
+    super.initState();
+    _provider = AccelerometerStateProvider();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _provider.initializeSensors();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _provider.disposeSensors();
+    _provider.dispose();
+    super.dispose();
+  }
+
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -80,7 +104,7 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
       if (value != null) {
         switch (value) {
           case 'show_logged_data':
-            // TODO
+            _navigateToLoggedData();
             break;
           case 'accelerometer_config':
             _navigateToConfig();
@@ -88,6 +112,19 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
         }
       }
     });
+  }
+
+  Future<void> _navigateToLoggedData() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoggedDataScreen(
+          instrumentName: 'accelerometer',
+          appBarName: appLocalizations.accelerometer,
+          instrumentIcon: instrumentIcons[7],
+        ),
+      ),
+    );
   }
 
   void _navigateToConfig() {
@@ -102,36 +139,125 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
     );
   }
 
+  Future<void> _toggleRecording() async {
+    if (_provider.isRecording) {
+      final data = _provider.stopRecording();
+      await _showSaveFileDialog(data);
+    } else {
+      _provider.startRecording();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${appLocalizations.recordingStarted}...',
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
+    final TextEditingController filenameController = TextEditingController();
+    final String defaultFilename = '';
+    filenameController.text = defaultFilename;
+
+    final String? fileName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(appLocalizations.saveRecording),
+          content: TextField(
+            controller: filenameController,
+            decoration: InputDecoration(
+              hintText: appLocalizations.enterFileName,
+              labelText: appLocalizations.fileName,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(appLocalizations.cancel.toUpperCase()),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, filenameController.text);
+              },
+              child: Text(appLocalizations.save),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (fileName != null) {
+      _csvService.writeMetaData('accelerometer', data);
+      final file =
+          await _csvService.saveCsvFile('accelerometer', fileName, data);
+      if (mounted) {
+        if (file != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                appLocalizations.failedToSave,
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AccelerometerStateProvider>(
-          create: (_) => AccelerometerStateProvider()..initializeSensors(),
-        ),
-      ],
+    return ChangeNotifierProvider<AccelerometerStateProvider>.value(
+      value: _provider,
       child: Stack(children: [
-        CommonScaffold(
-            title: appLocalizations.accelerometerTitle,
-            onGuidePressed: _showInstrumentGuide,
-            onOptionsPressed: _showOptionsMenu,
-            body: SafeArea(
+        Consumer<AccelerometerStateProvider>(
+          builder: (context, provider, child) {
+            return CommonScaffold(
+              title: appLocalizations.accelerometerTitle,
+              key: const Key(accelerometerScreenTitleKey),
+              onGuidePressed: _showInstrumentGuide,
+              onOptionsPressed: _showOptionsMenu,
+              onRecordPressed: _toggleRecording,
+              isRecording: provider.isRecording,
+              body: SafeArea(
                 child: Column(
-              children: [
-                Expanded(
-                    child: AccelerometerCard(
-                        color: xOrientationChartLineColor,
-                        axis: appLocalizations.xAxis)),
-                Expanded(
-                    child: AccelerometerCard(
-                        color: yOrientationChartLineColor,
-                        axis: appLocalizations.yAxis)),
-                Expanded(
-                    child: AccelerometerCard(
-                        color: zOrientationChartLineColor,
-                        axis: appLocalizations.zAxis)),
-              ],
-            ))),
+                  children: [
+                    Expanded(
+                      child: AccelerometerCard(
+                          color: xOrientationChartLineColor,
+                          axis: appLocalizations.xAxis),
+                    ),
+                    Expanded(
+                      child: AccelerometerCard(
+                          color: yOrientationChartLineColor,
+                          axis: appLocalizations.yAxis),
+                    ),
+                    Expanded(
+                      child: AccelerometerCard(
+                          color: zOrientationChartLineColor,
+                          axis: appLocalizations.zAxis),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
         if (_showGuide)
           InstrumentOverviewDrawer(
             instrumentName: appLocalizations.accelerometer,

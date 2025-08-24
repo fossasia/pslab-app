@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
@@ -165,6 +164,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           );
         }
         break;
+      case 9:
+        if (Navigator.canPop(context) &&
+            ModalRoute.of(context)?.settings.name == '/compass') {
+          Navigator.popUntil(context, ModalRoute.withName('/compass'));
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/compass',
+            (route) => route.isFirst,
+          );
+        }
+        break;
       case 4:
         if (Navigator.canPop(context) &&
             ModalRoute.of(context)?.settings.name == '/waveGenerator') {
@@ -241,7 +252,6 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
       _setOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
-    Permission.microphone.request();
   }
 
   void _setOrientation() {
@@ -255,6 +265,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   Widget build(BuildContext context) {
     return MainScaffold(
       index: 0,
+      scaffoldKey: const Key(instrumentsScreenTitleKey),
       title: appLocalizations.instrumentsTitle,
       showSearch: true,
       onSearchChanged: _filterInstruments,
@@ -298,18 +309,43 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
               )
             : ScrollConfiguration(
                 behavior: const ScrollBehavior(),
-                child: ListView.builder(
-                  itemCount: _filteredIndices.length,
-                  itemBuilder: (context, index) {
-                    final int originalIndex = _filteredIndices[index];
-                    return GestureDetector(
-                      onTap: () => _onItemTapped(originalIndex),
-                      child: ApplicationsListItem(
-                        heading: instrumentHeadings[originalIndex],
-                        description: instrumentDesc[originalIndex],
-                        instrumentIcon: instrumentIcons[originalIndex],
-                      ),
-                    );
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return constraints.maxWidth < constraints.maxHeight
+                        ? ListView.builder(
+                            itemCount: _filteredIndices.length,
+                            itemBuilder: (context, index) {
+                              final int originalIndex = _filteredIndices[index];
+                              return GestureDetector(
+                                onTap: () => _onItemTapped(originalIndex),
+                                child: ApplicationsListItem(
+                                  heading: instrumentHeadings[originalIndex],
+                                  description: instrumentDesc[originalIndex],
+                                  instrumentIcon:
+                                      instrumentIcons[originalIndex],
+                                ),
+                              );
+                            },
+                          )
+                        : GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 2.5,
+                            ),
+                            itemBuilder: (context, index) {
+                              final int originalIndex = _filteredIndices[index];
+                              return GestureDetector(
+                                onTap: () => _onItemTapped(originalIndex),
+                                child: ApplicationsListItem(
+                                  heading: instrumentHeadings[originalIndex],
+                                  description: instrumentDesc[originalIndex],
+                                  instrumentIcon:
+                                      instrumentIcons[originalIndex],
+                                ),
+                              );
+                            },
+                          );
                   },
                 ),
               ),

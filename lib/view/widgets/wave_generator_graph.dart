@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:pslab/providers/wave_generator_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
 class WaveGeneratorGraph extends StatefulWidget {
@@ -26,9 +28,12 @@ class _WaveGeneratorGraphState extends State<WaveGeneratorGraph> {
 
   @override
   Widget build(BuildContext context) {
+    WaveGeneratorStateProvider waveGeneratorStateProvider =
+        Provider.of<WaveGeneratorStateProvider>(context, listen: true);
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
       child: LineChart(
+        duration: const Duration(milliseconds: 10),
         LineChartData(
           backgroundColor: chartBackgroundColor,
           titlesData: FlTitlesData(
@@ -81,10 +86,11 @@ class _WaveGeneratorGraphState extends State<WaveGeneratorGraph> {
             ),
           ),
           clipData: const FlClipData.all(),
-          maxY: 5.0,
-          minY: -5.0,
+          maxY: 7.0,
+          minY: -7.0,
           maxX: 5000.0,
           minX: 0.0,
+          lineBarsData: waveGeneratorStateProvider.createPlots(),
         ),
       ),
     );

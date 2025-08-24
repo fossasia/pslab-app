@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class AccelerometerStateProvider extends ChangeNotifier {
   AccelerometerEvent _accelerometerEvent =
@@ -14,14 +15,17 @@ class AccelerometerStateProvider extends ChangeNotifier {
   final List<double> _yData = [];
   final List<double> _zData = [];
 
-  final List<FlSpot> xData = [];
-  final List<FlSpot> yData = [];
-  final List<FlSpot> zData = [];
+  final List<FlSpot> xData = [const FlSpot(0, 0)];
+  final List<FlSpot> yData = [const FlSpot(0, 0)];
+  final List<FlSpot> zData = [const FlSpot(0, 0)];
 
   final int _maxLength = 50;
   double _xMin = 0, _xMax = 0;
   double _yMin = 0, _yMax = 0;
   double _zMin = 0, _zMax = 0;
+  bool _isRecording = false;
+  List<List<dynamic>> _recordedData = [];
+  bool get isRecording => _isRecording;
 
   void initializeSensors() {
     _accelerometerSubscription = accelerometerEventStream().listen(
@@ -53,6 +57,19 @@ class AccelerometerStateProvider extends ChangeNotifier {
     final x = _accelerometerEvent.x;
     final y = _accelerometerEvent.y;
     final z = _accelerometerEvent.z;
+    if (_isRecording) {
+      final now = DateTime.now();
+      final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+      _recordedData.add([
+        now.millisecondsSinceEpoch.toString(),
+        dateFormat.format(now),
+        x.toStringAsFixed(6),
+        y.toStringAsFixed(6),
+        z.toStringAsFixed(6),
+        0,
+        0
+      ]);
+    }
 
     _xData.add(x);
     _yData.add(y);
@@ -80,6 +97,28 @@ class AccelerometerStateProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  void startRecording() {
+    _isRecording = true;
+    _recordedData = [
+      [
+        'Timestamp',
+        'DateTime',
+        'ReadingsX',
+        'ReadingsY',
+        'ReadingsZ',
+        'Latitude',
+        'Longitude'
+      ]
+    ];
+    notifyListeners();
+  }
+
+  List<List<dynamic>> stopRecording() {
+    _isRecording = false;
+    notifyListeners();
+    return _recordedData;
   }
 
   List<FlSpot> getAxisData(String axis) {

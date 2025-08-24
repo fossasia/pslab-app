@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/wave_generator_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
 class AnalogWaveformControls extends StatefulWidget {
@@ -16,6 +18,8 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
   String iconTriangular = "assets/icons/ic_triangular.png";
   @override
   Widget build(BuildContext context) {
+    WaveGeneratorStateProvider waveGeneratorStateProvider =
+        Provider.of<WaveGeneratorStateProvider>(context);
     return Stack(
       children: [
         Container(
@@ -27,48 +31,76 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
           ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+              SizedBox(
+                height: 40,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              waveGeneratorStateProvider.selectedAnalogWave ==
+                                      WaveConst.wave1
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        appLocalizations.wave1,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                        child: Text(
+                          appLocalizations.wave1,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
                         ),
+                        onPressed: () => {
+                          setState(
+                            () {
+                              waveGeneratorStateProvider
+                                  .setAnalogSelectedWave(WaveConst.wave1);
+                            },
+                          ),
+                        },
                       ),
-                      onPressed: () => {},
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: primaryRed,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              waveGeneratorStateProvider.selectedAnalogWave ==
+                                      WaveConst.wave2
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        appLocalizations.wave2,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                        child: Text(
+                          appLocalizations.wave2,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
                         ),
+                        onPressed: () => {
+                          setState(
+                            () {
+                              waveGeneratorStateProvider
+                                  .setAnalogSelectedWave(WaveConst.wave2);
+                            },
+                          ),
+                        },
                       ),
-                      onPressed: () => {},
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              IntrinsicHeight(
+              const SizedBox(height: 4),
+              SizedBox(
+                height: 40,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -76,7 +108,11 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                       flex: 35,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: primaryRed,
+                          backgroundColor:
+                              waveGeneratorStateProvider.propSelected ==
+                                      WaveConst.frequency
+                                  ? buttonEnabledColor
+                                  : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -88,35 +124,63 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                             fontSize: 14,
                           ),
                         ),
-                        onPressed: () => {},
+                        onPressed: () => {
+                          setState(
+                            () {
+                              waveGeneratorStateProvider
+                                  .setPropSelected(WaveConst.frequency);
+                            },
+                          ),
+                        },
                       ),
                     ),
                     const SizedBox(width: 4),
                     Expanded(
                       flex: 35,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: primaryRed,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                        child: Text(
-                          appLocalizations.phase,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                        ),
-                        onPressed: () => {},
-                      ),
+                      child: waveGeneratorStateProvider.selectedAnalogWave ==
+                              WaveConst.wave2
+                          ? TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor:
+                                    waveGeneratorStateProvider.propSelected ==
+                                            WaveConst.phase
+                                        ? buttonEnabledColor
+                                        : buttonDisabledColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                              child: Text(
+                                appLocalizations.phase,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              onPressed: () => {
+                                setState(
+                                  () {
+                                    waveGeneratorStateProvider
+                                        .setPropSelected(WaveConst.phase);
+                                  },
+                                ),
+                              },
+                            )
+                          : Container(),
                     ),
                     const SizedBox(width: 4),
                     Expanded(
                       flex: 15,
                       child: IconButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: primaryRed,
+                          backgroundColor: waveGeneratorStateProvider
+                                              .waveGeneratorConstants.wave[
+                                          waveGeneratorStateProvider
+                                              .selectedAnalogWave]
+                                      ?[WaveConst.waveType] ==
+                                  WaveGeneratorStateProvider.sin
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -125,7 +189,12 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                           iconSin,
                           color: Colors.white,
                         ),
-                        onPressed: () => {},
+                        onPressed: () => {
+                          setState(
+                            () => waveGeneratorStateProvider.setAnalogWaveType(
+                                WaveGeneratorStateProvider.sin),
+                          ),
+                        },
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -133,7 +202,14 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                       flex: 15,
                       child: IconButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: primaryRed,
+                          backgroundColor: waveGeneratorStateProvider
+                                              .waveGeneratorConstants.wave[
+                                          waveGeneratorStateProvider
+                                              .selectedAnalogWave]
+                                      ?[WaveConst.waveType] ==
+                                  WaveGeneratorStateProvider.triangular
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -142,7 +218,12 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                           iconTriangular,
                           color: Colors.white,
                         ),
-                        onPressed: () => {},
+                        onPressed: () => {
+                          setState(
+                            () => waveGeneratorStateProvider.setAnalogWaveType(
+                                WaveGeneratorStateProvider.triangular),
+                          ),
+                        },
                       ),
                     ),
                   ],

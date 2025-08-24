@@ -4,6 +4,12 @@ on:
   push:
     branches: [ "flutter" ]
 
+env:
+  ANDROID_EMULATOR_API: 34
+  ANDROID_EMULATOR_ARCH: x86_64
+  IPHONE_DEVICE_MODEL: iPhone 16 Pro Max
+  IPAD_DEVICE_MODEL: iPad Pro 13-inch (M4)
+
 jobs:
   common:
     name: Common Build
@@ -127,11 +133,11 @@ jobs:
           git branch -m apk
           git push --force origin apk
 
-      - name: Update app in Closed Testing track
+      - name: Update app in Open Testing track
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
           git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
-          fastlane uploadToClosedTesting
+          fastlane uploadToOpenTesting
           if [[ $? -ne 0 ]]; then
               exit 1
           fi
@@ -195,3 +201,50 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           version: ${{ needs.common.outputs.VERSION_NAME }}
+
+  screenshots-android:
+    name: Screenshots (Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Android Screenshot Workflow
+        uses: ./.github/actions/screenshot-android
+        with:
+          ANDROID_EMULATOR_API: ${{ env.ANDROID_EMULATOR_API }}
+          ANDROID_EMULATOR_ARCH: ${{ env.ANDROID_EMULATOR_ARCH }}
+
+  screenshots-iphone:
+    name: Screenshots (iPhone)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/checkout@v4
+
+      - name: iPhone Screenshot Workflow
+        uses: ./.github/actions/screenshot-iphone
+        with:
+          IPHONE_DEVICE_MODEL: ${{ env.IPHONE_DEVICE_MODEL }}
+  
+  screenshots-ipad:
+    name: Screenshots (iPad)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/checkout@v4
+
+      - name: iPad Screenshot Workflow
+        uses: ./.github/actions/screenshot-ipad
+        with:
+          IPAD_DEVICE_MODEL: ${{ env.IPAD_DEVICE_MODEL }}

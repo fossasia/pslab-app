@@ -1,0 +1,42 @@
+name: Clean PR Screenshots
+
+on:
+  schedule:
+  - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: pr-screenshots
+            
+      - name: Delete screenshots from closed PRs
+        run: |
+          open_prs=$(gh pr list --state open --json number -q '.[].number')
+
+          for file in *.png; do
+            pr_num=$(echo "$file" | cut -d'_' -f1)
+            if ! echo "$open_prs" | grep -qw "$pr_num"; then
+                rm "$file"
+                fi
+            done
+            
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Force push to pr-screenshots branch
+          git checkout --orphan temporary
+          git add --all .
+          git commit -am "[Auto] Clean screenshots ($(date +%Y-%m-%d.%H:%M:%S))"
+          git branch -D pr-screenshots
+          git branch -m pr-screenshots
+          git push --force origin pr-screenshots

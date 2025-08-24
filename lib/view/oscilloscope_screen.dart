@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/channel_parameters_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/data_analysis_widget.dart';
+import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/measurements_list.dart';
 import 'package:pslab/view/widgets/oscilloscope_graph.dart';
 import 'package:pslab/view/widgets/oscilloscope_screen_tabs.dart';
@@ -17,6 +19,12 @@ import '../providers/oscilloscope_state_provider.dart';
 
 class OscilloscopeScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
+  final String oscilloscopeSchematic =
+      'assets/images/oscilloscope_schematic.png';
+  final String micSchematic = 'assets/images/mic_schematic.png';
+  final String timebaseView = 'assets/images/timebase_view.png';
+  final String dataAnalysisView = 'assets/images/data_analysis_view.png';
+  final String xyPlotView = 'assets/images/xy_plot_view.png';
   const OscilloscopeScreen({super.key});
 
   @override
@@ -25,6 +33,7 @@ class OscilloscopeScreen extends StatefulWidget {
 
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  bool _showGuide = false;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -48,6 +57,46 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
     ]);
   }
 
+  void _hideInstrumentGuide() {
+    setState(() {
+      _showGuide = false;
+    });
+  }
+
+  List<Widget> _getOscilloscopeContent() {
+    return [
+      InstrumentBulletPoint(text: appLocalizations.oscilloscopeBulletPoint1),
+      InstrumentBulletPoint(text: appLocalizations.oscilloscopeBulletPoint2),
+      InstrumentImage(imagePath: widget.oscilloscopeSchematic),
+      InstrumentBulletPoint(text: appLocalizations.oscilloscopeBulletPoint3),
+      InstrumentBulletPoint(text: appLocalizations.oscilloscopeBulletPoint4),
+      InstrumentHeading(text: appLocalizations.channelParameters),
+      InstrumentIntroText(text: appLocalizations.channelParametersIntro),
+      InstrumentBulletPoint(
+          text: appLocalizations.channelParametersBulletPoint1),
+      InstrumentBulletPoint(
+          text: appLocalizations.channelParametersBulletPoint2),
+      InstrumentBulletPoint(
+          text: appLocalizations.channelParametersBulletPoint3),
+      InstrumentImage(imagePath: widget.micSchematic),
+      InstrumentBulletPoint(
+          text: appLocalizations.channelParametersBulletPoint4),
+      InstrumentHeading(text: appLocalizations.timeBaseAndTrigger),
+      InstrumentIntroText(text: appLocalizations.timebaseIntro),
+      InstrumentBulletPoint(text: appLocalizations.timebaseBulletPoint1),
+      InstrumentBulletPoint(text: appLocalizations.timebaseBulletPoint2),
+      InstrumentBulletPoint(text: appLocalizations.timebaseBulletPoint3),
+      InstrumentImage(imagePath: widget.timebaseView),
+      InstrumentHeading(text: appLocalizations.dataAnalysis),
+      InstrumentBulletPoint(text: appLocalizations.dataAnalysisBulletPoint1),
+      InstrumentBulletPoint(text: appLocalizations.dataAnalysisBulletPoint2),
+      InstrumentImage(imagePath: widget.dataAnalysisView),
+      InstrumentHeading(text: appLocalizations.xyPlot),
+      InstrumentBulletPoint(text: appLocalizations.xyPlotBulletPoint1),
+      InstrumentImage(imagePath: widget.xyPlotView),
+    ];
+  }
+
   @override
   void dispose() {
     _setPortraitOrientation();
@@ -65,151 +114,178 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       ],
       child: Consumer<OscilloscopeStateProvider>(
         builder: (context, provider, _) {
-          return CommonScaffold(
-            title: 'Oscilloscope',
-            body: SafeArea(
-              minimum: const EdgeInsets.only(right: 0, bottom: 0),
-              child: Container(
-                margin: const EdgeInsets.only(left: 5, top: 5),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 87,
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 5),
-                        child: Stack(
+          return Stack(
+            children: [
+              CommonScaffold(
+                title: appLocalizations.oscilloscope,
+                key: const Key(oscilloscopeScreenTitleKey),
+                body: SafeArea(
+                  minimum: const EdgeInsets.only(right: 0, bottom: 0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Container(
+                        margin: const EdgeInsets.only(left: 5, top: 5),
+                        child: Row(
                           children: [
-                            Column(
-                              children: [
-                                Expanded(
-                                  flex: 66,
-                                  child: Container(
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    color: Colors.black,
-                                    child: const OscilloscopeGraph(),
-                                  ),
+                            Expanded(
+                              flex: 87,
+                              child: Container(
+                                margin: const EdgeInsets.only(right: 5),
+                                child: Stack(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Expanded(
+                                          flex: constraints.maxHeight < 600
+                                              ? 66
+                                              : 80,
+                                          child: Container(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 20),
+                                            color: Colors.black,
+                                            child: const OscilloscopeGraph(),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: constraints.maxHeight < 600
+                                              ? 34
+                                              : 20,
+                                          child: Selector<
+                                              OscilloscopeStateProvider, int>(
+                                            selector: (context, provider) =>
+                                                provider.selectedIndex,
+                                            builder:
+                                                (context, selectedIndex, _) {
+                                              switch (selectedIndex) {
+                                                case 0:
+                                                  return const ChannelParametersWidget();
+                                                case 1:
+                                                  return const TimebaseTriggerWidget();
+                                                case 2:
+                                                  return const DataAnalysisWidget();
+                                                case 3:
+                                                  return const XYPlotWidget();
+                                                default:
+                                                  return const ChannelParametersWidget();
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    provider.isMeasurementsChecked
+                                        ? Positioned(
+                                            right: 0,
+                                            top: 0,
+                                            child: SizedBox(
+                                                width: 135,
+                                                child: MeasurementsList(
+                                                    dataParamsChannels: provider
+                                                        .dataParamsChannels)),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ],
                                 ),
-                                Expanded(
-                                  flex: 34,
-                                  child:
-                                      Selector<OscilloscopeStateProvider, int>(
-                                    selector: (context, provider) =>
-                                        provider.selectedIndex,
-                                    builder: (context, selectedIndex, _) {
-                                      switch (selectedIndex) {
-                                        case 0:
-                                          return const ChannelParametersWidget();
-                                        case 1:
-                                          return const TimebaseTriggerWidget();
-                                        case 2:
-                                          return const DataAnalysisWidget();
-                                        case 3:
-                                          return const XYPlotWidget();
-                                        default:
-                                          return const ChannelParametersWidget();
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                            provider.isMeasurementsChecked
-                                ? Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    child: SizedBox(
-                                        width: 135,
-                                        child: MeasurementsList(
-                                            dataParamsChannels:
-                                                provider.dataParamsChannels)),
-                                  )
-                                : const SizedBox.shrink(),
+                            const Expanded(
+                              flex: 13,
+                              child: OscilloscopeScreenTabs(),
+                            )
                           ],
                         ),
-                      ),
-                    ),
-                    const Expanded(
-                      flex: 13,
-                      child: OscilloscopeScreenTabs(),
-                    )
-                  ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  if ((((provider.isCH1Selected ||
-                                  provider.isCH2Selected ||
-                                  provider.isCH3Selected ||
-                                  provider.isMICSelected) &&
-                              getIt<ScienceLab>().isConnected()) ||
-                          provider.isInBuiltMICSelected) &&
-                      !provider.autoScale()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(appLocalizations.noSignal),
-                      ),
-                    );
-                  }
-                },
-                child: Text(appLocalizations.autoScale,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    )),
-              ),
-              IconButton(
-                icon: provider.isRunning
-                    ? const Icon(
-                        Icons.pause,
-                        color: Colors.white,
-                      )
-                    : const Icon(
-                        Icons.play_arrow,
-                        color: Colors.white,
-                      ),
-                onPressed: () {
-                  if (provider.isRunning) {
-                    provider.isRunning = false;
-                  } else {
-                    provider.isRunning = true;
-                  }
-                  setState(
-                    () {},
-                  );
-                },
-              ),
-              IconButton(
-                icon: Image.asset(
-                  widget.icRecord,
-                  width: 24,
-                  height: 24,
-                ),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.info, color: Colors.white),
-                onPressed: () {},
-              ),
-              PopupMenuButton<CheckboxListTile>(
-                icon: const Icon(Icons.more_vert, color: Colors.white),
-                onSelected: (value) {},
-                itemBuilder: (BuildContext context) => [
-                  PopupMenuItem<CheckboxListTile>(
-                    child: CheckboxListTile(
-                      title: Text(appLocalizations.automatedMeasurements),
-                      value: provider.isMeasurementsChecked,
-                      onChanged: (bool? newValue) {
-                        setState(() {
-                          provider.isMeasurementsChecked = newValue ?? false;
-                        });
-                        Navigator.pop(context);
-                      },
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      if ((((provider.isCH1Selected ||
+                                      provider.isCH2Selected ||
+                                      provider.isCH3Selected ||
+                                      provider.isMICSelected) &&
+                                  getIt<ScienceLab>().isConnected()) ||
+                              provider.isInBuiltMICSelected) &&
+                          !provider.autoScale()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(appLocalizations.noSignal),
+                          ),
+                        );
+                      }
+                    },
+                    child: Text(appLocalizations.autoScale,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  IconButton(
+                    icon: provider.isRunning
+                        ? const Icon(
+                            Icons.pause,
+                            color: Colors.white,
+                          )
+                        : const Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                          ),
+                    onPressed: () {
+                      if (provider.isRunning) {
+                        provider.isRunning = false;
+                      } else {
+                        provider.isRunning = true;
+                      }
+                      setState(
+                        () {},
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: Image.asset(
+                      widget.icRecord,
+                      width: 24,
+                      height: 24,
                     ),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.info, color: Colors.white),
+                    tooltip: appLocalizations.showGuide,
+                    onPressed: () {
+                      setState(() {
+                        _showGuide = !_showGuide;
+                      });
+                    },
+                  ),
+                  PopupMenuButton<CheckboxListTile>(
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    onSelected: (value) {},
+                    itemBuilder: (BuildContext context) => [
+                      PopupMenuItem<CheckboxListTile>(
+                        child: CheckboxListTile(
+                          title: Text(appLocalizations.automatedMeasurements),
+                          value: provider.isMeasurementsChecked,
+                          onChanged: (bool? newValue) {
+                            setState(() {
+                              provider.isMeasurementsChecked =
+                                  newValue ?? false;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
+              if (_showGuide)
+                InstrumentOverviewDrawer(
+                  instrumentName: appLocalizations.oscilloscope,
+                  content: _getOscilloscopeContent(),
+                  onHide: _hideInstrumentGuide,
+                ),
             ],
           );
         },

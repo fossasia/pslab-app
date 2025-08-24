@@ -12,7 +12,7 @@ class InnerDialPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = min(size.width / 2, size.height / 2) * 0.7;
+    final radius = 105.r;
 
     final paint = Paint()
       ..color = multimeterBorderBlack
@@ -32,7 +32,7 @@ class InnerDialFillPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = min(size.width / 2, size.height / 2) * 0.7;
+    final radius = 105.r;
 
     final fillPaint = Paint()
       ..color = innerDialFillColor
@@ -59,13 +59,13 @@ class InnerPointerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = min(size.width / 2, size.height / 2) * 0.5;
+    final radius = 105.r;
 
     final pointerAngle = -pi / 2 + (2 * pi * (value / max));
 
     final pointerPaint = Paint()
       ..color = color
-      ..strokeCap = StrokeCap.square
+      ..strokeCap = StrokeCap.butt
       ..strokeWidth = 30;
 
     final pointerStart = Offset(
@@ -82,12 +82,12 @@ class InnerPointerPainter extends CustomPainter {
       ..strokeCap = StrokeCap.square
       ..strokeWidth = 10;
     final pointerStartInner = Offset(
-      center.dx + radius * 1.1 * cos(pointerAngle),
-      center.dy + radius * 1.1 * sin(pointerAngle),
+      center.dx + radius * 1.0 * cos(pointerAngle),
+      center.dy + radius * 1.0 * sin(pointerAngle),
     );
     final pointerEndInner = Offset(
-      center.dx + radius * 0.9 * cos(pointerAngle),
-      center.dy + radius * 0.9 * sin(pointerAngle),
+      center.dx + radius * 0.77 * cos(pointerAngle),
+      center.dy + radius * 0.77 * sin(pointerAngle),
     );
     canvas.drawLine(pointerStart, pointerEnd, pointerPaint);
     canvas.drawLine(pointerStartInner, pointerEndInner, pointerPaintInner);
@@ -243,58 +243,62 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
       });
     }
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        CustomPaint(
-          painter: InnerDialFillPainter(),
-          child: SizedBox(
-            width: 300.w,
-            height: 300.h,
-          ),
-        ),
-        GestureDetector(
-          onPanUpdate: (details) {
-            if (isDragging) {
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
-              Offset localPosition =
-                  renderBox.globalToLocal(details.globalPosition);
-              updateAngle(localPosition, renderBox.size);
-            }
-          },
-          child: CustomPaint(
-            painter: InnerPointerPainter(
-              value: multimeterStateProvider.getSelectedIndex().toDouble(),
-              max: maxValue,
-              color: pointerColor,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            CustomPaint(
+              painter: InnerDialFillPainter(),
+              child: SizedBox(
+                width: 300.w,
+                height: 300.h,
+              ),
             ),
-            child: SizedBox(
-              width: 360.w,
-              height: 360.h,
+            GestureDetector(
+              onPanUpdate: (details) {
+                if (isDragging) {
+                  RenderBox renderBox = context.findRenderObject() as RenderBox;
+                  Offset localPosition =
+                      renderBox.globalToLocal(details.globalPosition);
+                  updateAngle(localPosition, renderBox.size);
+                }
+              },
+              child: CustomPaint(
+                painter: InnerPointerPainter(
+                  value: multimeterStateProvider.getSelectedIndex().toDouble(),
+                  max: maxValue,
+                  color: pointerColor,
+                ),
+                child: SizedBox(
+                  width: 300.w,
+                  height: 300.h,
+                ),
+              ),
             ),
-          ),
-        ),
-        IgnorePointer(
-          ignoring: true,
-          child: CustomPaint(
-            painter: InnerDialPainter(),
-            child: SizedBox(
-              height: 300.h,
-              width: 300.w,
+            IgnorePointer(
+              ignoring: true,
+              child: CustomPaint(
+                painter: InnerDialPainter(),
+                child: SizedBox(
+                  height: 300.h,
+                  width: 300.w,
+                ),
+              ),
             ),
-          ),
-        ),
-        IgnorePointer(
-          ignoring: true,
-          child: CustomPaint(
-            painter: RadialLabelPainter(
-              labels: knobMarker,
-              labelColors: knobLabelColors,
-              radius: 112.r,
-            ),
-          ),
-        )
-      ],
+            IgnorePointer(
+              ignoring: true,
+              child: CustomPaint(
+                painter: RadialLabelPainter(
+                  labels: knobMarker,
+                  labelColors: knobLabelColors,
+                  radius: 112.r,
+                ),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

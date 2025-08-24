@@ -20,6 +20,7 @@ import 'package:pslab/view/sensors_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
+import 'package:pslab/view/compass_screen.dart';
 import 'package:pslab/theme/app_theme.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/thermometer_screen.dart';
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
             '/waveGenerator': (context) => const WaveGeneratorScreen(),
             '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
             '/powerSource': (context) => const PowerSourceScreen(),
+            '/compass': (context) => const CompassScreen(),
             '/connectDevice': (context) => const ConnectDeviceScreen(),
             '/faq': (context) => FAQScreen(),
             '/settings': (context) => const SettingsScreen(),

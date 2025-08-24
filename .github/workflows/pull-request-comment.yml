@@ -12,7 +12,8 @@ jobs:
     if: >
       github.event.workflow_run.event == 'pull_request'
     steps:
-      - name: Download artifact
+      - name: Download artifacts
+        id: download-artifacts
         uses: actions/github-script@v7
         with:
           script: |
@@ -21,26 +22,103 @@ jobs:
                repo: context.repo.repo,
                run_id: ${{github.event.workflow_run.id }},
             });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+
+            var pr = artifacts.data.artifacts.filter((artifact) => {
               return artifact.name == "pr"
             })[0];
             var download = await github.rest.actions.downloadArtifact({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
+               artifact_id: pr.id,
                archive_format: 'zip',
             });
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
-      - run: unzip pr.zip
 
-      - name: Build success
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+            var androidScreenshots = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "Android Screenshots"
+            })[0];
+            var downloadAndroidScreenshots = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: androidScreenshots.id,
+               archive_format: 'zip',
+            });
+
+            fs.writeFileSync('${{github.workspace}}/androidScreenshots.zip', Buffer.from(downloadAndroidScreenshots.data));
+
+            var iPadScreenshots = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "iPad Screenshots"
+            })[0];
+            var downloadiPadScreenshots = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: iPadScreenshots.id,
+               archive_format: 'zip',
+            });
+
+            fs.writeFileSync('${{github.workspace}}/iPadScreenshots.zip', Buffer.from(downloadiPadScreenshots.data));
+
+            var iPhoneScreenshots = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "iPhone Screenshots"
+            })[0];
+            var downloadiPhoneScreenshots = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: iPhoneScreenshots.id,
+               archive_format: 'zip',
+            });
+
+            fs.writeFileSync('${{github.workspace}}/iPhoneScreenshots.zip', Buffer.from(downloadiPhoneScreenshots.data));
+
+      - name: Unzip Artifacts
+        shell: bash
+        run: |
+          unzip pr.zip
+          mkdir screenshots
+          unzip androidScreenshots.zip -d screenshots/
+          unzip iPadScreenshots.zip -d screenshots/
+          unzip iPhoneScreenshots.zip -d screenshots/
+
+      - name: Fetch PR Number
+        id: fetch-pr-number
         uses: actions/github-script@v7
         with:
           script: |
             var fs = require('fs')
             var issue_number = Number(fs.readFileSync('./NR'));
+            core.setOutput("pr_number", issue_number);
+
+      - name: Update PR Screenshots
+        shell: bash
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git clone --branch=pr-screenshots --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} pr-screenshots
+          cd pr-screenshots
+          
+          for file in ../screenshots/*; do
+            if [[ -f "$file" ]]; then
+              filename=$(basename "$file")
+              cp -f "$file" "./${{ steps.fetch-pr-number.outputs.pr_number }}_${filename}"
+            fi
+          done
+          
+          # Force push to pr-screenshots branch
+          git checkout --orphan temporary
+          git add --all .
+          git commit -am "[Auto] Update screenshots for #${{ steps.fetch-pr-number.outputs.pr_number }} ($(date +%Y-%m-%d.%H:%M:%S))"
+          git branch -D pr-screenshots
+          git branch -m pr-screenshots
+          git push --force origin pr-screenshots
+          
+      - name: Build success
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            var issue_number = ${{ steps.fetch-pr-number.outputs.pr_number }};
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -66,8 +144,81 @@ jobs:
                 break;
               }
             }
+            
+            var statusText = `Build successful. APKs to test: ${artifact_url}.`;
 
-            const body = `Build successful. APKs to test: ${artifact_url}`;
+            var androidScreenshots = `
+            <details>
+            <summary>Android Screenshots</summary>
+            <table>
+              <tr>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Pixel_6-1_instruments_screen.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Pixel_6-2_nav_drawer.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Pixel_6-3_accelerometer.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Pixel_6-4_power_source.png?raw=true" width="1080"/></td>
+              </tr>
+              <tr>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Pixel_6-5_multimeter.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Pixel_6-6_wave_generator.png?raw=true" width="1080"/></td>
+                <td colspan="2">
+                  <img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Pixel_6-7_oscilloscope.png?raw=true" width="2146"/>
+                </td>
+              </tr>
+            </table>
+            </details>
+            `;
+
+            var iPhoneScreenshots = `
+            <details>
+            <summary>iPhone Screenshots</summary>
+            <table>
+              <tr>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone_16_Pro_Max-1_instruments_screen.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone_16_Pro_Max-2_nav_drawer.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone_16_Pro_Max-3_accelerometer.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone_16_Pro_Max-4_power_source.png?raw=true" width="1080"/></td>
+              </tr>
+              <tr>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone_16_Pro_Max-5_multimeter.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone_16_Pro_Max-6_wave_generator.png?raw=true" width="1080"/></td>
+                <td colspan="2">
+                  <img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone_16_Pro_Max-7_oscilloscope.png?raw=true" width="2146"/>
+                </td>
+              </tr>
+            </table>
+            </details>
+            `;
+
+            var iPadScreenshots = `
+            <details>
+            <summary>iPad Screenshots</summary>
+            <table>
+              <tr>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad_Pro_13-inch_(M4)-1_instruments_screen.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad_Pro_13-inch_(M4)-2_nav_drawer.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad_Pro_13-inch_(M4)-3_accelerometer.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad_Pro_13-inch_(M4)-4_power_source.png?raw=true" width="1080"/></td>
+              </tr>
+              <tr>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad_Pro_13-inch_(M4)-5_multimeter.png?raw=true" width="1080"/></td>
+                <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad_Pro_13-inch_(M4)-6_wave_generator.png?raw=true" width="1080"/></td>
+                <td colspan="2">
+                  <img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad_Pro_13-inch_(M4)-7_oscilloscope.png?raw=true" width="2146"/>
+                </td>
+              </tr>
+            </table>
+            </details>
+            `;
+
+            const body = `
+            ## Build Status
+            ${statusText}
+
+            ## Screenshots
+            ${androidScreenshots}
+            ${iPhoneScreenshots}
+            ${iPadScreenshots}
+            `;
             
             if (comment_id) {
               await github.rest.issues.updateComment({
@@ -90,8 +241,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            var fs = require('fs')
-            var issue_number = Number(fs.readFileSync('./NR'));
+            var issue_number = ${{ steps.fetch-pr-number.outputs.pr_number }};
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
@@ -109,7 +259,13 @@ jobs:
               }
             }
 
-            const body = `Build failed`;
+            const body = `
+            ## Build Status
+            _Build workflow failed. Please check the logs for more information._
+
+            ## Screenshots
+            _Not able to fetch screenshots._
+            `;
             
             if (comment_id) {
               await github.rest.issues.updateComment({

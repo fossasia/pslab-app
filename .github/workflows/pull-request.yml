@@ -4,6 +4,16 @@ on:
   pull_request:
     branches: ["flutter"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ANDROID_EMULATOR_API: 34
+  ANDROID_EMULATOR_ARCH: x86_64
+  IPHONE_DEVICE_MODEL: iPhone 16 Pro Max
+  IPAD_DEVICE_MODEL: iPad Pro 13-inch (M4)
+
 jobs:
   common:
     name: Common Build
@@ -48,3 +58,50 @@ jobs:
 
       - name: iOS Workflow
         uses: ./.github/actions/ios
+
+  screenshots-android:
+    name: Screenshots (Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Android Screenshot Workflow
+        uses: ./.github/actions/screenshot-android
+        with:
+          ANDROID_EMULATOR_API: ${{ env.ANDROID_EMULATOR_API }}
+          ANDROID_EMULATOR_ARCH: ${{ env.ANDROID_EMULATOR_ARCH }}
+
+  screenshots-iphone:
+    name: Screenshots (iPhone)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/checkout@v4
+
+      - name: iPhone Screenshot Workflow
+        uses: ./.github/actions/screenshot-iphone
+        with:
+          IPHONE_DEVICE_MODEL: ${{ env.IPHONE_DEVICE_MODEL }}
+  
+  screenshots-ipad:
+    name: Screenshots (iPad)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/checkout@v4
+
+      - name: iPad Screenshot Workflow
+        uses: ./.github/actions/screenshot-ipad
+        with:
+          IPAD_DEVICE_MODEL: ${{ env.IPAD_DEVICE_MODEL }}

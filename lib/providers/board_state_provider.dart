@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pslab/communication/science_lab.dart';
@@ -20,6 +22,7 @@ class BoardStateProvider extends ChangeNotifier {
   int pslabVersion = 0;
   late String exportFormat;
   bool autoStart = true;
+  bool _isProcessing = false;
 
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
@@ -27,38 +30,45 @@ class BoardStateProvider extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
+    if (_isProcessing) return;
+    _isProcessing = true;
     await scienceLabCommon.initialize();
     pslabIsConnected = await scienceLabCommon.openDevice();
     setPSLabVersionIDs();
+    _isProcessing = false;
     if (autoStart) {
-      UsbSerial.usbEventStream?.listen(
-        (UsbEvent usbEvent) async {
-          if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
-            if (await attemptToConnectPSLab()) {
-              pslabIsConnected = await scienceLabCommon.openDevice();
-              setPSLabVersionIDs();
+      if (Platform.isAndroid) {
+        UsbSerial.usbEventStream?.listen(
+          (UsbEvent usbEvent) async {
+            if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
+              if (_isProcessing) return;
+              _isProcessing = true;
+              if (await attemptToConnectPSLab()) {
+                pslabIsConnected = await scienceLabCommon.openDevice();
+                setPSLabVersionIDs();
+                _isProcessing = false;
+              }
+            } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
+                !scienceLabCommon.isWiFiConnected()) {
+              scienceLabCommon.setConnected(false);
+              pslabIsConnected = false;
+              pslabVersionID = 'Not Connected';
+              notifyListeners();
             }
-          } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
-              !scienceLabCommon.isWiFiConnected()) {
-            scienceLabCommon.setConnected(false);
-            pslabIsConnected = false;
-            pslabVersionID = 'Not Connected';
-            notifyListeners();
-          }
-        },
-      );
-
-      Connectivity()
-          .onConnectivityChanged
-          .listen((List<ConnectivityResult> results) {
-        if (results.contains(ConnectivityResult.none)) {
-          scienceLabCommon.setWiFiConnected(false);
-          pslabIsConnected = false;
-          pslabVersionID = 'Not Connected';
-          notifyListeners();
-        }
-      });
+          },
+        );
+      }
     }
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> results) {
+      if (results.contains(ConnectivityResult.none)) {
+        scienceLabCommon.setWiFiConnected(false);
+        pslabIsConnected = false;
+        pslabVersionID = 'Not Connected';
+        notifyListeners();
+      }
+    });
   }
 
   Future<void> initializeWiFi() async {

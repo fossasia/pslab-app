@@ -50,6 +50,12 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
     };
   }
 
+  @override
+  void dispose() {
+    provider.disposeResources();
+    super.dispose();
+  }
+
   void _hideInstrumentGuide() {
     setState(() {
       _showGuide = false;
