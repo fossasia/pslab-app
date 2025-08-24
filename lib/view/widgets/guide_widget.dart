@@ -140,8 +140,11 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                         ),
                       ),
                       Flexible(
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          return SingleChildScrollView(
+                        child: InteractiveViewer(
+                          boundaryMargin: EdgeInsets.zero,
+                          minScale: 1.0,
+                          maxScale: 4.0,
+                          child: SingleChildScrollView(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,8 +162,8 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                                 const SizedBox(height: 20.0),
                               ],
                             ),
-                          );
-                        }),
+                          ),
+                        ),
                       ),
                     ],
                   ),
