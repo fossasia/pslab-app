@@ -463,6 +463,9 @@
     "moveTowardsLight" : "Move towards the light source",
     "moveAwayFromLight" : "Move away from the light source",
     "holdPosition" : "Hold your position and let the reading stabilize",
-    "followInstructions" : "Follow the on-screen instructions to set up your experiment."
-
+    "followInstructions" : "Follow the on-screen instructions to set up your experiment.",
+    "distance" : "Distance",
+    "distanceUnitLabel" : "mm",
+    "legacyFirmwareAlertTitle": "Legacy Firmware Detected",
+    "legacyFirmwareAlertMessage": "We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version."
 }

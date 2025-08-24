@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/bmp180_screen.dart';
+import 'package:pslab/view/vl53l0x_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
@@ -220,6 +221,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
     switch (sensorName) {
       case 'BMP180':
         targetScreen = const BMP180Screen();
+        break;
+      case 'VL53L0X':
+        targetScreen = const VL53L0XScreen();
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(
