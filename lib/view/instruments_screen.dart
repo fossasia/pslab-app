@@ -359,6 +359,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                               crossAxisCount: 2,
                               childAspectRatio: 2.5,
                             ),
+                            itemCount: _filteredIndices.length,
                             itemBuilder: (context, index) {
                               final int originalIndex = _filteredIndices[index];
                               return GestureDetector(
