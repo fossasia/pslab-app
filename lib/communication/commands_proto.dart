@@ -132,6 +132,7 @@ class CommandsProto {
   int getFrequency = 3;
   int getInductance = 4;
   int getVersion = 5;
+  int getFwVersion = 6;
   int retrieveBuffer = 8;
   int getHighFrequency = 9;
   int clearBuffer = 10;

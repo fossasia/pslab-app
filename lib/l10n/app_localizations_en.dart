@@ -1474,4 +1474,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lux => 'Lux';
+
+  String get distance => 'Distance';
+
+  @override
+  String get distanceUnitLabel => 'mm';
+
+  @override
+  String get legacyFirmwareAlertTitle => 'Legacy Firmware Detected';
+
+  @override
+  String get legacyFirmwareAlertMessage =>
+      'We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.';
 }

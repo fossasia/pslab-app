@@ -2849,6 +2849,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lux'**
   String get lux;
+
+  /// No description provided for @distance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance'**
+  String get distance;
+
+  /// No description provided for @distanceUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'mm'**
+  String get distanceUnitLabel;
+
+  /// No description provided for @legacyFirmwareAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legacy Firmware Detected'**
+  String get legacyFirmwareAlertTitle;
+
+  /// No description provided for @legacyFirmwareAlertMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.'**
+  String get legacyFirmwareAlertMessage;
 }
 
 class _AppLocalizationsDelegate

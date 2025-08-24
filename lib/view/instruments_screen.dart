@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/applications_list_item.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -210,6 +211,31 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   @override
   void initState() {
     super.initState();
+    getIt.get<BoardStateProvider>().legacyFirmwareNotifier.addListener(() {
+      if (getIt.get<BoardStateProvider>().legacyFirmwareNotifier.value ==
+          "LegacyFirmwareDetected") {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                icon: const Icon(Icons.warning),
+                title: Text(appLocalizations.legacyFirmwareAlertTitle),
+                content: Text(appLocalizations.legacyFirmwareAlertMessage),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(appLocalizations.ok),
+                  ),
+                ],
+              );
+            },
+          );
+        });
+      }
+    });
     instrumentHeadings = [
       appLocalizations.oscilloscope.toUpperCase(),
       appLocalizations.multimeter.toUpperCase(),
