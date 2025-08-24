@@ -133,11 +133,11 @@ jobs:
           git branch -m apk
           git push --force origin apk
 
-      - name: Update app in Closed Testing track
+      - name: Update app in Open Testing track
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
           git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
-          fastlane uploadToClosedTesting
+          fastlane uploadToOpenTesting
           if [[ $? -ne 0 ]]; then
               exit 1
           fi
@@ -201,6 +201,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           version: ${{ needs.common.outputs.VERSION_NAME }}
+
+  screenshots-android:
+    name: Screenshots (Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Android Screenshot Workflow
+        uses: ./.github/actions/screenshot-android
+        with:
+          ANDROID_EMULATOR_API: ${{ env.ANDROID_EMULATOR_API }}
+          ANDROID_EMULATOR_ARCH: ${{ env.ANDROID_EMULATOR_ARCH }}
 
   screenshots-iphone:
     name: Screenshots (iPhone)

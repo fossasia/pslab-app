@@ -66,7 +66,11 @@ void main() async {
 
       final infoIcon = find.byIcon(Icons.info);
       await tester.tap(infoIcon);
-      await tester.pump(const Duration(seconds: 5));
+      int i = 0;
+      while (i < 10) {
+        await tester.pump(const Duration(seconds: 1));
+        i++;
+      }
       await binding.takeScreenshot('3_accelerometer');
 
       final hideGuideText = find.text('Hide Guide');

@@ -44,7 +44,7 @@ runs:
         git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
         cd fastlane
         
-        rm -rf screenshots/*
+        rm -rf screenshots/iPad*
         cp -r ../../screenshots/. screenshots/
         
         # Force push to fastlane branch
