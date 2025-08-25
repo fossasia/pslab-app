@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:get_it/get_it.dart';
+import 'package:pslab/communication/handler/desktop_comms_handler.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/communication/handler/android_comms_handler.dart';
 import 'package:pslab/communication/handler/base.dart';
@@ -16,6 +17,8 @@ void setupLocator() {
   getIt.registerLazySingleton<CommunicationHandler>(() {
     if (Platform.isAndroid) {
       return AndroidUSBCommunicationHandler();
+    } else if (Platform.isWindows) {
+      return DesktopUSBCommunicationHandler();
     } else {
       return IosNoOpCommunicationHandler();
     }
