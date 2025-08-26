@@ -15,7 +15,9 @@ import '../constants.dart';
 import '../theme/colors.dart';
 
 class SoundMeterScreen extends StatefulWidget {
-  const SoundMeterScreen({super.key});
+  final List<List<dynamic>>? playbackData;
+  const SoundMeterScreen({super.key, this.playbackData});
+
   @override
   State<StatefulWidget> createState() => _SoundMeterScreenState();
 }
@@ -105,7 +107,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       MaterialPageRoute(
         builder: (context) => LoggedDataScreen(
           instrumentName: 'soundmeter',
-          appBarName: 'Sound Meter',
+          appBarName: appLocalizations.soundMeter,
           instrumentIcon: instrumentIcons[15],
         ),
       ),
@@ -196,9 +198,20 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
   void initState() {
     super.initState();
     _provider = SoundMeterStateProvider();
+    _provider.addListener(() {
+      if (!_provider.isPlayingBack && widget.playbackData != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pop(context);
+        });
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _provider.initializeSensors(onError: _showSensorErrorSnackbar);
+        if (widget.playbackData != null) {
+          _provider.startPlayback(widget.playbackData!);
+        } else {
+          _provider.initializeSensors(onError: _showSensorErrorSnackbar);
+        }
       }
     });
   }
@@ -234,11 +247,27 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
           Consumer<SoundMeterStateProvider>(
             builder: (context, provider, child) {
               return CommonScaffold(
-                title: appLocalizations.soundMeterTitle,
+                title: provider.isPlayingBack
+                    ? '${appLocalizations.soundMeter} - ${appLocalizations.playback}'
+                    : appLocalizations.soundMeterTitle,
                 onGuidePressed: _showInstrumentGuide,
-                onOptionsPressed: _showOptionsMenu,
-                onRecordPressed: _toggleRecording,
+                onOptionsPressed:
+                    provider.isPlayingBack ? null : _showOptionsMenu,
+                onRecordPressed:
+                    provider.isPlayingBack ? null : _toggleRecording,
                 isRecording: provider.isRecording,
+                isPlayingBack: provider.isPlayingBack,
+                isPlaybackPaused: provider.isPlaybackPaused,
+                onPlaybackPauseResume: provider.isPlayingBack
+                    ? (provider.isPlaybackPaused
+                        ? _provider.resumePlayback
+                        : _provider.pausePlayback)
+                    : null,
+                onPlaybackStop: provider.isPlayingBack
+                    ? () async {
+                        await _provider.stopPlayback();
+                      }
+                    : null,
                 body: SafeArea(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
