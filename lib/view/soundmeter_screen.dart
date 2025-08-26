@@ -198,13 +198,11 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
   void initState() {
     super.initState();
     _provider = SoundMeterStateProvider();
-    _provider.addListener(() {
-      if (!_provider.isPlayingBack && widget.playbackData != null && mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pop(context);
-        });
+    _provider.onPlaybackEnd = () {
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
       }
-    });
+    };
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         if (widget.playbackData != null) {

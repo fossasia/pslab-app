@@ -36,6 +36,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
   bool get isPlaybackPaused => _isPlaybackPaused;
 
   Function(String)? onSensorError;
+  Function? onPlaybackEnd;
 
   void initializeSensors({Function(String)? onError}) async {
     onSensorError = onError;
@@ -135,6 +136,11 @@ class SoundMeterStateProvider extends ChangeNotifier {
       _updateData();
       _playbackIndex++;
       notifyListeners();
+    } else {
+      logger.e(
+          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+      _playbackIndex++;
+      notifyListeners();
     }
 
     Duration interval = const Duration(seconds: 1);
@@ -182,6 +188,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
     _currentDb = 0.0;
     _currentTime = 0;
     notifyListeners();
+    onPlaybackEnd?.call();
   }
 
   void pausePlayback() {
