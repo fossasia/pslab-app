@@ -2993,6 +2993,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.'**
   String get legacyFirmwareAlertMessage;
+
+  /// No description provided for @holdPositionForPressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold position steady for stable pressure reading'**
+  String get holdPositionForPressure;
+
+  /// No description provided for @moveToHigherAltitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to a higher altitude or floor'**
+  String get moveToHigherAltitude;
+
+  /// No description provided for @moveToLowerAltitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to a lower altitude or floor'**
+  String get moveToLowerAltitude;
+
+  /// No description provided for @pressureVsAltitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Pressure vs Altitude'**
+  String get pressureVsAltitude;
+
+  /// No description provided for @pressureVsAltitudeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Observe how atmospheric pressure changes with altitude'**
+  String get pressureVsAltitudeDesc;
+
+  /// No description provided for @barometerExperimentSetUpContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure your device has a working barometer sensor, or connect a BMP180 sensor using PSLab to complete the experiment.'**
+  String get barometerExperimentSetUpContent;
+
+  /// No description provided for @barometerExperimentPreparationContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the experiment in a stable position. Pressure decreases as altitude increases, and pressure increases as altitude decreases.'**
+  String get barometerExperimentPreparationContent;
+
+  /// No description provided for @barometerExperimentInstructionContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the on-screen instructions to move between different altitudes. The experiment will automatically detect pressure changes.'**
+  String get barometerExperimentInstructionContent;
 }
 
 class _AppLocalizationsDelegate

@@ -5,6 +5,8 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import '../theme/colors.dart';
 import '../providers/experiment_provider.dart';
+import 'package:pslab/others/barometer_pressure_experiment.dart';
+import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/others/light_distance_experiment.dart';
 
 class ExperimentGuideScreen extends StatefulWidget {
@@ -41,6 +43,9 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
       case 'light_distance':
         guideSteps = lightDistanceExperiment.guideSteps;
         break;
+      case 'barometer_pressure':
+        guideSteps = barometerPressureExperiment.guideSteps;
+        break;
       default:
         guideSteps = [
           {
@@ -75,6 +80,9 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
       case 'light_distance':
         _experimentProvider.startExperiment(lightDistanceExperiment);
         break;
+      case 'barometer_pressure':
+        _experimentProvider.startExperiment(barometerPressureExperiment);
+        break;
     }
 
     switch (widget.experimentRoute) {
@@ -86,6 +94,17 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
                 ChangeNotifierProvider<ExperimentProvider>.value(
               value: _experimentProvider,
               child: const LuxMeterScreen(isExperiment: true),
+            ),
+          ),
+        );
+        break;
+      case '/barometer':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChangeNotifierProvider.value(
+              value: _experimentProvider,
+              child: const BarometerScreen(isExperiment: true),
             ),
           ),
         );
