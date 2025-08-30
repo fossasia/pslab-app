@@ -7,6 +7,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/audio_jack.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SoundMeterStateProvider extends ChangeNotifier {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
@@ -42,6 +43,22 @@ class SoundMeterStateProvider extends ChangeNotifier {
     onSensorError = onError;
 
     try {
+      PermissionStatus microphonePermission =
+          await Permission.microphone.status;
+
+      if (microphonePermission != PermissionStatus.granted) {
+        microphonePermission = await Permission.microphone.request();
+      }
+      if (microphonePermission != PermissionStatus.granted) {
+        if (microphonePermission == PermissionStatus.permanentlyDenied) {
+          await openAppSettings();
+          _handleSensorError("Microphone permission is permanently denied.");
+          return;
+        } else {
+          return;
+        }
+      }
+
       _audioJack = AudioJack();
       await _audioJack!.initialize();
       await _audioJack!.start();
