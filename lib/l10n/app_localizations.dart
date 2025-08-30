@@ -2993,6 +2993,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.'**
   String get legacyFirmwareAlertMessage;
+
+  /// No description provided for @playbackStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback started'**
+  String get playbackStarted;
+
+  /// No description provided for @playback.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback'**
+  String get playback;
+
+  /// No description provided for @stopPlayback.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Playback'**
+  String get stopPlayback;
+
+  /// No description provided for @resumePlayback.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume Playback'**
+  String get resumePlayback;
+
+  /// No description provided for @pausePlayback.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause Playback'**
+  String get pausePlayback;
 }
 
 class _AppLocalizationsDelegate
