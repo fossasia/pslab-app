@@ -124,7 +124,7 @@ public class ADS1115 {
 
     private int readRegister(int register) throws IOException {
         List<Integer> vals = i2c.readBulk(ADDRESS, register, 2);
-        return ((vals.get(0) & 0xFF) << 8) | vals.get(1) & 0xFF;
+        return ((vals.get(0) & 0xFF) << 8) | (vals.get(1) & 0xFF);
     }
 
     private void writeRegister(int register, int value) throws IOException {
