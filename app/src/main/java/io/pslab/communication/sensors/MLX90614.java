@@ -3,79 +3,51 @@ package io.pslab.communication.sensors;
 
 import android.util.Log;
 
-import io.pslab.communication.peripherals.I2C;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
-/**
- * Created by akarshan on 4/17/17.
- */
+import io.pslab.communication.peripherals.I2C;
 
 public class MLX90614 {
-    private String TAG = "MLX90614";
-    private int ADDRESS = 0x5A;
+    private static final String TAG = MLX90614.class.getSimpleName();
 
-    public int NUMPLOTS = 1;
-    public String[] PLOTNAMES = {"Temp"};
-    public String name = "PIR temperature";
+    private static final int ADDRESS = 0x5A;
+    private static final int OBJ_TEMP_REGISTER = 0x07;
+    private static final int AMB_TEMP_REGISTER = 0x06;
 
-    private I2C i2c;
-    private int source, OBJADDR = 0x07, AMBADDR = 0x06;
+    private final I2C i2c;
 
     public MLX90614(I2C i2c) throws IOException {
         this.i2c = i2c;
-        source = OBJADDR;
-        String name = "Passive IR temperature sensor";
+
         try {
             Log.d(TAG, "switching baud to 100k");
             i2c.config((int) 100e3);
         } catch (Exception e) {
             Log.d(TAG, "failed to change baud rate");
         }
-        ArrayList<Integer> readReg = new ArrayList<>();
-        for (int i = 0; i < 0x20; i++)
-            readReg.add(i);
-        ArrayList<String> selectSource = new ArrayList<>(Arrays.asList("object temperature", "ambient temperature"));
     }
 
-    public void selectSource(String source) {
-        if (source.equals("object temperature"))
-            this.source = OBJADDR;
-        else if (source.equals("ambient temperature"))
-            this.source = AMBADDR;
+    private ArrayList<Integer> getVals(int register, int bytes) throws IOException {
+        return i2c.readBulk(ADDRESS, register, bytes);
     }
 
-    public void readReg(int address) throws IOException {
-        ArrayList<Integer> x = getVals(address, 2);
-        Log.v(TAG, Integer.toHexString(address) + " " + Integer.toHexString(x.get(0) | (x.get(1) << 8)));
-    }
-
-    private ArrayList<Integer> getVals(int addr, int bytes) throws IOException {
-        ArrayList<Integer> vals = i2c.readBulk(ADDRESS, addr, bytes);
-        return vals;
-    }
-
-    public Double getRaw() throws IOException {
-        ArrayList<Integer> vals = getVals(source, 3);
-        if (vals.size() == 3)
+    private Double getRaw(int register) throws IOException {
+        List<Integer> vals = getVals(register, 3);
+        if (vals.size() == 4)
             return ((((vals.get(1) & 0x007f) << 8) + vals.get(0)) * 0.02) - 0.01 - 273.15;
         else
             return null;
     }
 
     public Double getObjectTemperature() throws IOException {
-        source = OBJADDR;
-        Double val = getRaw();
-        return val;
+        return getRaw(OBJ_TEMP_REGISTER);
 
     }
 
     public Double getAmbientTemperature() throws IOException {
-        source = AMBADDR;
-        Double val = getRaw();
-        return val;
+        return getRaw(AMB_TEMP_REGISTER);
 
     }
 
