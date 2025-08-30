@@ -33,6 +33,10 @@ public class SensorADS1115 extends AbstractSensorActivity {
     private LineChart mChart;
     private TextView tvSensorADS1115;
 
+    private Spinner spinnerSensorADS1115Gain;
+    private Spinner spinnerSensorADS1115Channel;
+    private Spinner spinnerSensorADS1115Rate;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,9 +53,9 @@ public class SensorADS1115 extends AbstractSensorActivity {
         tvSensorADS1115 = findViewById(R.id.tv_sensor_ads1115);
         mChart = findViewById(R.id.chart_sensor_ads);
 
-        Spinner spinnerSensorADS1115Gain = findViewById(R.id.spinner_sensor_ads1115_gain);
-        Spinner spinnerSensorADS1115Channel = findViewById(R.id.spinner_sensor_ads1115_channel);
-        Spinner spinnerSensorADS1115Rate = findViewById(R.id.spinner_sensor_ads1115_rate);
+        spinnerSensorADS1115Gain = findViewById(R.id.spinner_sensor_ads1115_gain);
+        spinnerSensorADS1115Channel = findViewById(R.id.spinner_sensor_ads1115_channel);
+        spinnerSensorADS1115Rate = findViewById(R.id.spinner_sensor_ads1115_rate);
 
         if (sensorADS1115 != null) {
             sensorADS1115.setGain(spinnerSensorADS1115Gain.getSelectedItem().toString());
@@ -97,6 +101,9 @@ public class SensorADS1115 extends AbstractSensorActivity {
 
             try {
                 if (sensorADS1115 != null) {
+                    sensorADS1115.setChannel(spinnerSensorADS1115Channel.getSelectedItem().toString());
+                    sensorADS1115.setDataRate(Integer.parseInt(spinnerSensorADS1115Rate.getSelectedItem().toString()));
+                    sensorADS1115.setGain(spinnerSensorADS1115Gain.getSelectedItem().toString());
                     dataADS1115 = sensorADS1115.getRaw();
                     success = true;
                 }
