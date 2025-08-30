@@ -34,12 +34,24 @@ jobs:
 
           # Read and increment version name
           IFS='.' read -r major minor patch < versionName.txt
-          current_patch_version_name="$major.$minor.$patch"
-          echo "VERSION_NAME=$current_patch_version_name" >> $GITHUB_OUTPUT
+
+          if [[ "$commit_message" =~ ^feat: ]]; then
+            next_minor=$((minor + 1))
+            next_patch=0
+          else
+            next_minor=$((minor))
+            next_patch=$((patch + 1))
+          fi
+          next_version_name="$major.$next_minor.$next_patch"
+          echo "VERSION_NAME=$next_version_name" >> $GITHUB_OUTPUT
+          echo "$next_version_name" > versionName.txt
+
+          # Read and increment version code
+          read -r version_code < versionCode.txt
           
-          next_patch=$((patch + 1))
-          next_patch_version_name="$major.$minor.$next_patch"
-          echo "$next_patch_version_name" > versionName.txt
+          new_version_code=$((version_code + 1))
+          echo "VERSION_CODE=$new_version_code" >> $GITHUB_OUTPUT
+          echo "$new_version_code" > versionCode.txt
 
           # Read and increment version code
           read -r version_code < versionCode.txt
