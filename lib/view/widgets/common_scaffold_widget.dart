@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pslab/others/light_distance_experiment.dart';
 
 import '../../theme/colors.dart';
 
@@ -14,6 +15,11 @@ class CommonScaffold extends StatefulWidget {
   final bool isRecording;
   final String icRecord = 'assets/icons/ic_record_white.png';
 
+  final bool isPlayingBack;
+  final bool isPlaybackPaused;
+  final VoidCallback? onPlaybackPauseResume;
+  final VoidCallback? onPlaybackStop;
+
   const CommonScaffold({
     super.key,
     required this.body,
@@ -24,6 +30,10 @@ class CommonScaffold extends StatefulWidget {
     this.onOptionsPressed,
     this.onRecordPressed,
     this.isRecording = false,
+    this.isPlayingBack = false,
+    this.isPlaybackPaused = false,
+    this.onPlaybackPauseResume,
+    this.onPlaybackStop,
   });
   @override
   State<StatefulWidget> createState() => _CommonScaffoldState();
@@ -67,7 +77,28 @@ class _CommonScaffoldState extends State<CommonScaffold> {
           ),
         ),
         actions: [
-          if (widget.onRecordPressed != null)
+          if (widget.isPlayingBack) ...[
+            if (widget.onPlaybackPauseResume != null)
+              IconButton(
+                onPressed: widget.onPlaybackPauseResume,
+                icon: Icon(
+                  widget.isPlaybackPaused ? Icons.play_arrow : Icons.pause,
+                  color: appBarContentColor,
+                ),
+                tooltip: widget.isPlaybackPaused
+                    ? appLocalizations.resumePlayback
+                    : appLocalizations.pausePlayback,
+              ),
+            if (widget.onPlaybackStop != null)
+              IconButton(
+                onPressed: widget.onPlaybackStop,
+                icon: Icon(
+                  Icons.stop,
+                  color: appBarContentColor,
+                ),
+                tooltip: appLocalizations.stopPlayback,
+              ),
+          ] else if (widget.onRecordPressed != null)
             IconButton(
               onPressed: widget.onRecordPressed,
               icon: Image.asset(

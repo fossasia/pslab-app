@@ -99,6 +99,38 @@ class _NavDrawerState extends State<NavDrawer> {
               focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
+                Icons.science,
+                color:
+                    widget.selectedIndex == 13 ? selectedMenuColor : menuColor,
+              ),
+              title: Text(
+                appLocalizations.experiments,
+                style: TextStyle(
+                  color: widget.selectedIndex == 13
+                      ? selectedMenuColor
+                      : Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              onTap: () {
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name == '/experiments') {
+                  Navigator.popUntil(
+                      context, ModalRoute.withName('/experiments'));
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/experiments',
+                    (route) => route.isFirst,
+                  );
+                }
+              },
+            ),
+            ListTile(
+              focusColor: listTileFocusColor,
+              dense: true,
+              leading: Icon(
                 Icons.wifi_tethering,
                 color:
                     widget.selectedIndex == 1 ? selectedMenuColor : menuColor,

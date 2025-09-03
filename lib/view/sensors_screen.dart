@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/bmp180_screen.dart';
 import 'package:pslab/view/ads1115_screen.dart';
+import 'package:pslab/view/vl53l0x_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import '../theme/colors.dart';
+import 'apds9960_screen.dart';
 
 class SensorsScreen extends StatefulWidget {
   const SensorsScreen({super.key});
@@ -224,6 +226,11 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'BMP180':
         targetScreen = const BMP180Screen();
+        break;
+      case 'APDS9960':
+        targetScreen = const APDS9960Screen();
+      case 'VL53L0X':
+        targetScreen = const VL53L0XScreen();
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(

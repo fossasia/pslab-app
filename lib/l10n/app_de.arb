@@ -1,1 +1,12 @@
-{}
+{
+    "unitPercentage": "%",
+    "@unitPercentage": {},
+    "percentage": "%",
+    "@percentage": {},
+    "unitDeg": "°",
+    "@unitDeg": {},
+    "degreeSymbol": "°",
+    "@degreeSymbol": {},
+    "noOfChannelsOne": "1",
+    "@noOfChannelsOne": {}
+}

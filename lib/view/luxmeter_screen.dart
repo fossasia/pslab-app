@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -11,12 +12,18 @@ import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/luxmeter_config_screen.dart';
-
+import '../providers/experiment_provider.dart';
+import './widgets/experiment_overlay_widget.dart';
 import '../constants.dart';
 import '../theme/colors.dart';
 
 class LuxMeterScreen extends StatefulWidget {
-  const LuxMeterScreen({super.key});
+  final bool isExperiment;
+
+  const LuxMeterScreen({
+    super.key,
+    this.isExperiment = false,
+  });
   @override
   State<StatefulWidget> createState() => _LuxMeterScreenState();
 }
@@ -209,10 +216,32 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         _provider.initializeSensors(onError: _showSensorErrorSnackbar);
       }
     });
+    if (widget.isExperiment) {
+      _experimentTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _checkExperimentConditions();
+      });
+    }
+  }
+
+  Timer? _experimentTimer;
+
+  void _checkExperimentConditions() {
+    if (!widget.isExperiment) return;
+
+    final experimentProvider = context.read<ExperimentProvider>();
+    if (experimentProvider.state == ExperimentState.running) {
+      final luxData =
+          _provider.getLuxChartData().map((spot) => spot.y).toList();
+      final timeData =
+          _provider.getLuxChartData().map((spot) => spot.x).toList();
+
+      experimentProvider.checkStepCondition(luxData, timeData);
+    }
   }
 
   @override
   void dispose() {
+    _experimentTimer?.cancel();
     _provider.disposeSensors();
     _provider.dispose();
     _configProvider.dispose();
@@ -291,6 +320,18 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             instrumentName: appLocalizations.luxMeterTitle,
             content: _getLuxMeterContent(),
             onHide: _hideInstrumentGuide,
+          ),
+        if (widget.isExperiment)
+          ExperimentOverlayWidget(
+            onExperimentComplete: () async {
+              if (_provider.isRecording) {
+                final data = _provider.stopRecording();
+                await _showSaveFileDialog(data);
+              }
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
           ),
       ]),
     );

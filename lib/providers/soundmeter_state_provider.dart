@@ -7,6 +7,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/audio_jack.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SoundMeterStateProvider extends ChangeNotifier {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
@@ -26,14 +27,38 @@ class SoundMeterStateProvider extends ChangeNotifier {
   int _dataCount = 0;
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
+  bool _isPlayingBack = false;
+  List<List<dynamic>>? _playbackData;
+  int _playbackIndex = 0;
+  Timer? _playbackTimer;
+  bool _isPlaybackPaused = false;
   bool get isRecording => _isRecording;
+  bool get isPlayingBack => _isPlayingBack;
+  bool get isPlaybackPaused => _isPlaybackPaused;
 
   Function(String)? onSensorError;
+  Function? onPlaybackEnd;
 
   void initializeSensors({Function(String)? onError}) async {
     onSensorError = onError;
 
     try {
+      PermissionStatus microphonePermission =
+          await Permission.microphone.status;
+
+      if (microphonePermission != PermissionStatus.granted) {
+        microphonePermission = await Permission.microphone.request();
+      }
+      if (microphonePermission != PermissionStatus.granted) {
+        if (microphonePermission == PermissionStatus.permanentlyDenied) {
+          await openAppSettings();
+          _handleSensorError("Microphone permission is permanently denied.");
+          return;
+        } else {
+          return;
+        }
+      }
+
       _audioJack = AudioJack();
       await _audioJack!.initialize();
       await _audioJack!.start();
@@ -92,8 +117,116 @@ class SoundMeterStateProvider extends ChangeNotifier {
     _audioJack = null;
   }
 
+  void startPlayback(List<List<dynamic>> data) {
+    if (data.length <= 1) return;
+
+    _isPlayingBack = true;
+    _isPlaybackPaused = false;
+    _playbackData = data;
+    _playbackIndex = 1;
+
+    _timeTimer?.cancel();
+    _audioTimer?.cancel();
+
+    _dbData.clear();
+    dbChartData.clear();
+    _timeData.clear();
+    _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+    _currentTime = 0;
+    _dbSum = 0;
+    _dataCount = 0;
+
+    _startPlaybackTimer();
+    notifyListeners();
+  }
+
+  void _startPlaybackTimer() {
+    if (_playbackIndex >= _playbackData!.length) {
+      stopPlayback();
+      return;
+    }
+
+    final currentRow = _playbackData![_playbackIndex];
+    if (currentRow.length > 2) {
+      _currentDb = double.tryParse(currentRow[2].toString()) ?? 0.0;
+      _currentTime = (_playbackIndex - 1).toDouble();
+      _updateData();
+      _playbackIndex++;
+      notifyListeners();
+    } else {
+      logger.e(
+          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+      _playbackIndex++;
+      notifyListeners();
+    }
+
+    Duration interval = const Duration(seconds: 1);
+
+    if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
+      try {
+        final currentTimestamp =
+            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
+        final nextTimestamp =
+            int.tryParse(_playbackData![_playbackIndex][0].toString());
+
+        if (currentTimestamp != null && nextTimestamp != null) {
+          final timeDiff = nextTimestamp - currentTimestamp;
+          interval = Duration(milliseconds: timeDiff);
+          if (interval.inMilliseconds < 100) {
+            interval = const Duration(milliseconds: 100);
+          } else if (interval.inMilliseconds > 10000) {
+            interval = const Duration(seconds: 10);
+          }
+        }
+      } catch (e) {
+        interval = const Duration(seconds: 1);
+      }
+    }
+
+    _playbackTimer = Timer(interval, () {
+      if (_isPlayingBack && !_isPlaybackPaused) {
+        _startPlaybackTimer();
+      }
+    });
+  }
+
+  Future<void> stopPlayback() async {
+    _isPlayingBack = false;
+    _isPlaybackPaused = false;
+    _playbackTimer?.cancel();
+    _playbackData = null;
+    _playbackIndex = 0;
+
+    _dbData.clear();
+    dbChartData.clear();
+    _timeData.clear();
+    _dbSum = 0;
+    _dataCount = 0;
+    _currentDb = 0.0;
+    _currentTime = 0;
+    notifyListeners();
+    onPlaybackEnd?.call();
+  }
+
+  void pausePlayback() {
+    if (_isPlayingBack) {
+      _isPlaybackPaused = true;
+      _playbackTimer?.cancel();
+      notifyListeners();
+    }
+  }
+
+  void resumePlayback() {
+    if (_isPlayingBack && _isPlaybackPaused) {
+      _isPlaybackPaused = false;
+      _startPlaybackTimer();
+      notifyListeners();
+    }
+  }
+
   @override
   void dispose() {
+    _playbackTimer?.cancel();
     disposeSensors();
     super.dispose();
   }

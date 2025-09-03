@@ -15,7 +15,7 @@ class PacketHandler {
   late SocketClient _socketClient;
   static String version = '';
   late CommandsProto _mCommandsProto;
-  int _timeout = 500, versionStringLength = 8;
+  int _timeout = 500, versionStringLength = 8, fwVersionLength = 3;
 
   PacketHandler(int timeout, CommunicationHandler communicationHandler) {
     _connected = false;
@@ -132,6 +132,22 @@ class PacketHandler {
       logger.e(e);
     }
     return -1;
+  }
+
+  Future<int> getFirmwareVersion() async {
+    try {
+      sendByte(_mCommandsProto.common);
+      sendByte(_mCommandsProto.getFwVersion);
+      int numBytesRead = await _commonRead(fwVersionLength);
+      if (numBytesRead == 1) {
+        return 2;
+      } else {
+        return _buffer[0];
+      }
+    } catch (e) {
+      logger.e(e);
+    }
+    return 0;
   }
 
   Future<int> read(Uint8List dest, int bytesToRead) async {

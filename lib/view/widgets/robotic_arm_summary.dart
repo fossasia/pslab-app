@@ -100,7 +100,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                   return DropdownMenuItem(
                                     value: i,
                                     child: Text(
-                                        '$appLocalizations.servo ${i + 1}',
+                                        '${appLocalizations.servo} ${i + 1}',
                                         style: const TextStyle(fontSize: 10)),
                                   );
                                 }),
@@ -118,17 +118,17 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                 icon: Icons.show_chart,
                                 label: appLocalizations.avgAngleLabel,
                                 value:
-                                    '${avg.toStringAsFixed(1)}$appLocalizations.degreeSymbol'),
+                                    '${avg.toStringAsFixed(1)}${appLocalizations.degreeSymbol}'),
                             _StatCard(
                                 icon: Icons.arrow_upward,
                                 label: appLocalizations.maxAngleLabel,
                                 value:
-                                    '${max.toStringAsFixed(1)}$appLocalizations.degreeSymbol'),
+                                    '${max.toStringAsFixed(1)}${appLocalizations.degreeSymbol}'),
                             _StatCard(
                                 icon: Icons.arrow_downward,
                                 label: appLocalizations.minAngleLabel,
                                 value:
-                                    '${min.toStringAsFixed(1)}$appLocalizations.degreeSymbol'),
+                                    '${min.toStringAsFixed(1)}${appLocalizations.degreeSymbol}'),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -139,17 +139,17 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                 icon: Icons.timeline,
                                 label: appLocalizations.avgDutyLabel,
                                 value:
-                                    '${avgDuty.toStringAsFixed(1)}$appLocalizations.percentage'),
+                                    '${avgDuty.toStringAsFixed(1)}${appLocalizations.percentage}'),
                             _StatCard(
                                 icon: Icons.trending_up,
                                 label: appLocalizations.maxDutyLabel,
                                 value:
-                                    '${maxDuty.toStringAsFixed(1)}$appLocalizations.percentage'),
+                                    '${maxDuty.toStringAsFixed(1)}${appLocalizations.percentage}'),
                             _StatCard(
                                 icon: Icons.low_priority,
                                 label: appLocalizations.minDutyLabel,
                                 value:
-                                    '${minDuty.toStringAsFixed(1)}$appLocalizations.percentage'),
+                                    '${minDuty.toStringAsFixed(1)}${appLocalizations.percentage}'),
                           ],
                         ),
                       ],

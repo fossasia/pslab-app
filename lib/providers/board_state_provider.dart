@@ -20,9 +20,12 @@ class BoardStateProvider extends ChangeNotifier {
   String pslabVersionIDV6 = 'PSLab V6';
   String pslabVersionIDV5 = 'PSLab V5';
   int pslabVersion = 0;
+  int pslabFirmwareVersion = 0;
   late String exportFormat;
   bool autoStart = true;
   bool _isProcessing = false;
+
+  final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
@@ -32,9 +35,12 @@ class BoardStateProvider extends ChangeNotifier {
   Future<void> initialize() async {
     if (_isProcessing) return;
     _isProcessing = true;
-    await scienceLabCommon.initialize();
-    pslabIsConnected = await scienceLabCommon.openDevice();
-    setPSLabVersionIDs();
+    if (!scienceLabCommon.isConnected()) {
+      await scienceLabCommon.initialize();
+      pslabIsConnected = await scienceLabCommon.openDevice();
+      await setPSLabVersionIDs();
+      await fetchFirmwareVersion();
+    }
     _isProcessing = false;
     if (autoStart) {
       if (Platform.isAndroid) {
@@ -43,9 +49,11 @@ class BoardStateProvider extends ChangeNotifier {
             if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
               if (_isProcessing) return;
               _isProcessing = true;
-              if (await attemptToConnectPSLab()) {
+              if (!scienceLabCommon.isConnected() &&
+                  await attemptToConnectPSLab()) {
                 pslabIsConnected = await scienceLabCommon.openDevice();
-                setPSLabVersionIDs();
+                await setPSLabVersionIDs();
+                await fetchFirmwareVersion();
                 _isProcessing = false;
               }
             } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
@@ -74,7 +82,8 @@ class BoardStateProvider extends ChangeNotifier {
   Future<void> initializeWiFi() async {
     if (!pslabIsConnected) {
       pslabIsConnected = await scienceLabCommon.openWiFiDevice();
-      setPSLabVersionIDs();
+      await setPSLabVersionIDs();
+      await fetchFirmwareVersion();
     }
   }
 
@@ -84,6 +93,17 @@ class BoardStateProvider extends ChangeNotifier {
       pslabVersion = 6;
     } else if (pslabVersionID == pslabVersionIDV5) {
       pslabVersion = 5;
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchFirmwareVersion() async {
+    if (getIt.get<ScienceLab>().isConnected()) {
+      pslabFirmwareVersion =
+          await getIt.get<ScienceLab>().mPacketHandler.getFirmwareVersion();
+    }
+    if (pslabFirmwareVersion < 3 && pslabFirmwareVersion != 0) {
+      legacyFirmwareNotifier.value = "LegacyFirmwareDetected";
     }
     notifyListeners();
   }

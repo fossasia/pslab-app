@@ -48,26 +48,6 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/luxmeter') {
-                Navigator.popUntil(context, ModalRoute.withName('/luxmeter'));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/luxmeter',
-                  (route) => route.isFirst,
-                );
-              }
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: appBarContentColor,
-            ),
-          );
-        }),
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.luxmeterConfigurations,
