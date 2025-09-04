@@ -69,7 +69,10 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^10.3.2
   flutter_screenutil: ^5.9.3
-  flutter_libserialport: ^0.6.0
+  flusbserial: ^0.1.1
+
+dependency_overrides:
+  ffi: ^2.1.3
 
 
 dev_dependencies:

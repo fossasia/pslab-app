@@ -1,7 +1,9 @@
+import 'dart:io';
+
 class CommandsProto {
   int acknowledge = 254;
   int maxSamples = 10000;
-  int dataSplitting = 60;
+  late int dataSplitting;
 
   int flash = 1;
   int readFlash = 1;
@@ -200,4 +202,12 @@ class CommandsProto {
   int passUart = 1;
 
   int stopStreaming = 253;
+
+  CommandsProto() {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      dataSplitting = 30;
+    } else {
+      dataSplitting = 60;
+    }
+  }
 }

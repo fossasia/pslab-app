@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter_libserialport/flutter_libserialport.dart';
+import 'package:flusbserial/flusbserial.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/others/logger_service.dart';
 
@@ -9,7 +9,7 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
   static const int pslabProductIdV5 = 223;
   static const int pslabVendorIdV6 = 0x10C4;
   static const int pslabProductIdV6 = 0xEA60;
-  SerialPort? mPort;
+  UsbSerialDevice? mDevice;
 
   @override
   bool connected = false;
@@ -19,22 +19,22 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
 
   @override
   void close() {
-    if (!connected || mPort == null) return;
-    mPort?.close();
+    if (!connected || mDevice == null) return;
+    mDevice?.close();
     connected = false;
   }
 
   @override
   Future<void> initialize() async {
-    List<String> addresses = SerialPort.availablePorts;
-    for (final address in addresses) {
-      final port = SerialPort(address);
-      if ((port.vendorId == pslabVendorIdV5 &&
-              port.productId == pslabProductIdV5) ||
-          (port.vendorId == pslabVendorIdV6 &&
-              port.productId == pslabProductIdV6)) {
+    UsbSerialDevice.init();
+    List<UsbDevice> availableDevices = await UsbSerialDevice.listDevices();
+    for (final device in availableDevices) {
+      if ((device.vendorId == pslabVendorIdV5 &&
+              device.productId == pslabProductIdV5) ||
+          (device.vendorId == pslabVendorIdV6 &&
+              device.productId == pslabProductIdV6)) {
         deviceFound = true;
-        mPort = port;
+        mDevice = UsbSerialDevice.createDevice(device);
         break;
       }
     }
@@ -60,11 +60,11 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
     if (!deviceFound) {
       throw Exception("Device not connected");
     }
-    mPort?.openReadWrite();
-    mPort?.config.baudRate = 1000000;
-    mPort?.config.bits = 8;
-    mPort?.config.stopBits = 1;
-    mPort?.config.parity = SerialPortParity.none;
+    await mDevice?.open();
+    await mDevice?.setBaudRate(1000000);
+    await mDevice?.setDataBits(UsbSerialInterface.dataBits8);
+    await mDevice?.setStopBits(UsbSerialInterface.stopBits1);
+    await mDevice?.setParity(UsbSerialInterface.parityNone);
     connected = true;
   }
 
@@ -74,14 +74,16 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
     int bytesToBeReadTemp = bytesToRead;
     try {
       while (numBytesRead < bytesToRead) {
-        Uint8List receivedData = mPort!.read(bytesToBeReadTemp, timeout: 0);
-        int readNow = receivedData.length;
+        Uint8List? receivedData =
+            await mDevice?.read(bytesToBeReadTemp, timeoutMillis);
+        int? readNow = receivedData?.length;
+        logger.d("Received chunk: $receivedData");
         if (readNow == 0) {
           logger.e("Read Error: $bytesToBeReadTemp");
           return numBytesRead;
         } else {
-          int readLength = readNow.clamp(0, bytesToBeReadTemp);
-          dest.setRange(numBytesRead, numBytesRead + readLength, receivedData);
+          int readLength = readNow!.clamp(0, bytesToBeReadTemp);
+          dest.setRange(numBytesRead, numBytesRead + readLength, receivedData!);
           numBytesRead += readLength;
           bytesToBeReadTemp -= readLength;
         }
@@ -96,7 +98,6 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
 
   @override
   void write(Uint8List src, int timeoutMillis) {
-    mPort?.write(src, timeout: 0);
-    mPort?.flush();
+    mDevice?.write(src, timeoutMillis);
   }
 }
