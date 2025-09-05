@@ -20,6 +20,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.4
+  flutter: '3.35.3'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -39,7 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.2.0
   google_fonts: ^6.3.1
-  fl_chart: ^1.0.0
+  fl_chart: ^1.1.0
   provider: ^6.1.5
   usb_serial:
     git:
@@ -69,6 +70,10 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^10.3.2
   flutter_screenutil: ^5.9.3
+  flusbserial: ^0.1.1
+
+dependency_overrides:
+  ffi: ^2.1.3
 
 
 dev_dependencies:

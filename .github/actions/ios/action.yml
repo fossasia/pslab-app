@@ -17,6 +17,7 @@ runs:
       uses: subosito/flutter-action@v2
       with:
         cache: true
+        flutter-version-file: pubspec.yaml
 
     - name: Update Podfile
       shell: bash
