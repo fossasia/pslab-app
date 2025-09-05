@@ -46,10 +46,6 @@ class ADS1115 {
   static const int regConfigCpolActvlow = 0x0000;
   static const int regConfigCmodeTrad = 0x0000;
 
-  static const int numPlots = 1;
-  static const List plotNames = ["Voltage"];
-  static const String name = "ADS1115 16-bit ADC";
-
   final I2C i2c;
 
   String _channel = "UNI_0";
