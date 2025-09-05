@@ -3041,6 +3041,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Follow the on-screen instructions to move between different altitudes. The experiment will automatically detect pressure changes.'**
   String get barometerExperimentInstructionContent;
+
+  /// No description provided for @playbackStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback started'**
+  String get playbackStarted;
+
+  /// No description provided for @playback.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback'**
+  String get playback;
+
+  /// No description provided for @stopPlayback.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Playback'**
+  String get stopPlayback;
+
+  /// No description provided for @resumePlayback.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume Playback'**
+  String get resumePlayback;
+
+  /// No description provided for @pausePlayback.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause Playback'**
+  String get pausePlayback;
 }
 
 class _AppLocalizationsDelegate

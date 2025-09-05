@@ -1581,4 +1581,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get barometerExperimentInstructionContent =>
       'Follow the on-screen instructions to move between different altitudes. The experiment will automatically detect pressure changes.';
+
+  String get playbackStarted => 'Playback started';
+
+  @override
+  String get playback => 'Playback';
+
+  @override
+  String get stopPlayback => 'Stop Playback';
+
+  @override
+  String get resumePlayback => 'Resume Playback';
+
+  @override
+  String get pausePlayback => 'Pause Playback';
 }
