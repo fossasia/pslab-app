@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/logged_data_chart_screen.dart';
-
+import 'package:pslab/view/soundmeter_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 
@@ -164,6 +164,22 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
+  Future<void> _playFile(File file) async {
+    final data = await _csvService.readCsvFromFile(file);
+    if (data.isNotEmpty && mounted) {
+      switch (widget.instrumentName) {
+        case 'soundmeter':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SoundMeterScreen(playbackData: data),
+            ),
+          );
+          break;
+      }
+    }
+  }
+
   Future<void> _pickAndImportFile() async {
     final data = await _csvService.pickAndReadCsvFile();
     if (data != null && mounted) {
@@ -288,6 +304,12 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              if (widget.instrumentName == "soundmeter")
+                                IconButton(
+                                  icon:
+                                      Icon(Icons.play_arrow, color: primaryRed),
+                                  onPressed: () => _playFile(file),
+                                ),
                               IconButton(
                                 icon: Icon(Icons.share, color: primaryRed),
                                 onPressed: () =>
