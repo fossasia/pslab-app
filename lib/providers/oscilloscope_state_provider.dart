@@ -164,7 +164,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
   Future<void> monitor() async {
     _timer = Timer.periodic(
-      Duration.zero,
+      const Duration(milliseconds: 10),
       (timer) async {
         if (!_monitor) {
           timer.cancel();

@@ -1,0 +1,60 @@
+name: Flutter Upgrade Check
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+jobs:
+  check-flutter-upgrade:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Read Flutter version from pubspec.yaml
+        id: read-version
+        run: |
+          FLUTTER_VERSION=$(yq '.environment.flutter' pubspec.yaml)
+          echo "Current Flutter version: $FLUTTER_VERSION"
+          echo "flutter_version=$FLUTTER_VERSION" >> $GITHUB_ENV
+
+      - name: Get latest stable Flutter version
+        id: check-latest
+        run: |
+          LATEST_VERSION=$(curl -s https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json | jq -r '.releases[] | select(.channel == "stable") | .version' | head -n 1)
+          echo "Latest stable Flutter version: $LATEST_VERSION"
+          echo "latest_flutter_version=$LATEST_VERSION" >> $GITHUB_ENV
+
+      - name: Compare versions and update pubspec.yaml if needed
+        id: update-version
+        run: |
+          if [ "$flutter_version" != "$latest_flutter_version" ]; then
+            echo "Updating Flutter version in pubspec.yaml..."
+            sed -i "s/flutter:\s*'${flutter_version}'/flutter: '${latest_flutter_version}'/" pubspec.yaml
+            git --no-pager diff
+            echo "update_needed=true" >> $GITHUB_ENV
+          else
+            echo "Flutter is up to date."
+            echo "update_needed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and create PR if update is needed
+        if: env.update_needed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |          
+          git config --global user.name "dependabot[bot]"
+          git config --global user.email "49699333+dependabot[bot]@users.noreply.github.com"
+
+          BRANCH_NAME="flutter-upgrade-${{ env.latest_flutter_version }}"
+          git checkout -b $BRANCH_NAME
+          git add pubspec.yaml
+          git commit -m "chore: Upgrade Flutter to ${{ env.latest_flutter_version }}"
+          git push origin -f $BRANCH_NAME
+
+          PR_URL=$(gh pr create --title "chore(deps): upgrade Flutter to ${{ env.latest_flutter_version }}" \
+                       --body "This PR updates Flutter version in pubspec.yaml to the latest stable release." \
+                       --base development \
+                       --head $BRANCH_NAME)
