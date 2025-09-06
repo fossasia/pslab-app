@@ -26,7 +26,7 @@ packages:
     source: hosted
     version: "2.1.2"
   carousel_slider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: carousel_slider
       sha256: bcc61735345c9ab5cb81073896579e735f81e35fd588907a393143ea986be8ff
@@ -58,7 +58,7 @@ packages:
     source: hosted
     version: "1.19.1"
   connectivity_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: connectivity_plus
       sha256: b5e72753cf63becce2c61fd04dfe0f1c430cc5278b53a1342dc5ad839eab29ec
@@ -90,7 +90,7 @@ packages:
     source: hosted
     version: "3.0.6"
   csv:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: csv
       sha256: c6aa2679b2a18cb57652920f674488d89712efaf4d3fdf2e537215b35fc19d6c
@@ -162,7 +162,7 @@ packages:
     source: hosted
     version: "1.3.3"
   ffi:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: ffi
       sha256: "16ed7b077ef01ad6170a3d0c57caa4a112a38d7a2ed5602e0aca9ca6f3d98da6"
@@ -178,7 +178,7 @@ packages:
     source: hosted
     version: "7.0.1"
   file_picker:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: file_picker
       sha256: e7e16c9d15c36330b94ca0e2ad8cb61f93cd5282d0158c09805aed13b5452f22
@@ -201,6 +201,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  flusbserial:
+    dependency: "direct main"
+    description:
+      name: flusbserial
+      sha256: "8c21f940f96ef3169cac91e10d2847e289618346d3945d65297967cb7b7a2fab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -229,12 +237,12 @@ packages:
     source: hosted
     version: "6.0.0"
   flutter_localizations:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
   flutter_oss_licenses:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: flutter_oss_licenses
       sha256: e4bbaeb00bc768e8430ee0c95ad304d2f256fb15194d30b912cea269871c8885
@@ -250,7 +258,7 @@ packages:
     source: hosted
     version: "2.0.28"
   flutter_screenutil:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_screenutil
       sha256: "8239210dd68bee6b0577aa4a090890342d04a136ce1c81f98ee513fc0ce891de"
@@ -276,7 +284,7 @@ packages:
     source: sdk
     version: "0.0.0"
   font_awesome_flutter:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: font_awesome_flutter
       sha256: "27af5982e6c510dec1ba038eff634fa284676ee84e3fd807225c80c4ad869177"
@@ -289,7 +297,7 @@ packages:
     source: sdk
     version: "0.0.0"
   gauge_indicator:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: gauge_indicator
       sha256: "483abfae360ddffdf7b89fbd25192f83d1a6513d5da18f2388131566ab0793fd"
@@ -328,13 +336,21 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  inno_bundle:
+    dependency: "direct main"
+    description:
+      name: inno_bundle
+      sha256: "05b18d03142bfbaf708f340e007a04d50cc24295195c5ddf9f1c102978878335"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.1"
   integration_test:
-    dependency: transitive
+    dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
@@ -373,8 +389,16 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
-  light:
+  libusb:
     dependency: transitive
+    description:
+      name: libusb
+      sha256: ca24c95f475eb53fac4dcdcd754b5a0b1b04d0bbf744f61163ae5d59197471c6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.23+2"
+  light:
+    dependency: "direct main"
     description:
       name: light
       sha256: cb6551bf3ac336fcd5d0ce85ba3345a6f195785bb913f7541a976b4367aeb3a3
@@ -462,7 +486,7 @@ packages:
     source: hosted
     version: "0.5.0"
   package_info_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: package_info_plus
       sha256: "16eee997588c60225bda0488b6dcfac69280a6b7a3cf02c741895dd370a02968"
@@ -494,7 +518,7 @@ packages:
     source: hosted
     version: "1.1.0"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
@@ -630,7 +654,7 @@ packages:
     source: hosted
     version: "6.1.5"
   sensors_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sensors_plus
       sha256: "89e2bfc3d883743539ce5774a2b93df61effde40ff958ecad78cd66b1a8b8d52"
@@ -646,7 +670,7 @@ packages:
     source: hosted
     version: "2.0.1"
   share_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: share_plus
       sha256: d7dc0630a923883c6328ca31b89aa682bacbf2f8304162d29f7c6aaff03a27a1
@@ -662,7 +686,7 @@ packages:
     source: hosted
     version: "6.1.0"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
       sha256: "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"
@@ -723,7 +747,7 @@ packages:
     source: sdk
     version: "0.0.0"
   sleek_circular_slider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sleek_circular_slider
       sha256: "89c7d0d37befc9818a2b53ef6ff126c43b70485dabb189b734d46106db190931"
@@ -916,7 +940,7 @@ packages:
     source: hosted
     version: "2.2.0"
   vibration:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: vibration
       sha256: "804ee8f9628f31ee71fbe6137a2bc6206a64e101ec22cd9dd6d3a7dc0272591b"
@@ -996,5 +1020,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.7.0-0 <4.0.0"
-  flutter: ">=3.27.0"
+  dart: ">=3.9.0 <4.0.0"
+  flutter: ">=3.35.3"

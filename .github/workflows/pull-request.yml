@@ -105,3 +105,13 @@ jobs:
         uses: ./.github/actions/screenshot-ipad
         with:
           IPAD_DEVICE_MODEL: ${{ env.IPAD_DEVICE_MODEL }}
+  
+  windows:
+    name: Windows Flutter Build
+    needs: common
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Windows Workflow
+        uses: ./.github/actions/windows

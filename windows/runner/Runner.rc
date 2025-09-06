@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "io.pslab" "\0"
-            VALUE "FileDescription", "pslab" "\0"
+            VALUE "CompanyName", "FOSSASIA" "\0"
+            VALUE "FileDescription", "PSLab" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "pslab" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 io.pslab. All rights reserved." "\0"
-            VALUE "OriginalFilename", "pslab.exe" "\0"
-            VALUE "ProductName", "pslab" "\0"
+            VALUE "InternalName", "PSLab" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 FOSSASIA. All rights reserved." "\0"
+            VALUE "OriginalFilename", "PSLab.exe" "\0"
+            VALUE "ProductName", "PSLab" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -29,6 +29,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
+          # Get commit message
+          commit_message=$(git log -1 --pretty=format:"%s")
+          
           git clone --branch=version https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} version
           cd version
 
@@ -53,17 +56,10 @@ jobs:
           echo "VERSION_CODE=$new_version_code" >> $GITHUB_OUTPUT
           echo "$new_version_code" > versionCode.txt
 
-          # Read and increment version code
-          read -r version_code < versionCode.txt
-          echo "VERSION_CODE=$version_code" >> $GITHUB_OUTPUT
-          
-          new_version_code=$((version_code + 1))
-          echo "$new_version_code" > versionCode.txt
-
           # Force push to version branch
           git checkout --orphan temporary
           git add --all .
-          git commit -am "[Auto] Update versionName: $next_patch_version_name & versionCode: $new_version_code ($(date +%Y-%m-%d.%H:%M:%S))"
+          git commit -am "[Auto] Update versionName: $next_version_name & versionCode: $new_version_code ($(date +%Y-%m-%d.%H:%M:%S))"
           git branch -D version
           git branch -m version
           git push --force origin version
