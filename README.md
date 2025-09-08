@@ -3,10 +3,7 @@
 Repository for the PSLab Android App for performing experiments with the [Pocket Science Lab](https://pslab.io) open-hardware platform.
 
 [![Build](https://github.com/fossasia/pslab-android/actions/workflows/pull-request.yml/badge.svg)](https://github.com/fossasia/pslab-android/actions/workflows/pull-request.yml)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/3383ddffb53b4c82a822f3a5991fe0a1)](https://www.codacy.com/gh/fossasia/pslab-android/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fossasia/pslab-android&amp;utm_campaign=Badge_Grade)
 [![Mailing List](https://img.shields.io/badge/Mailing%20List-FOSSASIA-blue.svg)](https://groups.google.com/forum/#!forum/pslab-fossasia)
-![Minimum API Level](https://img.shields.io/badge/Min%20API%20Level-23-green)
-![Maximum API Level](https://img.shields.io/badge/Max%20API%20Level-31-orange)
 ![GitHub repo size](https://img.shields.io/github/repo-size/fossasia/pslab-android)
 [![Gitter](https://badges.gitter.im/fossasia/pslab.svg)](https://gitter.im/fossasia/pslab?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Twitter Follow](https://img.shields.io/twitter/follow/pslabio.svg?style=social&label=Follow&maxAge=2592000?style=flat-square)](https://twitter.com/pslabio)
