@@ -14,6 +14,7 @@ class CommonScaffold extends StatefulWidget {
   final VoidCallback? onRecordPressed;
   final bool isRecording;
   final String icRecord = 'assets/icons/ic_record_white.png';
+  final String icStopRecord = 'assets/icons/ic_record_stop_white.png';
 
   final bool isPlayingBack;
   final bool isPlaybackPaused;
@@ -102,7 +103,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
             IconButton(
               onPressed: widget.onRecordPressed,
               icon: Image.asset(
-                widget.icRecord,
+                widget.isRecording ? widget.icStopRecord : widget.icRecord,
                 width: 24,
                 height: 24,
               ),
