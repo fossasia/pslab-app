@@ -47,6 +47,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: appBarContentColor),
         systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
         backgroundColor: primaryRed,
         title: Text(
