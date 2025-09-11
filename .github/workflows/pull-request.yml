@@ -115,3 +115,13 @@ jobs:
 
       - name: Windows Workflow
         uses: ./.github/actions/windows
+  
+  linux:
+    name: Linux Flutter Build
+    needs: common
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux Workflow
+        uses: ./.github/actions/linux
