@@ -158,7 +158,7 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: latest-stable
+          xcode-version: '16.4.0'
           
       - uses: actions/checkout@v4
 
@@ -200,7 +200,7 @@ jobs:
 
   update-release:
     name: Update Draft Release
-    needs: [ common, android, ios, windows, linux ]
+    needs: [ common, android, ios, windows, linux, macos ]
     runs-on: ubuntu-latest
     steps:
       - name: Run Release Drafter
@@ -231,7 +231,7 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: latest-stable
+          xcode-version: '16.4.0'
 
       - uses: actions/checkout@v4
 
@@ -248,7 +248,7 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: latest-stable
+          xcode-version: '16.4.0'
 
       - uses: actions/checkout@v4
 
