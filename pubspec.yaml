@@ -148,4 +148,4 @@ inno_bundle:
   name: PSLab
   url: https://pslab.io
   support_url: https://github.com/fossasia/pslab-app/issues
-  updates_url: https://github.com/fossasia/pslab-app/issues
+  updates_url: https://github.com/fossasia/pslab-app/releases
