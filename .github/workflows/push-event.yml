@@ -272,12 +272,15 @@ jobs:
 
       - name: Upload installer to apk branch
         if: ${{ github.repository == 'fossasia/pslab-app' }}
+        shell: bash
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
           cd apk
+          
+          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 
           echo "Removing previous files from branch"
 
@@ -317,6 +320,8 @@ jobs:
 
           git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
           cd apk
+          
+          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 
           echo "Removing previous files from branch"
 
