@@ -200,7 +200,7 @@ jobs:
 
   update-release:
     name: Update Draft Release
-    needs: [ common, android, ios ]
+    needs: [ common, android, ios, windows, linux ]
     runs-on: ubuntu-latest
     steps:
       - name: Run Release Drafter
@@ -256,3 +256,95 @@ jobs:
         uses: ./.github/actions/screenshot-ipad
         with:
           IPAD_DEVICE_MODEL: ${{ env.IPAD_DEVICE_MODEL }}
+  
+  windows:
+    name: Windows Flutter Build
+    needs: common
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Windows Workflow
+        uses: ./.github/actions/windows
+        with:
+          VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
+          VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
+
+      - name: Upload installer to apk branch
+        if: ${{ github.repository == 'fossasia/pslab-app' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
+          cd apk
+
+          echo "Removing previous files from branch"
+
+          rm -rf *.exe
+
+          echo "Copying new build files"
+
+          cp -v ../build/windows/x64/installer/Release/*.exe .
+
+          echo "Pushing to apk branch"
+
+          git checkout --orphan temporary
+          git add --all .
+          git commit -am "[Auto] Update Windows Installer's from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
+          git branch -D apk
+          git branch -m apk
+          git push --force origin apk
+  
+  linux:
+    name: Linux Flutter Build
+    needs: common
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux Workflow
+        uses: ./.github/actions/linux
+        with:
+          VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
+          VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
+      
+      - name: Upload packages to apk branch
+        if: ${{ github.repository == 'fossasia/pslab-app' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
+          cd apk
+
+          echo "Removing previous files from branch"
+
+          rm -rf *.deb *.rpm
+
+          echo "Copying new build files"
+
+          cp -v ../*.deb .
+          cp -v ../*.rpm .
+
+          echo "Pushing to apk branch"
+
+          git checkout --orphan temporary
+          git add --all .
+          git commit -am "[Auto] Update Linux Packages from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
+          git branch -D apk
+          git branch -m apk
+          git push --force origin apk
+
+  macos:
+    name: macOS Flutter Build
+    needs: common
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: macOS Workflow
+        uses: ./.github/actions/macos
+        with:
+          VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
+          VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}

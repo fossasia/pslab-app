@@ -125,3 +125,18 @@ jobs:
 
       - name: Linux Workflow
         uses: ./.github/actions/linux
+
+  macos:
+    name: macOS Flutter Build
+    needs: common
+    runs-on: macos-latest
+    steps:
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/checkout@v4
+
+      - name: macOS Workflow
+        uses: ./.github/actions/macos
