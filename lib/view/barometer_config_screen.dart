@@ -47,26 +47,6 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/barometer') {
-                Navigator.popUntil(context, ModalRoute.withName('/barometer'));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/barometer',
-                  (route) => route.isFirst,
-                );
-              }
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: appBarContentColor,
-            ),
-          );
-        }),
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.barometerConfig,

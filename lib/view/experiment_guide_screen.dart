@@ -5,6 +5,8 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import '../theme/colors.dart';
 import '../providers/experiment_provider.dart';
+import 'package:pslab/others/barometer_pressure_experiment.dart';
+import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/others/light_distance_experiment.dart';
 
 class ExperimentGuideScreen extends StatefulWidget {
@@ -41,6 +43,9 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
       case 'light_distance':
         guideSteps = lightDistanceExperiment.guideSteps;
         break;
+      case 'barometer_pressure':
+        guideSteps = barometerPressureExperiment.guideSteps;
+        break;
       default:
         guideSteps = [
           {
@@ -75,6 +80,9 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
       case 'light_distance':
         _experimentProvider.startExperiment(lightDistanceExperiment);
         break;
+      case 'barometer_pressure':
+        _experimentProvider.startExperiment(barometerPressureExperiment);
+        break;
     }
 
     switch (widget.experimentRoute) {
@@ -86,6 +94,17 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
                 ChangeNotifierProvider<ExperimentProvider>.value(
               value: _experimentProvider,
               child: const LuxMeterScreen(isExperiment: true),
+            ),
+          ),
+        );
+        break;
+      case '/barometer':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChangeNotifierProvider.value(
+              value: _experimentProvider,
+              child: const BarometerScreen(isExperiment: true),
             ),
           ),
         );
@@ -122,108 +141,110 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
         backgroundColor: appBarColor,
         foregroundColor: appBarContentColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            LinearProgressIndicator(
-              value: (currentStep + 1) / guideSteps.length,
-              backgroundColor: sensorStatusBorder,
-              valueColor: AlwaysStoppedAnimation<Color>(primaryRed),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '${appLocalizations.step} ${currentStep + 1} - ${guideSteps.length}',
-              style: Theme.of(context).textTheme.bodySmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              step['title']!,
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (step['image'] != null && step['image']!.isNotEmpty)
-                    Container(
-                      height: 200,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        color: sensorStatusBorder,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          step['image']!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: sensorStatusBorder,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                Icons.image_not_supported,
-                                size: 50,
-                                color: menuColor,
-                              ),
-                            );
-                          },
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              LinearProgressIndicator(
+                value: (currentStep + 1) / guideSteps.length,
+                backgroundColor: sensorStatusBorder,
+                valueColor: AlwaysStoppedAnimation<Color>(primaryRed),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '${appLocalizations.step} ${currentStep + 1} - ${guideSteps.length}',
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                step['title']!,
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (step['image'] != null && step['image']!.isNotEmpty)
+                      Container(
+                        height: 200,
+                        width: 200,
+                        decoration: BoxDecoration(
+                          color: sensorStatusBorder,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            step['image']!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: sensorStatusBorder,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 50,
+                                  color: menuColor,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
+                    const SizedBox(height: 30),
+                    Text(
+                      step['content']!,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
                     ),
-                  const SizedBox(height: 30),
-                  Text(
-                    step['content']!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (currentStep > 0)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (currentStep > 0)
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: sensorStatusBorder,
+                        foregroundColor: guideDrawerHeadingColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      onPressed: previousStep,
+                      child: Text(appLocalizations.previous),
+                    )
+                  else
+                    const SizedBox(),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: sensorStatusBorder,
-                      foregroundColor: guideDrawerHeadingColor,
+                      backgroundColor: primaryRed,
+                      foregroundColor: buttonTextColor,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
                       ),
                     ),
-                    onPressed: previousStep,
-                    child: Text(appLocalizations.previous),
-                  )
-                else
-                  const SizedBox(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryRed,
-                    foregroundColor: buttonTextColor,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                    onPressed: nextStep,
+                    child: Text(
+                      currentStep == guideSteps.length - 1
+                          ? appLocalizations.startExperiment
+                          : appLocalizations.next,
                     ),
                   ),
-                  onPressed: nextStep,
-                  child: Text(
-                    currentStep == guideSteps.length - 1
-                        ? appLocalizations.startExperiment
-                        : appLocalizations.next,
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

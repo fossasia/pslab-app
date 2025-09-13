@@ -18,11 +18,20 @@ import '../others/logger_service.dart';
 import '../providers/barometer_config_provider.dart';
 import '../constants.dart';
 import 'barometer_config_screen.dart';
+import '../providers/experiment_provider.dart';
+import './widgets/experiment_overlay_widget.dart';
+import 'dart:async';
 
 class BarometerScreen extends StatefulWidget {
   final List<List<dynamic>>? playbackData;
 
   const BarometerScreen({super.key, this.playbackData});
+
+  final dynamic isExperiment;
+  const BarometerScreen({
+    super.key,
+    this.isExperiment = false,
+  });
 
   @override
   State<StatefulWidget> createState() => _BarometerScreenState();
@@ -38,11 +47,28 @@ class _BarometerScreenState extends State<BarometerScreen> {
   I2C? _i2c;
   ScienceLab? _scienceLab;
   BarometerConfigProvider? _configProvider;
-
+  Timer? _experimentTimer;
   @override
   void initState() {
     super.initState();
     _initializeScienceLab();
+    if (widget.isExperiment) {
+      _experimentTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        _checkExperimentConditions();
+      });
+    }
+  }
+
+  void _checkExperimentConditions() {
+    if (!widget.isExperiment) return;
+    final experimentProvider = context.read<ExperimentProvider>();
+    if (experimentProvider.state == ExperimentState.running) {
+      final pressureData =
+          _provider.getPressureChartData().map((spot) => spot.y).toList();
+      final timeData =
+          _provider.getPressureChartData().map((spot) => spot.x).toList();
+      experimentProvider.checkStepCondition(pressureData, timeData);
+    }
   }
 
   void _initializeScienceLab() async {
@@ -245,6 +271,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
 
   @override
   void dispose() {
+    _experimentTimer?.cancel();
     _provider.dispose();
     super.dispose();
   }
@@ -356,6 +383,18 @@ class _BarometerScreenState extends State<BarometerScreen> {
             instrumentName: appLocalizations.barometer,
             content: _getBarometerContent(),
             onHide: _hideInstrumentGuide,
+          ),
+        if (widget.isExperiment)
+          ExperimentOverlayWidget(
+            onExperimentComplete: () async {
+              if (_provider.isRecording) {
+                final data = _provider.stopRecording();
+                await _showSaveFileDialog(data);
+              }
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
           ),
       ]),
     );
