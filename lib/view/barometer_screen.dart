@@ -23,16 +23,14 @@ import './widgets/experiment_overlay_widget.dart';
 import 'dart:async';
 
 class BarometerScreen extends StatefulWidget {
+  final dynamic isExperiment;
   final List<List<dynamic>>? playbackData;
 
-  const BarometerScreen({super.key, this.playbackData});
-
-  final dynamic isExperiment;
   const BarometerScreen({
     super.key,
     this.isExperiment = false,
+    this.playbackData,
   });
-
   @override
   State<StatefulWidget> createState() => _BarometerScreenState();
 }
