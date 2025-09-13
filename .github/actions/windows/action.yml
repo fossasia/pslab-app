@@ -1,0 +1,49 @@
+name: "Windows Workflow"
+
+inputs:
+  VERSION_NAME:
+    description: 'Version Name to be used for build'
+    required: false
+    default: '1.0.0'
+  VERSION_CODE:
+    description: 'Version Code to be used for build'
+    required: true
+    default: '1'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+        flutter-version-file: pubspec.yaml
+    
+    - name: Build Windows App
+      shell: pwsh
+      run: |
+        flutter config --enable-windows-desktop
+        flutter build windows --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
+    
+    - name: Build iss script
+      id: build-iss
+      shell: pwsh
+      run: |
+        # Update version in pubspec.yaml for iss script
+        (Get-Content pubspec.yaml) -replace '^version: .*', "version: ${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}" | Set-Content pubspec.yaml
+
+        dart run inno_bundle:build --no-app --release --no-installer
+        echo $(dart run inno_bundle:build --envs --no-hf) | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append
+    
+    - name: Build Installer
+      shell: pwsh
+      run: |
+        choco install innosetup -y
+        $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe"
+        & "$iscc" /O+ "build\windows\x64\installer\Release\inno-script.iss"
+
+    - name: Store Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-installer
+        path: build/windows/x64/installer/Release/${{ steps.build-iss.outputs.APP_NAME_CAMEL_CASE }}-x86_64-${{ steps.build-iss.outputs.APP_VERSION }}-Installer.exe

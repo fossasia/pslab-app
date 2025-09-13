@@ -1,0 +1,42 @@
+name: "macOS Workflow"
+
+inputs:
+  VERSION_NAME:
+    description: 'Version Name to be used for build'
+    required: false
+    default: '1.0.0'
+  VERSION_CODE:
+    description: 'Version Code to be used for build'
+    required: true
+    default: '1'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+        flutter-version-file: pubspec.yaml
+
+    - name: Update Podfile
+      shell: bash
+      run: |
+        cd ./macos
+        flutter pub get
+        pod install --repo-update
+
+    - name: Build macOS App
+      shell: bash
+      env:
+        VERSION_NAME: ${{ inputs.VERSION_NAME }}
+        VERSION_CODE: ${{ inputs.VERSION_CODE }}
+      run: |
+        flutter config --enable-macos-desktop
+        flutter build macos --build-name $VERSION_NAME --build-number $VERSION_CODE
+
+    - name: Store App file
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-app
+        path: build/macos/Build/Products/Release/pslab.app
