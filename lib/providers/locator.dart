@@ -17,7 +17,7 @@ void setupLocator() {
   getIt.registerLazySingleton<CommunicationHandler>(() {
     if (Platform.isAndroid) {
       return AndroidUSBCommunicationHandler();
-    } else if (Platform.isWindows) {
+    } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       return DesktopUSBCommunicationHandler();
     } else {
       return IosNoOpCommunicationHandler();
