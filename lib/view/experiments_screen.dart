@@ -23,6 +23,13 @@ class _ExperimentsScreenState extends State<ExperimentsScreen> {
       'icon': Icons.lightbulb,
       'route': '/luxmeter',
     },
+    {
+      'id': 'barometer_pressure',
+      'title': appLocalizations.pressureVsAltitude,
+      'description': appLocalizations.pressureVsAltitudeDesc,
+      'icon': Icons.compress,
+      'route': '/barometer',
+    },
   ];
 
   @override

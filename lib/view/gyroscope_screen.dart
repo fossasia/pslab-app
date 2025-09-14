@@ -14,7 +14,8 @@ import '../constants.dart';
 import 'gyroscope_config_screen.dart';
 
 class GyroscopeScreen extends StatefulWidget {
-  const GyroscopeScreen({super.key});
+  final List<List<dynamic>>? playbackData;
+  const GyroscopeScreen({super.key, this.playbackData});
 
   @override
   State<StatefulWidget> createState() => _GyroscopeScreenState();
@@ -31,16 +32,24 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
   void initState() {
     super.initState();
     _provider = GyroscopeProvider();
+    _provider.onPlaybackEnd = () {
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    };
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _provider.initializeSensors();
+        if (widget.playbackData != null) {
+          _provider.startPlayback(widget.playbackData!);
+        } else {
+          _provider.initializeSensors();
+        }
       }
     });
   }
 
   @override
   void dispose() {
-    _provider.disposeSensors();
     _provider.dispose();
     super.dispose();
   }
@@ -218,11 +227,26 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
         Consumer<GyroscopeProvider>(
           builder: (context, provider, child) {
             return CommonScaffold(
-              title: appLocalizations.gyroscopeTitle,
+              title: provider.isPlayingBack
+                  ? '${appLocalizations.gyroscopeTitle} - ${appLocalizations.playback}'
+                  : appLocalizations.gyroscopeTitle,
               onGuidePressed: _showInstrumentGuide,
-              onOptionsPressed: _showOptionsMenu,
-              onRecordPressed: _toggleRecording,
+              onOptionsPressed:
+                  provider.isPlayingBack ? null : _showOptionsMenu,
+              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
               isRecording: provider.isRecording,
+              isPlayingBack: provider.isPlayingBack,
+              isPlaybackPaused: provider.isPlaybackPaused,
+              onPlaybackPauseResume: provider.isPlayingBack
+                  ? (provider.isPlaybackPaused
+                      ? _provider.resumePlayback
+                      : _provider.pausePlayback)
+                  : null,
+              onPlaybackStop: provider.isPlayingBack
+                  ? () async {
+                      await _provider.stopPlayback();
+                    }
+                  : null,
               body: SafeArea(
                 child: Column(
                   children: [

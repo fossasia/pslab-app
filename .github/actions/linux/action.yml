@@ -1,0 +1,67 @@
+name: "Linux Workflow"
+
+inputs:
+  VERSION_NAME:
+    description: 'Version Name to be used for build'
+    required: false
+    default: '1.0.0'
+  VERSION_CODE:
+    description: 'Version Code to be used for build'
+    required: true
+    default: '1'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+        flutter-version-file: pubspec.yaml
+    
+    - name: Install dependencies
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+    
+    - name: Build Linux App
+      shell: bash
+      run: |
+        flutter config --enable-linux-desktop
+        flutter build linux --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
+
+    - name: Install fpm
+      shell: bash
+      run: |
+        sudo apt-get install -y ruby ruby-dev build-essential
+        sudo gem install --no-document fpm
+    
+    - name: Build .deb package
+      shell: bash
+      run: |
+        mkdir -p build/linux/package/usr/local/bin
+        cp -r ./build/linux/x64/release/bundle/* build/linux/package/usr/local/bin/
+        fpm -s dir -t deb \
+          -n pslab \
+          -v ${{ inputs.VERSION_NAME }} \
+          --prefix=/ \
+          -C build/linux/package \
+          usr
+
+    - name: Build .rpm package
+      shell: bash
+      run: |
+        fpm -s dir -t rpm \
+          -n pslab \
+          -v ${{ inputs.VERSION_NAME }} \
+          --prefix=/ \
+          -C build/linux/package \
+          usr
+
+    - name: Store Packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-packages
+        path: "*.deb\n*.rpm"
