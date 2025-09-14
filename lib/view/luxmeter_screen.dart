@@ -19,10 +19,12 @@ import '../theme/colors.dart';
 
 class LuxMeterScreen extends StatefulWidget {
   final bool isExperiment;
+  final List<List<dynamic>>? playbackData;
 
   const LuxMeterScreen({
     super.key,
     this.isExperiment = false,
+    this.playbackData,
   });
   @override
   State<StatefulWidget> createState() => _LuxMeterScreenState();
@@ -35,6 +37,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+
   void _showInstrumentGuide() {
     setState(() {
       _showGuide = true;
@@ -211,15 +214,24 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     _provider = LuxMeterStateProvider();
     _configProvider = LuxMeterConfigProvider();
 
+    _provider.onPlaybackEnd = () {
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    };
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _provider.onSensorError = (msg) {
-        _showSensorErrorSnackbar(msg);
-      };
-
-      _provider.setConfigProvider(_configProvider);
+      if (mounted) {
+        _provider.onSensorError = (msg) {
+          _showSensorErrorSnackbar(msg);
+        };
+        if (widget.playbackData != null) {
+          _provider.startPlayback(widget.playbackData!);
+        } else {
+          _provider.setConfigProvider(_configProvider);
+        }
+      }
     });
-
     if (widget.isExperiment) {
       _experimentTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         _checkExperimentConditions();
@@ -280,11 +292,26 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         Consumer<LuxMeterStateProvider>(
           builder: (context, provider, child) {
             return CommonScaffold(
-              title: appLocalizations.luxMeterTitle,
-              onOptionsPressed: _showOptionsMenu,
+              title: provider.isPlayingBack
+                  ? '${appLocalizations.luxMeterTitle} - ${appLocalizations.playback}'
+                  : appLocalizations.luxMeterTitle,
+              onOptionsPressed:
+                  provider.isPlayingBack ? null : _showOptionsMenu,
               onGuidePressed: _showInstrumentGuide,
-              onRecordPressed: _toggleRecording,
+              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
               isRecording: provider.isRecording,
+              isPlayingBack: provider.isPlayingBack,
+              isPlaybackPaused: provider.isPlaybackPaused,
+              onPlaybackPauseResume: provider.isPlayingBack
+                  ? (provider.isPlaybackPaused
+                      ? _provider.resumePlayback
+                      : _provider.pausePlayback)
+                  : null,
+              onPlaybackStop: provider.isPlayingBack
+                  ? () async {
+                      await _provider.stopPlayback();
+                    }
+                  : null,
               body: SafeArea(
                   child: LayoutBuilder(builder: (context, constraints) {
                 final isLargeScreen = constraints.maxWidth > 900;
