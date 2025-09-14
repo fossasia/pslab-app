@@ -210,12 +210,16 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     super.initState();
     _provider = LuxMeterStateProvider();
     _configProvider = LuxMeterConfigProvider();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _provider.setConfigProvider(_configProvider);
-        _provider.initializeSensors(onError: _showSensorErrorSnackbar);
-      }
+      if (!mounted) return;
+      _provider.onSensorError = (msg) {
+        _showSensorErrorSnackbar(msg);
+      };
+
+      _provider.setConfigProvider(_configProvider);
     });
+
     if (widget.isExperiment) {
       _experimentTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
         _checkExperimentConditions();
