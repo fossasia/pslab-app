@@ -144,6 +144,7 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 inno_bundle:
   id: b633ddbf-a022-4cbb-a459-4ba9fec0da51
+  name: pslab
   publisher: FOSSASIA
   url: https://pslab.io
   support_url: https://github.com/fossasia/pslab-app/issues
