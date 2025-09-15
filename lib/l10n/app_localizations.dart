@@ -645,13 +645,13 @@ abstract class AppLocalizations {
   /// No description provided for @step1ConnectMicroUsb.
   ///
   /// In en, this message translates to:
-  /// **'1. Connect a micro USB(Mini B) to PSLab'**
+  /// **'1. Connect an appropriate USB cable to PSLab: Type-C for PSLab V6, Micro-USB (Mini-B) for PSLab V5'**
   String get step1ConnectMicroUsb;
 
   /// No description provided for @step2ConnectOtg.
   ///
   /// In en, this message translates to:
-  /// **'2. Connect the other end of the micro USB cable to a OTG'**
+  /// **'2. Connect the other end of the USB cable to an OTG'**
   String get step2ConnectOtg;
 
   /// No description provided for @step3ConnectPhone.
