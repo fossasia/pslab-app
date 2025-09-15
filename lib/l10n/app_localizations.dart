@@ -303,7 +303,7 @@ abstract class AppLocalizations {
   /// No description provided for @gasSensorDesc.
   ///
   /// In en, this message translates to:
-  /// **'Air quality sensor for detecting a wide range of gases, including NH3, NOx, alcohol, benzene, smoke and CO2'**
+  /// **'Air quality sensor for detecting a wide range of gases'**
   String get gasSensorDesc;
 
   /// No description provided for @dustSensorDesc.
@@ -2796,6 +2796,36 @@ abstract class AppLocalizations {
   /// **'Data'**
   String get data;
 
+  /// No description provided for @configure.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure'**
+  String get configure;
+
+  /// No description provided for @setGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Gain'**
+  String get setGain;
+
+  /// No description provided for @setChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Channel'**
+  String get setChannel;
+
+  /// No description provided for @setRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Rate'**
+  String get setRate;
+
+  /// No description provided for @millivolts.
+  ///
+  /// In en, this message translates to:
+  /// **'mV'**
+  String get millivolts;
+
   /// No description provided for @experiments.
   ///
   /// In en, this message translates to:
@@ -2951,36 +2981,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mode'**
   String get mode;
-
-  /// No description provided for @configure.
-  ///
-  /// In en, this message translates to:
-  /// **'Configure'**
-  String get configure;
-
-  /// No description provided for @setGain.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Gain'**
-  String get setGain;
-
-  /// No description provided for @setChannel.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Channel'**
-  String get setChannel;
-
-  /// No description provided for @setRate.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Rate'**
-  String get setRate;
-
-  /// No description provided for @millivolts.
-  ///
-  /// In en, this message translates to:
-  /// **'mV'**
-  String get millivolts;
 
   /// No description provided for @proximity.
   ///

@@ -104,7 +104,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gasSensorDesc =>
-      'Air quality sensor for detecting a wide range of gases, including NH3, NOx, alcohol, benzene, smoke and CO2';
+      'Air quality sensor for detecting a wide range of gases';
 
   @override
   String get dustSensorDesc =>
@@ -1446,6 +1446,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get estimated => 'Estimated';
 
   @override
+  String get data => 'Data';
+
+  @override
+  String get configure => 'Configure';
+
+  @override
+  String get setGain => 'Set Gain';
+
+  @override
+  String get setChannel => 'Set Channel';
+
+  @override
+  String get setRate => 'Set Rate';
+
+  @override
+  String get millivolts => 'mV';
+
+  @override
   String get experiments => 'Experiments';
 
   @override
@@ -1529,9 +1547,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mode => 'Mode';
 
   @override
-  String get configure => 'Configure';
-
-  @override
   String get proximity => 'Proximity';
 
   @override
@@ -1552,4 +1567,48 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get legacyFirmwareAlertMessage =>
       'We have detected that your PSLab device is running legacy firmware. Please note that support for this firmware has ended. For the best experience and continued support, please update your device to the latest firmware version.';
+
+  @override
+  String get holdPositionForPressure =>
+      'Hold position steady for stable pressure reading';
+
+  @override
+  String get moveToHigherAltitude => 'Move to a higher altitude or floor';
+
+  @override
+  String get moveToLowerAltitude => 'Move to a lower altitude or floor';
+
+  @override
+  String get pressureVsAltitude => 'Pressure vs Altitude';
+
+  @override
+  String get pressureVsAltitudeDesc =>
+      'Observe how atmospheric pressure changes with altitude';
+
+  @override
+  String get barometerExperimentSetUpContent =>
+      'Ensure your device has a working barometer sensor, or connect a BMP180 sensor using PSLab to complete the experiment.';
+
+  @override
+  String get barometerExperimentPreparationContent =>
+      'Start the experiment in a stable position. Pressure decreases as altitude increases, and pressure increases as altitude decreases.';
+
+  @override
+  String get barometerExperimentInstructionContent =>
+      'Follow the on-screen instructions to move between different altitudes. The experiment will automatically detect pressure changes.';
+
+  @override
+  String get playbackStarted => 'Playback started';
+
+  @override
+  String get playback => 'Playback';
+
+  @override
+  String get stopPlayback => 'Stop Playback';
+
+  @override
+  String get resumePlayback => 'Resume Playback';
+
+  @override
+  String get pausePlayback => 'Pause Playback';
 }
