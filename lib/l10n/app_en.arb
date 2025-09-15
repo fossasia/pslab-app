@@ -29,7 +29,7 @@
     "gyroscopeDesc": "Measures rate of rotation about XYZ axis",
     "thermometerDesc": "To measure the ambient temperature",
     "roboticArmDesc": "Controls servos of a robotic arm",
-    "gasSensorDesc": "Air quality sensor for detecting a wide range of gases, including NH3, NOx, alcohol, benzene, smoke and CO2",
+    "gasSensorDesc": "Air quality sensor for detecting a wide range of gases",
     "dustSensorDesc": "Dust sensor is used to measure air quality in terms of particles per square meter",
     "soundMeterDesc": "To measure the loudness in the environment in decibel(dB)",
     "yAxisRange16V": "+/-16V",

@@ -104,7 +104,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gasSensorDesc =>
-      'Air quality sensor for detecting a wide range of gases, including NH3, NOx, alcohol, benzene, smoke and CO2';
+      'Air quality sensor for detecting a wide range of gases';
 
   @override
   String get dustSensorDesc =>
@@ -1448,6 +1448,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get data => 'Data';
 
+  @override
+  String get configure => 'Configure';
+
+  @override
+  String get setGain => 'Set Gain';
+
+  @override
+  String get setChannel => 'Set Channel';
+
+  @override
+  String get setRate => 'Set Rate';
+
+  @override
+  String get millivolts => 'mV';
+
+  @override
   String get experiments => 'Experiments';
 
   @override
@@ -1531,20 +1547,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mode => 'Mode';
 
   @override
-  String get configure => 'Configure';
-
-  @override
-  String get setGain => 'Set Gain';
-
-  @override
-  String get setChannel => 'Set Channel';
-
-  @override
-  String get setRate => 'Set Rate';
-
-  @override
-  String get millivolts => 'mV';
-
   String get proximity => 'Proximity';
 
   @override
@@ -1595,6 +1597,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get barometerExperimentInstructionContent =>
       'Follow the on-screen instructions to move between different altitudes. The experiment will automatically detect pressure changes.';
 
+  @override
   String get playbackStarted => 'Playback started';
 
   @override
