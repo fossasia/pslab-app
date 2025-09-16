@@ -128,7 +128,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                         child: Row(
                           children: [
                             Expanded(
-                              flex: 87,
+                              flex: 89,
                               child: Container(
                                 margin: const EdgeInsets.only(right: 5),
                                 child: Stack(
@@ -189,7 +189,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                               ),
                             ),
                             const Expanded(
-                              flex: 13,
+                              flex: 11,
                               child: OscilloscopeScreenTabs(),
                             )
                           ],
