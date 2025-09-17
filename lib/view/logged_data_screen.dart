@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/theme/colors.dart';
+import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/logged_data_chart_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
@@ -178,6 +179,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'barometer':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BarometerScreen(playbackData: data),
+            ),
+          );
+          break;
         case 'gyroscope':
           Navigator.push(
             context,
@@ -323,6 +332,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (widget.instrumentName == "soundmeter" ||
+                                  widget.instrumentName == "barometer" ||
                                   widget.instrumentName == "gyroscope" ||
                                   widget.instrumentName == "luxmeter")
                                 IconButton(

@@ -34,7 +34,15 @@ class BarometerStateProvider extends ChangeNotifier {
   bool _sensorAvailable = false;
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
+  bool _isPlayingBack = false;
+  List<List<dynamic>>? _playbackData;
+  int _playbackIndex = 0;
+  Timer? _playbackTimer;
+  bool _isPlaybackPaused = false;
+
   bool get isRecording => _isRecording;
+  bool get isPlayingBack => _isPlayingBack;
+  bool get isPlaybackPaused => _isPlaybackPaused;
 
   StreamSubscription? _barometerSubscription;
 
@@ -46,6 +54,7 @@ class BarometerStateProvider extends ChangeNotifier {
   String _currentSensorType = 'In-built Sensor';
 
   Function(String)? onSensorError;
+  Function? onPlaybackEnd;
 
   BarometerStateProvider(this._configProvider) {
     _configProvider.addListener(_onConfigChanged);
@@ -232,6 +241,118 @@ class BarometerStateProvider extends ChangeNotifier {
     logger.e("${appLocalizations.barometerSensorError} $error");
   }
 
+  void startPlayback(List<List<dynamic>> data) {
+    if (data.length <= 1) return;
+
+    _isPlayingBack = true;
+    _isPlaybackPaused = false;
+    _playbackData = data;
+    _playbackIndex = 1;
+
+    _timeTimer?.cancel();
+    _dataTimer?.cancel();
+
+    _pressureData.clear();
+    pressureChartData.clear();
+    _timeData.clear();
+    _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+    _currentTime = 0;
+    _pressureSum = 0;
+    _dataCount = 0;
+
+    _startPlaybackTimer();
+    notifyListeners();
+  }
+
+  void _startPlaybackTimer() {
+    if (_playbackIndex >= _playbackData!.length) {
+      stopPlayback();
+      return;
+    }
+
+    final currentRow = _playbackData![_playbackIndex];
+    if (currentRow.length > 2) {
+      _currentPressure = double.tryParse(currentRow[2].toString()) ?? 0.0;
+      if (currentRow.length > 3) {
+        _currentAltitude = double.tryParse(currentRow[3].toString());
+      }
+      _currentTime = (_playbackIndex - 1).toDouble();
+      _updateData();
+      _playbackIndex++;
+      notifyListeners();
+    } else {
+      logger.e(
+          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+      _playbackIndex++;
+      notifyListeners();
+    }
+
+    Duration interval = const Duration(seconds: 1);
+
+    if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
+      try {
+        final currentTimestamp =
+            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
+        final nextTimestamp =
+            int.tryParse(_playbackData![_playbackIndex][0].toString());
+
+        if (currentTimestamp != null && nextTimestamp != null) {
+          final timeDiff = nextTimestamp - currentTimestamp;
+          interval = Duration(milliseconds: timeDiff);
+          if (interval.inMilliseconds < 100) {
+            interval = const Duration(milliseconds: 100);
+          } else if (interval.inMilliseconds > 10000) {
+            interval = const Duration(seconds: 10);
+          }
+        }
+      } catch (e) {
+        interval = const Duration(seconds: 1);
+      }
+    }
+
+    _playbackTimer = Timer(interval, () {
+      if (_isPlayingBack && !_isPlaybackPaused) {
+        _startPlaybackTimer();
+      }
+    });
+  }
+
+  Future<void> stopPlayback() async {
+    _isPlayingBack = false;
+    _isPlaybackPaused = false;
+    _playbackTimer?.cancel();
+    _playbackData = null;
+    _playbackIndex = 0;
+
+    _pressureData.clear();
+    pressureChartData.clear();
+    _timeData.clear();
+    _pressureSum = 0;
+    _dataCount = 0;
+    _currentPressure = 0.0;
+    _currentTemperature = 0.0;
+    _currentAltitude = null;
+    _currentTime = 0;
+    notifyListeners();
+    onPlaybackEnd?.call();
+  }
+
+  void pausePlayback() {
+    if (_isPlayingBack) {
+      _isPlaybackPaused = true;
+      _playbackTimer?.cancel();
+      notifyListeners();
+    }
+  }
+
+  void resumePlayback() {
+    if (_isPlayingBack && _isPlaybackPaused) {
+      _isPlaybackPaused = false;
+      _startPlaybackTimer();
+      notifyListeners();
+    }
+  }
+
   void disposeSensors() {
     logger.d("Disposing sensors...");
     _barometerSubscription?.cancel();
@@ -240,6 +361,7 @@ class BarometerStateProvider extends ChangeNotifier {
     _timeTimer = null;
     _dataTimer?.cancel();
     _dataTimer = null;
+    _playbackTimer?.cancel();
     _bmp180Sensor = null;
     _sensorAvailable = false;
   }
@@ -247,12 +369,13 @@ class BarometerStateProvider extends ChangeNotifier {
   @override
   void dispose() {
     _configProvider.removeListener(_onConfigChanged);
+    _playbackTimer?.cancel();
     disposeSensors();
     super.dispose();
   }
 
   void _updateData() {
-    if (!_sensorAvailable) return;
+    if (!_sensorAvailable && !_isPlayingBack) return;
 
     final pressure = _currentPressure;
     final time = _currentTime;

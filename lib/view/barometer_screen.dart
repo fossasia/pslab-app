@@ -24,9 +24,12 @@ import 'dart:async';
 
 class BarometerScreen extends StatefulWidget {
   final dynamic isExperiment;
+  final List<List<dynamic>>? playbackData;
+
   const BarometerScreen({
     super.key,
     this.isExperiment = false,
+    this.playbackData,
   });
   @override
   State<StatefulWidget> createState() => _BarometerScreenState();
@@ -286,12 +289,28 @@ class _BarometerScreenState extends State<BarometerScreen> {
           create: (context) {
             final configProvider =
                 Provider.of<BarometerConfigProvider>(context, listen: false);
-            _provider = BarometerStateProvider(configProvider)
-              ..initializeSensors(
-                onError: _showSensorErrorSnackbar,
-                i2c: _i2c,
-                scienceLab: _scienceLab,
-              );
+            _provider = BarometerStateProvider(configProvider);
+
+            _provider.onPlaybackEnd = () {
+              if (mounted && Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            };
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                if (widget.playbackData != null) {
+                  _provider.startPlayback(widget.playbackData!);
+                } else {
+                  _provider.initializeSensors(
+                    onError: _showSensorErrorSnackbar,
+                    i2c: _i2c,
+                    scienceLab: _scienceLab,
+                  );
+                }
+              }
+            });
+
             return _provider;
           },
           update: (context, configProvider, previous) {
@@ -303,11 +322,26 @@ class _BarometerScreenState extends State<BarometerScreen> {
         Consumer<BarometerStateProvider>(
           builder: (context, provider, child) {
             return CommonScaffold(
-              title: appLocalizations.barometerTitle,
+              title: provider.isPlayingBack
+                  ? '${appLocalizations.barometerTitle} - ${appLocalizations.playback}'
+                  : appLocalizations.barometerTitle,
               onGuidePressed: _showInstrumentGuide,
-              onOptionsPressed: _showOptionsMenu,
-              onRecordPressed: _toggleRecording,
+              onOptionsPressed:
+                  provider.isPlayingBack ? null : _showOptionsMenu,
+              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
               isRecording: provider.isRecording,
+              isPlayingBack: provider.isPlayingBack,
+              isPlaybackPaused: provider.isPlaybackPaused,
+              onPlaybackPauseResume: provider.isPlayingBack
+                  ? (provider.isPlaybackPaused
+                      ? _provider.resumePlayback
+                      : _provider.pausePlayback)
+                  : null,
+              onPlaybackStop: provider.isPlayingBack
+                  ? () async {
+                      await _provider.stopPlayback();
+                    }
+                  : null,
               body: SafeArea(
                   child: LayoutBuilder(builder: (context, constraints) {
                 final isLargeScreen = constraints.maxWidth > 900;

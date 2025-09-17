@@ -70,7 +70,7 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^10.3.2
   flutter_screenutil: ^5.9.3
-  flusbserial: ^0.2.1
+  flusbserial: ^0.2.2
   inno_bundle: ^0.4.0
 
 dependency_overrides:
@@ -144,8 +144,8 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 inno_bundle:
   id: b633ddbf-a022-4cbb-a459-4ba9fec0da51
+  name: pslab
   publisher: FOSSASIA
-  name: PSLab
   url: https://pslab.io
   support_url: https://github.com/fossasia/pslab-app/issues
   updates_url: https://github.com/fossasia/pslab-app/releases
