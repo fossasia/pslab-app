@@ -106,6 +106,13 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 fontSize: 16,
                               ),
                             ),
+                            Text(
+                              appLocalizations.step4ConnectWireless,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
                           ],
                         ),
                       ),

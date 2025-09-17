@@ -293,15 +293,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get stepsToConnectTitle => 'Steps to connect the PSLab Device';
 
   @override
-  String get step1ConnectMicroUsb =>
-      '1. Connect an appropriate USB cable to PSLab: Type-C for PSLab V6, Micro-USB (Mini-B) for PSLab V5';
+  String get step1ConnectMicroUsb => '1. Connect a USB cable to PSLab.';
 
   @override
   String get step2ConnectOtg =>
-      '2. Connect the other end of the USB cable to an OTG';
+      '2. Connect the other end of the USB cable to an OTG.';
 
   @override
-  String get step3ConnectPhone => '3. Connect the OTG to the phone';
+  String get step3ConnectPhone => '3. Connect the OTG to the phone.';
+
+  @override
+  String get step4ConnectWireless =>
+      '4. PSLab can also be connected wirelessly (Bluetooth or Wi-Fi) if the option is present.';
 
   @override
   String get bluetoothWifiConnection => 'Connect using Bluetooth or Wi-Fi';
