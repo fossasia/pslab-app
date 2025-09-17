@@ -3101,6 +3101,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pause Playback'**
   String get pausePlayback;
+
+  /// No description provided for @openStreetMapContributors.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenStreetMap contributors'**
+  String get openStreetMapContributors;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @noLocationDataAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No location data available'**
+  String get noLocationDataAvailable;
 }
 
 class _AppLocalizationsDelegate

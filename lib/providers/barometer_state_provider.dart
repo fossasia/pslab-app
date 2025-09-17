@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
@@ -56,9 +57,47 @@ class BarometerStateProvider extends ChangeNotifier {
   Function(String)? onSensorError;
   Function? onPlaybackEnd;
 
+  Position? currentPosition;
+  late StreamSubscription _locationStream;
+
   BarometerStateProvider(this._configProvider) {
     _configProvider.addListener(_onConfigChanged);
     _currentSensorType = _configProvider.config.activeSensor;
+    _startGeoLocationUpdates();
+  }
+
+  void _startGeoLocationUpdates() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      logger.w('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        logger.w('Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      logger.w(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      return;
+    }
+
+    _locationStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    ).listen((Position position) {
+      currentPosition = position;
+    });
   }
 
   void _onConfigChanged() {
@@ -368,6 +407,7 @@ class BarometerStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _locationStream.cancel();
     _configProvider.removeListener(_onConfigChanged);
     _playbackTimer?.cancel();
     disposeSensors();
@@ -387,8 +427,12 @@ class BarometerStateProvider extends ChangeNotifier {
         dateFormat.format(now),
         pressure.toStringAsFixed(2),
         getCurrentAltitude().toStringAsFixed(2),
-        0,
-        0
+        _configProvider.config.includeLocationData
+            ? currentPosition?.latitude.toString() ?? 0
+            : 0,
+        _configProvider.config.includeLocationData
+            ? currentPosition?.longitude.toString() ?? 0
+            : 0
       ]);
     }
     _pressureData.add(pressure);

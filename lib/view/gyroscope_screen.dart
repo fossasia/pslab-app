@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/gyroscope_config_provider.dart';
 import 'package:pslab/providers/gyroscope_state_provider.dart';
@@ -27,11 +28,13 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
   static const imagePath = 'assets/images/gyroscope_axes_orientation.png';
   final CsvService _csvService = CsvService();
   late GyroscopeProvider _provider;
+  late GyroscopeConfigProvider _configProvider;
 
   @override
   void initState() {
     super.initState();
     _provider = GyroscopeProvider();
+    _configProvider = GyroscopeConfigProvider();
     _provider.onPlaybackEnd = () {
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
@@ -42,6 +45,7 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
         if (widget.playbackData != null) {
           _provider.startPlayback(widget.playbackData!);
         } else {
+          _provider.setConfigProvider(_configProvider);
           _provider.initializeSensors();
         }
       }
@@ -133,7 +137,7 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => ChangeNotifierProvider(
-            create: (context) => GyroscopeConfigProvider(),
+            create: (context) => _configProvider,
             child: const GyroscopeConfigScreen(),
           ),
         ));
@@ -159,7 +163,8 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
 
   Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
     final TextEditingController filenameController = TextEditingController();
-    final String defaultFilename = '';
+    final String defaultFilename =
+        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
     filenameController.text = defaultFilename;
 
     final String? fileName = await showDialog<String>(

@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/providers/accelerometer_config_provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +28,54 @@ class AccelerometerStateProvider extends ChangeNotifier {
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
   bool get isRecording => _isRecording;
+  late AccelerometerConfigProvider _configProvider;
+  late StreamSubscription _locationStream;
+
+  Position? currentPosition;
+
+  AccelerometerStateProvider() {
+    _startGeoLocationUpdates();
+  }
+
+  void setConfigProvider(AccelerometerConfigProvider configProvider) {
+    _configProvider = configProvider;
+  }
+
+  AccelerometerConfigProvider? get configProvider => _configProvider;
+
+  void _startGeoLocationUpdates() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      logger.w('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        logger.w('Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      logger.w(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      return;
+    }
+
+    _locationStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    ).listen((Position position) {
+      currentPosition = position;
+    });
+  }
 
   void initializeSensors() {
     _accelerometerSubscription = accelerometerEventStream().listen(
@@ -49,6 +99,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _locationStream.cancel();
     disposeSensors();
     super.dispose();
   }
@@ -66,8 +117,12 @@ class AccelerometerStateProvider extends ChangeNotifier {
         x.toStringAsFixed(6),
         y.toStringAsFixed(6),
         z.toStringAsFixed(6),
-        0,
-        0
+        _configProvider.config.includeLocationData
+            ? currentPosition?.latitude.toString() ?? 0
+            : 0,
+        _configProvider.config.includeLocationData
+            ? currentPosition?.longitude.toString() ?? 0
+            : 0
       ]);
     }
 

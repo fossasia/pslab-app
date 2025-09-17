@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
@@ -26,6 +27,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
   late SoundMeterStateProvider _provider;
+  late SoundMeterConfigProvider _configProvider;
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic.png';
 
@@ -94,7 +96,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
-          create: (context) => SoundMeterConfigProvider(),
+          create: (context) => _configProvider,
           child: const SoundMeterConfigScreen(),
         ),
       ),
@@ -134,7 +136,8 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
 
   Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
     final TextEditingController filenameController = TextEditingController();
-    final String defaultFilename = '';
+    final String defaultFilename =
+        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
     filenameController.text = defaultFilename;
 
     final String? fileName = await showDialog<String>(
@@ -198,6 +201,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
   void initState() {
     super.initState();
     _provider = SoundMeterStateProvider();
+    _configProvider = SoundMeterConfigProvider();
     _provider.onPlaybackEnd = () {
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
@@ -208,6 +212,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
         if (widget.playbackData != null) {
           _provider.startPlayback(widget.playbackData!);
         } else {
+          _provider.setConfigProvider(_configProvider);
           _provider.initializeSensors(onError: _showSensorErrorSnackbar);
         }
       }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -27,13 +28,16 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
   static const imagePath = 'assets/images/bh1750_schematic.png';
   final CsvService _csvService = CsvService();
   late AccelerometerStateProvider _provider;
+  late AccelerometerConfigProvider _configProvider;
 
   @override
   void initState() {
     super.initState();
     _provider = AccelerometerStateProvider();
+    _configProvider = AccelerometerConfigProvider();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        _provider.setConfigProvider(_configProvider);
         _provider.initializeSensors();
       }
     });
@@ -132,7 +136,7 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
-          create: (context) => AccelerometerConfigProvider(),
+          create: (context) => _configProvider,
           child: const AccelerometerConfigScreen(),
         ),
       ),
@@ -159,7 +163,8 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
 
   Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
     final TextEditingController filenameController = TextEditingController();
-    final String defaultFilename = '';
+    final String defaultFilename =
+        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
     filenameController.text = defaultFilename;
 
     final String? fileName = await showDialog<String>(

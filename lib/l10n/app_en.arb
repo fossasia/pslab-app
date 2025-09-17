@@ -496,5 +496,8 @@
     "playback" : "Playback",
     "stopPlayback" : "Stop Playback",
     "resumePlayback" : "Resume Playback",
-    "pausePlayback" : "Pause Playback"
+    "pausePlayback" : "Pause Playback",
+    "openStreetMapContributors": "OpenStreetMap contributors",
+    "location": "Location",
+    "noLocationDataAvailable": "No location data available"
 }

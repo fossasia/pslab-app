@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:intl/intl.dart';
 import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:flutter/material.dart';
@@ -207,7 +208,8 @@ class _BarometerScreenState extends State<BarometerScreen> {
 
   Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
     final TextEditingController filenameController = TextEditingController();
-    final String defaultFilename = '';
+    final String defaultFilename =
+        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
     filenameController.text = defaultFilename;
 
     final String? fileName = await showDialog<String>(

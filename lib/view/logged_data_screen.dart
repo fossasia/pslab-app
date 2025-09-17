@@ -7,6 +7,7 @@ import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/logged_data_chart_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
+import 'package:pslab/view/map_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
@@ -340,6 +341,50 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                       Icon(Icons.play_arrow, color: primaryRed),
                                   onPressed: () => _playFile(file),
                                 ),
+                              IconButton(
+                                icon: Icon(Icons.map, color: primaryRed),
+                                onPressed: () async {
+                                  final data =
+                                      await _csvService.readCsvFromFile(file);
+                                  if (!context.mounted) return;
+                                  double latitude = 0;
+                                  double longitude = 0;
+                                  if (data[data.length - 1]
+                                          [data[data.length - 1].length - 2]
+                                      is double) {
+                                    latitude = data[data.length - 1]
+                                            [data[data.length - 1].length - 2]
+                                        .toDouble();
+                                    longitude = data[data.length - 1]
+                                            [data[data.length - 1].length - 1]
+                                        .toDouble();
+                                  }
+                                  if (latitude == 0 && longitude == 0) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          appLocalizations
+                                              .noLocationDataAvailable,
+                                          style: TextStyle(
+                                              color: snackBarContentColor),
+                                        ),
+                                        backgroundColor:
+                                            snackBarBackgroundColor,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MapScreen(
+                                        latitude: latitude,
+                                        longitude: longitude,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                               IconButton(
                                 icon: Icon(Icons.share, color: primaryRed),
                                 onPressed: () =>

@@ -1611,4 +1611,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pausePlayback => 'Pause Playback';
+
+  @override
+  String get openStreetMapContributors => 'OpenStreetMap contributors';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get noLocationDataAvailable => 'No location data available';
 }
