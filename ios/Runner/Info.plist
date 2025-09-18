@@ -36,6 +36,8 @@
     <string>App needs access to photo library</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
