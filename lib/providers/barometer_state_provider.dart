@@ -58,15 +58,14 @@ class BarometerStateProvider extends ChangeNotifier {
   Function? onPlaybackEnd;
 
   Position? currentPosition;
-  late StreamSubscription _locationStream;
+  StreamSubscription? _locationStream;
 
   BarometerStateProvider(this._configProvider) {
     _configProvider.addListener(_onConfigChanged);
     _currentSensorType = _configProvider.config.activeSensor;
-    _startGeoLocationUpdates();
   }
 
-  void _startGeoLocationUpdates() async {
+  Future<void> _startGeoLocationUpdates() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -407,7 +406,9 @@ class BarometerStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _locationStream.cancel();
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _configProvider.removeListener(_onConfigChanged);
     _playbackTimer?.cancel();
     disposeSensors();
@@ -476,7 +477,10 @@ class BarometerStateProvider extends ChangeNotifier {
     return altitude;
   }
 
-  void startRecording() {
+  Future<void> startRecording() async {
+    if (_configProvider.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
     _isRecording = true;
     _recordedData = [
       ['Timestamp', 'DateTime', 'Pressure', 'Altitude', 'Latitude', 'Longitude']
@@ -485,6 +489,9 @@ class BarometerStateProvider extends ChangeNotifier {
   }
 
   List<List<dynamic>> stopRecording() {
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _isRecording = false;
     notifyListeners();
     return _recordedData;

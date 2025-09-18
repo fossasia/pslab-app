@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
@@ -319,9 +320,9 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (_) => LoggedDataScreen(
-                          instrumentName: appLocalizations.roboticArmTitle,
+                          instrumentNames: [appLocalizations.roboticArmTitle],
                           appBarName: appLocalizations.showLoggedData,
-                          instrumentIcon: 'assets/icons/robotic_arm.png',
+                          instrumentIcons: [instrumentIcons[12]],
                         ),
                       ),
                     );

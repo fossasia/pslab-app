@@ -123,9 +123,9 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => LoggedDataScreen(
-          instrumentName: 'accelerometer',
+          instrumentNames: [appLocalizations.accelerometer.toLowerCase()],
           appBarName: appLocalizations.accelerometer,
-          instrumentIcon: instrumentIcons[7],
+          instrumentIcons: [instrumentIcons[7]],
         ),
       ),
     );
@@ -148,7 +148,8 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
       final data = _provider.stopRecording();
       await _showSaveFileDialog(data);
     } else {
-      _provider.startRecording();
+      await _provider.startRecording();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -196,9 +197,10 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
     );
 
     if (fileName != null) {
-      _csvService.writeMetaData('accelerometer', data);
-      final file =
-          await _csvService.saveCsvFile('accelerometer', fileName, data);
+      _csvService.writeMetaData(
+          appLocalizations.accelerometer.toLowerCase(), data);
+      final file = await _csvService.saveCsvFile(
+          appLocalizations.accelerometer.toLowerCase(), fileName, data);
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(

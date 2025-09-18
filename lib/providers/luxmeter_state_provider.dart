@@ -61,11 +61,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
   Function? onPlaybackEnd;
 
   Position? currentPosition;
-  late StreamSubscription _locationStream;
-
-  LuxMeterStateProvider() {
-    _startGeoLocationUpdates();
-  }
+  StreamSubscription? _locationStream;
 
   void setConfigProvider(LuxMeterConfigProvider configProvider) {
     _configProvider = configProvider;
@@ -75,7 +71,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
 
   LuxMeterConfigProvider? get configProvider => _configProvider;
 
-  void _startGeoLocationUpdates() async {
+  Future<void> _startGeoLocationUpdates() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -402,7 +398,9 @@ class LuxMeterStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _locationStream.cancel();
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _configProvider?.removeListener(_onConfigChanged);
     _playbackTimer?.cancel();
     disposeSensors();
@@ -468,7 +466,10 @@ class LuxMeterStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startRecording() {
+  Future<void> startRecording() async {
+    if (_configProvider!.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
     _isRecording = true;
     _recordedData = [
       ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']
@@ -477,6 +478,9 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   List<List<dynamic>> stopRecording() {
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _isRecording = false;
     notifyListeners();
     return _recordedData;

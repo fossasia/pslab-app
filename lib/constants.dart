@@ -1,11 +1,16 @@
 import 'dart:core';
 
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
+
 const instrumentsScreenTitleKey = 'instruments_screen_title';
 const accelerometerScreenTitleKey = 'accelerometer_screen_title';
 const powerSourceScreenTitleKey = 'power_source_screen_title';
 const multimeterScreenTitleKey = 'multimeter_screen_title';
 const waveGeneratorScreenTitleKey = 'wave_generator_screen_title';
 const oscilloscopeScreenTitleKey = 'oscilloscope_screen_title';
+
+AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
 List<String> instrumentHeadings = [
   'OSCILLOSCOPE',
@@ -62,4 +67,23 @@ List<String> instrumentIcons = [
   'assets/icons/tile_icon_gas.png',
   'assets/icons/tile_icon_gas.png',
   'assets/icons/tile_icon_gas.png',
+];
+
+List<String> instrumentNames = [
+  appLocalizations.oscilloscope.toLowerCase(),
+  appLocalizations.multimeter.toLowerCase(),
+  appLocalizations.logicAnalyzer.toLowerCase(),
+  appLocalizations.sensors.toLowerCase(),
+  appLocalizations.waveGenerator.toLowerCase(),
+  appLocalizations.powerSource.toLowerCase(),
+  appLocalizations.luxMeter.toLowerCase(),
+  appLocalizations.accelerometer.toLowerCase(),
+  appLocalizations.barometer.toLowerCase(),
+  appLocalizations.compass.toLowerCase(),
+  appLocalizations.gyroscope.toLowerCase(),
+  appLocalizations.thermometer.toLowerCase(),
+  appLocalizations.roboticArm.toLowerCase(),
+  appLocalizations.gasSensor.toLowerCase(),
+  appLocalizations.dustSensor.toLowerCase(),
+  appLocalizations.soundMeter.toLowerCase()
 ];

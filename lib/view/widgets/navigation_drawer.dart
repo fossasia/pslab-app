@@ -146,7 +146,17 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
               onTap: () {
-                /**/
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name == '/loggedData') {
+                  Navigator.popUntil(
+                      context, ModalRoute.withName('/loggedData'));
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/loggedData',
+                    (route) => route.isFirst,
+                  );
+                }
               },
             ),
             const Divider(),

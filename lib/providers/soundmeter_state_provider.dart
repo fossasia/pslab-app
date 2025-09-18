@@ -44,11 +44,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
   Function? onPlaybackEnd;
 
   Position? currentPosition;
-  late StreamSubscription _locationStream;
-
-  SoundMeterStateProvider() {
-    _startGeoLocationUpdates();
-  }
+  StreamSubscription? _locationStream;
 
   void setConfigProvider(SoundMeterConfigProvider configProvider) {
     _configProvider = configProvider;
@@ -56,7 +52,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
   SoundMeterConfigProvider? get configProvider => _configProvider;
 
-  void _startGeoLocationUpdates() async {
+  Future<void> _startGeoLocationUpdates() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -102,7 +98,6 @@ class SoundMeterStateProvider extends ChangeNotifier {
       }
       if (microphonePermission != PermissionStatus.granted) {
         if (microphonePermission == PermissionStatus.permanentlyDenied) {
-          await openAppSettings();
           _handleSensorError("Microphone permission is permanently denied.");
           return;
         } else {
@@ -277,7 +272,9 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _locationStream.cancel();
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _playbackTimer?.cancel();
     disposeSensors();
     super.dispose();
@@ -322,7 +319,10 @@ class SoundMeterStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startRecording() {
+  Future<void> startRecording() async {
+    if (_configProvider!.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
     _isRecording = true;
     _recordedData = [
       ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']
@@ -331,6 +331,9 @@ class SoundMeterStateProvider extends ChangeNotifier {
   }
 
   List<List<dynamic>> stopRecording() {
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _isRecording = false;
     notifyListeners();
     return _recordedData;

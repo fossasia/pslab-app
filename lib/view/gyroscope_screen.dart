@@ -124,9 +124,9 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => LoggedDataScreen(
-          instrumentName: 'gyroscope',
-          appBarName: 'Gyroscope',
-          instrumentIcon: instrumentIcons[10],
+          instrumentNames: [appLocalizations.gyroscope.toLowerCase()],
+          appBarName: appLocalizations.gyroscope,
+          instrumentIcons: [instrumentIcons[10]],
         ),
       ),
     );
@@ -148,7 +148,8 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
       final data = _provider.stopRecording();
       await _showSaveFileDialog(data);
     } else {
-      _provider.startRecording();
+      await _provider.startRecording();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -196,8 +197,9 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
     );
 
     if (fileName != null) {
-      _csvService.writeMetaData('gyroscope', data);
-      final file = await _csvService.saveCsvFile('gyroscope', fileName, data);
+      _csvService.writeMetaData(appLocalizations.gyroscope.toLowerCase(), data);
+      final file = await _csvService.saveCsvFile(
+          appLocalizations.gyroscope.toLowerCase(), fileName, data);
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -29,13 +29,9 @@ class AccelerometerStateProvider extends ChangeNotifier {
   List<List<dynamic>> _recordedData = [];
   bool get isRecording => _isRecording;
   late AccelerometerConfigProvider _configProvider;
-  late StreamSubscription _locationStream;
+  StreamSubscription? _locationStream;
 
   Position? currentPosition;
-
-  AccelerometerStateProvider() {
-    _startGeoLocationUpdates();
-  }
 
   void setConfigProvider(AccelerometerConfigProvider configProvider) {
     _configProvider = configProvider;
@@ -43,7 +39,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
 
   AccelerometerConfigProvider? get configProvider => _configProvider;
 
-  void _startGeoLocationUpdates() async {
+  Future<void> _startGeoLocationUpdates() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -99,7 +95,9 @@ class AccelerometerStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _locationStream.cancel();
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     disposeSensors();
     super.dispose();
   }
@@ -154,7 +152,10 @@ class AccelerometerStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startRecording() {
+  Future<void> startRecording() async {
+    if (_configProvider.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
     _isRecording = true;
     _recordedData = [
       [
@@ -171,6 +172,9 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   List<List<dynamic>> stopRecording() {
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _isRecording = false;
     notifyListeners();
     return _recordedData;

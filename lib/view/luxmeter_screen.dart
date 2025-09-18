@@ -121,9 +121,9 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => LoggedDataScreen(
-          instrumentName: 'luxmeter',
-          appBarName: 'Lux Meter',
-          instrumentIcon: instrumentIcons[6],
+          instrumentNames: [appLocalizations.luxMeter.toLowerCase()],
+          appBarName: appLocalizations.luxMeterTitle,
+          instrumentIcons: [instrumentIcons[6]],
         ),
       ),
     );
@@ -134,7 +134,8 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       final data = _provider.stopRecording();
       await _showSaveFileDialog(data);
     } else {
-      _provider.startRecording();
+      await _provider.startRecording();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -182,8 +183,9 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     );
 
     if (fileName != null) {
-      _csvService.writeMetaData('luxmeter', data);
-      final file = await _csvService.saveCsvFile('luxmeter', fileName, data);
+      _csvService.writeMetaData(appLocalizations.luxMeter.toLowerCase(), data);
+      final file = await _csvService.saveCsvFile(
+          appLocalizations.luxMeter.toLowerCase(), fileName, data);
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(

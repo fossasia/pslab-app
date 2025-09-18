@@ -6,7 +6,7 @@
     "sensors": "Sensors",
     "waveGenerator": "Wave Generator",
     "powerSource": "Power Source",
-    "luxMeter": "Lux Meter",
+    "luxMeter": "Luxmeter",
     "accelerometer": "Accelerometer",
     "barometer": "Barometer",
     "compass": "Compass",
@@ -389,7 +389,7 @@
     "documentationError" : "Could not open the documentation link",
     "deleteFile": "Delete File",
     "deleteAllData": "Delete All Data",
-    "deleteCautionMessage": "Are you sure you want to delete all logged data for this instrument?",
+    "deleteCautionMessage": "Are you sure you want to delete all logged data?",
     "deleteAll": "Delete All",
     "noLoggedData": "No logged data found.",
     "importLog": "Import Log",
@@ -499,5 +499,7 @@
     "pausePlayback" : "Pause Playback",
     "openStreetMapContributors": "OpenStreetMap contributors",
     "location": "Location",
-    "noLocationDataAvailable": "No location data available"
+    "noLocationDataAvailable": "No location data available",
+    "share": "Share",
+    "loggedData": "Logged Data"
 }

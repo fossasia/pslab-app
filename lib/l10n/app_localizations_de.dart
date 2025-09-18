@@ -27,7 +27,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get powerSource => 'Power Source';
 
   @override
-  String get luxMeter => 'Lux Meter';
+  String get luxMeter => 'Luxmeter';
 
   @override
   String get accelerometer => 'Accelerometer';
@@ -1272,7 +1272,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deleteCautionMessage =>
-      'Are you sure you want to delete all logged data for this instrument?';
+      'Are you sure you want to delete all logged data?';
 
   @override
   String get deleteAll => 'Delete All';
@@ -1620,4 +1620,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get noLocationDataAvailable => 'No location data available';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get loggedData => 'Logged Data';
 }

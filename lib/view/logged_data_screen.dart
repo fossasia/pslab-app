@@ -13,24 +13,31 @@ import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 
 class LoggedDataScreen extends StatefulWidget {
-  final String instrumentName;
+  final List<String> instrumentNames;
   final String appBarName;
-  final String instrumentIcon;
+  final List<String> instrumentIcons;
 
   const LoggedDataScreen(
       {super.key,
-      required this.instrumentName,
+      required this.instrumentNames,
       required this.appBarName,
-      required this.instrumentIcon});
+      required this.instrumentIcons});
 
   @override
   State<LoggedDataScreen> createState() => _LoggedDataScreenState();
 }
 
+class LoggedDataFile {
+  final String instrumentName;
+  final FileSystemEntity file;
+
+  LoggedDataFile({required this.instrumentName, required this.file});
+}
+
 class _LoggedDataScreenState extends State<LoggedDataScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
-  List<FileSystemEntity> _files = [];
+  List<LoggedDataFile> _files = [];
   bool _isLoading = true;
 
   @override
@@ -43,10 +50,15 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     setState(() {
       _isLoading = true;
     });
-    final files = await _csvService.getSavedFiles(widget.instrumentName);
+    _files = [];
+    for (var name in widget.instrumentNames) {
+      final files = await _csvService.getSavedFiles(name);
+      for (var file in files) {
+        _files.add(LoggedDataFile(instrumentName: name, file: file));
+      }
+    }
     if (mounted) {
       setState(() {
-        _files = files;
         _isLoading = false;
       });
     }
@@ -105,13 +117,15 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     );
 
     if (confirmed == true) {
-      await _csvService.deleteAllFiles(widget.instrumentName);
+      for (var name in widget.instrumentNames) {
+        await _csvService.deleteAllFiles(name);
+      }
       _loadFiles();
     }
   }
 
-  Map<String, dynamic> _getChartConfig() {
-    switch (widget.instrumentName.toLowerCase()) {
+  Map<String, dynamic> _getChartConfig(String instrumentName) {
+    switch (instrumentName.toLowerCase()) {
       case 'luxmeter':
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
@@ -143,13 +157,13 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
-  Future<void> _openFile(File file) async {
+  Future<void> _openFile(File file, String instrumentName) async {
     final data = await _csvService.readCsvFromFile(file);
     if (mounted) {
-      if (widget.instrumentName.toLowerCase() == 'robotic arm') {
+      if (instrumentName.toLowerCase() == 'robotic arm') {
         Navigator.pop(context, data);
       } else {
-        final config = _getChartConfig();
+        final config = _getChartConfig(instrumentName);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -160,7 +174,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
               yAxisLabel: config['yAxisLabel'],
               xDataColumnIndex: config['xDataColumnIndex'],
               yDataColumnIndex: config['yDataColumnIndex'],
-              instrumentName: widget.instrumentName,
+              instrumentName: instrumentName,
             ),
           ),
         );
@@ -168,10 +182,10 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
-  Future<void> _playFile(File file) async {
+  Future<void> _playFile(File file, String instrumentName) async {
     final data = await _csvService.readCsvFromFile(file);
     if (data.isNotEmpty && mounted) {
-      switch (widget.instrumentName) {
+      switch (instrumentName) {
         case 'soundmeter':
           Navigator.push(
             context,
@@ -208,13 +222,13 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
-  Future<void> _pickAndImportFile() async {
+  Future<void> _pickAndImportFile(String instrumentName) async {
     final data = await _csvService.pickAndReadCsvFile();
     if (data != null && mounted) {
-      if (widget.instrumentName.toLowerCase() == 'robotic arm') {
+      if (instrumentName.toLowerCase() == 'robotic arm') {
         Navigator.pop(context, data);
       } else {
-        final config = _getChartConfig();
+        final config = _getChartConfig(instrumentName);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -225,7 +239,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
               yAxisLabel: config['yAxisLabel'],
               xDataColumnIndex: config['xDataColumnIndex'],
               yDataColumnIndex: config['yDataColumnIndex'],
-              instrumentName: widget.instrumentName,
+              instrumentName: instrumentName,
             ),
           ),
         );
@@ -243,10 +257,11 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         0,
       ),
       items: [
-        PopupMenuItem(
-          value: 'import_log',
-          child: Text(appLocalizations.importLog),
-        ),
+        if (widget.instrumentNames.length == 1)
+          PopupMenuItem(
+            value: 'import_log',
+            child: Text(appLocalizations.importLog),
+          ),
         PopupMenuItem(
           value: 'delete_all',
           child: Text(appLocalizations.deleteAllData),
@@ -256,7 +271,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       if (value != null) {
         switch (value) {
           case 'import_log':
-            _pickAndImportFile();
+            _pickAndImportFile(widget.instrumentNames.first);
             break;
           case 'delete_all':
             _deleteAllFiles();
@@ -300,9 +315,10 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                   child: ListView.builder(
                     itemCount: _files.length,
                     itemBuilder: (context, index) {
-                      final file = _files[index] as File;
+                      final file = _files[index].file as File;
                       final stat = file.statSync();
                       final fileName = file.path.split('/').last;
+                      final instrumentName = _files[index].instrumentName;
                       final formattedDate =
                           DateFormat.yMMMd().add_jm().format(stat.modified);
 
@@ -314,13 +330,11 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                         margin:
                             const EdgeInsets.only(left: 8, right: 8, top: 8),
                         child: ListTile(
-                          onTap: () => _openFile(file),
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: Image.asset(
-                              widget.instrumentIcon,
-                              color: primaryRed,
-                            ),
+                          onTap: () => _openFile(file, instrumentName),
+                          leading: Image.asset(
+                            widget.instrumentIcons[
+                                widget.instrumentNames.indexOf(instrumentName)],
+                            color: primaryRed,
                           ),
                           title: Text(fileName,
                               style:
@@ -328,71 +342,132 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                           subtitle: Text(
                               '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
                           isThreeLine: true,
-                          trailing: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (widget.instrumentName == "soundmeter" ||
-                                  widget.instrumentName == "barometer" ||
-                                  widget.instrumentName == "gyroscope" ||
-                                  widget.instrumentName == "luxmeter")
-                                IconButton(
-                                  icon:
-                                      Icon(Icons.play_arrow, color: primaryRed),
-                                  onPressed: () => _playFile(file),
-                                ),
-                              IconButton(
-                                icon: Icon(Icons.map, color: primaryRed),
-                                onPressed: () async {
-                                  final data =
-                                      await _csvService.readCsvFromFile(file);
-                                  if (!context.mounted) return;
-                                  double latitude = 0;
-                                  double longitude = 0;
-                                  if (data[data.length - 1]
+                          trailing: PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert,
+                                color: Colors.black),
+                            onSelected: (value) async {
+                              if (value == appLocalizations.play) {
+                                _playFile(file, instrumentName);
+                              } else if (value == appLocalizations.location) {
+                                final data =
+                                    await _csvService.readCsvFromFile(file);
+                                if (!context.mounted) return;
+                                double latitude = 0;
+                                double longitude = 0;
+                                if (data[data.length - 1]
+                                        [data[data.length - 1].length - 2]
+                                    is double) {
+                                  latitude = data[data.length - 1]
                                           [data[data.length - 1].length - 2]
-                                      is double) {
-                                    latitude = data[data.length - 1]
-                                            [data[data.length - 1].length - 2]
-                                        .toDouble();
-                                    longitude = data[data.length - 1]
-                                            [data[data.length - 1].length - 1]
-                                        .toDouble();
-                                  }
-                                  if (latitude == 0 && longitude == 0) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          appLocalizations
-                                              .noLocationDataAvailable,
-                                          style: TextStyle(
-                                              color: snackBarContentColor),
-                                        ),
-                                        backgroundColor:
-                                            snackBarBackgroundColor,
+                                      .toDouble();
+                                  longitude = data[data.length - 1]
+                                          [data[data.length - 1].length - 1]
+                                      .toDouble();
+                                }
+                                if (latitude == 0 && longitude == 0) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        appLocalizations
+                                            .noLocationDataAvailable,
+                                        style: TextStyle(
+                                            color: snackBarContentColor),
                                       ),
-                                    );
-                                    return;
-                                  }
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MapScreen(
-                                        latitude: latitude,
-                                        longitude: longitude,
-                                      ),
+                                      backgroundColor: snackBarBackgroundColor,
                                     ),
                                   );
-                                },
+                                  return;
+                                }
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MapScreen(
+                                      latitude: latitude,
+                                      longitude: longitude,
+                                    ),
+                                  ),
+                                );
+                              } else if (value == appLocalizations.share) {
+                                _csvService.shareFile(file.path);
+                              } else if (value == appLocalizations.delete) {
+                                _deleteFile(file.path);
+                              }
+                            },
+                            itemBuilder: (BuildContext context) => [
+                              if (instrumentName ==
+                                      appLocalizations.soundMeter
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.barometer
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.gyroscope
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.luxMeter.toLowerCase())
+                                PopupMenuItem<String>(
+                                  value: appLocalizations.play,
+                                  child: ListTile(
+                                    dense: true,
+                                    leading: Icon(
+                                      Icons.play_arrow,
+                                      color: primaryRed,
+                                    ),
+                                    title: Text(
+                                      appLocalizations.play,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              PopupMenuItem<String>(
+                                value: appLocalizations.location,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(
+                                    Icons.map,
+                                    color: primaryRed,
+                                  ),
+                                  title: Text(
+                                    appLocalizations.location,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              IconButton(
-                                icon: Icon(Icons.share, color: primaryRed),
-                                onPressed: () =>
-                                    _csvService.shareFile(file.path),
+                              PopupMenuItem<String>(
+                                value: appLocalizations.share,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(
+                                    Icons.share,
+                                    color: primaryRed,
+                                  ),
+                                  title: Text(
+                                    appLocalizations.share,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              IconButton(
-                                icon: Icon(Icons.delete, color: primaryRed),
-                                onPressed: () => _deleteFile(file.path),
+                              PopupMenuItem<String>(
+                                value: appLocalizations.delete,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(
+                                    Icons.delete,
+                                    color: primaryRed,
+                                  ),
+                                  title: Text(
+                                    appLocalizations.delete,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),

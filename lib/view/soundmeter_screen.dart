@@ -108,9 +108,9 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => LoggedDataScreen(
-          instrumentName: 'soundmeter',
+          instrumentNames: [appLocalizations.soundMeter.toLowerCase()],
           appBarName: appLocalizations.soundMeter,
-          instrumentIcon: instrumentIcons[15],
+          instrumentIcons: [instrumentIcons[15]],
         ),
       ),
     );
@@ -121,7 +121,8 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       final data = _provider.stopRecording();
       await _showSaveFileDialog(data);
     } else {
-      _provider.startRecording();
+      await _provider.startRecording();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -169,8 +170,10 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     );
 
     if (fileName != null) {
-      _csvService.writeMetaData('soundmeter', data);
-      final file = await _csvService.saveCsvFile('soundmeter', fileName, data);
+      _csvService.writeMetaData(
+          appLocalizations.soundMeter.toLowerCase(), data);
+      final file = await _csvService.saveCsvFile(
+          appLocalizations.soundMeter.toLowerCase(), fileName, data);
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(

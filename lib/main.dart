@@ -10,6 +10,7 @@ import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
+import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/logic_analyzer_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import 'package:pslab/view/multimeter_screen.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations? appLocalizations;
     _preCacheImages(context);
     return ScreenUtilInit(
       designSize: const Size(360, 690),
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
           builder: (context, child) {
             registerAppLocalizations(AppLocalizations.of(context)!);
             getIt<BoardStateProvider>().initialize();
+            appLocalizations = getIt.get<AppLocalizations>();
             return child!;
           },
           theme: AppTheme.lightTheme,
@@ -86,7 +89,12 @@ class MyApp extends StatelessWidget {
             '/soundmeter': (context) => const SoundMeterScreen(),
             '/thermometer': (context) => const ThermometerScreen(),
             '/sensors': (context) => const SensorsScreen(),
-            '/experiments': (context) => const ExperimentsScreen()
+            '/experiments': (context) => const ExperimentsScreen(),
+            '/loggedData': (context) => LoggedDataScreen(
+                  instrumentNames: instrumentNames,
+                  appBarName: appLocalizations!.loggedData,
+                  instrumentIcons: instrumentIcons,
+                ),
           },
         );
       },

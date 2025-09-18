@@ -34,6 +34,8 @@
     <string>This app uses motion sensors to determine compass direction.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>App needs access to photo library</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

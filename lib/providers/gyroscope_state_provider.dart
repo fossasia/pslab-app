@@ -53,13 +53,9 @@ class GyroscopeProvider extends ChangeNotifier {
   late GyroscopeConfigProvider _configProvider;
 
   Position? currentPosition;
-  late StreamSubscription _locationStream;
+  StreamSubscription? _locationStream;
 
   Function? onPlaybackEnd;
-
-  GyroscopeProvider() {
-    _startGeoLocationUpdates();
-  }
 
   void setConfigProvider(GyroscopeConfigProvider configProvider) {
     _configProvider = configProvider;
@@ -67,7 +63,7 @@ class GyroscopeProvider extends ChangeNotifier {
 
   GyroscopeConfigProvider? get configProvider => _configProvider;
 
-  void _startGeoLocationUpdates() async {
+  Future<void> _startGeoLocationUpdates() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -288,7 +284,10 @@ class GyroscopeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startRecording() {
+  Future<void> startRecording() async {
+    if (_configProvider.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
     _isRecording = true;
     _recordedData = [
       [
@@ -305,6 +304,9 @@ class GyroscopeProvider extends ChangeNotifier {
   }
 
   List<List<dynamic>> stopRecording() {
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _isRecording = false;
     notifyListeners();
     return _recordedData;
@@ -377,7 +379,9 @@ class GyroscopeProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _locationStream.cancel();
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
     _playbackTimer?.cancel();
     disposeSensors();
     super.dispose();

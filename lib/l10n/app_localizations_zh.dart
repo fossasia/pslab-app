@@ -27,7 +27,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get powerSource => 'Power Source';
 
   @override
-  String get luxMeter => 'Lux Meter';
+  String get luxMeter => 'Luxmeter';
 
   @override
   String get accelerometer => 'Accelerometer';
@@ -1272,7 +1272,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get deleteCautionMessage =>
-      'Are you sure you want to delete all logged data for this instrument?';
+      'Are you sure you want to delete all logged data?';
 
   @override
   String get deleteAll => 'Delete All';
@@ -1620,6 +1620,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noLocationDataAvailable => 'No location data available';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get loggedData => 'Logged Data';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
