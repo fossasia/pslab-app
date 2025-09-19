@@ -61,7 +61,10 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
       throw Exception("Device not connected");
     }
     UsbSerialDevice.setAutoDetachKernelDriver(true);
-    await mDevice?.open();
+    if (await mDevice?.open() == false) {
+      logger.e("Failed to open device");
+      return;
+    }
     await mDevice?.setBaudRate(1000000);
     await mDevice?.setDataBits(UsbSerialInterface.dataBits8);
     await mDevice?.setStopBits(UsbSerialInterface.stopBits1);
