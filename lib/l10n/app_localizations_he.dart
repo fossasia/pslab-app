@@ -1626,4 +1626,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get loggedData => 'Logged Data';
+
+  @override
+  String get pinLayoutFront => 'Pin Layout Front';
+
+  @override
+  String get pinLayoutBack => 'Pin Layout Back';
 }

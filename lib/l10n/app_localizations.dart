@@ -3131,6 +3131,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logged Data'**
   String get loggedData;
+
+  /// No description provided for @pinLayoutFront.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin Layout Front'**
+  String get pinLayoutFront;
+
+  /// No description provided for @pinLayoutBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin Layout Back'**
+  String get pinLayoutBack;
 }
 
 class _AppLocalizationsDelegate

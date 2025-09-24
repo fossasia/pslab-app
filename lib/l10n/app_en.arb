@@ -501,5 +501,7 @@
     "location": "Location",
     "noLocationDataAvailable": "No location data available",
     "share": "Share",
-    "loggedData": "Logged Data"
+    "loggedData": "Logged Data",
+    "pinLayoutFront": "Pin Layout Front",
+    "pinLayoutBack": "Pin Layout Back"
 }

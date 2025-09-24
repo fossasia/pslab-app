@@ -1626,6 +1626,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get loggedData => 'Logged Data';
+
+  @override
+  String get pinLayoutFront => 'Pin Layout Front';
+
+  @override
+  String get pinLayoutBack => 'Pin Layout Back';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).

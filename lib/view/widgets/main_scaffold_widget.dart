@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
+import 'package:pslab/providers/locator.dart';
 
 import '../../theme/colors.dart';
 import 'navigation_drawer.dart';
@@ -81,6 +83,7 @@ class _MainScaffoldState extends State<MainScaffold>
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: true,
@@ -182,15 +185,20 @@ class _MainScaffoldState extends State<MainScaffold>
                     );
                   },
                 ),
-                IconButton(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: appBarContentColor,
-                  ),
-                  onPressed: () {
-                    /**/
-                  },
-                ),
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: appBarContentColor),
+                  onSelected: (value) {},
+                  itemBuilder: (BuildContext context) => [
+                    PopupMenuItem<String>(
+                      value: appLocalizations.pinLayoutFront,
+                      child: Text(appLocalizations.pinLayoutFront),
+                    ),
+                    PopupMenuItem<String>(
+                      value: appLocalizations.pinLayoutBack,
+                      child: Text(appLocalizations.pinLayoutBack),
+                    ),
+                  ],
+                )
               ],
       ),
       body: widget.body,
