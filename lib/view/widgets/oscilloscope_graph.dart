@@ -129,6 +129,18 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   verticalInterval: oscilloscopeStateProvider
                       .oscilloscopeAxesScale
                       .getTimebaseInterval(),
+                  getDrawingHorizontalLine: (value) {
+                    return const FlLine(
+                      color: Color.fromARGB(50, 255, 255, 255),
+                      strokeWidth: 1,
+                    );
+                  },
+                  getDrawingVerticalLine: (value) {
+                    return const FlLine(
+                      color: Color.fromARGB(50, 255, 255, 255),
+                      strokeWidth: 1,
+                    );
+                  },
                 ),
                 borderData: FlBorderData(
                   show: true,

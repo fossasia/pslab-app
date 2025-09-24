@@ -137,7 +137,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                       children: [
                                         Expanded(
                                           flex: constraints.maxHeight < 600
-                                              ? 66
+                                              ? 69
                                               : 80,
                                           child: Container(
                                             padding: const EdgeInsets.only(
@@ -148,7 +148,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                         ),
                                         Expanded(
                                           flex: constraints.maxHeight < 600
-                                              ? 34
+                                              ? 31
                                               : 20,
                                           child: Selector<
                                               OscilloscopeStateProvider, int>(

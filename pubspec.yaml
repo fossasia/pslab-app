@@ -70,7 +70,7 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^10.3.2
   flutter_screenutil: ^5.9.3
-  flusbserial: ^0.2.2
+  flusbserial: ^0.3.0
   inno_bundle: ^0.4.0
   flutter_map: ^8.2.1
   latlong2: ^0.9.1

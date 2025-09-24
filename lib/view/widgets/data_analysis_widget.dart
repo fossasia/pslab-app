@@ -59,7 +59,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             appLocalizations.fourierAnalysis,
                             style: TextStyle(
                               color: oscilloscopeOptionLabelColor,
-                              fontSize: 15,
+                              fontSize: 14.5,
                               fontWeight: FontWeight.normal,
                               fontStyle: FontStyle.normal,
                             ),
@@ -95,7 +95,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             ),
                             textStyle: TextStyle(
                               color: oscilloscopeOptionLabelColor,
-                              fontSize: 15,
+                              fontSize: 14.5,
                             ),
                             onSelected: (String? value) {
                               if (value == 'Sine Fit') {
@@ -136,7 +136,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         ),
                         textStyle: TextStyle(
                           color: oscilloscopeOptionLabelColor,
-                          fontSize: 15,
+                          fontSize: 14.5,
                         ),
                         onSelected: (value) {
                           setState(
@@ -174,7 +174,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                         ),
                         textStyle: TextStyle(
                           color: oscilloscopeOptionLabelColor,
-                          fontSize: 15,
+                          fontSize: 14.5,
                         ),
                         onSelected: (value) {
                           setState(
@@ -252,7 +252,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                           ),
                           textStyle: TextStyle(
                             color: oscilloscopeOptionLabelColor,
-                            fontSize: 15,
+                            fontSize: 14.5,
                           ),
                           onSelected: (value) => {
                             setState(

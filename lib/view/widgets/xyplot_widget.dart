@@ -65,7 +65,7 @@ class _XYPlotState extends State<XYPlotWidget> {
                       appLocalizations.enablePlot,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 15,
+                        fontSize: 14.5,
                         fontWeight: FontWeight.normal,
                         fontStyle: FontStyle.normal,
                       ),
@@ -96,7 +96,7 @@ class _XYPlotState extends State<XYPlotWidget> {
                       ),
                       textStyle: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 15,
+                        fontSize: 14.5,
                       ),
                       onSelected: (String? value) {
                         oscilloscopeStateProvider.xyPlotAxis1 = value!;
@@ -118,7 +118,7 @@ class _XYPlotState extends State<XYPlotWidget> {
                       ),
                       textStyle: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 15,
+                        fontSize: 14.5,
                       ),
                       onSelected: (String? value) {
                         oscilloscopeStateProvider.xyPlotAxis2 = value!;
