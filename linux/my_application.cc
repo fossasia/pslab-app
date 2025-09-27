@@ -55,12 +55,14 @@ static void my_application_activate(GApplication* application) {
 
   gboolean is_production = build_mode_production != nullptr;
 
-  gchar* aot_path = (gchar*)(is_production ? "lib/libapp.so" : "../lib/pslab/libpslab.so");
-  gchar* assets_path = (gchar*)(is_production ? "data/flutter_assets" : "../share/pslab/flutter_assets");
-  gchar* icu_path = (gchar*)(is_production ? "data/icudtl.dat" : "../share/pslab/icudtl.dat");
-  fl_dart_project_set_aot_library_path(project, aot_path);
-  fl_dart_project_set_assets_path(project, assets_path);
-  fl_dart_project_set_icu_data_path(project, icu_path);
+  gchar* aot_path = (gchar*)("../lib/pslab/libapp.so");
+  gchar* assets_path = (gchar*)("../share/pslab/flutter_assets");
+  gchar* icu_path = (gchar*)("../share/pslab/icudtl.dat");
+  if (is_production) {
+    fl_dart_project_set_aot_library_path(project, aot_path);
+    fl_dart_project_set_assets_path(project, assets_path);
+    fl_dart_project_set_icu_data_path(project, icu_path);
+  }
   fl_dart_project_set_dart_entrypoint_arguments(project, self->dart_entrypoint_arguments);
 
   FlView* view = fl_view_new(project);
