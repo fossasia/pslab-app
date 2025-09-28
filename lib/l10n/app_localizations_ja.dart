@@ -1626,4 +1626,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get loggedData => 'Logged Data';
+
+  @override
+  String get oscilloscopeConfigs => 'Oscilloscope Configurations';
+
+  @override
+  String get automatedMeasurementsInfo =>
+      'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.';
 }

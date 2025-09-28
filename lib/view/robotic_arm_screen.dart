@@ -285,7 +285,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
 
                   try {
                     await provider.exportTimelineToCsv(
-                      instrumentName: appLocalizations.roboticArmTitle,
+                      instrumentName:
+                          appLocalizations.roboticArmTitle.toLowerCase(),
                       fileName: (enteredFileName!),
                     );
 

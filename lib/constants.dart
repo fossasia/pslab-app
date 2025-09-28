@@ -82,7 +82,7 @@ List<String> instrumentNames = [
   appLocalizations.compass.toLowerCase(),
   appLocalizations.gyroscope.toLowerCase(),
   appLocalizations.thermometer.toLowerCase(),
-  appLocalizations.roboticArm.toLowerCase(),
+  appLocalizations.roboticArmTitle.toLowerCase(),
   appLocalizations.gasSensor.toLowerCase(),
   appLocalizations.dustSensor.toLowerCase(),
   appLocalizations.soundMeter.toLowerCase()

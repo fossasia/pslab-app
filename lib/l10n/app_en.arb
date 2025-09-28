@@ -501,5 +501,7 @@
     "location": "Location",
     "noLocationDataAvailable": "No location data available",
     "share": "Share",
-    "loggedData": "Logged Data"
+    "loggedData": "Logged Data",
+    "oscilloscopeConfigs": "Oscilloscope Configurations",
+    "automatedMeasurementsInfo": "Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc."
 }

@@ -5,10 +5,13 @@ import 'dart:math';
 import 'package:data/data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/models/oscilloscope_measurements.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/oscilloscope_axes_scale.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/oscilloscope_config_provider.dart';
 
 import '../communication/analytics_class.dart';
 import '../communication/science_lab.dart';
@@ -32,6 +35,7 @@ List<Color> colors = [
 ];
 
 class OscilloscopeStateProvider extends ChangeNotifier {
+  late OscilloscopeConfigProvider _configProvider;
   late AudioJack _audioJack;
   late int _selectedIndex;
   late String selectedChannelOffset;
@@ -71,8 +75,17 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late bool _monitor;
   late double _maxAmp;
   late double _maxFreq;
-  late bool _isRecording;
   late bool isRunning;
+  bool _isPlayingBack = false;
+  bool get isPlayingBack => _isPlayingBack;
+  bool _isPlaybackPaused = false;
+  bool get isPlaybackPaused => _isPlaybackPaused;
+  List<List<dynamic>>? _playbackData;
+  int _playbackIndex = 0;
+  Timer? _playbackTimer;
+  Function? onPlaybackEnd;
+  late bool _isRecording;
+  bool get isRecording => _isRecording;
   bool isMeasurementsChecked = false;
   late Map<String, int> _channelIndexMap;
   late String xyPlotAxis1;
@@ -81,6 +94,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late List<List<FlSpot>> dataEntriesXYPlot;
   late List<List<FlSpot>> dataEntriesCurveFit;
   late List<String> dataParamsChannels;
+  List<List<dynamic>> _recordedData = [];
   late int _timebaseDivisions;
   int get timebaseDivisions => _timebaseDivisions;
 
@@ -93,6 +107,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late Timer _timer;
 
   late OscilloscopeAxesScale oscilloscopeAxesScale;
+
+  Position? currentPosition;
+  StreamSubscription? _locationStream;
 
   OscilloscopeStateProvider() {
     _audioJack = AudioJack();
@@ -160,6 +177,45 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     oscilloscopeAxesScale = OscilloscopeAxesScale();
 
     monitor();
+  }
+
+  void setConfigProvider(
+      OscilloscopeConfigProvider oscilloscopeConfigProvider) {
+    _configProvider = oscilloscopeConfigProvider;
+  }
+
+  Future<void> _startGeoLocationUpdates() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      logger.w('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        logger.w('Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      logger.w(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      return;
+    }
+
+    _locationStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    ).listen((Position position) {
+      currentPosition = position;
+    });
   }
 
   Future<void> monitor() async {
@@ -495,8 +551,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         }
       }
 
-      if (_isRecording) {}
-
       if (!isFourierTransformSelected) {
         for (int i = 0; i < min(entries.length, paramsChannels.length); i++) {
           String channel = paramsChannels[i];
@@ -552,6 +606,26 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       dataEntries = List.from(entries);
       dataEntriesCurveFit = List.from(curveFitEntries);
       dataParamsChannels = List.from(paramsChannels);
+      if (_isRecording) {
+        final now = DateTime.now();
+        final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+        _recordedData.add(
+          [
+            now.millisecondsSinceEpoch.toString(),
+            dateFormat.format(now),
+            dataEntries,
+            dataParamsChannels,
+            oscilloscopeAxesScale.xAxisScale,
+            oscilloscopeAxesScale.yAxisScale,
+            _configProvider.config.includeLocationData
+                ? currentPosition?.latitude.toString() ?? 0
+                : 0,
+            _configProvider.config.includeLocationData
+                ? currentPosition?.longitude.toString() ?? 0
+                : 0
+          ],
+        );
+      }
       if (isFourierTransformSelected) {
         oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
         oscilloscopeAxesScale.setYAxisScaleMin(0);
@@ -561,6 +635,168 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  List<List<FlSpot>> parseFlSpotList(String data) {
+    String clean = data.trim();
+    if (clean.startsWith('[[') && clean.endsWith(']]')) {
+      clean = clean.substring(2, clean.length - 2);
+    }
+
+    List<String> groups = clean.split('], [');
+
+    return groups.map((group) {
+      List<String> tuples = group.split('), (');
+      return tuples.map((tuple) {
+        String cleaned = tuple.replaceAll('(', '').replaceAll(')', '');
+        List<String> parts = cleaned.split(',');
+        if (parts.length <= 2) {
+          return FlSpot(0.0, 0.0);
+        }
+        double x = double.tryParse(parts[0].trim()) ?? 0.0;
+        double y = double.tryParse(parts[1].trim()) ?? 0.0;
+
+        return FlSpot(x, y);
+      }).toList();
+    }).toList();
+  }
+
+  List<String> parseChannelsList(String input) {
+    String clean = input.trim();
+    if (clean.startsWith('[') && clean.endsWith(']')) {
+      clean = clean.substring(1, clean.length - 1);
+    }
+
+    return clean.split(',').map((s) => s.trim()).toList();
+  }
+
+  void _startPlaybackTimer() {
+    if (_playbackIndex >= _playbackData!.length) {
+      stopPlayback();
+      return;
+    }
+
+    final currentRow = _playbackData![_playbackIndex];
+    if (currentRow.length > 2) {
+      dataEntries = parseFlSpotList(currentRow[2]);
+      dataParamsChannels = parseChannelsList(currentRow[3]);
+      oscilloscopeAxesScale
+          .setXAxisScale(double.tryParse(currentRow[4].toString()) ?? 875.0);
+      oscilloscopeAxesScale
+          .setYAxisScale(double.tryParse(currentRow[5].toString()) ?? 16.0);
+      _playbackIndex++;
+      notifyListeners();
+    } else {
+      logger.e(
+          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+      _playbackIndex++;
+      notifyListeners();
+    }
+
+    Duration interval = const Duration(seconds: 1);
+
+    if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
+      try {
+        final currentTimestamp =
+            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
+        final nextTimestamp =
+            int.tryParse(_playbackData![_playbackIndex][0].toString());
+
+        if (currentTimestamp != null && nextTimestamp != null) {
+          final timeDiff = nextTimestamp - currentTimestamp;
+          interval = Duration(milliseconds: timeDiff);
+          if (interval.inMilliseconds < 100) {
+            interval = const Duration(milliseconds: 100);
+          } else if (interval.inMilliseconds > 10000) {
+            interval = const Duration(seconds: 10);
+          }
+        }
+      } catch (e) {
+        interval = const Duration(seconds: 1);
+      }
+    }
+
+    _playbackTimer = Timer(interval, () {
+      if (_isPlayingBack && !_isPlaybackPaused) {
+        _startPlaybackTimer();
+      }
+    });
+  }
+
+  Future<void> stopPlayback() async {
+    _isPlayingBack = false;
+    _isPlaybackPaused = false;
+    _playbackTimer?.cancel();
+    _playbackData = null;
+    _playbackIndex = 0;
+
+    dataEntries.clear();
+    notifyListeners();
+    onPlaybackEnd?.call();
+  }
+
+  void startPlayback(List<List<dynamic>> data) {
+    if (data.length <= 1) return;
+
+    _isPlayingBack = true;
+    _isPlaybackPaused = false;
+    _playbackData = data;
+    _playbackIndex = 1;
+
+    _timer.cancel();
+
+    dataEntries.clear();
+    _startPlaybackTimer();
+    notifyListeners();
+  }
+
+  void pausePlayback() {
+    if (_isPlayingBack) {
+      _isPlaybackPaused = true;
+      _playbackTimer?.cancel();
+      notifyListeners();
+    }
+  }
+
+  void resumePlayback() {
+    if (_isPlayingBack && _isPlaybackPaused) {
+      _isPlaybackPaused = false;
+      _startPlaybackTimer();
+      notifyListeners();
+    }
+  }
+
+  Future<bool> startRecording() async {
+    if (!_scienceLab.isConnected()) {
+      return false;
+    }
+    if (_configProvider.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
+    _isRecording = true;
+    _recordedData = [
+      [
+        'Timestamp',
+        'DateTime',
+        'Readings',
+        'Channels',
+        'XAxisScale',
+        'YAxisScale',
+        'Latitude',
+        'Longitude'
+      ]
+    ];
+    notifyListeners();
+    return true;
+  }
+
+  List<List<dynamic>> stopRecording() {
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
+    _isRecording = false;
+    notifyListeners();
+    return _recordedData;
   }
 
   void setTimebaseDivisions(int divisions) {

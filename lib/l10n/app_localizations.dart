@@ -3131,6 +3131,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logged Data'**
   String get loggedData;
+
+  /// No description provided for @oscilloscopeConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Oscilloscope Configurations'**
+  String get oscilloscopeConfigs;
+
+  /// No description provided for @automatedMeasurementsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.'**
+  String get automatedMeasurementsInfo;
 }
 
 class _AppLocalizationsDelegate
