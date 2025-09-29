@@ -51,17 +51,18 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_show(GTK_WIDGET(window));
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
-  const gchar* build_mode_production = g_getenv("BUILD_MODE_PRODUCTION");
 
-  gboolean is_production = build_mode_production != nullptr;
+  char exe_path[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path)-1);
+    if (len == -1) {
+        g_error("Failed to determine executable path");
+    }
+    exe_path[len] = '\0';
 
-  gchar* aot_path = (gchar*)("../lib/pslab/libapp.so");
-  gchar* assets_path = (gchar*)("../share/pslab/flutter_assets");
-  gchar* icu_path = (gchar*)("../share/pslab/icudtl.dat");
-  if (is_production) {
-    fl_dart_project_set_aot_library_path(project, aot_path);
-    fl_dart_project_set_assets_path(project, assets_path);
-    fl_dart_project_set_icu_data_path(project, icu_path);
+  if (g_str_has_prefix(exe_path, "/usr/bin/")) {
+    fl_dart_project_set_aot_library_path(project, (gchar*)"/usr/lib/pslab/libapp.so");
+    fl_dart_project_set_assets_path(project, (gchar*)"/usr/share/pslab/flutter_assets");
+    fl_dart_project_set_icu_data_path(project, (gchar*)"/usr/share/pslab/icudtl.dat");
   }
   fl_dart_project_set_dart_entrypoint_arguments(project, self->dart_entrypoint_arguments);
 

@@ -15,7 +15,7 @@ cmake_policy(SET CMP0063 NEW)
 
 # Load bundled libraries from the lib/ directory relative to the binary.
 if(DEFINED ENV{BUILD_MODE_PRODUCTION})
-  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/pslab")
+  set(CMAKE_INSTALL_RPATH "/usr/lib/pslab")
 else()
   set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 endif()
