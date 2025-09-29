@@ -51,7 +51,7 @@ runs:
           build/linux/x64/release/bundle/lib/pslab/=/usr/lib/pslab \
           build/linux/x64/release/bundle/share/pslab/=/usr/share/pslab \
           linux/pslab.desktop=/usr/share/applications/pslab.desktop \
-          linux/assets/pslab.png=/usr/share/icons/hicolor/256x256/apps/pslab.png \
+          linux/assets/pslab.png=/usr/share/icons/hicolor/512x512/apps/pslab.png \
           linux/99-pslab.rules=/etc/udev/rules.d/99-pslab.rules
 
     - name: Build .rpm package
@@ -66,7 +66,7 @@ runs:
           build/linux/x64/release/bundle/lib/pslab/=/usr/lib/pslab \
           build/linux/x64/release/bundle/share/pslab/=/usr/share/pslab \
           linux/pslab.desktop=/usr/share/applications/pslab.desktop \
-          linux/assets/pslab.png=/usr/share/icons/hicolor/256x256/apps/pslab.png \
+          linux/assets/pslab.png=/usr/share/icons/hicolor/512x512/apps/pslab.png \
           linux/99-pslab.rules=/etc/udev/rules.d/99-pslab.rules
 
     - name: Store Packages
