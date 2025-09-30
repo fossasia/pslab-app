@@ -10,13 +10,12 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/multimeter_config_provider.dart';
 
 class MultimeterStateProvider extends ChangeNotifier {
-  late MultimeterConfigProvider _configProvider;
+  MultimeterConfigProvider? _configProvider;
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late List<String> knobMarker;
   late int _selectedIndex = 0;
   late ScienceLab _scienceLab;
   late bool isSwitchChecked;
-  late int delay;
   late String value;
   late String unit;
 
@@ -42,7 +41,6 @@ class MultimeterStateProvider extends ChangeNotifier {
     _selectedIndex = 0;
     _scienceLab = getIt<ScienceLab>();
     isSwitchChecked = false;
-    delay = 1000;
     value = appLocalizations.defaultValue;
     unit = appLocalizations.unitVolts;
     knobMarker = [
@@ -64,6 +62,16 @@ class MultimeterStateProvider extends ChangeNotifier {
 
   void setConfigProvider(MultimeterConfigProvider multimeterConfigProvider) {
     _configProvider = multimeterConfigProvider;
+    _configProvider?.addListener(_onConfigChanged);
+    _onConfigChanged();
+  }
+
+  void _onConfigChanged() async {
+    if (_timer != null && _timer!.isActive) {
+      _timer!.cancel();
+    }
+    logData();
+    notifyListeners();
   }
 
   Future<void> _startGeoLocationUpdates() async {
@@ -114,7 +122,7 @@ class MultimeterStateProvider extends ChangeNotifier {
 
   Future<void> logData() async {
     _timer = Timer.periodic(
-        Duration(milliseconds: _configProvider.config.updatePeriod),
+        Duration(milliseconds: _configProvider!.config.updatePeriod),
         (timer) async {
       if (_isProcessing) {
         return;
@@ -217,10 +225,10 @@ class MultimeterStateProvider extends ChangeNotifier {
               _selectedIndex,
               value,
               unit,
-              _configProvider.config.includeLocationData
+              _configProvider!.config.includeLocationData
                   ? currentPosition?.latitude.toString() ?? 0
                   : 0,
-              _configProvider.config.includeLocationData
+              _configProvider!.config.includeLocationData
                   ? currentPosition?.longitude.toString() ?? 0
                   : 0
             ],
@@ -350,7 +358,7 @@ class MultimeterStateProvider extends ChangeNotifier {
     if (!_scienceLab.isConnected()) {
       return false;
     }
-    if (_configProvider.config.includeLocationData) {
+    if (_configProvider!.config.includeLocationData) {
       await _startGeoLocationUpdates();
     }
     _isRecording = true;
@@ -383,6 +391,13 @@ class MultimeterStateProvider extends ChangeNotifier {
     if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
     }
+    if (_playbackTimer != null && _playbackTimer!.isActive) {
+      _playbackTimer!.cancel();
+    }
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
+    _configProvider?.removeListener(_onConfigChanged);
     super.dispose();
   }
 }
