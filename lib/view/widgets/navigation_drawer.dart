@@ -348,35 +348,6 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-              focusColor: listTileFocusColor,
-              dense: true,
-              leading: Icon(
-                Icons.menu_book,
-                color:
-                    widget.selectedIndex == 6 ? selectedMenuColor : menuColor,
-              ),
-              title: Text(
-                appLocalizations.documentationMenu,
-                style: TextStyle(
-                  color: widget.selectedIndex == 6
-                      ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-              onTap: () async {
-                final launched = await launchUrl(
-                    Uri.parse(appLocalizations.documentationLink));
-                if (!launched && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(appLocalizations.documentationError)),
-                  );
-                }
-              },
-            ),
-            ListTile(
                 focusColor: listTileFocusColor,
                 dense: true,
                 leading: Icon(
