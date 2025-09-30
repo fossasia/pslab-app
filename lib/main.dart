@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/settings_config_provider.dart';
 import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
@@ -35,6 +36,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<SettingsConfigProvider>(
+          create: (context) => SettingsConfigProvider(),
+        ),
         ChangeNotifierProvider<BoardStateProvider>(
           create: (context) => getIt<BoardStateProvider>(),
         ),
@@ -54,47 +58,59 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       builder: (context, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          builder: (context, child) {
-            registerAppLocalizations(AppLocalizations.of(context)!);
-            getIt<BoardStateProvider>().initialize();
-            appLocalizations = getIt.get<AppLocalizations>();
-            return child!;
-          },
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.system,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          initialRoute: '/',
-          routes: {
-            '/': (context) => const InstrumentsScreen(),
-            '/oscilloscope': (context) => const OscilloscopeScreen(),
-            '/multimeter': (context) => const MultimeterScreen(),
-            '/waveGenerator': (context) => const WaveGeneratorScreen(),
-            '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
-            '/powerSource': (context) => const PowerSourceScreen(),
-            '/compass': (context) => const CompassScreen(),
-            '/connectDevice': (context) => const ConnectDeviceScreen(),
-            '/faq': (context) => FAQScreen(),
-            '/settings': (context) => const SettingsScreen(),
-            '/aboutUs': (context) => const AboutUsScreen(),
-            '/softwareLicenses': (context) => SoftwareLicensesScreen(),
-            '/accelerometer': (context) => const AccelerometerScreen(),
-            '/gyroscope': (context) => const GyroscopeScreen(),
-            '/roboticArm': (context) => const RoboticArmScreen(),
-            '/luxmeter': (context) => const LuxMeterScreen(),
-            '/barometer': (context) => const BarometerScreen(),
-            '/soundmeter': (context) => const SoundMeterScreen(),
-            '/thermometer': (context) => const ThermometerScreen(),
-            '/sensors': (context) => const SensorsScreen(),
-            '/experiments': (context) => const ExperimentsScreen(),
-            '/loggedData': (context) => LoggedDataScreen(
-                  instrumentNames: instrumentNames,
-                  appBarName: appLocalizations!.loggedData,
-                  instrumentIcons: instrumentIcons,
-                ),
+        return Consumer<SettingsConfigProvider>(
+          builder: (context, provider, child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              builder: (context, child) {
+                registerAppLocalizations(AppLocalizations.of(context)!);
+                getIt<BoardStateProvider>().initialize();
+                appLocalizations = getIt.get<AppLocalizations>();
+                return child!;
+              },
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: () {
+                if (provider.config.theme == "Light") {
+                  return ThemeMode.light;
+                } else if (provider.config.theme == "Dark (Experimental)") {
+                  return ThemeMode.dark;
+                } else {
+                  return ThemeMode.system;
+                }
+              }(),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              initialRoute: '/',
+              routes: {
+                '/': (context) => const InstrumentsScreen(),
+                '/oscilloscope': (context) => const OscilloscopeScreen(),
+                '/multimeter': (context) => const MultimeterScreen(),
+                '/waveGenerator': (context) => const WaveGeneratorScreen(),
+                '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
+                '/powerSource': (context) => const PowerSourceScreen(),
+                '/compass': (context) => const CompassScreen(),
+                '/connectDevice': (context) => const ConnectDeviceScreen(),
+                '/faq': (context) => FAQScreen(),
+                '/settings': (context) => const SettingsScreen(),
+                '/aboutUs': (context) => const AboutUsScreen(),
+                '/softwareLicenses': (context) => SoftwareLicensesScreen(),
+                '/accelerometer': (context) => const AccelerometerScreen(),
+                '/gyroscope': (context) => const GyroscopeScreen(),
+                '/roboticArm': (context) => const RoboticArmScreen(),
+                '/luxmeter': (context) => const LuxMeterScreen(),
+                '/barometer': (context) => const BarometerScreen(),
+                '/soundmeter': (context) => const SoundMeterScreen(),
+                '/thermometer': (context) => const ThermometerScreen(),
+                '/sensors': (context) => const SensorsScreen(),
+                '/experiments': (context) => const ExperimentsScreen(),
+                '/loggedData': (context) => LoggedDataScreen(
+                      instrumentNames: instrumentNames,
+                      appBarName: appLocalizations!.loggedData,
+                      instrumentIcons: instrumentIcons,
+                    ),
+              },
+            );
           },
         );
       },

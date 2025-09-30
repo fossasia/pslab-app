@@ -1265,6 +1265,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String get documentationError => 'Could not open the documentation link';
 
   @override
+  String get androidRatingLink =>
+      'https://play.google.com/store/apps/details?id=io.pslab';
+
+  @override
+  String get iOSRatingLink =>
+      'https://apps.apple.com/us/app/pslab/id6740454978?action=write-review';
+
+  @override
+  String get ratingError => 'Could not open the link';
+
+  @override
+  String get privacyPolicyLink => 'https://pslab.io/privacy-policy/';
+
+  @override
+  String get privacyPolicyError => 'Could not open the privacy policy link';
+
+  @override
   String get deleteFile => 'Delete File';
 
   @override
@@ -1633,4 +1650,16 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get automatedMeasurementsInfo =>
       'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get darkExperimental => 'Dark (Experimental)';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get shareApp => 'Share App';
 }

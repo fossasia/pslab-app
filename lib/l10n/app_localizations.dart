@@ -2448,6 +2448,36 @@ abstract class AppLocalizations {
   /// **'Could not open the documentation link'**
   String get documentationError;
 
+  /// No description provided for @androidRatingLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://play.google.com/store/apps/details?id=io.pslab'**
+  String get androidRatingLink;
+
+  /// No description provided for @iOSRatingLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://apps.apple.com/us/app/pslab/id6740454978?action=write-review'**
+  String get iOSRatingLink;
+
+  /// No description provided for @ratingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link'**
+  String get ratingError;
+
+  /// No description provided for @privacyPolicyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://pslab.io/privacy-policy/'**
+  String get privacyPolicyLink;
+
+  /// No description provided for @privacyPolicyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the privacy policy link'**
+  String get privacyPolicyError;
+
   /// No description provided for @deleteFile.
   ///
   /// In en, this message translates to:
@@ -3143,6 +3173,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.'**
   String get automatedMeasurementsInfo;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @darkExperimental.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark (Experimental)'**
+  String get darkExperimental;
+
+  /// No description provided for @system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get system;
+
+  /// No description provided for @shareApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share App'**
+  String get shareApp;
 }
 
 class _AppLocalizationsDelegate

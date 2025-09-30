@@ -387,6 +387,11 @@
     "dangerous" : "Dangerous",
     "documentationLink" : "https://docs.pslab.io/",
     "documentationError" : "Could not open the documentation link",
+    "androidRatingLink": "https://play.google.com/store/apps/details?id=io.pslab",
+    "iOSRatingLink": "https://apps.apple.com/us/app/pslab/id6740454978?action=write-review",
+    "ratingError": "Could not open the link",
+    "privacyPolicyLink": "https://pslab.io/privacy-policy/",
+    "privacyPolicyError": "Could not open the privacy policy link",
     "deleteFile": "Delete File",
     "deleteAllData": "Delete All Data",
     "deleteCautionMessage": "Are you sure you want to delete all logged data?",
@@ -503,5 +508,10 @@
     "share": "Share",
     "loggedData": "Logged Data",
     "oscilloscopeConfigs": "Oscilloscope Configurations",
-    "automatedMeasurementsInfo": "Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc."
+    "automatedMeasurementsInfo": "Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.",
+    "theme": "Theme",
+    "light": "Light",
+    "darkExperimental": "Dark (Experimental)",
+    "system": "System",
+    "shareApp": "Share App"
 }
