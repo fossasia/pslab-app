@@ -503,5 +503,7 @@
     "share": "Share",
     "loggedData": "Logged Data",
     "oscilloscopeConfigs": "Oscilloscope Configurations",
-    "automatedMeasurementsInfo": "Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc."
+    "automatedMeasurementsInfo": "Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.",
+    "multimeterConfigs": "Multimeter Configurations",
+    "multimeterUpdatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 1000 ms)"
 }

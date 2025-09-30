@@ -3143,6 +3143,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.'**
   String get automatedMeasurementsInfo;
+
+  /// No description provided for @multimeterConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Multimeter Configurations'**
+  String get multimeterConfigs;
+
+  /// No description provided for @multimeterUpdatePeriodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be updated (100 ms to 1000 ms)'**
+  String get multimeterUpdatePeriodHint;
 }
 
 class _AppLocalizationsDelegate

@@ -173,13 +173,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
     });
   }
 
-  void _setPortraitOrientation() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-  }
-
   void _setLandscapeOrientation() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -229,7 +222,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
 
   @override
   void dispose() {
-    _setPortraitOrientation();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }

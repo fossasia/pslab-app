@@ -281,10 +281,20 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   }
 
   void _setOrientation() {
-    SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    _setPortraitOrientation();
+  }
+
+  void _setPortraitOrientation() {
+    SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+  }
+
+  @override
+  void didChangeDependencies() {
+    _setPortraitOrientation();
+    super.didChangeDependencies();
   }
 
   @override

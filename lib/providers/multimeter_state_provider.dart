@@ -1,11 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/multimeter_config_provider.dart';
 
 class MultimeterStateProvider extends ChangeNotifier {
+  late MultimeterConfigProvider _configProvider;
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late List<String> knobMarker;
   late int _selectedIndex = 0;
@@ -16,7 +21,22 @@ class MultimeterStateProvider extends ChangeNotifier {
   late String unit;
 
   late bool _isProcessing;
-  late Timer _timer;
+  Timer? _timer;
+
+  bool _isPlayingBack = false;
+  bool get isPlayingBack => _isPlayingBack;
+  bool _isPlaybackPaused = false;
+  bool get isPlaybackPaused => _isPlaybackPaused;
+  List<List<dynamic>>? _playbackData;
+  int _playbackIndex = 0;
+  Timer? _playbackTimer;
+  Function? onPlaybackEnd;
+  late bool _isRecording;
+  bool get isRecording => _isRecording;
+  List<List<dynamic>> _recordedData = [];
+
+  Position? currentPosition;
+  StreamSubscription? _locationStream;
 
   MultimeterStateProvider() {
     _selectedIndex = 0;
@@ -39,8 +59,45 @@ class MultimeterStateProvider extends ChangeNotifier {
       appLocalizations.knobMarkerCh2,
     ];
     _isProcessing = false;
+    _isRecording = false;
+  }
 
-    logData();
+  void setConfigProvider(MultimeterConfigProvider multimeterConfigProvider) {
+    _configProvider = multimeterConfigProvider;
+  }
+
+  Future<void> _startGeoLocationUpdates() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      logger.w('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        logger.w('Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      logger.w(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      return;
+    }
+
+    _locationStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    ).listen((Position position) {
+      currentPosition = position;
+    });
   }
 
   int getSelectedIndex() => _selectedIndex;
@@ -56,7 +113,9 @@ class MultimeterStateProvider extends ChangeNotifier {
   }
 
   Future<void> logData() async {
-    _timer = Timer.periodic(Duration(milliseconds: delay), (timer) async {
+    _timer = Timer.periodic(
+        Duration(milliseconds: _configProvider.config.updatePeriod),
+        (timer) async {
       if (_isProcessing) {
         return;
       }
@@ -148,6 +207,25 @@ class MultimeterStateProvider extends ChangeNotifier {
             value = voltageValue;
             unit = voltageUnit;
         }
+        if (_isRecording) {
+          final now = DateTime.now();
+          final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+          _recordedData.add(
+            [
+              now.millisecondsSinceEpoch.toString(),
+              dateFormat.format(now),
+              _selectedIndex,
+              value,
+              unit,
+              _configProvider.config.includeLocationData
+                  ? currentPosition?.latitude.toString() ?? 0
+                  : 0,
+              _configProvider.config.includeLocationData
+                  ? currentPosition?.longitude.toString() ?? 0
+                  : 0
+            ],
+          );
+        }
         notifyListeners();
         _isProcessing = false;
       }
@@ -173,10 +251,137 @@ class MultimeterStateProvider extends ChangeNotifier {
     }
   }
 
+  void _startPlaybackTimer() {
+    if (_playbackIndex >= _playbackData!.length) {
+      stopPlayback();
+      return;
+    }
+
+    final currentRow = _playbackData![_playbackIndex];
+    if (currentRow.length > 2) {
+      _selectedIndex = int.tryParse(currentRow[2].toString()) ?? 0;
+      value = currentRow[3].toString();
+      unit = currentRow[4].toString();
+      _playbackIndex++;
+      notifyListeners();
+    } else {
+      logger.e(
+          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+      _playbackIndex++;
+      notifyListeners();
+    }
+
+    Duration interval = const Duration(seconds: 1);
+
+    if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
+      try {
+        final currentTimestamp =
+            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
+        final nextTimestamp =
+            int.tryParse(_playbackData![_playbackIndex][0].toString());
+
+        if (currentTimestamp != null && nextTimestamp != null) {
+          final timeDiff = nextTimestamp - currentTimestamp;
+          interval = Duration(milliseconds: timeDiff);
+          if (interval.inMilliseconds < 100) {
+            interval = const Duration(milliseconds: 100);
+          } else if (interval.inMilliseconds > 10000) {
+            interval = const Duration(seconds: 10);
+          }
+        }
+      } catch (e) {
+        interval = const Duration(seconds: 1);
+      }
+    }
+
+    _playbackTimer = Timer(interval, () {
+      if (_isPlayingBack && !_isPlaybackPaused) {
+        _startPlaybackTimer();
+      }
+    });
+  }
+
+  Future<void> stopPlayback() async {
+    _isPlayingBack = false;
+    _isPlaybackPaused = false;
+    _playbackTimer?.cancel();
+    _playbackData = null;
+    _playbackIndex = 0;
+
+    notifyListeners();
+    onPlaybackEnd?.call();
+  }
+
+  void startPlayback(List<List<dynamic>> data) {
+    if (data.length <= 1) return;
+
+    _isPlayingBack = true;
+    _isPlaybackPaused = false;
+    _playbackData = data;
+    _playbackIndex = 1;
+
+    if (_timer != null && _timer!.isActive) {
+      _timer!.cancel();
+    }
+
+    value = appLocalizations.defaultValue;
+    unit = appLocalizations.unitVolts;
+    _startPlaybackTimer();
+    notifyListeners();
+  }
+
+  void pausePlayback() {
+    if (_isPlayingBack) {
+      _isPlaybackPaused = true;
+      _playbackTimer?.cancel();
+      notifyListeners();
+    }
+  }
+
+  void resumePlayback() {
+    if (_isPlayingBack && _isPlaybackPaused) {
+      _isPlaybackPaused = false;
+      _startPlaybackTimer();
+      notifyListeners();
+    }
+  }
+
+  Future<bool> startRecording() async {
+    if (!_scienceLab.isConnected()) {
+      return false;
+    }
+    if (_configProvider.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
+    _isRecording = true;
+    _recordedData = [
+      [
+        'Timestamp',
+        'DateTime',
+        'Mode',
+        'Reading',
+        'Unit',
+        'Latitude',
+        'Longitude'
+      ]
+    ];
+    notifyListeners();
+    return true;
+  }
+
+  List<List<dynamic>> stopRecording() {
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
+    _isRecording = false;
+    notifyListeners();
+    return _recordedData;
+  }
+
   @override
   void dispose() {
-    if (_timer.isActive) {
-      _timer.cancel();
+    if (_timer != null && _timer!.isActive) {
+      _timer!.cancel();
     }
     super.dispose();
   }
