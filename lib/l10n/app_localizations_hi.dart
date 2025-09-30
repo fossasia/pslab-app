@@ -1652,6 +1652,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.';
 
   @override
+  String get multimeterConfigs => 'Multimeter Configurations';
+
+  @override
+  String get multimeterUpdatePeriodHint =>
+      'Please provide time interval at which data will be updated (100 ms to 1000 ms)';
+
+  @override
   String get theme => 'Theme';
 
   @override

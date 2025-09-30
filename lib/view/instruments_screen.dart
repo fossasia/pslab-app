@@ -275,16 +275,23 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     _filteredIndices =
         List<int>.generate(instrumentHeadings.length, (index) => index);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setOrientation();
+      _setPortraitOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
   }
 
-  void _setOrientation() {
-    SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+  void _setPortraitOrientation() {
+    SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+  }
+
+  @override
+  void didChangeDependencies() {
+    _setPortraitOrientation();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.didChangeDependencies();
   }
 
   @override

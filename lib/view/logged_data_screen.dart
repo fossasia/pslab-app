@@ -8,6 +8,7 @@ import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/logged_data_chart_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import 'package:pslab/view/map_screen.dart';
+import 'package:pslab/view/multimeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import '../l10n/app_localizations.dart';
@@ -227,6 +228,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'multimeter':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MultimeterScreen(playbackData: data),
+            ),
+          );
+          break;
       }
     }
   }
@@ -416,7 +425,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                       appLocalizations.luxMeter.toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.oscilloscope
-                                          .toLowerCase())
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.multimeter.toLowerCase())
                                 PopupMenuItem<String>(
                                   value: appLocalizations.play,
                                   child: ListTile(
