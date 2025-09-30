@@ -38,7 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
         backgroundColor: primaryRed,
         title: Text(
-          appLocalizations.luxmeterConfigurations,
+          appLocalizations.settings,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,

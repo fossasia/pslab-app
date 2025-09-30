@@ -31,7 +31,7 @@ class SettingsConfig {
 
   factory SettingsConfig.fromJson(Map<String, dynamic> json) {
     return SettingsConfig(
-      autoStart: json['autoStart'] ?? false,
+      autoStart: json['autoStart'] ?? true,
       exportFormat: json['exportFormat'] ?? 'CSV',
       theme: json['theme'] ?? 'Light',
     );
