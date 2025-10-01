@@ -115,14 +115,12 @@ abstract class AppLocalizations {
     Locale('id'),
     Locale('ja'),
     Locale('nb'),
-    Locale('nb', 'NO'),
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ru'),
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
@@ -3248,8 +3246,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     case 'zh':
       {
         switch (locale.scriptCode) {
-          case 'Hans':
-            return AppLocalizationsZhHans();
           case 'Hant':
             return AppLocalizationsZhHant();
         }
@@ -3259,14 +3255,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
-    case 'nb':
-      {
-        switch (locale.countryCode) {
-          case 'NO':
-            return AppLocalizationsNbNo();
-        }
-        break;
-      }
     case 'pt':
       {
         switch (locale.countryCode) {

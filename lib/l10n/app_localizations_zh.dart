@@ -1671,11 +1671,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shareApp => 'Share App';
 }
 
-/// The translations for Chinese, using the Han script (`zh_Hans`).
-class AppLocalizationsZhHans extends AppLocalizationsZh {
-  AppLocalizationsZhHans() : super('zh_Hans');
-}
-
 /// The translations for Chinese, using the Han script (`zh_Hant`).
 class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
