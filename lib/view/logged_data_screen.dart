@@ -6,6 +6,7 @@ import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/logged_data_chart_screen.dart';
+import 'package:pslab/view/logic_analyzer_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import 'package:pslab/view/map_screen.dart';
 import 'package:pslab/view/multimeter_screen.dart';
@@ -253,6 +254,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'logic analyzer':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LogicAnalyzerScreen(playbackData: data),
+            ),
+          );
+          break;
       }
     }
   }
@@ -429,9 +438,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                               }
                             },
                             itemBuilder: (BuildContext context) => [
-                              if (instrumentName ==
-                                      appLocalizations.soundMeter
-                                          .toLowerCase() ||
+                              if (instrumentName == appLocalizations.soundMeter.toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.barometer
                                           .toLowerCase() ||
@@ -450,7 +457,11 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                       appLocalizations.oscilloscope
                                           .toLowerCase() ||
                                   instrumentName ==
-                                      appLocalizations.multimeter.toLowerCase())
+                                      appLocalizations.multimeter
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.logicAnalyzer
+                                          .toLowerCase())
                                 PopupMenuItem<String>(
                                   value: appLocalizations.play,
                                   child: ListTile(
