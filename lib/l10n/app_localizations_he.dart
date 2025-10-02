@@ -9,16 +9,16 @@ class AppLocalizationsHe extends AppLocalizations {
   AppLocalizationsHe([String locale = 'he']) : super(locale);
 
   @override
-  String get oscilloscope => 'Oscilloscope';
+  String get oscilloscope => 'מתנד';
 
   @override
-  String get multimeter => 'Multimeter';
+  String get multimeter => 'רב־מודד';
 
   @override
-  String get logicAnalyzer => 'Logic Analyzer';
+  String get logicAnalyzer => 'מאבחן לוגיקה';
 
   @override
-  String get sensors => 'Sensors';
+  String get sensors => 'חיישנים';
 
   @override
   String get waveGenerator => 'Wave Generator';
@@ -369,6 +369,12 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analysisOptionDisabled => 'Disabled';
 
   @override
+  String get logicAnalyzerConfigs => 'Logic Analyzer Configurations';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
   String get powerSourceTitle => 'Power Source';
 
   @override
@@ -526,6 +532,9 @@ class AppLocalizationsHe extends AppLocalizations {
       'Press View button to generate the PWM signals.';
 
   @override
+  String get waveGeneratorConfigs => 'Wave Generator Configurations';
+
+  @override
   String get analyze => 'Analyze';
 
   @override
@@ -553,7 +562,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get currentFormat => 'Current format is ';
 
   @override
-  String get aboutUs => 'About Us';
+  String get aboutUs => 'עלינו';
 
   @override
   String get pslabDescription =>
@@ -1307,7 +1316,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get fileSaved => 'File saved';
 
   @override
-  String get save => 'Save';
+  String get save => 'שמירה';
 
   @override
   String get enterFileName =>

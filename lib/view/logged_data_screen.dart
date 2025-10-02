@@ -11,6 +11,7 @@ import 'package:pslab/view/map_screen.dart';
 import 'package:pslab/view/multimeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
+import 'package:pslab/view/wave_generator_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 
@@ -220,6 +221,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'wave generator':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WaveGeneratorScreen(playbackData: data),
+            ),
+          );
+          break;
         case 'oscilloscope':
           Navigator.push(
             context,
@@ -423,6 +432,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                           .toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.luxMeter.toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.waveGenerator
+                                          .toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.oscilloscope
                                           .toLowerCase() ||
