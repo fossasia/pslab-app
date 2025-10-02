@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/providers/logic_analyzer_config_provider.dart';
@@ -252,6 +253,20 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
                   IconButton(
                     icon: Icon(Icons.save, color: Colors.white),
                     onPressed: () async {
+                      if (!getIt.get<ScienceLab>().isConnected()) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                appLocalizations.notConnected,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
+                          );
+                        }
+                        return;
+                      }
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
