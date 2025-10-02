@@ -850,6 +850,30 @@ abstract class AppLocalizations {
   /// **'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.'**
   String get powerSourceBulletPoint4;
 
+  /// No description provided for @powerSourceConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Source Configurations'**
+  String get powerSourceConfigs;
+
+  /// No description provided for @loggingInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging Interval'**
+  String get loggingInterval;
+
+  /// No description provided for @loggingIntervalErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered logging interval is not within the limits!'**
+  String get loggingIntervalErrorMessage;
+
+  /// No description provided for @powerSourceLoggingIntervalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be logged (100 ms to 1000 ms)'**
+  String get powerSourceLoggingIntervalHint;
+
   /// No description provided for @analog.
   ///
   /// In en, this message translates to:

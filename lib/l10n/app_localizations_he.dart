@@ -9,16 +9,16 @@ class AppLocalizationsHe extends AppLocalizations {
   AppLocalizationsHe([String locale = 'he']) : super(locale);
 
   @override
-  String get oscilloscope => 'Oscilloscope';
+  String get oscilloscope => 'מתנד';
 
   @override
-  String get multimeter => 'Multimeter';
+  String get multimeter => 'רב־מודד';
 
   @override
-  String get logicAnalyzer => 'Logic Analyzer';
+  String get logicAnalyzer => 'מאבחן לוגיקה';
 
   @override
-  String get sensors => 'Sensors';
+  String get sensors => 'חיישנים';
 
   @override
   String get waveGenerator => 'Wave Generator';
@@ -404,6 +404,20 @@ class AppLocalizationsHe extends AppLocalizations {
       'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.';
 
   @override
+  String get powerSourceConfigs => 'Power Source Configurations';
+
+  @override
+  String get loggingInterval => 'Logging Interval';
+
+  @override
+  String get loggingIntervalErrorMessage =>
+      'Entered logging interval is not within the limits!';
+
+  @override
+  String get powerSourceLoggingIntervalHint =>
+      'Please provide time interval at which data will be logged (100 ms to 1000 ms)';
+
+  @override
   String get analog => 'Analog';
 
   @override
@@ -553,7 +567,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get currentFormat => 'Current format is ';
 
   @override
-  String get aboutUs => 'About Us';
+  String get aboutUs => 'עלינו';
 
   @override
   String get pslabDescription =>
@@ -1307,7 +1321,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get fileSaved => 'File saved';
 
   @override
-  String get save => 'Save';
+  String get save => 'שמירה';
 
   @override
   String get enterFileName =>
