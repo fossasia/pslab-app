@@ -369,6 +369,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analysisOptionDisabled => 'Disabled';
 
   @override
+  String get logicAnalyzerConfigs => 'Logic Analyzer Configurations';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
   String get powerSourceTitle => 'Power Source';
 
   @override
@@ -538,6 +544,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pwmBulletPoint4 =>
       'Press View button to generate the PWM signals.';
+
+  @override
+  String get waveGeneratorConfigs => 'Wave Generator Configurations';
 
   @override
   String get analyze => 'Analyze';

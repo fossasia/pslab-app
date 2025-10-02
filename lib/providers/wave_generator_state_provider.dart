@@ -1,11 +1,16 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:math' as math;
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/wave_generator_constants.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/wave_generator_config_provider.dart';
 
 enum WaveConst {
   waveType,
@@ -39,6 +44,7 @@ enum WaveData {
 }
 
 class WaveGeneratorStateProvider extends ChangeNotifier {
+  WaveGeneratorConfigProvider? _configProvider;
   static final int sin = 1;
   static final int triangular = 2;
   static final int pwm = 3;
@@ -55,6 +61,10 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
   late ScienceLab _scienceLab;
 
+  List<List<dynamic>> _recordedData = [];
+
+  Position? currentPosition;
+
   WaveGeneratorStateProvider() {
     selectedAnalogWave = WaveConst.wave1;
 
@@ -67,6 +77,43 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
     waveGeneratorConstants = WaveGeneratorConstants();
 
     waveData = [];
+  }
+
+  void setConfigProvider(WaveGeneratorConfigProvider configProvider) {
+    _configProvider = configProvider;
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      logger.w('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        logger.w('Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      logger.w(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      return;
+    }
+
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+    );
+
+    currentPosition =
+        await Geolocator.getCurrentPosition(locationSettings: locationSettings);
   }
 
   void setAnalogSelectedWave(WaveConst wave) {
@@ -307,6 +354,91 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
     }
     return entries;
   }
+
+  Map<WaveConst, Map<WaveConst, int>> parseWave(String input) {
+    String jsonLike = input.replaceAllMapped(
+      RegExp(r'WaveConst\.(\w+)'),
+      (m) => '"${m[1]}"',
+    );
+
+    jsonLike = jsonLike.replaceAllMapped(
+      RegExp(r'(\w+):'),
+      (m) => '"${m[1]}":',
+    );
+
+    final Map<String, dynamic> raw = jsonDecode(jsonLike);
+
+    return raw.map((key, value) {
+      return MapEntry(
+        _waveConstFromString(key),
+        (value as Map<String, dynamic>).map((k, v) {
+          return MapEntry(_waveConstFromString(k), v as int);
+        }),
+      );
+    });
+  }
+
+  WaveConst _waveConstFromString(String s) {
+    switch (s) {
+      case 'wave1':
+        return WaveConst.wave1;
+      case 'wave2':
+        return WaveConst.wave2;
+      case 'waveType':
+        return WaveConst.waveType;
+      case 'sqr1':
+        return WaveConst.sqr1;
+      case 'sqr2':
+        return WaveConst.sqr2;
+      case 'sqr3':
+        return WaveConst.sqr3;
+      case 'sqr4':
+        return WaveConst.sqr4;
+      case 'frequency':
+        return WaveConst.frequency;
+      case 'phase':
+        return WaveConst.phase;
+      case 'duty':
+        return WaveConst.duty;
+      default:
+        return WaveConst.wave1;
+    }
+  }
+
+  Future<void> loadPlaybackData(List<List<dynamic>> playbackData) async {
+    waveGeneratorConstants.wave =
+        parseWave(playbackData[playbackData.length - 1][2].toString());
+    previewWave();
+    await setWave();
+    notifyListeners();
+  }
+
+  Future<bool> logData() async {
+    if (_configProvider!.config.includeLocationData) {
+      await _getCurrentLocation();
+    }
+    _recordedData = [
+      ['Timestamp', 'DateTime', 'Waveform Data', 'Latitude', 'Longitude']
+    ];
+    final now = DateTime.now();
+    final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+    _recordedData.add(
+      [
+        now.millisecondsSinceEpoch.toString(),
+        dateFormat.format(now),
+        waveGeneratorConstants.wave,
+        _configProvider!.config.includeLocationData
+            ? currentPosition?.latitude.toString() ?? 0
+            : 0,
+        _configProvider!.config.includeLocationData
+            ? currentPosition?.longitude.toString() ?? 0
+            : 0
+      ],
+    );
+    return true;
+  }
+
+  List<List<dynamic>> get recordedData => _recordedData;
 
   List<LineChartBarData> createPlots() {
     List<Color> colors = [Colors.white, Colors.white60];

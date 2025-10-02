@@ -790,6 +790,18 @@ abstract class AppLocalizations {
   /// **'Disabled'**
   String get analysisOptionDisabled;
 
+  /// No description provided for @logicAnalyzerConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic Analyzer Configurations'**
+  String get logicAnalyzerConfigs;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
   /// No description provided for @powerSourceTitle.
   ///
   /// In en, this message translates to:
@@ -1095,6 +1107,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Press View button to generate the PWM signals.'**
   String get pwmBulletPoint4;
+
+  /// No description provided for @waveGeneratorConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave Generator Configurations'**
+  String get waveGeneratorConfigs;
 
   /// No description provided for @analyze.
   ///

@@ -1,7 +1,7 @@
 import 'package:pslab/providers/wave_generator_state_provider.dart';
 
 class WaveGeneratorConstants {
-  final Map<WaveConst, Map<WaveConst, int>> wave = {
+  Map<WaveConst, Map<WaveConst, int>> wave = {
     WaveConst.wave1: {
       WaveConst.frequency: WaveData.freqMin.value,
       WaveConst.waveType: WaveGeneratorStateProvider.sin,
