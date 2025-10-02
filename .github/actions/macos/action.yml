@@ -41,7 +41,7 @@ runs:
         brew install node
         npm install -g appdmg
 
-        appdmg macos/appdmg.json pslab-${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}.dmg
+        appdmg appdmg.json pslab-${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}.dmg
 
     - name: Store App file
       uses: actions/upload-artifact@v4
