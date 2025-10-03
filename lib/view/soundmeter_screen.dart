@@ -95,8 +95,8 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChangeNotifierProvider(
-          create: (context) => _configProvider,
+        builder: (context) => ChangeNotifierProvider.value(
+          value: _configProvider,
           child: const SoundMeterConfigScreen(),
         ),
       ),
