@@ -773,13 +773,63 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     }).toList();
   }
 
+  List<String> parseList(String input) {
+    String clean = input.trim();
+    if (clean.startsWith('[') && clean.endsWith(']')) {
+      clean = clean.substring(1, clean.length - 1);
+    }
+
+    return clean.split(',').map((s) => s.trim()).toList();
+  }
+
   void loadPlaybackData(List<List<dynamic>> playbackData) {
     dataSets =
         parseFlSpotList(playbackData[playbackData.length - 1][2].toString());
     maxY = double.parse(playbackData[playbackData.length - 1][3].toString());
     minY = double.parse(playbackData[playbackData.length - 1][4].toString());
+    analysisChannelNames =
+        parseList(playbackData[playbackData.length - 1][5].toString());
+    analysisEdgesNames =
+        parseList(playbackData[playbackData.length - 1][6].toString());
+    channelMode = analysisChannelNames.length;
+    setConfigData();
     isData = true;
     notifyListeners();
+  }
+
+  void setConfigData() {
+    switch (channelMode) {
+      case 1:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        break;
+      case 2:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        channelSelectSpinner2 = analysisChannelNames[1];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        edgeSelectSpinner2 = analysisEdgesNames[1];
+        break;
+      case 3:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        channelSelectSpinner2 = analysisChannelNames[1];
+        channelSelectSpinner3 = analysisChannelNames[2];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        edgeSelectSpinner2 = analysisEdgesNames[1];
+        edgeSelectSpinner3 = analysisEdgesNames[2];
+        break;
+      case 4:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        channelSelectSpinner2 = analysisChannelNames[1];
+        channelSelectSpinner3 = analysisChannelNames[2];
+        channelSelectSpinner4 = analysisChannelNames[3];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        edgeSelectSpinner2 = analysisEdgesNames[1];
+        edgeSelectSpinner3 = analysisEdgesNames[2];
+        edgeSelectSpinner4 = analysisEdgesNames[3];
+        break;
+      default:
+        break;
+    }
   }
 
   Future<bool> logData() async {
@@ -796,6 +846,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         'Readings',
         'maxY',
         'minY',
+        'Channels',
+        'Edges',
         'Latitude',
         'Longitude'
       ]
@@ -809,6 +861,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         dataSets,
         maxY,
         minY,
+        analysisChannelNames,
+        analysisEdgesNames,
         _configProvider!.config.includeLocationData
             ? currentPosition?.latitude.toString() ?? 0
             : 0,

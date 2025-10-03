@@ -50,12 +50,12 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
     _provider = LogicAnalyzerStateProvider();
     _configProvider = LogicAnalyzerConfigProvider();
     _provider.setConfigProvider(_configProvider!);
+    if (widget.playbackData != null) {
+      _provider.loadPlaybackData(widget.playbackData!);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setLandscapeOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      if (widget.playbackData != null) {
-        _provider.loadPlaybackData(widget.playbackData!);
-      }
     });
     super.initState();
   }
