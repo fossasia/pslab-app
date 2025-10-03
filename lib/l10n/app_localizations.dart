@@ -115,14 +115,12 @@ abstract class AppLocalizations {
     Locale('id'),
     Locale('ja'),
     Locale('nb'),
-    Locale('nb', 'NO'),
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ru'),
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
@@ -798,6 +796,18 @@ abstract class AppLocalizations {
   /// **'Disabled'**
   String get analysisOptionDisabled;
 
+  /// No description provided for @logicAnalyzerConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic Analyzer Configurations'**
+  String get logicAnalyzerConfigs;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
   /// No description provided for @powerSourceTitle.
   ///
   /// In en, this message translates to:
@@ -857,6 +867,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.'**
   String get powerSourceBulletPoint4;
+
+  /// No description provided for @powerSourceConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Source Configurations'**
+  String get powerSourceConfigs;
+
+  /// No description provided for @loggingInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging Interval'**
+  String get loggingInterval;
+
+  /// No description provided for @loggingIntervalErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered logging interval is not within the limits!'**
+  String get loggingIntervalErrorMessage;
+
+  /// No description provided for @powerSourceLoggingIntervalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be logged (100 ms to 1000 ms)'**
+  String get powerSourceLoggingIntervalHint;
 
   /// No description provided for @analog.
   ///
@@ -1079,6 +1113,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Press View button to generate the PWM signals.'**
   String get pwmBulletPoint4;
+
+  /// No description provided for @waveGeneratorConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave Generator Configurations'**
+  String get waveGeneratorConfigs;
 
   /// No description provided for @analyze.
   ///
@@ -3254,8 +3294,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     case 'zh':
       {
         switch (locale.scriptCode) {
-          case 'Hans':
-            return AppLocalizationsZhHans();
           case 'Hant':
             return AppLocalizationsZhHant();
         }
@@ -3265,14 +3303,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
-    case 'nb':
-      {
-        switch (locale.countryCode) {
-          case 'NO':
-            return AppLocalizationsNbNo();
-        }
-        break;
-      }
     case 'pt':
       {
         switch (locale.countryCode) {

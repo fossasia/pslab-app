@@ -373,6 +373,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get analysisOptionDisabled => 'Disabled';
 
   @override
+  String get logicAnalyzerConfigs => 'Logic Analyzer Configurations';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
   String get powerSourceTitle => 'Power Source';
 
   @override
@@ -406,6 +412,20 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get powerSourceBulletPoint4 =>
       'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.';
+
+  @override
+  String get powerSourceConfigs => 'Power Source Configurations';
+
+  @override
+  String get loggingInterval => 'Logging Interval';
+
+  @override
+  String get loggingIntervalErrorMessage =>
+      'Entered logging interval is not within the limits!';
+
+  @override
+  String get powerSourceLoggingIntervalHint =>
+      'Please provide time interval at which data will be logged (100 ms to 1000 ms)';
 
   @override
   String get analog => 'Analog';
@@ -528,6 +548,9 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get pwmBulletPoint4 =>
       'Press View button to generate the PWM signals.';
+
+  @override
+  String get waveGeneratorConfigs => 'Wave Generator Configurations';
 
   @override
   String get analyze => 'Analyze';

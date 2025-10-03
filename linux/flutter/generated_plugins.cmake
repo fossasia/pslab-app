@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  flusbserial
   flutter_audio_capture
   url_launcher_linux
 )
