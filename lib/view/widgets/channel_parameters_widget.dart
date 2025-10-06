@@ -73,7 +73,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
-                        fontSize: 15,
+                        fontSize: 14.5,
                       ),
                     ),
                     Padding(
@@ -84,7 +84,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                           color: Color(0xFF424242),
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
-                          fontSize: 15,
+                          fontSize: 14.5,
                         ),
                       ),
                     ),
@@ -106,7 +106,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                           border: InputBorder.none,
                         ),
                         textStyle: TextStyle(
-                            color: oscilloscopeOptionLabelColor, fontSize: 15),
+                            color: oscilloscopeOptionLabelColor,
+                            fontSize: 14.5),
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
                             case 0:
@@ -173,7 +174,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
-                        fontSize: 15,
+                        fontSize: 14.5,
                       ),
                     ),
                     Padding(
@@ -184,7 +185,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                           color: Color(0xFF424242),
                           fontWeight: FontWeight.normal,
                           fontStyle: FontStyle.normal,
-                          fontSize: 15,
+                          fontSize: 14.5,
                         ),
                       ),
                     ),
@@ -198,7 +199,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                             color: oscilloscopeOptionLabelColor,
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.normal,
-                            fontSize: 15,
+                            fontSize: 14.5,
                           ),
                         ),
                       ),
@@ -231,7 +232,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         color: oscilloscopeOptionLabelColor,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
-                        fontSize: 15,
+                        fontSize: 14.5,
                       ),
                     ),
                   ],
@@ -285,7 +286,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       appLocalizations.inBuiltMic,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 15,
+                        fontSize: 14.5,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                       ),
@@ -320,7 +321,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       appLocalizations.pslabMic,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 15,
+                        fontSize: 14.5,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                       ),

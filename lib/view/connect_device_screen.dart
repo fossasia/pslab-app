@@ -71,7 +71,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         margin: const EdgeInsets.only(
                             left: 40, right: 40, bottom: 20),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Center(
                               child: Text(
@@ -87,18 +87,28 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                             const SizedBox(height: 20),
                             Text(
                               appLocalizations.step1ConnectMicroUsb,
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                             Text(
                               appLocalizations.step2ConnectOtg,
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                             Text(
                               appLocalizations.step3ConnectPhone,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              appLocalizations.step4ConnectWireless,
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 16,
                               ),

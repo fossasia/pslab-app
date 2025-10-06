@@ -65,7 +65,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       appLocalizations.trigger,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 15,
+                        fontSize: 14.5,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                       ),
@@ -89,7 +89,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         ),
                         textStyle: TextStyle(
                           color: oscilloscopeOptionLabelColor,
-                          fontSize: 15,
+                          fontSize: 14,
                         ),
                         onSelected: (String? value) {
                           oscilloscopeStateProvider.triggerChannel = value!;
@@ -228,7 +228,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       appLocalizations.timeBase,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 15,
+                        fontSize: 14.5,
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.normal,
                       ),

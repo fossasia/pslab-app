@@ -34,9 +34,17 @@ runs:
       run: |
         flutter config --enable-macos-desktop
         flutter build macos --build-name $VERSION_NAME --build-number $VERSION_CODE
+    
+    - name: Package into dmg
+      shell: bash
+      run: |
+        brew install node
+        npm install -g appdmg
+
+        appdmg appdmg.json pslab-${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}.dmg
 
     - name: Store App file
       uses: actions/upload-artifact@v4
       with:
         name: macos-app
-        path: build/macos/Build/Products/Release/pslab.app
+        path: pslab-${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}.dmg

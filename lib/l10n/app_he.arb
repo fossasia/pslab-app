@@ -1,1 +1,14 @@
-{}
+{
+    "save": "שמירה",
+    "@save": {},
+    "aboutUs": "עלינו",
+    "@aboutUs": {},
+    "oscilloscope": "מתנד",
+    "@oscilloscope": {},
+    "multimeter": "רב־מודד",
+    "@multimeter": {},
+    "logicAnalyzer": "מאבחן לוגיקה",
+    "@logicAnalyzer": {},
+    "sensors": "חיישנים",
+    "@sensors": {}
+}

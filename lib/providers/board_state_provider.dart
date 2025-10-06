@@ -6,11 +6,13 @@ import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/settings_config_provider.dart';
 import 'package:usb_serial/usb_serial.dart';
 
 import 'package:pslab/others/science_lab_common.dart';
 
 class BoardStateProvider extends ChangeNotifier {
+  late SettingsConfigProvider configProvider;
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool initialisationStatus = false;
   bool pslabIsConnected = false;
@@ -21,15 +23,13 @@ class BoardStateProvider extends ChangeNotifier {
   String pslabVersionIDV5 = 'PSLab V5';
   int pslabVersion = 0;
   int pslabFirmwareVersion = 0;
-  late String exportFormat;
-  bool autoStart = true;
   bool _isProcessing = false;
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
-    exportFormat = appLocalizations.txtFormat;
+    configProvider = SettingsConfigProvider();
   }
 
   Future<void> initialize() async {
@@ -42,7 +42,7 @@ class BoardStateProvider extends ChangeNotifier {
       await fetchFirmwareVersion();
     }
     _isProcessing = false;
-    if (autoStart) {
+    if (configProvider.config.autoStart) {
       if (Platform.isAndroid) {
         UsbSerial.usbEventStream?.listen(
           (UsbEvent usbEvent) async {

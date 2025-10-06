@@ -72,7 +72,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       maxLines: 1,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 10,
+                        fontSize: 9.5,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
                       ),
@@ -124,7 +124,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                         maxLines: 1,
                         style: TextStyle(
                           color: oscilloscopeOptionLabelColor,
-                          fontSize: 10,
+                          fontSize: 9.5,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.bold,
                         ),
@@ -175,7 +175,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                         maxLines: 1,
                         style: TextStyle(
                           color: oscilloscopeOptionLabelColor,
-                          fontSize: 10,
+                          fontSize: 9.5,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.bold,
                         ),
@@ -226,7 +226,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       maxLines: 1,
                       style: TextStyle(
                         color: oscilloscopeOptionLabelColor,
-                        fontSize: 10,
+                        fontSize: 9.5,
                         fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.bold,
                       ),

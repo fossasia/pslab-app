@@ -78,6 +78,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
           ),
         ),
         actions: [
+          if (widget.actions != null) ...widget.actions!,
           if (widget.isPlayingBack) ...[
             if (widget.onPlaybackPauseResume != null)
               IconButton(
@@ -126,7 +127,6 @@ class _CommonScaffoldState extends State<CommonScaffold> {
                 color: appBarContentColor,
               ),
             ),
-          if (widget.actions != null) ...widget.actions!,
         ],
       ),
       body: widget.body,

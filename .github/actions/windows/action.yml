@@ -38,7 +38,7 @@ runs:
     - name: Build Installer
       shell: pwsh
       run: |
-        choco install innosetup -y
+        choco install innosetup --version=6.4.0 -y
         $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe"
         & "$iscc" /O+ "build\windows\x64\installer\Release\inno-script.iss"
 

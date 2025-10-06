@@ -134,13 +134,14 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
 
   void _navigateToConfig() {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChangeNotifierProvider(
-            create: (context) => _configProvider,
-            child: const GyroscopeConfigScreen(),
-          ),
-        ));
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider.value(
+          value: _configProvider,
+          child: const GyroscopeConfigScreen(),
+        ),
+      ),
+    );
   }
 
   Future<void> _toggleRecording() async {

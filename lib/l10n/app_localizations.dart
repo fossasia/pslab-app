@@ -115,14 +115,12 @@ abstract class AppLocalizations {
     Locale('id'),
     Locale('ja'),
     Locale('nb'),
-    Locale('nb', 'NO'),
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ru'),
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
   ];
 
@@ -645,20 +643,26 @@ abstract class AppLocalizations {
   /// No description provided for @step1ConnectMicroUsb.
   ///
   /// In en, this message translates to:
-  /// **'1. Connect a micro USB(Mini B) to PSLab'**
+  /// **'1. Connect a USB cable to PSLab.'**
   String get step1ConnectMicroUsb;
 
   /// No description provided for @step2ConnectOtg.
   ///
   /// In en, this message translates to:
-  /// **'2. Connect the other end of the micro USB cable to a OTG'**
+  /// **'2. Connect the other end of the USB cable to an OTG.'**
   String get step2ConnectOtg;
 
   /// No description provided for @step3ConnectPhone.
   ///
   /// In en, this message translates to:
-  /// **'3. Connect the OTG to the phone'**
+  /// **'3. Connect the OTG to the phone.'**
   String get step3ConnectPhone;
+
+  /// No description provided for @step4ConnectWireless.
+  ///
+  /// In en, this message translates to:
+  /// **'4. PSLab can also be connected wirelessly (Bluetooth or Wi-Fi) if the option is present.'**
+  String get step4ConnectWireless;
 
   /// No description provided for @bluetoothWifiConnection.
   ///
@@ -792,6 +796,18 @@ abstract class AppLocalizations {
   /// **'Disabled'**
   String get analysisOptionDisabled;
 
+  /// No description provided for @logicAnalyzerConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic Analyzer Configurations'**
+  String get logicAnalyzerConfigs;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
   /// No description provided for @powerSourceTitle.
   ///
   /// In en, this message translates to:
@@ -851,6 +867,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.'**
   String get powerSourceBulletPoint4;
+
+  /// No description provided for @powerSourceConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Power Source Configurations'**
+  String get powerSourceConfigs;
+
+  /// No description provided for @loggingInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging Interval'**
+  String get loggingInterval;
+
+  /// No description provided for @loggingIntervalErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered logging interval is not within the limits!'**
+  String get loggingIntervalErrorMessage;
+
+  /// No description provided for @powerSourceLoggingIntervalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be logged (100 ms to 1000 ms)'**
+  String get powerSourceLoggingIntervalHint;
 
   /// No description provided for @analog.
   ///
@@ -1073,6 +1113,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Press View button to generate the PWM signals.'**
   String get pwmBulletPoint4;
+
+  /// No description provided for @waveGeneratorConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave Generator Configurations'**
+  String get waveGeneratorConfigs;
 
   /// No description provided for @analyze.
   ///
@@ -2448,6 +2494,36 @@ abstract class AppLocalizations {
   /// **'Could not open the documentation link'**
   String get documentationError;
 
+  /// No description provided for @androidRatingLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://play.google.com/store/apps/details?id=io.pslab'**
+  String get androidRatingLink;
+
+  /// No description provided for @iOSRatingLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://apps.apple.com/us/app/pslab/id6740454978?action=write-review'**
+  String get iOSRatingLink;
+
+  /// No description provided for @ratingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link'**
+  String get ratingError;
+
+  /// No description provided for @privacyPolicyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://pslab.io/privacy-policy/'**
+  String get privacyPolicyLink;
+
+  /// No description provided for @privacyPolicyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the privacy policy link'**
+  String get privacyPolicyError;
+
   /// No description provided for @deleteFile.
   ///
   /// In en, this message translates to:
@@ -3143,6 +3219,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pin Layout Back'**
   String get pinLayoutBack;
+
+  /// No description provided for @oscilloscopeConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Oscilloscope Configurations'**
+  String get oscilloscopeConfigs;
+
+  /// No description provided for @automatedMeasurementsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.'**
+  String get automatedMeasurementsInfo;
+
+  /// No description provided for @multimeterConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Multimeter Configurations'**
+  String get multimeterConfigs;
+
+  /// No description provided for @multimeterUpdatePeriodHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide time interval at which data will be updated (100 ms to 1000 ms)'**
+  String get multimeterUpdatePeriodHint;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @darkExperimental.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark (Experimental)'**
+  String get darkExperimental;
+
+  /// No description provided for @system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get system;
+
+  /// No description provided for @shareApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share App'**
+  String get shareApp;
 }
 
 class _AppLocalizationsDelegate
@@ -3182,8 +3306,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     case 'zh':
       {
         switch (locale.scriptCode) {
-          case 'Hans':
-            return AppLocalizationsZhHans();
           case 'Hant':
             return AppLocalizationsZhHant();
         }
@@ -3193,14 +3315,6 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
-    case 'nb':
-      {
-        switch (locale.countryCode) {
-          case 'NO':
-            return AppLocalizationsNbNo();
-        }
-        break;
-      }
     case 'pt':
       {
         switch (locale.countryCode) {

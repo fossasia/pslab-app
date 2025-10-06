@@ -6,9 +6,14 @@ import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/logged_data_chart_screen.dart';
+import 'package:pslab/view/logic_analyzer_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import 'package:pslab/view/map_screen.dart';
+import 'package:pslab/view/multimeter_screen.dart';
+import 'package:pslab/view/oscilloscope_screen.dart';
+import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
+import 'package:pslab/view/wave_generator_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 
@@ -210,11 +215,50 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'power source':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PowerSourceScreen(playbackData: data),
+            ),
+          );
         case 'luxmeter':
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => LuxMeterScreen(playbackData: data),
+            ),
+          );
+          break;
+        case 'wave generator':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WaveGeneratorScreen(playbackData: data),
+            ),
+          );
+          break;
+        case 'oscilloscope':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OscilloscopeScreen(playbackData: data),
+            ),
+          );
+          break;
+        case 'multimeter':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MultimeterScreen(playbackData: data),
+            ),
+          );
+          break;
+        case 'logic analyzer':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LogicAnalyzerScreen(playbackData: data),
             ),
           );
           break;
@@ -394,17 +438,30 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                               }
                             },
                             itemBuilder: (BuildContext context) => [
-                              if (instrumentName ==
-                                      appLocalizations.soundMeter
-                                          .toLowerCase() ||
+                              if (instrumentName == appLocalizations.soundMeter.toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.barometer
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.powerSource
                                           .toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.gyroscope
                                           .toLowerCase() ||
                                   instrumentName ==
-                                      appLocalizations.luxMeter.toLowerCase())
+                                      appLocalizations.luxMeter.toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.waveGenerator
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.oscilloscope
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.multimeter
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.logicAnalyzer
+                                          .toLowerCase())
                                 PopupMenuItem<String>(
                                   value: appLocalizations.play,
                                   child: ListTile(

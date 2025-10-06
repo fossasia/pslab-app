@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/board_state_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../theme/colors.dart';
@@ -324,8 +327,24 @@ class _NavDrawerState extends State<NavDrawer> {
                   fontSize: 14,
                 ),
               ),
-              onTap: () {
-                /**/
+              onTap: () async {
+                if (Platform.isIOS) {
+                  final launched = await launchUrl(
+                      Uri.parse(appLocalizations.iOSRatingLink));
+                  if (!launched && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(appLocalizations.ratingError)),
+                    );
+                  }
+                } else {
+                  final launched = await launchUrl(
+                      Uri.parse(appLocalizations.androidRatingLink));
+                  if (!launched && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(appLocalizations.ratingError)),
+                    );
+                  }
+                }
               },
             ),
             ListTile(
@@ -405,7 +424,9 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
               onTap: () {
-                /**/
+                SharePlus.instance.share(
+                  ShareParams(text: appLocalizations.shareApp),
+                );
               },
             ),
             ListTile(
@@ -426,8 +447,15 @@ class _NavDrawerState extends State<NavDrawer> {
                   fontSize: 14,
                 ),
               ),
-              onTap: () {
-                /**/
+              onTap: () async {
+                final launched = await launchUrl(
+                    Uri.parse(appLocalizations.privacyPolicyLink));
+                if (!launched && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(appLocalizations.privacyPolicyError)),
+                  );
+                }
               },
             ),
             ListTile(

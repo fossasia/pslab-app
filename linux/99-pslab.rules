@@ -1,0 +1,4 @@
+# PSLab v5
+SUBSYSTEM=="usb|tty", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00df", MODE="666"
+# PSLab v6
+SUBSYSTEM=="usb|tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE="666"

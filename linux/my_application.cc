@@ -51,6 +51,19 @@ static void my_application_activate(GApplication* application) {
   gtk_widget_show(GTK_WIDGET(window));
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
+
+  char exe_path[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path)-1);
+    if (len == -1) {
+        g_error("Failed to determine executable path");
+    }
+    exe_path[len] = '\0';
+
+  if (g_str_has_prefix(exe_path, "/usr/bin/")) {
+    fl_dart_project_set_aot_library_path(project, (gchar*)"/usr/lib/pslab/libapp.so");
+    fl_dart_project_set_assets_path(project, (gchar*)"/usr/share/pslab/flutter_assets");
+    fl_dart_project_set_icu_data_path(project, (gchar*)"/usr/share/pslab/icudtl.dat");
+  }
   fl_dart_project_set_dart_entrypoint_arguments(project, self->dart_entrypoint_arguments);
 
   FlView* view = fl_view_new(project);

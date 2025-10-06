@@ -1,135 +1,101 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:pslab/theme/colors.dart';
-import 'package:pslab/providers/board_state_provider.dart';
-import 'package:pslab/view/widgets/main_scaffold_widget.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/settings_config_provider.dart';
+import 'package:pslab/view/widgets/config_widgets.dart';
+
+import '../theme/colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  bool isTxtFormatSelected = false;
-  bool isCsvFormatSelected = false;
 
   @override
   void initState() {
     super.initState();
-    isTxtFormatSelected =
-        (GetIt.instance.get<BoardStateProvider>().exportFormat ==
-            appLocalizations.txtFormat);
-    isCsvFormatSelected =
-        (GetIt.instance.get<BoardStateProvider>().exportFormat ==
-            appLocalizations.csvFormat);
   }
 
-  void _showExportFormatDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-          ),
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          title: Text(appLocalizations.export,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          children: [
-            RadioGroup(
-              groupValue: isTxtFormatSelected,
-              onChanged: (bool? value) {
-                setState(
-                  () {
-                    isTxtFormatSelected = true;
-                    isCsvFormatSelected = false;
-                    GetIt.instance.get<BoardStateProvider>().exportFormat =
-                        appLocalizations.txtFormat;
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-              child: RadioListTile<bool>(
-                  title: Text(appLocalizations.txtFormat),
-                  value: true,
-                  activeColor: primaryRed),
-            ),
-            RadioGroup(
-              groupValue: isCsvFormatSelected,
-              onChanged: (bool? value) {
-                setState(
-                  () {
-                    isTxtFormatSelected = false;
-                    isCsvFormatSelected = true;
-                    GetIt.instance.get<BoardStateProvider>().exportFormat =
-                        appLocalizations.csvFormat;
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-              child: RadioListTile<bool>(
-                title: Text(appLocalizations.csvFormat),
-                value: true,
-                activeColor: primaryRed,
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 20, bottom: 5),
-                  child: Text(
-                    appLocalizations.cancel.toUpperCase(),
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ),
-            )
-          ],
-        );
-      },
-    );
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MainScaffold(
-      title: appLocalizations.settings,
-      index: 4,
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: appBarContentColor),
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
+        backgroundColor: primaryRed,
+        title: Text(
+          appLocalizations.settings,
+          style: TextStyle(
+            color: appBarContentColor,
+            fontSize: 15,
+          ),
+        ),
+      ),
       body: SafeArea(
-        child: ListView(
-          children: [
-            const SizedBox(height: 10),
-            CheckboxListTile(
-              title: Text(appLocalizations.autoStart),
-              subtitle: Text(appLocalizations.autoStartText),
-              value: GetIt.instance.get<BoardStateProvider>().autoStart,
-              onChanged: (bool? value) {
-                setState(() {
-                  GetIt.instance.get<BoardStateProvider>().autoStart = value!;
-                });
-              },
-              activeColor: primaryRed,
-            ),
-            const SizedBox(height: 10),
-            ListTile(
-              title: Text(appLocalizations.export),
-              subtitle: Text(appLocalizations.currentFormat +
-                  GetIt.instance.get<BoardStateProvider>().exportFormat),
-              onTap: () {
-                _showExportFormatDialog();
-              },
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Consumer<SettingsConfigProvider>(
+            builder: (context, provider, child) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ConfigCheckboxItem(
+                      title: appLocalizations.autoStart,
+                      subtitle: appLocalizations.autoStartText,
+                      value: provider.config.autoStart,
+                      onChanged: (value) {
+                        provider.updateAutoStart(value);
+                      },
+                    ),
+                    ConfigDropdownItem(
+                      title: appLocalizations.export,
+                      selectedValue: provider.config.exportFormat,
+                      options: [
+                        ConfigOption(value: 'CSV', displayName: 'CSV'),
+                        ConfigOption(value: 'TXT', displayName: 'TXT'),
+                      ],
+                      onChanged: (value) {
+                        provider.updateExportFormat(value);
+                      },
+                    ),
+                    ConfigDropdownItem(
+                      title: appLocalizations.theme,
+                      selectedValue: provider.config.theme,
+                      options: [
+                        ConfigOption(
+                            value: 'Light',
+                            displayName: appLocalizations.light),
+                        ConfigOption(
+                            value: 'Dark (Experimental)',
+                            displayName: appLocalizations.darkExperimental),
+                        ConfigOption(
+                            value: 'System',
+                            displayName: appLocalizations.system),
+                      ],
+                      onChanged: (value) {
+                        provider.updateTheme(value);
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

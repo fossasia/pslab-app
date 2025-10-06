@@ -180,7 +180,19 @@ class _MainScaffoldState extends State<MainScaffold>
                         height: 24,
                       ),
                       onPressed: () {
-                        /**/
+                        provider.initialize();
+                        if (Navigator.canPop(context) &&
+                            ModalRoute.of(context)?.settings.name ==
+                                '/connectDevice') {
+                          Navigator.popUntil(
+                              context, ModalRoute.withName('/connectDevice'));
+                        } else {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/connectDevice',
+                            (route) => route.isFirst,
+                          );
+                        }
                       },
                     );
                   },

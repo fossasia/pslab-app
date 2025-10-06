@@ -2,14 +2,18 @@ import 'dart:collection';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:pslab/communication/digitalChannel/digital_channel.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/providers/logic_analyzer_config_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
 class LogicAnalyzerStateProvider extends ChangeNotifier {
+  LogicAnalyzerConfigProvider? _configProvider;
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   static const singleChannelAxisMin = -0.1;
   static const singleChannelAxisMax = 1.1;
@@ -51,6 +55,9 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   late ScienceLab _scienceLab;
   late bool isProcessing;
   late bool isData;
+  List<List<dynamic>> _recordedData = [];
+
+  Position? currentPosition;
 
   late List<String> channelNames;
   LogicAnalyzerStateProvider() {
@@ -88,6 +95,44 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     _scienceLab = getIt<ScienceLab>();
     isProcessing = false;
     isData = false;
+  }
+
+  void setConfigProvider(
+      LogicAnalyzerConfigProvider logicAnalyzerConfigProvider) {
+    _configProvider = logicAnalyzerConfigProvider;
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      logger.w('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        logger.w('Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      logger.w(
+          'Location permissions are permanently denied, we cannot request permissions.');
+      return;
+    }
+
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+    );
+
+    currentPosition =
+        await Geolocator.getCurrentPosition(locationSettings: locationSettings);
   }
 
   Future<void> analyze() async {
@@ -703,6 +748,133 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       }
     }
   }
+
+  List<List<FlSpot>> parseFlSpotList(String data) {
+    String clean = data.trim();
+    if (clean.startsWith('[[') && clean.endsWith(']]')) {
+      clean = clean.substring(2, clean.length - 2);
+    }
+
+    List<String> groups = clean.split('], [');
+
+    return groups.map((group) {
+      List<String> tuples = group.split('), (');
+      return tuples.map((tuple) {
+        String cleaned = tuple.replaceAll('(', '').replaceAll(')', '');
+        List<String> parts = cleaned.split(',');
+        if (parts.length <= 2) {
+          return FlSpot(0.0, 0.0);
+        }
+        double x = double.tryParse(parts[0].trim()) ?? 0.0;
+        double y = double.tryParse(parts[1].trim()) ?? 0.0;
+
+        return FlSpot(x, y);
+      }).toList();
+    }).toList();
+  }
+
+  List<String> parseList(String input) {
+    String clean = input.trim();
+    if (clean.startsWith('[') && clean.endsWith(']')) {
+      clean = clean.substring(1, clean.length - 1);
+    }
+
+    return clean.split(',').map((s) => s.trim()).toList();
+  }
+
+  void loadPlaybackData(List<List<dynamic>> playbackData) {
+    dataSets =
+        parseFlSpotList(playbackData[playbackData.length - 1][2].toString());
+    maxY = double.parse(playbackData[playbackData.length - 1][3].toString());
+    minY = double.parse(playbackData[playbackData.length - 1][4].toString());
+    analysisChannelNames =
+        parseList(playbackData[playbackData.length - 1][5].toString());
+    analysisEdgesNames =
+        parseList(playbackData[playbackData.length - 1][6].toString());
+    channelMode = analysisChannelNames.length;
+    setConfigData();
+    isData = true;
+    notifyListeners();
+  }
+
+  void setConfigData() {
+    switch (channelMode) {
+      case 1:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        break;
+      case 2:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        channelSelectSpinner2 = analysisChannelNames[1];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        edgeSelectSpinner2 = analysisEdgesNames[1];
+        break;
+      case 3:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        channelSelectSpinner2 = analysisChannelNames[1];
+        channelSelectSpinner3 = analysisChannelNames[2];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        edgeSelectSpinner2 = analysisEdgesNames[1];
+        edgeSelectSpinner3 = analysisEdgesNames[2];
+        break;
+      case 4:
+        channelSelectSpinner1 = analysisChannelNames[0];
+        channelSelectSpinner2 = analysisChannelNames[1];
+        channelSelectSpinner3 = analysisChannelNames[2];
+        channelSelectSpinner4 = analysisChannelNames[3];
+        edgeSelectSpinner1 = analysisEdgesNames[0];
+        edgeSelectSpinner2 = analysisEdgesNames[1];
+        edgeSelectSpinner3 = analysisEdgesNames[2];
+        edgeSelectSpinner4 = analysisEdgesNames[3];
+        break;
+      default:
+        break;
+    }
+  }
+
+  Future<bool> logData() async {
+    if (!_scienceLab.isConnected()) {
+      return false;
+    }
+    if (_configProvider!.config.includeLocationData) {
+      await _getCurrentLocation();
+    }
+    _recordedData = [
+      [
+        'Timestamp',
+        'DateTime',
+        'Readings',
+        'maxY',
+        'minY',
+        'Channels',
+        'Edges',
+        'Latitude',
+        'Longitude'
+      ]
+    ];
+    final now = DateTime.now();
+    final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+    _recordedData.add(
+      [
+        now.millisecondsSinceEpoch.toString(),
+        dateFormat.format(now),
+        dataSets,
+        maxY,
+        minY,
+        analysisChannelNames,
+        analysisEdgesNames,
+        _configProvider!.config.includeLocationData
+            ? currentPosition?.latitude.toString() ?? 0
+            : 0,
+        _configProvider!.config.includeLocationData
+            ? currentPosition?.longitude.toString() ?? 0
+            : 0
+      ],
+    );
+    return true;
+  }
+
+  List<List<dynamic>> get recordedData => _recordedData;
 
   List<LineChartBarData> createPlots() {
     List<LineChartBarData> plots = [];

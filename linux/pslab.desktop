@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=PSLab
+Exec=/usr/bin/pslab
+Icon=pslab
+Terminal=false
+Type=Application
+Categories=Education;Science;

@@ -9,16 +9,16 @@ class AppLocalizationsHe extends AppLocalizations {
   AppLocalizationsHe([String locale = 'he']) : super(locale);
 
   @override
-  String get oscilloscope => 'Oscilloscope';
+  String get oscilloscope => 'מתנד';
 
   @override
-  String get multimeter => 'Multimeter';
+  String get multimeter => 'רב־מודד';
 
   @override
-  String get logicAnalyzer => 'Logic Analyzer';
+  String get logicAnalyzer => 'מאבחן לוגיקה';
 
   @override
-  String get sensors => 'Sensors';
+  String get sensors => 'חיישנים';
 
   @override
   String get waveGenerator => 'Wave Generator';
@@ -293,14 +293,18 @@ class AppLocalizationsHe extends AppLocalizations {
   String get stepsToConnectTitle => 'Steps to connect the PSLab Device';
 
   @override
-  String get step1ConnectMicroUsb => '1. Connect a micro USB(Mini B) to PSLab';
+  String get step1ConnectMicroUsb => '1. Connect a USB cable to PSLab.';
 
   @override
   String get step2ConnectOtg =>
-      '2. Connect the other end of the micro USB cable to a OTG';
+      '2. Connect the other end of the USB cable to an OTG.';
 
   @override
-  String get step3ConnectPhone => '3. Connect the OTG to the phone';
+  String get step3ConnectPhone => '3. Connect the OTG to the phone.';
+
+  @override
+  String get step4ConnectWireless =>
+      '4. PSLab can also be connected wirelessly (Bluetooth or Wi-Fi) if the option is present.';
 
   @override
   String get bluetoothWifiConnection => 'Connect using Bluetooth or Wi-Fi';
@@ -369,6 +373,12 @@ class AppLocalizationsHe extends AppLocalizations {
   String get analysisOptionDisabled => 'Disabled';
 
   @override
+  String get logicAnalyzerConfigs => 'Logic Analyzer Configurations';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
   String get powerSourceTitle => 'Power Source';
 
   @override
@@ -402,6 +412,20 @@ class AppLocalizationsHe extends AppLocalizations {
   @override
   String get powerSourceBulletPoint4 =>
       'PCS pin is used to supply a constant current between PCS pin and a GND pin in a range of 3.3mA.';
+
+  @override
+  String get powerSourceConfigs => 'Power Source Configurations';
+
+  @override
+  String get loggingInterval => 'Logging Interval';
+
+  @override
+  String get loggingIntervalErrorMessage =>
+      'Entered logging interval is not within the limits!';
+
+  @override
+  String get powerSourceLoggingIntervalHint =>
+      'Please provide time interval at which data will be logged (100 ms to 1000 ms)';
 
   @override
   String get analog => 'Analog';
@@ -526,6 +550,9 @@ class AppLocalizationsHe extends AppLocalizations {
       'Press View button to generate the PWM signals.';
 
   @override
+  String get waveGeneratorConfigs => 'Wave Generator Configurations';
+
+  @override
   String get analyze => 'Analyze';
 
   @override
@@ -553,7 +580,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get currentFormat => 'Current format is ';
 
   @override
-  String get aboutUs => 'About Us';
+  String get aboutUs => 'עלינו';
 
   @override
   String get pslabDescription =>
@@ -1265,6 +1292,23 @@ class AppLocalizationsHe extends AppLocalizations {
   String get documentationError => 'Could not open the documentation link';
 
   @override
+  String get androidRatingLink =>
+      'https://play.google.com/store/apps/details?id=io.pslab';
+
+  @override
+  String get iOSRatingLink =>
+      'https://apps.apple.com/us/app/pslab/id6740454978?action=write-review';
+
+  @override
+  String get ratingError => 'Could not open the link';
+
+  @override
+  String get privacyPolicyLink => 'https://pslab.io/privacy-policy/';
+
+  @override
+  String get privacyPolicyError => 'Could not open the privacy policy link';
+
+  @override
   String get deleteFile => 'Delete File';
 
   @override
@@ -1290,7 +1334,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get fileSaved => 'File saved';
 
   @override
-  String get save => 'Save';
+  String get save => 'שמירה';
 
   @override
   String get enterFileName =>
@@ -1632,4 +1676,30 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get pinLayoutBack => 'Pin Layout Back';
+
+  @override
+  String get oscilloscopeConfigs => 'Oscilloscope Configurations';
+
+  @override
+  String get automatedMeasurementsInfo =>
+      'Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.';
+
+  @override
+  String get multimeterConfigs => 'Multimeter Configurations';
+
+  @override
+  String get multimeterUpdatePeriodHint =>
+      'Please provide time interval at which data will be updated (100 ms to 1000 ms)';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get darkExperimental => 'Dark (Experimental)';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get shareApp => 'Share App';
 }

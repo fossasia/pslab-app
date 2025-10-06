@@ -96,7 +96,7 @@ class _LogicAnalyzerChannelSelectionState
                   options: CarouselOptions(
                     height: 40,
                     enableInfiniteScroll: false,
-                    initialPage: 0,
+                    initialPage: provider.channelMode - 1,
                     viewportFraction: 0.4,
                     enlargeCenterPage: true,
                     enlargeFactor: 0.4,

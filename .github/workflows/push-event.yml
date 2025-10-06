@@ -136,7 +136,7 @@ jobs:
 
           git checkout --orphan temporary
           git add --all .
-          git commit -am "[Auto] Update APK/AAB's from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
+          git commit -am "[Auto] Update APK/AABs from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
           git branch -D apk
           git branch -m apk
           git push --force origin apk
@@ -294,7 +294,7 @@ jobs:
 
           git checkout --orphan temporary
           git add --all .
-          git commit -am "[Auto] Update Windows Installer's from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
+          git commit -am "[Auto] Update Windows Installer from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
           git branch -D apk
           git branch -m apk
           git push --force origin apk
@@ -353,3 +353,31 @@ jobs:
         with:
           VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
+      
+      - name: Upload dmg to apk branch
+        if: ${{ github.repository == 'fossasia/pslab-app' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
+          cd apk
+          
+          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+
+          echo "Removing previous files from branch"
+
+          rm -rf *.dmg
+
+          echo "Copying new build files"
+
+          cp -v ../*.dmg .
+
+          echo "Pushing to apk branch"
+
+          git checkout --orphan temporary
+          git add --all .
+          git commit -am "[Auto] Update macOS DMG from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
+          git branch -D apk
+          git branch -m apk
+          git push --force origin apk
