@@ -1029,12 +1029,11 @@ packages:
   usb_serial:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: ba7892bca3b8bf7725af92c6cc58279659c2a2bc
-      url: "https://github.com/AsCress/usbserial.git"
-    source: git
-    version: "0.5.1"
+      name: usb_serial
+      sha256: a605a600e34e7f28d4e80851ca3999ef747e42e406138887b8a88b8c382a8b07
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   uuid:
     dependency: transitive
     description:
