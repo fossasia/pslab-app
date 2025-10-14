@@ -56,5 +56,5 @@ jobs:
 
           PR_URL=$(gh pr create --title "chore(deps): upgrade Flutter to ${{ env.latest_flutter_version }}" \
                        --body "This PR updates Flutter version in pubspec.yaml to the latest stable release." \
-                       --base development \
+                       --base flutter \
                        --head $BRANCH_NAME)
