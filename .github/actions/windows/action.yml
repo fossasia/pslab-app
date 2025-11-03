@@ -40,6 +40,11 @@ runs:
       run: |
         choco install innosetup --version=6.4.0 -y
         $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe"
+        # Remove missing Icelandic language include if present to avoid build failure
+        $issPath = "build\windows\x64\installer\Release\inno-script.iss"
+        if (Test-Path $issPath) {
+          (Get-Content $issPath) | Where-Object { $_ -notmatch 'Icelandic\.isl' } | Set-Content $issPath
+        }
         & "$iscc" /O+ "build\windows\x64\installer\Release\inno-script.iss"
 
     - name: Store Installer
