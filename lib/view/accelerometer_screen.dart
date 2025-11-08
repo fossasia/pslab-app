@@ -16,7 +16,8 @@ import '../theme/colors.dart';
 import 'accelerometer_config_screen.dart';
 
 class AccelerometerScreen extends StatefulWidget {
-  const AccelerometerScreen({super.key});
+  final List<List<dynamic>>? playbackData;
+  const AccelerometerScreen({super.key, this.playbackData});
 
   @override
   State<StatefulWidget> createState() => _AccelerometerScreenState();
@@ -35,10 +36,19 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
     super.initState();
     _provider = AccelerometerStateProvider();
     _configProvider = AccelerometerConfigProvider();
+    _provider.onPlaybackEnd = () {
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    };
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _provider.setConfigProvider(_configProvider);
-        _provider.initializeSensors();
+        if (widget.playbackData != null) {
+          _provider.startPlayback(widget.playbackData!);
+        } else {
+          _provider.setConfigProvider(_configProvider);
+          _provider.initializeSensors();
+        }
       }
     });
   }
@@ -235,12 +245,26 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
         Consumer<AccelerometerStateProvider>(
           builder: (context, provider, child) {
             return CommonScaffold(
-              title: appLocalizations.accelerometerTitle,
-              key: const Key(accelerometerScreenTitleKey),
+              title: provider.isPlayingBack
+                  ? '${appLocalizations.accelerometerTitle} - ${appLocalizations.playback}'
+                  : appLocalizations.accelerometerTitle,
               onGuidePressed: _showInstrumentGuide,
-              onOptionsPressed: _showOptionsMenu,
-              onRecordPressed: _toggleRecording,
+              onOptionsPressed:
+                  provider.isPlayingBack ? null : _showOptionsMenu,
+              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
               isRecording: provider.isRecording,
+              isPlayingBack: provider.isPlayingBack,
+              isPlaybackPaused: provider.isPlaybackPaused,
+              onPlaybackPauseResume: provider.isPlayingBack
+                  ? (provider.isPlaybackPaused
+                      ? _provider.resumePlayback
+                      : _provider.pausePlayback)
+                  : null,
+              onPlaybackStop: provider.isPlayingBack
+                  ? () async {
+                      await _provider.stopPlayback();
+                    }
+                  : null,
               body: SafeArea(
                 child: Column(
                   children: [

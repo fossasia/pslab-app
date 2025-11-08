@@ -16,6 +16,7 @@ import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
+import 'accelerometer_screen.dart';
 
 class LoggedDataScreen extends StatefulWidget {
   final List<String> instrumentNames;
@@ -191,7 +192,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     final data = await _csvService.readCsvFromFile(file);
     if (data.isNotEmpty && mounted) {
       switch (instrumentName) {
-        case 'soundmeter':
+        case 'sound meter':
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -259,6 +260,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => LogicAnalyzerScreen(playbackData: data),
+            ),
+          );
+          break;
+        case 'accelerometer':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AccelerometerScreen(playbackData: data),
             ),
           );
           break;
@@ -461,6 +470,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                           .toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.logicAnalyzer
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.accelerometer
                                           .toLowerCase())
                                 PopupMenuItem<String>(
                                   value: appLocalizations.play,
