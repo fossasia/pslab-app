@@ -147,18 +147,22 @@ The app interfaces with PSLab hardware devices via USB and provides scientific i
 ### Flutter SDK Setup
 
 #### Install Flutter
+##### macOS (via Homebrew)
 ```bash
-# macOS (via Homebrew)
 brew install --cask flutter
-
-# Linux
-wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.2-stable.tar.xz
-tar xf flutter_linux_3.38.2-stable.tar.xz
-export PATH="$PATH:`pwd`/flutter/bin"
-
-# Windows
-# Download from https://flutter.dev/docs/get-started/install/windows
 ```
+
+##### Linux
+```
+mkdir ~/flutter && cd ~/flutter
+wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.2-stable.tar.xz
+tar -xf flutter_linux_3.38.2-stable.tar.xz
+rm -rf flutter_linux_3.38.2-stable.tar.xz
+echo 'export PATH="$HOME/flutter/flutter/bin:$PATH"' >> ~/.bash_profile
+```
+
+#### Windows
+Download from [here](https://docs.flutter.dev/install)
 
 #### Verify Flutter Installation
 ```bash
