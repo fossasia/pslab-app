@@ -121,38 +121,236 @@ Sign up for the latest updates and test new features early by joining our beta p
 | Gas Sensor             | Detects gases, including NH3, NOx, alcohol, benzene, smoke and CO2| :heavy_check_mark: |
 | Robotic Arm Controller | Allows to control 4 servo motors of the robotic arm independently | :heavy_check_mark: |
 
-## How to set up the Android app in your development environment
+## Development Environment Setup
 
-### Application Flavors
+### Project Overview
 
-There are 2 flavors (build variants) of PSLab Android application.
+This is a **Flutter cross-platform application** that supports:
+- **Android** (primary platform)
+- **iOS** 
+- **Linux** (with USB device support)
+- **macOS**
+- **Windows**
+- **Web**
 
-1. #### Play Store Flavor
-  - Play Store flavor uses Google Maps to display location stored in logs in Data logger.
-2. #### Fdroid Flavors
-  - Fdroid flavor uses Open Street Maps to display location stored in logs in Data logger.
+The app interfaces with PSLab hardware devices via USB and provides scientific instrument functionality.
 
-### Development Setup
+### Required Software Versions
 
-Before you begin, you should already have the Android Studio SDK downloaded and set up correctly. You can find a guide on how to do this here: [Setting up Android Studio](http://developer.android.com/sdk/installing/index.html?pkg=studio)
+**Flutter & Dart:**
+- Flutter: `3.38.1` (minimum) - `3.38.2` (tested)
+- Dart: `^3.5.4` (minimum) - `3.10.0` (tested)
 
-### Setting up the Android Project
-For setting up the PSLab Android project you may follow any of the two methods listed below, that is, you may download the repository zip file or you may directly clone the repository to Android Studio.
+**Java:**
+- Java 17 (required for Android Kotlin compilation)
 
-### By downloading the zip file
+### Flutter SDK Setup
 
-1. Download the _pslab-android_ project source. You can do this either by forking and cloning the repository (recommended if you plan on pushing changes) or by downloading it as a ZIP file and extracting it.
+#### Install Flutter
+```bash
+# macOS (via Homebrew)
+brew install --cask flutter
 
-2. Open Android Studio, you will see a **Welcome to Android** window. Under Quick Start, select _Import Project (Eclipse ADT, Gradle, etc.)To debug over Wi-Fi follow the steps given in this [Blog](http://blog.fossasia.org/android-app-debugging-over-wifi-fo).
+# Linux
+wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.2-stable.tar.xz
+tar xf flutter_linux_3.38.2-stable.tar.xz
+export PATH="$PATH:`pwd`/flutter/bin"
 
-* **Note :**
-If you built your own hardware, change VendorID and/or ProductID in [CommunicationHandler.java](blob/master/app/src/main/java/io/pslab/communication/CommunicationHandler.java).
+# Windows
+# Download from https://flutter.dev/docs/get-started/install/windows
+```
 
-### By direct cloning
+#### Verify Flutter Installation
+```bash
+flutter doctor
+flutter --version
+```
 
-  1. Open Android Studio, you will see a **Welcome to Android** window. Under Quick Start, select "check out project from version control".
-  2. Select git from the drop down menu that appeared.
-  3. Go to the repository and click clone or download button.
+### Android Development Setup
+
+**Android Studio is optional** - you can use command-line tools instead.
+
+#### Option 1: Android Studio (Recommended)
+1. Install [Android Studio](https://developer.android.com/studio)
+2. Install Android SDK and accept licenses:
+```bash
+flutter doctor --android-licenses
+```
+
+#### Option 2: Command Line Tools Only
+```bash
+# Install Android SDK command-line tools
+# Set environment variables
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+```
+
+**Android Requirements:**
+- Compile SDK: Latest (managed by Flutter)
+- Min SDK: Latest Flutter default
+- Target SDK: Latest Flutter default
+- Java 17 compatibility (configured in build.gradle)
+
+### iOS Development Setup (macOS only)
+
+**Requirements:**
+- iOS 14.0+ (specified in Podfile)
+- Xcode 12.0+
+- CocoaPods
+
+```bash
+# Install CocoaPods
+sudo gem install cocoapods
+
+# Install iOS dependencies
+cd ios && pod install && cd ..
+```
+
+### Linux-Specific Setup
+
+**USB Device Access for PSLab Hardware:**
+
+```bash
+# Install udev rules for PSLab devices
+sudo cp linux/99-pslab.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+# Add user to dialout group for serial access
+sudo usermod -a -G dialout $USER
+# Log out and back in for group changes to take effect
+```
+
+**Supported PSLab Devices:**
+- PSLab v5: VendorID `04d8`, ProductID `00df`
+- PSLab v6: VendorID `10c4`, ProductID `ea60`
+
+### Project Setup
+
+1. **Clone repository:**
+```bash
+git clone <repository-url>
+cd pslab-app
+```
+
+2. **Install dependencies:**
+```bash
+flutter pub get
+```
+
+3. **Platform-specific setup:**
+```bash
+# iOS (macOS only)
+cd ios && pod install && cd ..
+
+# Android - no additional steps needed
+```
+
+### Required Permissions
+
+The app requires these permissions (configured in AndroidManifest.xml):
+
+**Android:**
+- `ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION` - GPS logging
+- `RECORD_AUDIO` - Audio oscilloscope functionality
+- `INTERNET` - Connectivity features
+- `READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE` - Data logging
+- `android.hardware.usb.host` - PSLab device communication
+- `android.hardware.sensor.ambient_temperature` - Temperature sensors
+
+### Key Dependencies
+
+**Hardware Communication:**
+- `usb_serial: ^0.5.0` - USB device communication
+- `flusbserial: ^0.3.0` - Additional USB serial support
+
+**Sensors & Hardware:**
+- `sensors_plus: ^6.1.2` - Device sensors
+- `light: ^4.1.0` - Light sensor
+- `geolocator: ^14.0.2` - GPS functionality
+- `permission_handler: ^12.0.1` - Runtime permissions
+
+**Audio Processing:**
+- `flutter_audio_capture` (Git dependency) - Audio capture for oscilloscope
+
+### Running the Application
+
+#### Development
+```bash
+# List available devices
+flutter devices
+
+# Run on connected device
+flutter run
+
+# Run with hot reload
+flutter run --debug
+```
+
+#### Building for Release
+```bash
+# Android APK
+flutter build apk --release
+
+# Android App Bundle (for Play Store)
+flutter build appbundle --release
+
+# iOS (macOS only)
+flutter build ios --release
+
+# Linux
+flutter build linux --release
+```
+
+### Testing
+
+```bash
+# Unit tests
+flutter test
+
+# Integration tests
+flutter test integration_test/
+```
+
+### Troubleshooting
+
+**Common Issues:**
+
+1. **USB permissions on Linux:**
+   - Ensure udev rules are installed: `ls -la /etc/udev/rules.d/99-pslab.rules`
+   - Check user is in dialout group: `groups $USER`
+
+2. **Flutter version mismatch:**
+   ```bash
+   flutter channel stable
+   flutter upgrade
+   flutter pub get
+   ```
+
+3. **iOS build issues:**
+   ```bash
+   cd ios
+   pod deintegrate
+   pod install
+   cd ..
+   flutter clean
+   flutter pub get
+   ```
+
+4. **Android build issues:**
+   - Ensure Java 17 is installed: `java -version`
+   - Clean build: `flutter clean && flutter pub get`
+
+5. **Git dependency issues:**
+   ```bash
+   flutter pub deps
+   flutter pub get
+   ```
+
+**Verify Setup:**
+- `flutter doctor` shows no critical issues
+- `flutter build apk --debug` completes successfully
+- Tests pass: `flutter test` to the repository and click clone or download button.
   4. From the dropdown that appeared, copy the link.
   5. Paste the URL that you copied and press clone.
   6. Android studio should now begin building the project with gradle.
