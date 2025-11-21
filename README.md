@@ -163,6 +163,61 @@ echo 'export PATH="$HOME/flutter/flutter/bin:$PATH"' >> ~/.bash_profile
 
 #### Windows
 Download from [here](https://docs.flutter.dev/install)
+### Flutter development setup (VS Code)
+
+The instructions below explain how to install the Flutter SDK, set up Visual Studio Code with the Flutter and Dart extensions, and run the project using `flutter run`. These steps avoid Android Studio-specific instructions and focus on a minimal, cross-platform Flutter workflow.
+
+Prerequisites
+- A supported operating system (Windows, macOS, or Linux).
+- A working internet connection to download the Flutter SDK and extensions.
+
+1) Install the Flutter SDK
+- Download the Flutter SDK from https://flutter.dev and follow the platform-specific instructions. On Windows, extract the SDK (for example to `C:\src\flutter`) and add the `bin` folder to your PATH environment variable. On macOS/Linux, follow the steps on the Flutter website for adding `flutter` to your PATH.
+- After installation, open a terminal (PowerShell on Windows) and run:
+
+```powershell
+flutter --version
+flutter doctor
+```
+
+Resolve any missing components suggested by `flutter doctor`. If you plan to build desktop apps, follow the platform-specific toolchain steps suggested by `flutter doctor` (e.g., install Visual Studio on Windows for Windows desktop builds).
+
+2) Set up Visual Studio Code
+- Install VS Code (if you don't have it) and open the project folder in VS Code.
+- Install the following extensions from the Extensions view:
+  - Flutter (includes the Dart extension)
+  - Dart (if the Flutter extension did not install it automatically)
+- (Optional) If VS Code cannot find the Flutter SDK, set the `dart.flutterSdkPath` setting to the SDK location in your VS Code settings.
+
+3) Prepare the project and run
+- In the project root, fetch packages and generate any code:
+
+```powershell
+flutter pub get
+flutter pub run build_runner build --delete-conflicting-outputs  # if the project uses code generation
+```
+
+- Run the app on the default device (emulator, connected device, or desktop target):
+
+```powershell
+flutter run
+```
+
+If you want to run on a specific device, list available devices and pass `-d`:
+
+```powershell
+flutter devices
+flutter run -d windows   # example: run on Windows desktop
+```
+
+Notes and troubleshooting
+- If you see issues related to missing SDKs or tools, run `flutter doctor` and follow the recommended fixes.
+- Building Android APKs or running on Android devices may require Android SDK tools. If you need Android targets later, install the Android SDK separately; Android Studio is not required for Flutter development but can simplify SDK installation.
+- For fast iteration in VS Code, use the Debug panel (press F5) or the Flutter toolbar (Run and Debug).
+
+---
+
+### Application Flavors
 
 #### Verify Flutter Installation
 ```bash
