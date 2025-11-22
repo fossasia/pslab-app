@@ -138,8 +138,8 @@ The app interfaces with PSLab hardware devices via USB and provides scientific i
 ### Required Software Versions
 
 **Flutter & Dart:**
-- Flutter: `3.38.1` (minimum) - `3.38.2` (tested)
-- Dart: `^3.5.4` (minimum) - `3.10.0` (tested)
+- Flutter: `>=3.35.4`
+- Dart: `>=3.9.0 <4.0.0`
 
 **Java:**
 - Java 17 (required for Android Kotlin compilation)
@@ -155,9 +155,9 @@ brew install --cask flutter
 ##### Linux
 ```
 mkdir ~/flutter && cd ~/flutter
-wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.2-stable.tar.xz
-tar -xf flutter_linux_3.38.2-stable.tar.xz
-rm -rf flutter_linux_3.38.2-stable.tar.xz
+wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.35.4-stable.tar.xz
+tar -xf flutter_linux_3.35.4-stable.tar.xz
+rm -rf flutter_linux_3.35.4-stable.tar.xz
 echo 'export PATH="$HOME/flutter/flutter/bin:$PATH"' >> ~/.bash_profile
 ```
 
@@ -245,9 +245,9 @@ export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 ```
 
 **Android Requirements:**
-- Compile SDK: Latest (managed by Flutter)
-- Min SDK: Latest Flutter default
-- Target SDK: Latest Flutter default
+- Compile SDK: 36 (Android 14)
+- Min SDK: 24 (Android 7.0)
+- Target SDK: 36 (Android 14)
 - Java 17 compatibility (configured in build.gradle)
 
 ### iOS Development Setup (macOS only)
@@ -288,7 +288,7 @@ sudo usermod -a -G dialout $USER
 
 1. **Clone repository:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/fossasia/pslab-app.git
 cd pslab-app
 ```
 
