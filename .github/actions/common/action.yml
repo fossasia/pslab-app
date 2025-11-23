@@ -6,6 +6,7 @@ runs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
+        if: runner.os != 'macOS' # TODO remove after https://github.com/actions/runner/issues/449 is fixed
         cache: true
         flutter-version-file: pubspec.yaml
 
