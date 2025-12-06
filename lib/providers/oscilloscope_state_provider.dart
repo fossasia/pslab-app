@@ -333,31 +333,90 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (isInBuiltMICSelected) {
       noOfChannels--;
     }
+
     try {
-      List<double>? xData;
-      List<double>? yData;
-      double? xValue;
       List<List<String>> yDataString = [];
       List<String> xDataString = [];
       _maxAmp = 0;
+
       if (noOfChannels > 0) {
         await _scienceLab.captureTraces(
             4, samples, timeGap, channel, false, null);
       }
+
       await Future.delayed(
           Duration(milliseconds: (samples * timeGap * 1e-3).toInt()));
+
+      List<Map<String, List<double>>> allChannelData = [];
+
+      double? masterTriggerTime;
+
+      for (int i = 0; i < noOfChannels; i++) {
+        channel = channels[i];
+        Map<String, List<double>> data =
+            await _scienceLab.fetchTrace(_channelIndexMap[channel]!);
+
+        List<double> xRaw = data['x']!;
+        for (int k = 0; k < xRaw.length; k++) {
+          xRaw[k] = xRaw[k] / ((timebase == 875) ? 1 : 1000);
+        }
+
+        allChannelData.add(data);
+
+        if (isTriggerSelected &&
+            triggerChannel == channel &&
+            !isFourierTransformSelected) {
+          List<double> yRaw = data['y']!;
+
+          double prevY = yRaw[0];
+          bool increasing = false;
+
+          for (int j = 0; j < min(xRaw.length, yRaw.length); j++) {
+            double currY = yRaw[j];
+            if (currY > prevY) {
+              increasing = true;
+            } else if (currY < prevY && increasing) {
+              increasing = false;
+            }
+
+            bool triggered = false;
+            if (triggerMode == MODE.rising.toString() &&
+                prevY < trigger &&
+                currY >= trigger &&
+                increasing) {
+              triggered = true;
+            } else if (triggerMode == MODE.falling.toString() &&
+                prevY > trigger &&
+                currY <= trigger &&
+                !increasing) {
+              triggered = true;
+            } else if (triggerMode == MODE.dual.toString() &&
+                ((prevY < trigger && currY >= trigger && increasing) ||
+                    (prevY > trigger && currY <= trigger && !increasing))) {
+              triggered = true;
+            }
+
+            if (triggered) {
+              masterTriggerTime = xRaw[j];
+              break;
+            }
+            prevY = currY;
+          }
+        }
+      }
+
       for (int i = 0; i < noOfChannels; i++) {
         entries.add([]);
         channel = channels[i];
-        isTriggered = false;
-        Map<String, List<double>> data;
-        data = await _scienceLab.fetchTrace(_channelIndexMap[channel]!);
-        xData = data['x'];
-        yData = data['y'];
-        xValue = xData?[0];
-        int n = min(xData!.length, yData!.length);
+
+        Map<String, List<double>> data = allChannelData[i];
+        List<double> xData = data['x']!;
+        List<double> yData = data['y']!;
+        int n = min(xData.length, yData.length);
+
         xDataString = List.filled(n, '');
         yDataString.add(List.filled(n, ''));
+
         List<Complex> fftOut = [];
         if (isFourierTransformSelected) {
           List<Complex> yComplex = List.filled(yData.length, const Complex(0));
@@ -366,106 +425,90 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           }
           fftOut = fft(yComplex);
         }
+
         double factor = samples * timeGap * 1e-3;
         _maxFreq = (n / 2 - 1) / factor;
         double mA = 0;
-        double prevY = yData[0];
-        bool increasing = false;
-        for (int j = 0; j < n; j++) {
-          double currY = yData[j];
-          xData[j] = xData[j] / ((timebase == 875) ? 1 : 1000);
+
+        int startIndex = 0;
+
+        if (!isFourierTransformSelected &&
+            isTriggerSelected &&
+            masterTriggerTime != null) {
+          int foundIndex = xData.indexWhere((t) => t >= masterTriggerTime!);
+          if (foundIndex != -1) {
+            startIndex = foundIndex;
+          }
+        }
+
+        for (int j = startIndex; j < n; j++) {
+          double timeShift = (isTriggerSelected && masterTriggerTime != null)
+              ? masterTriggerTime
+              : xData[startIndex];
+          double relativeTime = xData[j] - timeShift;
+
           if (!isFourierTransformSelected) {
-            if (isTriggerSelected && triggerChannel == channel) {
-              if (currY > prevY) {
-                increasing = true;
-              } else if ((currY < prevY) && increasing) {
-                increasing = false;
-              }
-              if (isTriggered) {
-                double k = xValue! / ((timebase == 875) ? 1 : 1000);
-                entries[i].add(FlSpot(k + xOffsets[channels[i]]!,
-                    yData[j] + yOffsets[channels[i]]!));
-                xValue += timeGap;
-              }
-              if (triggerMode == MODE.rising.toString() &&
-                  prevY < trigger &&
-                  currY >= trigger &&
-                  increasing) {
-                isTriggered = true;
-              } else if (triggerMode == MODE.falling.toString() &&
-                  prevY > trigger &&
-                  currY <= trigger &&
-                  !increasing) {
-                isTriggered = true;
-              } else if (triggerMode == MODE.dual.toString() &&
-                  ((prevY < trigger && currY >= trigger && increasing) ||
-                      (prevY > trigger && currY <= trigger && !increasing))) {
-                isTriggered = true;
-              }
-              prevY = currY;
-            } else {
-              entries[i].add(FlSpot(xData[j] - xOffsets[channels[i]]!,
-                  yData[j] + yOffsets[channels[i]]!));
-            }
+            entries[i].add(FlSpot(relativeTime + xOffsets[channels[i]]!,
+                yData[j] + yOffsets[channels[i]]!));
           } else {
             if (j < n / 2) {
               double y = fftOut[j].abs() / samples;
-              if (y > mA) {
-                mA = y;
-              }
+              if (y > mA) mA = y;
               entries[i].add(FlSpot(j / factor, y));
             }
             xDataString[j] = xData[j].toString();
             yDataString[i][j] = yData[j].toString();
           }
         }
+
         if (sineFit && channel == curveFittingChannel1) {
-          if (curveFitEntries.isEmpty) {
-            curveFitEntries.add([]);
-          }
-          List<double> sinFit = _analyticsClass.sineFit(xData, yData);
-          double amp = sinFit[0];
-          double freq = sinFit[1];
-          double offset = sinFit[2];
-          double phase = sinFit[3];
-          freq = freq / 1e6;
-          double max = xData[xData.length - 1];
-          for (int j = 0; j < 500; j++) {
-            double x = j * max / 500;
-            double y = offset +
-                amp * sin(((freq * (2 * pi)).abs()) * x + phase * pi / 180);
-            curveFitEntries[curveFitEntries.length - 1].add(FlSpot(x, y));
+          List<double> xFit = xData.sublist(startIndex);
+          List<double> yFit = yData.sublist(startIndex);
+
+          if (xFit.isNotEmpty) {
+            if (curveFitEntries.isEmpty) curveFitEntries.add([]);
+            List<double> sinFit = _analyticsClass.sineFit(xFit, yFit);
+            double amp = sinFit[0];
+            double freq = sinFit[1] / 1e6;
+            double offset = sinFit[2];
+            double phase = sinFit[3];
+            double maxX = xFit.last - xFit.first;
+
+            for (int k = 0; k < 500; k++) {
+              double x = k * maxX / 500;
+              double y = offset +
+                  amp * sin(((freq * (2 * pi)).abs()) * x + phase * pi / 180);
+              curveFitEntries.last.add(FlSpot(x, y));
+            }
           }
         }
 
         if (squareFit && channel == curveFittingChannel2) {
-          if (curveFitEntries.isEmpty) {
-            curveFitEntries.add([]);
-          }
-          List<double> sqFit = _analyticsClass.squareFit(xData, yData);
-          double amp = sqFit[0];
-          double freq = sqFit[1];
-          double phase = sqFit[2];
-          double dc = sqFit[3];
-          double offset = sqFit[4];
+          List<double> xFit = xData.sublist(startIndex);
+          List<double> yFit = yData.sublist(startIndex);
 
-          freq = freq / 1e6;
-          double max = xData[xData.length - 1];
-          for (int j = 0; j < 500; j++) {
-            double x = j * max / 500;
-            double t = 2 * pi * freq * (x - phase);
-            double y;
-            if (t % (2 * pi) < 2 * pi * dc) {
-              y = offset + amp;
-            } else {
-              y = offset - 2 * amp;
+          if (xFit.isNotEmpty) {
+            if (curveFitEntries.isEmpty) curveFitEntries.add([]);
+            List<double> sqFit = _analyticsClass.squareFit(xFit, yFit);
+            double amp = sqFit[0];
+            double freq = sqFit[1] / 1e6;
+            double phase = sqFit[2];
+            double dc = sqFit[3];
+            double offset = sqFit[4];
+            double maxX = xFit.last - xFit.first;
+
+            for (int k = 0; k < 500; k++) {
+              double x = k * maxX / 500;
+              double t = 2 * pi * freq * (x - phase);
+              double y = (t % (2 * pi) < 2 * pi * dc)
+                  ? offset + amp
+                  : offset - 2 * amp;
+              curveFitEntries.last.add(FlSpot(x, y));
             }
-            curveFitEntries[curveFitEntries.length - 1].add(FlSpot(x, y));
           }
         }
-        if (mA > _maxAmp) {
-          _maxAmp = mA;
-        }
+
+        if (mA > _maxAmp) _maxAmp = mA;
       }
 
       if (isInBuiltMICSelected) {
@@ -475,111 +518,106 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         List<double> buffer = _audioJack.read();
         xDataString = List.filled(buffer.length, '');
         yDataString.add(List.filled(buffer.length, ''));
-
         int n = buffer.length;
+
+        List<double> micXData = List.generate(n, (i) {
+          double t = ((i / AudioJack.samplingRate) * 1000000.0);
+          return t / ((timebase == 875) ? 1 : 1000);
+        });
+
         List<Complex> fftOut = [];
         if (isFourierTransformSelected) {
-          List<Complex> yComplex =
-              List.filled(buffer.length, const Complex(0), growable: true);
+          List<Complex> yComplex = List.filled(buffer.length, const Complex(0));
           for (int j = 0; j < buffer.length; j++) {
-            double audioValue = buffer[j] * 3;
-            yComplex[j] = Complex(audioValue);
+            yComplex[j] = Complex(buffer[j] * 3);
           }
           fftOut = fft(yComplex);
         }
+
         double factor = buffer.length * timeGap * 1e-3;
         _maxFreq = (n / 2 - 1) / factor;
         double mA = 0;
-        double prevY = buffer[0] * 3;
-        bool increasing = false;
-        double xDataPoint = 0;
-        for (int i = 0; i < n; i++) {
-          double j = ((i / AudioJack.samplingRate) * 1000000.0);
-          j = j / ((timebase == 875) ? 1 : 1000);
+
+        int micStartIndex = 0;
+        double micTimeShift = 0;
+
+        if (!isFourierTransformSelected &&
+            isTriggerSelected &&
+            triggerChannel == 'MIC') {
+          double prevY = buffer[0] * 3;
+          bool increasing = false;
+          for (int j = 0; j < n; j++) {
+            double currY = buffer[j] * 3;
+            if (currY > prevY) {
+              increasing = true;
+            } else if (currY < prevY && increasing) {
+              increasing = false;
+            }
+
+            bool triggered = false;
+            if (triggerMode == MODE.rising.toString() &&
+                prevY < trigger &&
+                currY >= trigger &&
+                increasing) {
+              triggered = true;
+            } else if (triggerMode == MODE.falling.toString() &&
+                prevY > trigger &&
+                currY <= trigger &&
+                !increasing) {
+              triggered = true;
+            } else if (triggerMode == MODE.dual.toString() &&
+                ((prevY < trigger && currY >= trigger && increasing) ||
+                    (prevY > trigger && currY <= trigger && !increasing))) {
+              triggered = true;
+            }
+
+            if (triggered) {
+              micStartIndex = j;
+              micTimeShift = micXData[j];
+              break;
+            }
+            prevY = currY;
+          }
+        }
+
+        for (int i = micStartIndex; i < n; i++) {
           double audioValue = buffer[i] * 3;
-          double currY = audioValue;
+
           if (!isFourierTransformSelected) {
-            if (noOfChannels == 1) {
-              xDataString[i] = j.toString();
-            }
-            if (isTriggerSelected && triggerChannel == 'MIC') {
-              if (currY > prevY) {
-                increasing = true;
-              } else if (currY < prevY && increasing) {
-                increasing = false;
-              }
-              if (triggerMode == MODE.rising.toString() &&
-                  prevY < trigger &&
-                  currY >= trigger &&
-                  increasing) {
-                isTriggered = true;
-              } else if (triggerMode == MODE.falling.toString() &&
-                  prevY > trigger &&
-                  currY <= trigger &&
-                  !increasing) {
-                isTriggered = true;
-              } else if (triggerMode == MODE.dual.toString() &&
-                  ((prevY < trigger && currY >= trigger && increasing) ||
-                      (prevY > trigger && currY <= trigger && !increasing))) {
-                isTriggered = true;
-              }
-              if (isTriggered) {
-                double k = ((xDataPoint / AudioJack.samplingRate) * 1000000.0);
-                k = k / ((timebase == 875) ? 1 : 1000);
-                entries[entries.length - 1].add(FlSpot(
-                    k - xOffsets['MIC']!, audioValue + yOffsets['MIC']!));
-                xDataPoint++;
-              }
-              prevY = currY;
-            } else {
-              entries[entries.length - 1].add(
-                  FlSpot(j - xOffsets['MIC']!, audioValue + yOffsets['MIC']!));
-            }
+            entries.last.add(FlSpot(
+                micXData[i] - micTimeShift - xOffsets['MIC']!,
+                audioValue + yOffsets['MIC']!));
           } else {
             if (i < n / 2) {
               double y = fftOut[i].abs() / samples;
-              if (y > mA) {
-                mA = y;
-              }
-              entries[entries.length - 1].add(FlSpot((i / factor), y));
+              if (y > mA) mA = y;
+              entries.last.add(FlSpot((i / factor), y));
             }
           }
-          yDataString[yDataString.length - 1][i] = audioValue.toString();
+          yDataString.last[i] = audioValue.toString();
         }
-        if (mA > _maxAmp) {
-          _maxAmp = mA;
-        }
+        if (mA > _maxAmp) _maxAmp = mA;
       }
 
       if (!isFourierTransformSelected) {
         for (int i = 0; i < min(entries.length, paramsChannels.length); i++) {
           String channel = paramsChannels[i];
-          double minY;
-          double maxY;
-          double yRange;
-          List<double> voltage = List.filled(512, 0.0);
+          double minY = 0, maxY = 0;
+
           List<FlSpot> entriesList = entries[i];
+          List<double> voltage = List.filled(512, 0.0);
 
-          if (entriesList.isEmpty) {
-            minY = 0;
-            maxY = 0;
-          } else {
+          if (entriesList.isNotEmpty) {
             minY = double.maxFinite;
-            maxY = -1 * double.maxFinite;
-
+            maxY = -double.maxFinite;
             for (int j = 0; j < entriesList.length; j++) {
               FlSpot entry = entriesList[j];
-              if (j < voltage.length - 1) {
-                voltage[j] = entry.y;
-              }
-              if (entry.y > maxY) {
-                maxY = entry.y;
-              }
-              if (entry.y < minY) {
-                minY = entry.y;
-              }
+              if (j < voltage.length) voltage[j] = entry.y;
+              if (entry.y > maxY) maxY = entry.y;
+              if (entry.y < minY) minY = entry.y;
             }
           }
+
           final double frequency;
           if (paramsChannels[i] == 'MIC') {
             frequency = _analyticsClass.findFrequency(
@@ -588,8 +626,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             frequency =
                 _analyticsClass.findFrequency(voltage, timeGap / 1000000.0);
           }
-          double period = (1 / frequency) * 1000.0;
-          yRange = maxY - minY;
+
+          double period = (frequency > 0) ? (1 / frequency) * 1000.0 : 0;
+          double yRange = maxY - minY;
+
           OscilloscopeMeasurements
               .channel[channel]![ChannelMeasurements.frequency] = frequency;
           OscilloscopeMeasurements
@@ -606,6 +646,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       dataEntries = List.from(entries);
       dataEntriesCurveFit = List.from(curveFitEntries);
       dataParamsChannels = List.from(paramsChannels);
+
       if (_isRecording) {
         final now = DateTime.now();
         final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
@@ -626,11 +667,13 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           ],
         );
       }
+
       if (isFourierTransformSelected) {
         oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
         oscilloscopeAxesScale.setYAxisScaleMin(0);
         oscilloscopeAxesScale.setXAxisScale(_maxFreq * 1000);
       }
+
       notifyListeners();
     } catch (e) {
       logger.e(e);
