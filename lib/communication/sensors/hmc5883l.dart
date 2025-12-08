@@ -170,13 +170,14 @@ class HMC5883L {
   }
 
   /// Read magnetic field data in microTesla (µT)
-  Future<Map<String, double>> readMagneticField() async {
+  /// Optionally accepts pre-read rawData to avoid redundant I2C reads
+  Future<Map<String, double>> readMagneticField({Map<String, int>? rawData}) async {
     try {
-      final rawData = await readRawData();
+      final data = rawData ?? await readRawData();
 
-      magneticX = (rawData['x']! / scale) * 100.0 - offsetX;
-      magneticY = (rawData['y']! / scale) * 100.0 - offsetY;
-      magneticZ = (rawData['z']! / scale) * 100.0 - offsetZ;
+      magneticX = (data['x']! / scale) * 100.0 - offsetX;
+      magneticY = (data['y']! / scale) * 100.0 - offsetY;
+      magneticZ = (data['z']! / scale) * 100.0 - offsetZ;
 
       return {
         'x': magneticX,
@@ -191,11 +192,12 @@ class HMC5883L {
 
   /// Calculate heading angle (0-360 degrees)
   /// Assumes the sensor is level (parallel to ground)
-  Future<double> readHeading() async {
+  /// Optionally accepts pre-computed magneticField to avoid redundant I2C reads
+  Future<double> readHeading({Map<String, double>? magneticField}) async {
     try {
-      await readMagneticField();
+      final field = magneticField ?? await readMagneticField();
 
-      double heading = atan2(magneticY, magneticX);
+      double heading = atan2(field['y']!, field['x']!);
 
       double headingDegrees = heading * (180.0 / pi);
 
@@ -211,12 +213,13 @@ class HMC5883L {
   }
 
   /// Calculate total magnetic field magnitude
-  Future<double> readMagnitude() async {
+  /// Optionally accepts pre-computed magneticField to avoid redundant I2C reads
+  Future<double> readMagnitude({Map<String, double>? magneticField}) async {
     try {
-      await readMagneticField();
-      return sqrt(magneticX * magneticX +
-          magneticY * magneticY +
-          magneticZ * magneticZ);
+      final field = magneticField ?? await readMagneticField();
+      return sqrt(field['x']! * field['x']! +
+          field['y']! * field['y']! +
+          field['z']! * field['z']!);
     } catch (e) {
       logger.e("Error calculating magnitude: $e");
       rethrow;
@@ -235,10 +238,15 @@ class HMC5883L {
 
   Future<Map<String, dynamic>> getAllData() async {
     try {
+      // Perform single I2C read
       final rawData = await readRawData();
-      await readMagneticField();
-      final heading = await readHeading();
-      final magnitude = await readMagnitude();
+      
+      // Reuse raw data for magnetic field calculation
+      final magneticField = await readMagneticField(rawData: rawData);
+      
+      // Reuse magnetic field for heading and magnitude calculations
+      final heading = await readHeading(magneticField: magneticField);
+      final magnitude = await readMagnitude(magneticField: magneticField);
 
       return {
         'raw_x': rawData['x'],

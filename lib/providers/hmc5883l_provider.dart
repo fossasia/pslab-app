@@ -85,9 +85,9 @@ class HMC5883LProvider extends ChangeNotifier {
       _hmc5883l = await HMC5883L.create(i2c, scienceLab);
       logger.d("HMC5883L sensor initialized successfully");
       notifyListeners();
-    } catch (e) {
-      logger.e('Error initializing HMC5883L: $e');
-      onError('Error initializing HMC5883L: $e');
+    } catch (e, stackTrace) {
+      logger.e('Error initializing HMC5883L', e, stackTrace);
+      onError('${appLocalizations.magnetometerError} ${e.toString()}');
     }
   }
 

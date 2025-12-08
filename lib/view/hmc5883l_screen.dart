@@ -24,7 +24,6 @@ class _HMC5883LScreenState extends State<HMC5883LScreen> {
   String sensorImage = 'assets/images/hmc5883l.jpg';
   I2C? _i2c;
   ScienceLab? _scienceLab;
-  late HMC5883LProvider _provider;
 
   @override
   void initState() {
@@ -78,15 +77,12 @@ class _HMC5883LScreenState extends State<HMC5883LScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) {
-        _provider = HMC5883LProvider()
-          ..initializeSensors(
-            onError: _showSensorErrorSnackbar,
-            i2c: _i2c,
-            scienceLab: _scienceLab,
-          );
-        return _provider;
-      },
+      create: (context) => HMC5883LProvider()
+        ..initializeSensors(
+          onError: _showSensorErrorSnackbar,
+          i2c: _i2c,
+          scienceLab: _scienceLab,
+        ),
       child: Consumer<HMC5883LProvider>(
         builder: (context, provider, child) {
           return CommonScaffold(
@@ -461,18 +457,23 @@ class _HMC5883LScreenState extends State<HMC5883LScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Gain'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: gains.entries.map((entry) {
-            return ListTile(
-              title: Text(entry.key),
-              onTap: () {
-                provider.setGain(entry.value);
-                Navigator.pop(context);
-                _showSuccessSnackbar('Gain set to ${entry.key}');
-              },
-            );
-          }).toList(),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxHeight: 300,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: gains.entries.map((entry) {
+              return ListTile(
+                title: Text(entry.key),
+                onTap: () {
+                  provider.setGain(entry.value);
+                  Navigator.pop(context);
+                  _showSuccessSnackbar('Gain set to ${entry.key}');
+                },
+              );
+            }).toList(),
+          ),
         ),
         actions: [
           TextButton(
@@ -524,9 +525,4 @@ class _HMC5883LScreenState extends State<HMC5883LScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    _provider.dispose();
-    super.dispose();
-  }
 }
