@@ -20,7 +20,7 @@ assignees: ''
 <!--Provide logs for the crash here.-->
 
 **Screenshots of the issue**
-<!--Where-ever possible add a screenshot of the issue. Use `<img src="paste-link-here" width=200 />` tag-->
+<!--Wherever possible add a screenshot of the issue. Use `<img src="paste-link-here" width=200 />` tag-->
 
 **System Information**
 <table>
