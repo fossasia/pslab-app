@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/view/bmp180_screen.dart';
 import 'package:pslab/view/ads1115_screen.dart';
 import 'package:pslab/view/vl53l0x_screen.dart';
+import 'package:pslab/view/hmc5883l_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
@@ -229,6 +230,10 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'APDS9960':
         targetScreen = const APDS9960Screen();
+        break;
+      case 'HMC5883L':
+        targetScreen = const HMC5883LScreen();
+        break;
       case 'VL53L0X':
         targetScreen = const VL53L0XScreen();
         break;
