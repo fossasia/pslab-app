@@ -14,8 +14,9 @@
     <application
         android:label="PSLab"
         android:name="${applicationName}"
-        android:icon="@drawable/launcher_icon"
-        android:roundIcon="@drawable/launcher_icon_round"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+
         >
         <activity
             android:name=".MainActivity"
