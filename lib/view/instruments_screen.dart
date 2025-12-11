@@ -14,9 +14,9 @@ class InstrumentsScreen extends StatefulWidget {
 }
 
 class _InstrumentData {
-  const String heading;
-  const String description;
-  const String name;
+  final String heading;
+  final String description;
+  final String name;
 
   _InstrumentData(this.heading, this.description, this.name);
 }
