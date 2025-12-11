@@ -89,35 +89,35 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     _instrumentDatas = [
       _InstrumentData(appLocalizations.oscilloscope,
           appLocalizations.oscilloscopeDesc, '/oscilloscope'),
-      _InstrumentData(appLocalizations.multimeter, appLocalizations.multimeter,
-          '/multimeter'),
+      _InstrumentData(appLocalizations.multimeter,
+          appLocalizations.multimeterDesc, '/multimeter'),
       _InstrumentData(appLocalizations.logicAnalyzer,
-          appLocalizations.logicAnalyzer, '/logicAnalyzer'),
+          appLocalizations.logicAnalyzerDesc, '/logicAnalyzer'),
       _InstrumentData(
-          appLocalizations.sensors, appLocalizations.sensors, '/sensors'),
+          appLocalizations.sensors, appLocalizations.sensorsDesc, '/sensors'),
       _InstrumentData(appLocalizations.waveGenerator,
-          appLocalizations.waveGenerator, '/waveGenerator'),
+          appLocalizations.waveGeneratorDesc, '/waveGenerator'),
       _InstrumentData(appLocalizations.powerSource,
-          appLocalizations.powerSource, '/powerSource'),
-      _InstrumentData(
-          appLocalizations.luxMeter, appLocalizations.luxMeter, '/luxmeter'),
+          appLocalizations.powerSourceDesc, '/powerSource'),
+      _InstrumentData(appLocalizations.luxMeter, appLocalizations.luxMeterDesc,
+          '/luxmeter'),
       _InstrumentData(appLocalizations.accelerometer,
-          appLocalizations.accelerometer, '/accelerometer'),
+          appLocalizations.accelerometerDesc, '/accelerometer'),
+      _InstrumentData(appLocalizations.barometer,
+          appLocalizations.barometerDesc, '/barometer'),
       _InstrumentData(
-          appLocalizations.barometer, appLocalizations.barometer, '/barometer'),
-      _InstrumentData(
-          appLocalizations.compass, appLocalizations.compass, '/compass'),
-      _InstrumentData(
-          appLocalizations.gyroscope, appLocalizations.gyroscope, '/gyroscope'),
+          appLocalizations.compass, appLocalizations.compassDesc, '/compass'),
+      _InstrumentData(appLocalizations.gyroscope,
+          appLocalizations.gyroscopeDesc, '/gyroscope'),
       _InstrumentData(appLocalizations.thermometer,
-          appLocalizations.thermometer, '/thermometer'),
-      _InstrumentData(appLocalizations.roboticArm, appLocalizations.roboticArm,
-          '/roboticArm'),
+          appLocalizations.thermometerDesc, '/thermometer'),
+      _InstrumentData(appLocalizations.roboticArm,
+          appLocalizations.roboticArmDesc, '/roboticArm'),
       // Instruments below are not yet implemented.
-      //_InstrumentData(appLocalizations.gasSensor, appLocalizations.gasSensor, 'gassensor'),
-      //_InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensor, 'dustsensor'),
-      _InstrumentData(appLocalizations.soundMeter, appLocalizations.soundMeter,
-          '/soundmeter'),
+      //_InstrumentData(appLocalizations.gasSensor, appLocalizations.gasSensorDesc, 'gassensor'),
+      //_InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensorDesc, 'dustsensor'),
+      _InstrumentData(appLocalizations.soundMeter,
+          appLocalizations.soundMeterDesc, '/soundmeter'),
     ];
 
     _filteredIndices =
