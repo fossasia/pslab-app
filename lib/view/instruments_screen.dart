@@ -13,183 +13,31 @@ class InstrumentsScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _InstrumentsScreenState();
 }
 
+class _InstrumentData {
+  String heading;
+  String description;
+  String name;
+
+  _InstrumentData(this.heading, this.description, this.name);
+}
+
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
   List<int> _filteredIndices = <int>[];
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  late List<String> instrumentHeadings;
-  late List<String> instrumentDesc;
+  late List<_InstrumentData> _instrumentDatas;
 
   void _onItemTapped(int index) {
-    switch (index) {
-      case 0:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/oscilloscope') {
-          Navigator.popUntil(context, ModalRoute.withName('/oscilloscope'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/oscilloscope',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 1:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/multimeter') {
-          Navigator.popUntil(context, ModalRoute.withName('/multimeter'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/multimeter',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 2:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/logicAnalyzer') {
-          Navigator.popUntil(context, ModalRoute.withName('/logicAnalyzer'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/logicAnalyzer',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 3:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/sensors') {
-          Navigator.popUntil(context, ModalRoute.withName('/sensors'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/sensors',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 5:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/powerSource') {
-          Navigator.popUntil(context, ModalRoute.withName('/powerSource'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/powerSource',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 6:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/luxmeter') {
-          Navigator.popUntil(context, ModalRoute.withName('/luxmeter'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/luxmeter',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 7:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/accelerometer') {
-          Navigator.popUntil(context, ModalRoute.withName('/accelerometer'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/accelerometer',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 8:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/barometer') {
-          Navigator.popUntil(context, ModalRoute.withName('/barometer'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/barometer',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 10:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/gyroscope') {
-          Navigator.popUntil(context, ModalRoute.withName('/gyroscope'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/gyroscope',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 11:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/thermometer') {
-          Navigator.popUntil(context, ModalRoute.withName('/thermometer'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/thermometer',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 12:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/roboticArm') {
-          Navigator.popUntil(context, ModalRoute.withName('/roboticArm'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/roboticArm',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 15:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/soundmeter') {
-          Navigator.popUntil(context, ModalRoute.withName('/soundmeter'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/soundmeter',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 9:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/compass') {
-          Navigator.popUntil(context, ModalRoute.withName('/compass'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/compass',
-            (route) => route.isFirst,
-          );
-        }
-        break;
-      case 4:
-        if (Navigator.canPop(context) &&
-            ModalRoute.of(context)?.settings.name == '/waveGenerator') {
-          Navigator.popUntil(context, ModalRoute.withName('/waveGenerator'));
-        } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/waveGenerator',
-            (route) => route.isFirst,
-          );
-        }
-      default:
-        break;
+    _InstrumentData instrument = _instrumentDatas[index];
+
+    if (Navigator.canPop(context) &&
+        ModalRoute.of(context)?.settings.name == instrument.name) {
+      Navigator.popUntil(context, ModalRoute.withName(instrument.name));
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        instrument.name,
+        (route) => route.isFirst,
+      );
     }
   }
 
@@ -197,10 +45,11 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     setState(() {
       if (query.isEmpty) {
         _filteredIndices =
-            List<int>.generate(instrumentHeadings.length, (index) => index);
+            List<int>.generate(_instrumentDatas.length, (index) => index);
       } else {
-        _filteredIndices = List.generate(instrumentHeadings.length, (i) => i)
-            .where((i) => instrumentHeadings[i]
+        _filteredIndices = List.generate(_instrumentDatas.length, (i) => i)
+            .where((i) => _instrumentDatas[i]
+                .heading
                 .toLowerCase()
                 .contains(query.toLowerCase()))
             .toList();
@@ -236,44 +85,43 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
         });
       }
     });
-    instrumentHeadings = [
-      appLocalizations.oscilloscope.toUpperCase(),
-      appLocalizations.multimeter.toUpperCase(),
-      appLocalizations.logicAnalyzer.toUpperCase(),
-      appLocalizations.sensors.toUpperCase(),
-      appLocalizations.waveGenerator.toUpperCase(),
-      appLocalizations.powerSource.toUpperCase(),
-      appLocalizations.luxMeter.toUpperCase(),
-      appLocalizations.accelerometer.toUpperCase(),
-      appLocalizations.barometer.toUpperCase(),
-      appLocalizations.compass.toUpperCase(),
-      appLocalizations.gyroscope.toUpperCase(),
-      appLocalizations.thermometer.toUpperCase(),
-      appLocalizations.roboticArm.toUpperCase(),
-      appLocalizations.gasSensor.toUpperCase(),
-      appLocalizations.dustSensor.toUpperCase(),
-      appLocalizations.soundMeter.toUpperCase(),
+
+    _instrumentDatas = [
+      _InstrumentData(appLocalizations.oscilloscope,
+          appLocalizations.oscilloscopeDesc, '/oscilloscope'),
+      _InstrumentData(appLocalizations.multimeter, appLocalizations.multimeter,
+          '/multimeter'),
+      _InstrumentData(appLocalizations.logicAnalyzer,
+          appLocalizations.logicAnalyzer, '/logicAnalyzer'),
+      _InstrumentData(
+          appLocalizations.sensors, appLocalizations.sensors, '/sensors'),
+      _InstrumentData(appLocalizations.waveGenerator,
+          appLocalizations.waveGenerator, '/waveGenerator'),
+      _InstrumentData(appLocalizations.powerSource,
+          appLocalizations.powerSource, '/powerSource'),
+      _InstrumentData(
+          appLocalizations.luxMeter, appLocalizations.luxMeter, '/luxmeter'),
+      _InstrumentData(appLocalizations.accelerometer,
+          appLocalizations.accelerometer, '/accelerometer'),
+      _InstrumentData(
+          appLocalizations.barometer, appLocalizations.barometer, '/barometer'),
+      _InstrumentData(
+          appLocalizations.compass, appLocalizations.compass, '/compass'),
+      _InstrumentData(
+          appLocalizations.gyroscope, appLocalizations.gyroscope, '/gyroscope'),
+      _InstrumentData(appLocalizations.thermometer,
+          appLocalizations.thermometer, '/thermometer'),
+      _InstrumentData(appLocalizations.roboticArm, appLocalizations.roboticArm,
+          '/roboticArm'),
+      // Instruments below are not yet implemented.
+      //_InstrumentData(appLocalizations.gasSensor, appLocalizations.gasSensor, 'gassensor'),
+      //_InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensor, 'dustsensor'),
+      _InstrumentData(appLocalizations.soundMeter, appLocalizations.soundMeter,
+          '/soundmeter'),
     ];
-    instrumentDesc = [
-      appLocalizations.oscilloscopeDesc,
-      appLocalizations.multimeterDesc,
-      appLocalizations.logicAnalyzerDesc,
-      appLocalizations.sensorsDesc,
-      appLocalizations.waveGeneratorDesc,
-      appLocalizations.powerSourceDesc,
-      appLocalizations.luxMeterDesc,
-      appLocalizations.accelerometerDesc,
-      appLocalizations.barometerDesc,
-      appLocalizations.compassDesc,
-      appLocalizations.gyroscopeDesc,
-      appLocalizations.thermometerDesc,
-      appLocalizations.roboticArmDesc,
-      appLocalizations.gasSensorDesc,
-      appLocalizations.dustSensorDesc,
-      appLocalizations.soundMeterDesc,
-    ];
+
     _filteredIndices =
-        List<int>.generate(instrumentHeadings.length, (index) => index);
+        List<int>.generate(_instrumentDatas.length, (index) => index);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setPortraitOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -372,8 +220,11 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                               return GestureDetector(
                                 onTap: () => _onItemTapped(originalIndex),
                                 child: ApplicationsListItem(
-                                  heading: instrumentHeadings[originalIndex],
-                                  description: instrumentDesc[originalIndex],
+                                  heading: _instrumentDatas[originalIndex]
+                                      .heading
+                                      .toUpperCase(),
+                                  description: _instrumentDatas[originalIndex]
+                                      .description,
                                   instrumentIcon:
                                       instrumentIcons[originalIndex],
                                 ),
