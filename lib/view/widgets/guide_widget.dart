@@ -23,6 +23,12 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+
+  double _currentHeightFactor = 0.5;
+
+  final double _minHeightFactor = 0.15;
+  final double _maxHeightFactor = 0.90;
+
   @override
   void initState() {
     super.initState();
@@ -40,13 +46,23 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
     _animationController.forward();
   }
 
-  void _onVerticalDragEnd(DragEndDetails details) {
-    if (details.primaryVelocity != null) {
-      if (details.primaryVelocity! > 300) {
-        _hideDrawer();
-      } else if (details.primaryVelocity! < -300) {
-        _animationController.forward();
-      }
+  void _onHeaderDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      double delta = details.primaryDelta! / MediaQuery.of(context).size.height;
+      _currentHeightFactor -= delta;
+      _currentHeightFactor =
+          _currentHeightFactor.clamp(_minHeightFactor, _maxHeightFactor);
+    });
+  }
+
+  void _onHeaderDragEnd(DragEndDetails details) {
+    if (details.primaryVelocity != null && details.primaryVelocity! > 500) {
+      _hideDrawer();
+    } else if (details.primaryVelocity != null &&
+        details.primaryVelocity! < -500) {
+      setState(() {
+        _currentHeightFactor = _maxHeightFactor;
+      });
     }
   }
 
@@ -66,103 +82,122 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Material(
-      color: guideDrawerHighlightColor,
-      child: GestureDetector(
-        onVerticalDragEnd: _onVerticalDragEnd,
-        onTap: _hideDrawer,
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: SlideTransition(
+      color: Colors.transparent,
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: _hideDrawer,
+            child: Container(
+              color: Colors.transparent,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+          SlideTransition(
             position: _slideAnimation,
             child: Align(
               alignment: Alignment.bottomCenter,
               child: GestureDetector(
                 onTap: () {},
-                onVerticalDragEnd: _onVerticalDragEnd,
                 child: Container(
+                  height: screenHeight * _currentHeightFactor,
+                  width: double.infinity,
                   margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.7,
-                    minHeight: 200.0,
-                  ),
                   decoration: BoxDecoration(
                     color: guideDrawerBackgroundColor,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16.0),
                       topRight: Radius.circular(16.0),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        height: 50,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: primaryRed,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(16.0),
-                            topRight: Radius.circular(16.0),
+                      GestureDetector(
+                        onVerticalDragUpdate: _onHeaderDragUpdate,
+                        onVerticalDragEnd: _onHeaderDragEnd,
+                        onTap: () {
+                          setState(() {
+                            _currentHeightFactor =
+                                _currentHeightFactor < 0.5 ? 0.8 : 0.15;
+                          });
+                        },
+                        child: Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: primaryRed,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(16.0),
+                              topRight: Radius.circular(16.0),
+                            ),
                           ),
-                        ),
-                        child: GestureDetector(
-                          onTap: _hideDrawer,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24.0,
-                              vertical: 2.0,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Icon(
-                                  Icons.keyboard_arrow_down,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                _currentHeightFactor > 0.5
+                                    ? Icons.keyboard_arrow_down
+                                    : Icons.keyboard_arrow_up,
+                                color: appBarContentColor,
+                                size: 24.0,
+                              ),
+                              Text(
+                                _currentHeightFactor > 0.5
+                                    ? appLocalizations.hideGuide
+                                    : "Show Guide",
+                                style: TextStyle(
                                   color: appBarContentColor,
-                                  size: 16.0,
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                const SizedBox(
-                                  height: 2,
-                                ),
-                                Text(
-                                  appLocalizations.hideGuide,
-                                  style: TextStyle(
-                                    color: appBarContentColor,
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      Flexible(
-                        child: InteractiveViewer(
-                          boundaryMargin: EdgeInsets.zero,
-                          minScale: 1.0,
-                          maxScale: 4.0,
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.instrumentName,
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: guideDrawerHeadingColor,
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return InteractiveViewer(
+                              boundaryMargin: EdgeInsets.zero,
+                              minScale: 1.0,
+                              maxScale: 4.0,
+                              constrained: false,
+                              child: SizedBox(
+                                width: constraints.maxWidth,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.instrumentName,
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: guideDrawerHeadingColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16.0),
+                                      ...widget.content,
+                                      const SizedBox(height: 20.0),
+                                    ],
                                   ),
                                 ),
-                                const SizedBox(height: 16.0),
-                                ...widget.content,
-                                const SizedBox(height: 20.0),
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -171,7 +206,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -180,11 +215,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
 class InstrumentIntroText extends StatelessWidget {
   final String text;
   final TextStyle? style;
-  const InstrumentIntroText({
-    super.key,
-    required this.text,
-    this.style,
-  });
+  const InstrumentIntroText({super.key, required this.text, this.style});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -205,11 +236,7 @@ class InstrumentIntroText extends StatelessWidget {
 class InstrumentHeading extends StatelessWidget {
   final String text;
   final TextStyle? style;
-  const InstrumentHeading({
-    super.key,
-    required this.text,
-    this.style,
-  });
+  const InstrumentHeading({super.key, required this.text, this.style});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -230,11 +257,7 @@ class InstrumentHeading extends StatelessWidget {
 class InstrumentBulletPoint extends StatelessWidget {
   final String text;
   final TextStyle? style;
-  const InstrumentBulletPoint({
-    super.key,
-    required this.text,
-    this.style,
-  });
+  const InstrumentBulletPoint({super.key, required this.text, this.style});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -288,22 +311,24 @@ class InstrumentImage extends StatelessWidget {
           SizedBox(
             height: height ?? 200.0,
             width: double.infinity,
-            child: ClipRRect(
-              child: Image.asset(
-                imagePath,
-                fit: fit,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey,
-                        size: 48.0,
+            child: IgnorePointer(
+              child: ClipRRect(
+                child: Image.asset(
+                  imagePath,
+                  fit: fit,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.shade200,
+                      child: const Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                          size: 48.0,
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
