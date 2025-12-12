@@ -152,7 +152,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                                 size: 24.0,
                               ),
                               Text(
-                                _currentHeightFactor > 0.5
+                                _currentHeightFactor >= 0.5
                                     ? appLocalizations.hideGuide
                                     : appLocalizations.showGuide,
                                 style: TextStyle(
