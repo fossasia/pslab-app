@@ -154,7 +154,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                               Text(
                                 _currentHeightFactor > 0.5
                                     ? appLocalizations.hideGuide
-                                    : "Show Guide",
+                                    : appLocalizations.showGuide,
                                 style: TextStyle(
                                   color: appBarContentColor,
                                   fontSize: 14.0,
