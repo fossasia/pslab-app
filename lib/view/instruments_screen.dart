@@ -200,8 +200,9 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                               return GestureDetector(
                                 onTap: () => _onItemTapped(originalIndex),
                                 child: ApplicationsListItem(
-                                  heading:
-                                      _instrumentDatas[originalIndex].heading,
+                                  heading: _instrumentDatas[originalIndex]
+                                      .heading
+                                      .toUpperCase(),
                                   description: _instrumentDatas[originalIndex]
                                       .description,
                                   instrumentIcon:
