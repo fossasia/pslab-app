@@ -126,10 +126,13 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                         onVerticalDragUpdate: _onHeaderDragUpdate,
                         onVerticalDragEnd: _onHeaderDragEnd,
                         onTap: () {
-                          setState(() {
-                            _currentHeightFactor =
-                                _currentHeightFactor < 0.5 ? 0.8 : 0.15;
-                          });
+                          if (_currentHeightFactor < 0.5) {
+                            setState(() {
+                              _currentHeightFactor = _maxHeightFactor;
+                            });
+                          } else {
+                            _hideDrawer();
+                          }
                         },
                         child: Container(
                           height: 50,
@@ -145,7 +148,7 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                _currentHeightFactor > 0.5
+                                _currentHeightFactor >= 0.5
                                     ? Icons.keyboard_arrow_down
                                     : Icons.keyboard_arrow_up,
                                 color: appBarContentColor,
