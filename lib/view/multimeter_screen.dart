@@ -439,7 +439,10 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                                         value: provider
                                                             .isSwitchChecked,
                                                         onChanged:
-                                                            (bool value) {},
+                                                            (bool value) {
+                                                          provider
+                                                              .setSwitch(value);
+                                                        },
                                                       ),
                                                     ),
                                                     Text(
