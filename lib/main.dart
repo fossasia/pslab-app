@@ -9,6 +9,7 @@ import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
+import 'package:pslab/view/gas_sensor_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
 import 'package:pslab/view/logged_data_screen.dart';
@@ -102,6 +103,7 @@ class MyApp extends StatelessWidget {
                 '/barometer': (context) => const BarometerScreen(),
                 '/soundmeter': (context) => const SoundMeterScreen(),
                 '/thermometer': (context) => const ThermometerScreen(),
+                '/gassensor': (context) => const GasSensorScreen(),
                 '/sensors': (context) => const SensorsScreen(),
                 '/experiments': (context) => const ExperimentsScreen(),
                 '/loggedData': (context) => LoggedDataScreen(
