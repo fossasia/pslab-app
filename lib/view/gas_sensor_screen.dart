@@ -99,7 +99,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
                         const SizedBox(height: 24),
                         SensorChartWidget(
                           title:
-                          '${appLocalizations.plot} - ${appLocalizations.gasSensor}',
+                              '${appLocalizations.plot} - ${appLocalizations.gasSensor}',
                           yAxisLabel: 'Gas Concentration (PPM)',
                           data: provider.gasPPMData,
                           lineColor: Colors.orange,

@@ -76,12 +76,9 @@ class GasSensorProvider extends ChangeNotifier {
       logger.d('Gas Sensor Provider initialized successfully');
       notifyListeners();
     } catch (e) {
-
-
       _isSensorAvailable = false;
 
-      final errorMessage =
-      appLocalizations.gasSensorInitError(e.toString());
+      final errorMessage = appLocalizations.gasSensorInitError(e.toString());
 
       logger.e(errorMessage);
       onError?.call(errorMessage);
@@ -111,7 +108,8 @@ class GasSensorProvider extends ChangeNotifier {
     _currentTime = 0.0;
 
     // Start periodic timer
-    _dataTimer = Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+    _dataTimer =
+        Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
       try {
         await _fetchSensorData();
 
@@ -156,7 +154,8 @@ class GasSensorProvider extends ChangeNotifier {
 
       _addDataPoint(_gasPPMData, _gasPPM);
 
-      logger.d('Gas Sensor: ${_gasPPM.toStringAsFixed(2)} PPM at ${_currentTime.toStringAsFixed(1)}s');
+      logger.d(
+          'Gas Sensor: ${_gasPPM.toStringAsFixed(2)} PPM at ${_currentTime.toStringAsFixed(1)}s');
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
       rethrow;
