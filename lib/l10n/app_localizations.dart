@@ -3255,6 +3255,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share App'**
   String get shareApp;
+
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PSLab'**
+  String get appTitle;
+
+  /// No description provided for @connect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connect;
+
+  /// No description provided for @disconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get disconnect;
+
+  /// No description provided for @gasSensorInitError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error initializing Gas Sensor: {error}'**
+  String gasSensorInitError(Object error);
 }
 
 class _AppLocalizationsDelegate

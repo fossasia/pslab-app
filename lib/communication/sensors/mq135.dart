@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/logger_service.dart';
 import '../../l10n/app_localizations.dart';
@@ -113,7 +112,7 @@ class MQ135 {
     final ppm = gasConstant * math.pow(ratio, powerValue);
 
     // Clamp PPM to realistic values (0-5000 ppm)
-    return (ppm as double).clamp(0.0, 5000.0);
+    return ppm.clamp(0.0, 5000.0);
   }
 
   /// Read and calculate gas concentration in PPM

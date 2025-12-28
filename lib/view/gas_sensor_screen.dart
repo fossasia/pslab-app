@@ -18,10 +18,10 @@ class GasSensorScreen extends StatefulWidget {
 }
 
 class _GasSensorScreenState extends State<GasSensorScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  String sensorImage = 'assets/images/mq135.jpg';
+  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  final String sensorImage = 'assets/images/mq135.jpg';
+
   ScienceLab? _scienceLab;
-  late GasSensorProvider _provider;
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
     _initializeScienceLab();
   }
 
-  void _initializeScienceLab() async {
+  void _initializeScienceLab() {
     try {
       _scienceLab = getIt.get<ScienceLab>();
       if (_scienceLab != null && _scienceLab!.isConnected()) {
@@ -41,47 +41,47 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
   }
 
   void _showSensorErrorSnackbar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
-          backgroundColor: snackBarBackgroundColor,
-          duration: const Duration(milliseconds: 500),
-          behavior: SnackBarBehavior.floating,
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: snackBarContentColor),
         ),
-      );
-    }
+        backgroundColor: snackBarBackgroundColor,
+        duration: const Duration(milliseconds: 500),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   void _showSuccessSnackbar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
-          backgroundColor: snackBarBackgroundColor,
-          duration: const Duration(milliseconds: 500),
-          behavior: SnackBarBehavior.floating,
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: snackBarContentColor),
         ),
-      );
-    }
+        backgroundColor: snackBarBackgroundColor,
+        duration: const Duration(milliseconds: 500),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) {
-        _provider = GasSensorProvider()
-          ..initializeSensors(
-            scienceLab: _scienceLab,
-            onError: _showSensorErrorSnackbar,
-          );
-        return _provider;
+    return ChangeNotifierProvider<GasSensorProvider>(
+      create: (_) {
+        final provider = GasSensorProvider();
+        provider.initializeSensors(
+          scienceLab: _scienceLab,
+          onError: _showSensorErrorSnackbar,
+        );
+        return provider;
       },
       child: Consumer<GasSensorProvider>(
         builder: (context, provider, child) {
@@ -98,7 +98,8 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
                         _buildRawDataSection(provider),
                         const SizedBox(height: 24),
                         SensorChartWidget(
-                          title: '${appLocalizations.plot} - ${appLocalizations.gasSensor}',
+                          title:
+                          '${appLocalizations.plot} - ${appLocalizations.gasSensor}',
                           yAxisLabel: 'Gas Concentration (PPM)',
                           data: provider.gasPPMData,
                           lineColor: Colors.orange,
@@ -116,9 +117,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
                   isLooping: provider.isLooping,
                   timegapMs: provider.timegapMs,
                   numberOfReadings: provider.numberOfReadings,
-                  onPlayPause: () {
-                    provider.toggleDataCollection();
-                  },
+                  onPlayPause: provider.toggleDataCollection,
                   onLoop: provider.toggleLooping,
                   onTimegapChanged: provider.setTimegap,
                   onNumberOfReadingsChanged: provider.setNumberOfReadings,
@@ -140,7 +139,6 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: cardBackgroundColor,
-        borderRadius: BorderRadius.zero,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(50),
@@ -154,13 +152,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            decoration: BoxDecoration(
-              color: primaryRed,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.zero,
-                topRight: Radius.zero,
-              ),
-            ),
+            color: primaryRed,
             child: Row(
               children: [
                 Text(
@@ -184,11 +176,9 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
+          Padding(
             padding: const EdgeInsets.all(24),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   flex: 2,
@@ -206,13 +196,11 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
                     child: Image.asset(
                       sensorImage,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
-                          Icons.sensors,
-                          size: 40,
-                          color: sensorControlsTextBox,
-                        );
-                      },
+                      errorBuilder: (_, __, ___) => Icon(
+                        Icons.sensors,
+                        size: 40,
+                        color: sensorControlsTextBox,
+                      ),
                     ),
                   ),
                 ),
@@ -228,7 +216,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
     return Row(
       children: [
         SizedBox(
-          width: 100,
+          width: 120,
           child: Text(
             label,
             style: TextStyle(
@@ -239,7 +227,6 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
           ),
         ),
         Expanded(
-          flex: 3,
           child: Container(
             height: 36,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -248,25 +235,17 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
               borderRadius: BorderRadius.circular(4),
               color: cardBackgroundColor,
             ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: blackTextColor,
-                ),
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                color: blackTextColor,
               ),
             ),
           ),
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _provider.dispose();
-    super.dispose();
   }
 }

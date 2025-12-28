@@ -1696,6 +1696,20 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get shareApp => 'Share App';
+
+  @override
+  String get appTitle => 'PSLab';
+
+  @override
+  String get connect => 'Connect';
+
+  @override
+  String get disconnect => 'Disconnect';
+
+  @override
+  String gasSensorInitError(Object error) {
+    return 'Error initializing Gas Sensor: $error';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

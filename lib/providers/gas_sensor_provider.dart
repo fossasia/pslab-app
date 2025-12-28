@@ -76,9 +76,15 @@ class GasSensorProvider extends ChangeNotifier {
       logger.d('Gas Sensor Provider initialized successfully');
       notifyListeners();
     } catch (e) {
+
+
       _isSensorAvailable = false;
-      logger.e('Error initializing Gas Sensor: $e');
-      onError?.call('Error initializing Gas Sensor: $e');
+
+      final errorMessage =
+      appLocalizations.gasSensorInitError(e.toString());
+
+      logger.e(errorMessage);
+      onError?.call(errorMessage);
       notifyListeners();
     }
   }

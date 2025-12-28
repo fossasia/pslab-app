@@ -523,5 +523,14 @@
     "light": "Light",
     "darkExperimental": "Dark (Experimental)",
     "system": "System",
-    "shareApp": "Share App"
+    "shareApp": "Share App",
+    "appTitle": "PSLab",
+     "connect": "Connect",
+     "disconnect": "Disconnect",
+     "gasSensorInitError": "Error initializing Gas Sensor: {error}",
+     "@gasSensorInitError": {
+    "placeholders": {
+          "error": {}
+          }
+      }
 }
