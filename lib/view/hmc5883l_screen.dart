@@ -524,5 +524,4 @@ class _HMC5883LScreenState extends State<HMC5883LScreen> {
       ],
     );
   }
-
 }

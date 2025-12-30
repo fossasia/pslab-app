@@ -48,12 +48,12 @@ class HMC5883L {
   // Configuration values for Register B (Gain)
   static const int gain1370 = 0x00; // ±0.88 Ga
   static const int gain1090 = 0x20; // ±1.3 Ga (default)
-  static const int gain820 = 0x40;  // ±1.9 Ga
-  static const int gain660 = 0x60;  // ±2.5 Ga
-  static const int gain440 = 0x80;  // ±4.0 Ga
-  static const int gain390 = 0xA0;  // ±4.7 Ga
-  static const int gain330 = 0xC0;  // ±5.6 Ga
-  static const int gain230 = 0xE0;  // ±8.1 Ga
+  static const int gain820 = 0x40; // ±1.9 Ga
+  static const int gain660 = 0x60; // ±2.5 Ga
+  static const int gain440 = 0x80; // ±4.0 Ga
+  static const int gain390 = 0xA0; // ±4.7 Ga
+  static const int gain330 = 0xC0; // ±5.6 Ga
+  static const int gain230 = 0xE0; // ±8.1 Ga
 
   // Mode register values
   static const int modeContinuous = 0x00;
@@ -171,7 +171,8 @@ class HMC5883L {
 
   /// Read magnetic field data in microTesla (µT)
   /// Optionally accepts pre-read rawData to avoid redundant I2C reads
-  Future<Map<String, double>> readMagneticField({Map<String, int>? rawData}) async {
+  Future<Map<String, double>> readMagneticField(
+      {Map<String, int>? rawData}) async {
     try {
       final data = rawData ?? await readRawData();
 
@@ -226,8 +227,8 @@ class HMC5883L {
     }
   }
 
-  void setCalibrationOffsets(double minX, double maxX, double minY,
-      double maxY, double minZ, double maxZ) {
+  void setCalibrationOffsets(double minX, double maxX, double minY, double maxY,
+      double minZ, double maxZ) {
     offsetX = (minX + maxX) / 2.0;
     offsetY = (minY + maxY) / 2.0;
     offsetZ = (minZ + maxZ) / 2.0;
@@ -240,10 +241,10 @@ class HMC5883L {
     try {
       // Perform single I2C read
       final rawData = await readRawData();
-      
+
       // Reuse raw data for magnetic field calculation
       final magneticField = await readMagneticField(rawData: rawData);
-      
+
       // Reuse magnetic field for heading and magnitude calculations
       final heading = await readHeading(magneticField: magneticField);
       final magnitude = await readMagnitude(magneticField: magneticField);
