@@ -167,6 +167,10 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
 
       double normalizedAngle = angle;
 
+      if (normalizedAngle < pi / 2) {
+        normalizedAngle += 2 * pi;
+      }
+
       if (normalizedAngle < startAngle || normalizedAngle > endAngle) {
         double distToStart = (normalizedAngle - startAngle).abs();
         double distToEnd = (normalizedAngle - endAngle).abs();
