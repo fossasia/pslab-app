@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/power_source_state_provider.dart';
@@ -134,16 +135,7 @@ class PowerSourceKnob extends StatefulWidget {
 class _PowerSourceKnobState extends State<PowerSourceKnob> {
   double outerValue = 0.0;
   late final double maxValue = widget.maxValue;
-
-  final double initialAngle = 150 * pi / 180;
-  double previousAngle = 0.0;
-  bool isDragging = true;
-
-  @override
-  void initState() {
-    super.initState();
-    previousAngle = initialAngle;
-  }
+  bool isDragging = false;
 
   @override
   Widget build(BuildContext context) {
@@ -153,93 +145,123 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
       powerSourceStateProvider.getValue(widget.pin),
       widget.pin,
     );
-    void updateOuterValue(double angle) {
-      const startAngle = 155 * pi / 180;
-      const endAngle = 355 * pi / 180;
 
-      const totalAngle = endAngle - startAngle;
+    bool isTouchOnActiveArea(PointerDownEvent event) {
+      final RenderBox box = context.findRenderObject() as RenderBox;
+      final localPosition = box.globalToLocal(event.position);
+      final center = Offset(box.size.width / 2, box.size.height / 2);
+      final distance = (localPosition - center).distance;
+      const double minActiveRadius = 40.0;
+      const double maxActiveRadius = 100.0;
+
+      if (distance >= minActiveRadius && distance <= maxActiveRadius) {
+        return true;
+      }
+      return false;
+    }
+
+    void updateOuterValue(double angle) {
+      const startAngle = 3 * pi / 4;
+      const endAngle = startAngle + 6 * pi / 4;
+      const totalAngle = 6 * pi / 4;
+
+      double normalizedAngle = angle;
+
+      if (normalizedAngle < startAngle || normalizedAngle > endAngle) {
+        double distToStart = (normalizedAngle - startAngle).abs();
+        double distToEnd = (normalizedAngle - endAngle).abs();
+        if (distToStart < distToEnd) {
+          normalizedAngle = startAngle;
+        } else {
+          normalizedAngle = endAngle;
+        }
+      }
 
       final numSections = maxValue;
-
       final anglePerSection = totalAngle / numSections;
 
-      final section = ((angle - startAngle) / anglePerSection).round();
-
+      final section =
+          ((normalizedAngle - startAngle) / anglePerSection).round();
       final clampedSection = section.clamp(0, numSections);
 
-      setState(() async {
+      setState(() {
         outerValue = clampedSection.toDouble();
-        await powerSourceStateProvider.setValue(
-            powerSourceStateProvider.indexToValue(
-              outerValue,
-              widget.pin,
-            ),
-            widget.pin);
       });
+
+      powerSourceStateProvider.setValue(
+        powerSourceStateProvider.indexToValue(
+          outerValue,
+          widget.pin,
+        ),
+        widget.pin,
+      );
     }
 
     void updateAngle(Offset position, Size size) {
-      if (!isDragging) return;
-
       final center = Offset(size.width / 2, size.height / 2);
       final dx = position.dx - center.dx;
       final dy = position.dy - center.dy;
-      final distanceFromCenter = sqrt(dx * dx + dy * dy);
-
-      if (distanceFromCenter > size.width / 2) return;
 
       var angle = atan2(dy, dx);
-
       if (angle < 0) {
         angle += 2 * pi;
       }
 
-      const startAngle = 150 * pi / 180;
-      const endAngle = 360 * pi / 180;
-
-      if (angle >= startAngle && angle <= endAngle) {
-        if ((angle >= previousAngle && angle <= endAngle) ||
-            (angle < startAngle && previousAngle < startAngle) ||
-            (angle - previousAngle).abs() < pi) {
-          setState(() {
-            updateOuterValue(angle);
-          });
-        }
-        previousAngle = angle;
-      }
+      updateOuterValue(angle);
     }
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        CustomPaint(
-          painter: RadialDialPainter(
-            value: outerValue,
-            max: maxValue,
-            color: primaryRed,
+    return RawGestureDetector(
+      behavior: HitTestBehavior.opaque,
+      gestures: {
+        _SelectivePanGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+            _SelectivePanGestureRecognizer>(
+          () => _SelectivePanGestureRecognizer(
+            debugOwner: this,
+            shouldClaimGesture: isTouchOnActiveArea,
           ),
-          child: SizedBox(
-            width: 200,
-            height: 200,
-          ),
-        ),
-        CustomPaint(
-          painter: InnerDialPainter(),
-          child: SizedBox(
-            width: 180,
-            height: 180,
-          ),
-        ),
-        GestureDetector(
-          onPanUpdate: (details) {
-            if (isDragging) {
+          (_SelectivePanGestureRecognizer instance) {
+            instance.onStart = (details) {
+              FocusScope.of(context).unfocus();
+              isDragging = true;
               RenderBox renderBox = context.findRenderObject() as RenderBox;
-              Offset localPosition =
-                  renderBox.globalToLocal(details.globalPosition);
-              updateAngle(localPosition, renderBox.size);
-            }
+              updateAngle(renderBox.globalToLocal(details.globalPosition),
+                  renderBox.size);
+            };
+            instance.onUpdate = (details) {
+              if (isDragging) {
+                RenderBox renderBox = context.findRenderObject() as RenderBox;
+                updateAngle(renderBox.globalToLocal(details.globalPosition),
+                    renderBox.size);
+              }
+            };
+            instance.onEnd = (details) {
+              isDragging = false;
+            };
           },
-          child: CustomPaint(
+        ),
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          CustomPaint(
+            painter: RadialDialPainter(
+              value: outerValue,
+              max: maxValue,
+              color: primaryRed,
+            ),
+            child: SizedBox(
+              width: 200,
+              height: 200,
+            ),
+          ),
+          CustomPaint(
+            painter: InnerDialPainter(),
+            child: SizedBox(
+              width: 180,
+              height: 180,
+            ),
+          ),
+          CustomPaint(
             painter: InnerPointerPainter(
               value: outerValue,
               max: maxValue,
@@ -250,8 +272,28 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
               height: 140,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+}
+
+class _SelectivePanGestureRecognizer extends PanGestureRecognizer {
+  final bool Function(PointerDownEvent event) shouldClaimGesture;
+
+  _SelectivePanGestureRecognizer({
+    super.debugOwner,
+    required this.shouldClaimGesture,
+  });
+
+  @override
+  void addPointer(PointerDownEvent event) {
+    super.addPointer(event);
+
+    if (shouldClaimGesture(event)) {
+      resolve(GestureDisposition.accepted);
+    } else {
+      resolve(GestureDisposition.rejected);
+    }
   }
 }
