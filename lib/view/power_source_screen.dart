@@ -259,7 +259,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           ),
                           const SizedBox(height: 8),
                           TextField(
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             controller: TextEditingController(
                               text:
                                   '${provider.voltagePV1.toStringAsFixed(2)} V',
@@ -370,7 +371,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           ),
                           const SizedBox(height: 8),
                           TextField(
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             controller: TextEditingController(
                               text:
                                   '${provider.voltagePV2.toStringAsFixed(2)} V',
@@ -481,7 +483,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           ),
                           const SizedBox(height: 8),
                           TextField(
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             controller: TextEditingController(
                               text:
                                   '${provider.voltagePV3.toStringAsFixed(2)} V',
@@ -592,7 +595,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           ),
                           const SizedBox(height: 8),
                           TextField(
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             controller: TextEditingController(
                               text:
                                   '${provider.currentPCS.toStringAsFixed(2)} mA',
