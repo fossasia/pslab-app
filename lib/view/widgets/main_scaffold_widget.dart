@@ -194,15 +194,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     );
                   },
                 ),
-                IconButton(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: appBarContentColor,
-                  ),
-                  onPressed: () {
-                    /**/
-                  },
-                ),
+                ...(widget.actions ?? []),
               ],
       ),
       body: widget.body,
