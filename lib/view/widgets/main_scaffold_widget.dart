@@ -194,7 +194,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     );
                   },
                 ),
-                ...(widget.actions ?? []),
+                ...(widget.actions ?? const []),
               ],
       ),
       body: widget.body,
