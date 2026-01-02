@@ -26,14 +26,14 @@ class AppTheme {
     scaffoldBackgroundColor: Colors.black,
     colorSchemeSeed: Colors.black,
     checkboxTheme: const CheckboxThemeData(
-      side: BorderSide(color: Colors.black, width: 2),
+      side: BorderSide(color:Colors.white, width: 2),
     ),
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.selected)) {
           return radioButtonActiveColor;
         }
-        return Colors.black;
+        return Colors.white;
       }),
     ),
   );
