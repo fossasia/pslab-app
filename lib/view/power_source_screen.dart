@@ -262,8 +262,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
                             controller: TextEditingController(
-                              text:
-                                  '${provider.voltagePV1.toStringAsFixed(2)} V',
+                              text: provider.voltagePV1.toStringAsFixed(2),
                             ),
                             style: TextStyle(
                               fontSize: 18,
@@ -374,8 +373,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
                             controller: TextEditingController(
-                              text:
-                                  '${provider.voltagePV2.toStringAsFixed(2)} V',
+                              text: provider.voltagePV2.toStringAsFixed(2),
                             ),
                             textAlign: TextAlign.center,
                             onSubmitted: (value) async {
@@ -486,8 +484,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
                             controller: TextEditingController(
-                              text:
-                                  '${provider.voltagePV3.toStringAsFixed(2)} V',
+                              text: provider.voltagePV3.toStringAsFixed(2),
                             ),
                             textAlign: TextAlign.center,
                             onSubmitted: (value) async {
@@ -598,8 +595,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                             keyboardType: const TextInputType.numberWithOptions(
                                 decimal: true),
                             controller: TextEditingController(
-                              text:
-                                  '${provider.currentPCS.toStringAsFixed(2)} mA',
+                              text: provider.currentPCS.toStringAsFixed(2),
                             ),
                             style: TextStyle(
                               fontSize: 18,
