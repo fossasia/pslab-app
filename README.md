@@ -103,7 +103,7 @@ Sign up for the latest updates and test new features early by joining our beta p
   * [Generating and Observing Waveforms Using Pocket Science Lab](https://www.youtube.com/watch?v=Ua9_OCR4p8Y).
 
 ## Features
-|   **Feature**          | **Description**                                                   | **Status**         |
+|   ***Feature***        | **Description**                                                   | **Status**         |
 |------------------------|-------------------------------------------------------------------|--------------------|
 | Home Screen            | Show status and version of PSLab device                           | :heavy_check_mark: |
 | Instruments            | Exposes PSLab instruments like Oscilloscope, etc                  | :heavy_check_mark: |
