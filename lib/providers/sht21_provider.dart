@@ -1,49 +1,54 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import '../communication/sensors/sht21.dart';
 import '../communication/peripherals/i2c.dart';
+import '../communication/sensors/sht21.dart';
 
-class SHT21Provider with ChangeNotifier {
+class SHT21Provider extends ChangeNotifier {
   SHT21? _sensor;
-  bool isWorking = false;
-  double temp = 0.0;
-  double hum = 0.0;
+  Timer? _timer;
 
-  // Initialize the sensor with the I2C connection
-  Future<void> init(I2C i2c) async {
-    _sensor ??= SHT21(i2c);
+  // These are the public variables the Screen is trying to read
+  double temperature = 0.0;
+  double humidity = 0.0;
+
+  bool isRecording = false;
+
+  void init(I2C i2c) {
+    _sensor = SHT21(i2c);
   }
 
-  // Start the loop to read data
-  Future<void> startDataLog() async {
-    if (_sensor == null) return;
+  void startDataLog() {
+    if (_sensor == null || isRecording) return;
 
-    // FIX 1: Prevent multiple loops running at the same time
-    // If it's already working, stop here.
-    if (isWorking) return;
-
-    isWorking = true;
-    notifyListeners();
-
-    while (isWorking) {
+    isRecording = true;
+    _timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) async {
       try {
-        // FIX 2: Wrap I2C calls in try-catch to prevent crashing on error
-        temp = await _sensor!.getTemperature();
-        hum = await _sensor!.getHumidity();
+        // Fetch new values
+        double temp = await _sensor!.getTemperature();
+        double hum = await _sensor!.getHumidity();
+
+        // Update variables
+        temperature = temp;
+        humidity = hum;
+
+        // Notify the screen to update
         notifyListeners();
       } catch (e) {
-        // Log the error but don't crash the app
-        debugPrint("Error reading SHT21: $e");
+        if (kDebugMode) {
+          print("SHT21 Error: $e");
+        }
       }
-
-      // Wait 1 second before next read
-      await Future.delayed(const Duration(milliseconds: 1000));
-    }
+    });
   }
 
-  // Stop the loop
   void stopDataLog() {
-    isWorking = false;
-    notifyListeners();
+    _timer?.cancel();
+    isRecording = false;
+  }
+
+  @override
+  void dispose() {
+    stopDataLog();
+    super.dispose();
   }
 }

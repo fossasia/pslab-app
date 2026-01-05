@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
-import 'package:pslab/communication/peripherals/i2c.dart'; // Import I2C class
+import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import '../providers/sht21_provider.dart';
 
 class SHT21Screen extends StatefulWidget {
@@ -17,22 +18,19 @@ class _SHT21ScreenState extends State<SHT21Screen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // FIX: Check if widget is still on screen before using context
       if (!mounted) return;
 
-      final sht21Provider = Provider.of<SHT21Provider>(context, listen: false);
-
-      // Get the ScienceLab instance via the locator
+      final provider = Provider.of<SHT21Provider>(context, listen: false);
       final scienceLab = getIt<ScienceLab>();
+      final appLocalizations = AppLocalizations.of(context)!;
 
       if (scienceLab.isConnected()) {
-        // Create I2C helper and init
         I2C i2c = I2C(scienceLab.mPacketHandler);
-        sht21Provider.init(i2c);
-        sht21Provider.startDataLog();
+        provider.init(i2c);
+        provider.startDataLog();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Device not connected')),
+          SnackBar(content: Text(appLocalizations.notConnected)),
         );
       }
     });
@@ -40,7 +38,6 @@ class _SHT21ScreenState extends State<SHT21Screen> {
 
   @override
   void dispose() {
-    // Stop the data loop when leaving the screen
     if (mounted) {
       Provider.of<SHT21Provider>(context, listen: false).stopDataLog();
     }
@@ -49,6 +46,8 @@ class _SHT21ScreenState extends State<SHT21Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('SHT21 Sensor'),
@@ -60,8 +59,9 @@ class _SHT21ScreenState extends State<SHT21Screen> {
             child: Column(
               children: [
                 _buildSensorCard(
-                  title: "Temperature",
-                  value: provider.temp.toStringAsFixed(2),
+                  // Using the localized string we added earlier
+                  title: appLocalizations.temperature,
+                  value: provider.temperature.toStringAsFixed(2),
                   unit: "°C",
                   icon: Icons.thermostat,
                   color: Colors.redAccent,
@@ -69,7 +69,7 @@ class _SHT21ScreenState extends State<SHT21Screen> {
                 const SizedBox(height: 20),
                 _buildSensorCard(
                   title: "Humidity",
-                  value: provider.hum.toStringAsFixed(2),
+                  value: provider.humidity.toStringAsFixed(2),
                   unit: "%",
                   icon: Icons.water_drop,
                   color: Colors.blueAccent,
@@ -97,21 +97,23 @@ class _SHT21ScreenState extends State<SHT21Screen> {
           children: [
             Icon(icon, size: 40, color: color),
             const SizedBox(width: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(fontSize: 18, color: Colors.grey)),
-                Row(
-                  children: [
-                    Text(value,
-                        style: const TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    Text(unit, style: const TextStyle(fontSize: 20)),
-                  ],
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey)),
+                  Row(
+                    children: [
+                      Text(value,
+                          style: const TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 5),
+                      Text(unit, style: const TextStyle(fontSize: 20)),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

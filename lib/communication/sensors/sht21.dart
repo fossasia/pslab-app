@@ -2,56 +2,43 @@ import 'dart:async';
 import '../peripherals/i2c.dart';
 
 class SHT21 {
-  // SHT21 Default I2C Address
-  static const int addr = 0x40;
-
-  // The I2C helper instance (passed in from the main app)
   final I2C i2c;
+  static const int address = 0x40;
 
-  // Constructor: Ask for the I2C object instead of trying to create a new empty one
+  // Commands (Use Hold Master Mode for readBulk compatibility)
+  static const int tempHoldCmd = 0xE3;
+  static const int humidityHoldCmd = 0xE5;
+
   SHT21(this.i2c);
 
-  // Commands (No Hold Master Mode)
-  static const int _triggerTempMeasure = 0xF3;
-  static const int _triggerHumMeasure = 0xF5;
-
-  /// Read Temperature in Celsius
   Future<double> getTemperature() async {
-    // 1. Send the "Measure" command
-    // We use writeBulk because it sends the bytes directly to the address
-    await i2c.writeBulk(addr, [_triggerTempMeasure]);
+    // FIX: Use readBulk to handle the Write -> Restart -> Read sequence automatically.
+    // This avoids the argument errors with .write() and .read()
+    List<int> data = await i2c.readBulk(address, tempHoldCmd, 3);
 
-    // 2. Wait for measurement (Datasheet max ~85ms)
-    await Future.delayed(Duration(milliseconds: 100));
+    if (data.length < 2) {
+      throw Exception("Failed to read temperature from SHT21");
+    }
 
-    // 3. Read 3 bytes (MSB, LSB, Checksum)
-    // simpleRead automatically handles the "Start Condition" + "Read" logic
-    List<int> data = await i2c.simpleRead(addr, 3);
-
-    if (data.length < 2) return 0.0;
-
-    // 4. Combine bytes & clear status bits
+    // Mask out status bits (last 2 bits) using & 0xFC
     int rawValue = (data[0] << 8) | (data[1] & 0xFC);
 
-    // 5. Calculate Formula
+    // Formula: T = -46.85 + 175.72 * (S_T / 2^16)
     return -46.85 + 175.72 * (rawValue / 65536.0);
   }
 
-  /// Read Humidity in %RH
   Future<double> getHumidity() async {
-    // 1. Send Measure Command
-    await i2c.writeBulk(addr, [_triggerHumMeasure]);
+    // FIX: Use readBulk here too
+    List<int> data = await i2c.readBulk(address, humidityHoldCmd, 3);
 
-    // 2. Wait
-    await Future.delayed(Duration(milliseconds: 100));
+    if (data.length < 2) {
+      throw Exception("Failed to read humidity from SHT21");
+    }
 
-    // 3. Read
-    List<int> data = await i2c.simpleRead(addr, 3);
-    if (data.length < 2) return 0.0;
-
+    // Mask out status bits
     int rawValue = (data[0] << 8) | (data[1] & 0xFC);
 
-    // 4. Calculate
+    // Formula: RH = -6 + 125 * (S_RH / 2^16)
     return -6.0 + 125.0 * (rawValue / 65536.0);
   }
 }

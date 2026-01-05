@@ -527,5 +527,6 @@
     "light": "Light",
     "darkExperimental": "Dark (Experimental)",
     "system": "System",
-    "shareApp": "Share App"
+    "shareApp": "Share App",
+    "sht21Config": "SHT21 Configurations"
 }
