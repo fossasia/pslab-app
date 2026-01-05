@@ -17,18 +17,17 @@ class _SHT21ScreenState extends State<SHT21Screen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // FIX: Check if widget is still on screen before using context
+      if (!mounted) return;
+
       final sht21Provider = Provider.of<SHT21Provider>(context, listen: false);
 
-      // 1. Get the ScienceLab instance
+      // Get the ScienceLab instance via the locator
       final scienceLab = getIt<ScienceLab>();
 
-      // 2. Check connection
       if (scienceLab.isConnected()) {
-        // 3. MANUALLY create the I2C helper using the packet handler
-        // This fixes the "getter i2c not defined" error
+        // Create I2C helper and init
         I2C i2c = I2C(scienceLab.mPacketHandler);
-
-        // 4. Initialize the sensor provider
         sht21Provider.init(i2c);
         sht21Provider.startDataLog();
       } else {

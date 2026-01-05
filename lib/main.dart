@@ -43,11 +43,10 @@ void main() {
         ChangeNotifierProvider<BoardStateProvider>(
           create: (context) => getIt<BoardStateProvider>(),
         ),
-        // --- ADD THIS BLOCK BELOW ---
         ChangeNotifierProvider<SHT21Provider>(
-          create: (context) => SHT21Provider(),
+          // FIX: Use getIt to resolve the provider instead of 'SHT21Provider()'
+          create: (context) => getIt<SHT21Provider>(),
         ),
-        // ----------------------------
       ],
       child: const MyApp(),
     ),
