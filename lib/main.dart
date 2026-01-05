@@ -1,3 +1,4 @@
+import 'package:pslab/providers/sht21_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +43,11 @@ void main() {
         ChangeNotifierProvider<BoardStateProvider>(
           create: (context) => getIt<BoardStateProvider>(),
         ),
+        // --- ADD THIS BLOCK BELOW ---
+        ChangeNotifierProvider<SHT21Provider>(
+          create: (context) => SHT21Provider(),
+        ),
+        // ----------------------------
       ],
       child: const MyApp(),
     ),
