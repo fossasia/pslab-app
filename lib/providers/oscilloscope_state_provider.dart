@@ -12,6 +12,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/oscilloscope_axes_scale.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_config_provider.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../communication/analytics_class.dart';
 import '../communication/science_lab.dart';
@@ -97,6 +98,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   List<List<dynamic>> _recordedData = [];
   late int _timebaseDivisions;
   int get timebaseDivisions => _timebaseDivisions;
+  bool _wakelockEnabled = false;
 
   late double timebaseSlider;
 
@@ -242,6 +244,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
           if (_scienceLab.isConnected() && isXYPlotSelected) {
             await xyPlotTask(xyPlotAxis1, xyPlotAxis2);
+            if (!_wakelockEnabled) {
+              WakelockPlus.enable();
+              _wakelockEnabled = true;
+            }
           } else {
             if (_scienceLab.isConnected()) {
               if (isCH1Selected) {
@@ -259,8 +265,16 @@ class OscilloscopeStateProvider extends ChangeNotifier {
               channels.add('MIC');
             }
             if (channels.isNotEmpty) {
+              if (!_wakelockEnabled) {
+                WakelockPlus.enable();
+                _wakelockEnabled = true;
+              }
               await captureTask(channels);
             } else {
+              if (_wakelockEnabled) {
+                WakelockPlus.disable();
+                _wakelockEnabled = false;
+              }
               resetGraph();
               dataEntries = [];
             }
@@ -773,6 +787,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     _playbackData = null;
     _playbackIndex = 0;
 
+    if (_wakelockEnabled) {
+      WakelockPlus.disable();
+      _wakelockEnabled = false;
+    }
     dataEntries.clear();
     notifyListeners();
     onPlaybackEnd?.call();
@@ -786,6 +804,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     _playbackData = data;
     _playbackIndex = 1;
 
+    if (!_wakelockEnabled) {
+      WakelockPlus.enable();
+      _wakelockEnabled = true;
+    }
     _timer.cancel();
 
     dataEntries.clear();
@@ -797,6 +819,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (_isPlayingBack) {
       _isPlaybackPaused = true;
       _playbackTimer?.cancel();
+      if (_wakelockEnabled) {
+        WakelockPlus.disable();
+        _wakelockEnabled = false;
+      }
       notifyListeners();
     }
   }
@@ -804,6 +830,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   void resumePlayback() {
     if (_isPlayingBack && _isPlaybackPaused) {
       _isPlaybackPaused = false;
+      if (!_wakelockEnabled) {
+        WakelockPlus.enable();
+        _wakelockEnabled = true;
+      }
       _startPlaybackTimer();
       notifyListeners();
     }
@@ -1010,6 +1040,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     dataEntries = [];
     dataEntriesXYPlot = [];
     dataEntriesCurveFit = [];
+    notifyListeners();
   }
 
   @override
@@ -1017,6 +1048,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     _monitor = false;
     if (_timer.isActive) {
       _timer.cancel();
+    }
+    if (_wakelockEnabled) {
+      WakelockPlus.disable();
     }
     _audioJack.close();
     super.dispose();
