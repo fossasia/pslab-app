@@ -38,6 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         backgroundColor: primaryRed,
         title: Text(

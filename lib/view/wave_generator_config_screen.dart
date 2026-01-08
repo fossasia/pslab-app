@@ -39,6 +39,7 @@ class _WaveGeneratorConfigScreenState extends State<WaveGeneratorConfigScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         backgroundColor: primaryRed,
         title: Text(

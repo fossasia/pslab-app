@@ -50,6 +50,7 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         leading: Builder(builder: (context) {
           return IconButton(

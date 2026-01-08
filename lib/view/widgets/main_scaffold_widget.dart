@@ -88,6 +88,7 @@ class _MainScaffoldState extends State<MainScaffold>
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         leading: Builder(builder: (context) {
           return IconButton(

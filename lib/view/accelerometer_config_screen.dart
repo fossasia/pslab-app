@@ -51,6 +51,7 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         leading: Builder(builder: (context) {
           return IconButton(

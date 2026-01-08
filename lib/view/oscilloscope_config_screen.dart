@@ -39,6 +39,7 @@ class _OscilloscopeConfigScreenState extends State<OscilloscopeConfigScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         backgroundColor: primaryRed,
         title: Text(

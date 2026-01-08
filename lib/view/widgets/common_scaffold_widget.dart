@@ -50,6 +50,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         leading: Builder(builder: (context) {
           return IconButton(

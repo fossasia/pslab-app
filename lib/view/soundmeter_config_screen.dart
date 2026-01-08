@@ -34,6 +34,7 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         leading: Builder(builder: (context) {
           return IconButton(

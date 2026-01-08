@@ -45,6 +45,7 @@ class _MultimeterConfigScreenState extends State<MultimeterConfigScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         backgroundColor: primaryRed,
         title: Text(

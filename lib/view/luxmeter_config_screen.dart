@@ -51,6 +51,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
         ),
         backgroundColor: primaryRed,
         title: Text(
