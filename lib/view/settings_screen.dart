@@ -35,7 +35,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         iconTheme: IconThemeData(color: appBarContentColor),
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: appBarColor,
+          statusBarIconBrightness: Brightness.light,
+        ),
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.settings,

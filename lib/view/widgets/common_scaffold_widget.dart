@@ -47,7 +47,10 @@ class _CommonScaffoldState extends State<CommonScaffold> {
       backgroundColor: scaffoldBackgroundColor,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: appBarColor,
+          statusBarIconBrightness: Brightness.light,
+        ),
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {

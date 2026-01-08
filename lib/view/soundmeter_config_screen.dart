@@ -31,7 +31,10 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: appBarColor),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: appBarColor,
+          statusBarIconBrightness: Brightness.light,
+        ),
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {
