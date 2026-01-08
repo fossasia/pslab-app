@@ -21,13 +21,13 @@ class ApplicationsListItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(10),
       ),
       elevation: 2,
       child: Container(
         height: 225,
         decoration: BoxDecoration(
-            color: primaryRed, borderRadius: BorderRadius.circular(5)),
+            color: primaryRed, borderRadius: BorderRadius.circular(10)),
         child: Stack(
           children: [
             Positioned(

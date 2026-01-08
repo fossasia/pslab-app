@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
+import 'package:pslab/view/contributors_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -29,11 +30,20 @@ Widget buildContactList(List<Map<String, dynamic>> items) {
           style: const TextStyle(fontSize: 15),
         ),
         onTap: () async {
-          final uri = Uri.parse(item['url']);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri);
+          if (item['url'] == '') {
+            // Navigate to contributors screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ContributorsScreen()),
+            );
           } else {
-            debugPrint('Could not launch ${item['url']}');
+            final uri = Uri.parse(item['url']);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
+            } else {
+              debugPrint('Could not launch ${item['url']}');
+            }
           }
         },
       );
@@ -77,7 +87,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
     {
       'icon': const Icon(Icons.person),
       'title': appLocalizations.developersLink,
-      'url': appLocalizations.developers
+      'url': ''
     },
   ];
 

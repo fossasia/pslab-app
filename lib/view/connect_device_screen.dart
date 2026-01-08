@@ -51,7 +51,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     Center(
                       child: Container(
                         margin: const EdgeInsets.only(
-                            top: 20, bottom: 60, left: 40, right: 40),
+                            top: 20, bottom: 20, left: 40, right: 40),
                         child: Text(
                           provider.pslabIsConnected
                               ? '${appLocalizations.deviceConnected}\n\n${provider.pslabVersionID}'
@@ -138,8 +138,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                           children: [
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 backgroundColor: primaryRed,
                                 foregroundColor: buttonForegroundColor,
@@ -156,8 +157,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                             const SizedBox(width: 20),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 backgroundColor: primaryRed,
                                 foregroundColor: buttonForegroundColor,
