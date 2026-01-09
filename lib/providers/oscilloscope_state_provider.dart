@@ -1034,6 +1034,11 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   void resetGraph() {
+    if (dataEntries.isEmpty &&
+        dataEntriesXYPlot.isEmpty &&
+        dataEntriesCurveFit.isEmpty) {
+      return;
+    }
     oscilloscopeAxesScale.setYAxisScaleMax(oscilloscopeAxesScale.yAxisScale);
     oscilloscopeAxesScale.setYAxisScaleMin(-oscilloscopeAxesScale.yAxisScale);
     oscilloscopeAxesScale.setXAxisScale(timebase);
