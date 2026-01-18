@@ -26,9 +26,8 @@ List<String> instrumentIcons = [
   'assets/icons/gyroscope_logo.png',
   'assets/icons/thermometer_logo.png',
   'assets/icons/robotic_arm.png',
-  'assets/icons/tile_icon_gas.png',
-  'assets/icons/tile_icon_gas.png',
-  'assets/icons/tile_icon_gas.png',
+  'assets/icons/tile_icon_gas.png', // dust sensor (temporary icon)
+  'assets/icons/tile_icon_gas.png', // sound meter (temporary icon)
 ];
 
 List<String> instrumentNames = [
