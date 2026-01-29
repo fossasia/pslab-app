@@ -23,17 +23,22 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool _isConnectingWifi = false;
 
+  void _showSnackBar(String message, {Color? backgroundColor}) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
+  }
+
   Future<void> _connectWifi(BoardStateProvider provider) async {
     setState(() {
       _isConnectingWifi = true;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(appLocalizations.connectingToWifi),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    _showSnackBar(appLocalizations.connectingToWifi);
 
     try {
       await provider.initializeWiFi();
@@ -41,27 +46,21 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
       if (!mounted) return;
 
       if (provider.pslabIsConnected) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(appLocalizations.wifiConnectionSuccess),
-            backgroundColor: Colors.green,
-          ),
+        _showSnackBar(
+          appLocalizations.wifiConnectionSuccess,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(appLocalizations.wifiConnectionFailed),
-            backgroundColor: Colors.red,
-          ),
+        _showSnackBar(
+          appLocalizations.wifiConnectionFailed,
+          backgroundColor: Theme.of(context).colorScheme.error,
         );
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(appLocalizations.wifiConnectionFailed),
-          backgroundColor: Colors.red,
-        ),
+      _showSnackBar(
+        appLocalizations.wifiConnectionFailed,
+        backgroundColor: Theme.of(context).colorScheme.error,
       );
     } finally {
       if (mounted) {
@@ -73,11 +72,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
   }
 
   void _showBluetoothComingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(appLocalizations.bluetoothComingSoon),
-      ),
-    );
+    _showSnackBar(appLocalizations.bluetoothComingSoon);
   }
 
   @override
