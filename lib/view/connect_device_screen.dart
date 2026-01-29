@@ -21,6 +21,65 @@ class ConnectDeviceScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<ConnectDeviceScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  bool _isConnectingWifi = false;
+
+  Future<void> _connectWifi(BoardStateProvider provider) async {
+    setState(() {
+      _isConnectingWifi = true;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(appLocalizations.connectingToWifi),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    try {
+      await provider.initializeWiFi();
+
+      if (!mounted) return;
+
+      if (provider.pslabIsConnected) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(appLocalizations.wifiConnectionSuccess),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(appLocalizations.wifiConnectionFailed),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(appLocalizations.wifiConnectionFailed),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isConnectingWifi = false;
+        });
+      }
+    }
+  }
+
+  void _showBluetoothComingSoon() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(appLocalizations.bluetoothComingSoon),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
@@ -144,7 +203,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 backgroundColor: primaryRed,
                                 foregroundColor: buttonForegroundColor,
                               ),
-                              onPressed: () {},
+                              onPressed: _showBluetoothComingSoon,
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
@@ -162,15 +221,25 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 backgroundColor: primaryRed,
                                 foregroundColor: buttonForegroundColor,
                               ),
-                              onPressed: () async {
-                                await provider.initializeWiFi();
-                              },
+                              onPressed: _isConnectingWifi
+                                  ? null
+                                  : () => _connectWifi(provider),
                               child: Padding(
                                 padding: const EdgeInsets.all(10),
-                                child: Text(
-                                  appLocalizations.wifi.toUpperCase(),
-                                  style: TextStyle(color: buttonTextColor),
-                                ),
+                                child: _isConnectingWifi
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        appLocalizations.wifi.toUpperCase(),
+                                        style:
+                                            TextStyle(color: buttonTextColor),
+                                      ),
                               ),
                             ),
                           ],
