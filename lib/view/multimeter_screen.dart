@@ -61,7 +61,50 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
 
   List<Widget> _getMultimeterContent() {
     return [
+      InstrumentIntroText(text: appLocalizations.multimeterIntro),
       InstrumentImage(imagePath: widget.multimeterCircuit),
+      InstrumentIntroText(
+        text: appLocalizations.resistanceCapacitanceCaption,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.resistanceCapacitanceBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.resistanceCapacitanceBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.resistanceCapacitanceBulletPoint3,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.resistanceCapacitanceBulletPoint4,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.voltageMeasurementCaption,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.voltageMeasurementBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.voltageMeasurementBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.voltageMeasurementBulletPoint3,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.frequencyPulseCaption,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.frequencyPulseBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.frequencyPulseBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.frequencyPulseBulletPoint3,
+      ),
     ];
   }
 

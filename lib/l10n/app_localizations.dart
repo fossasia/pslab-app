@@ -682,6 +682,30 @@ abstract class AppLocalizations {
   /// **'Wi-Fi'**
   String get wifi;
 
+  /// No description provided for @bluetoothComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth connection coming soon'**
+  String get bluetoothComingSoon;
+
+  /// No description provided for @connectingToWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to PSLab WiFi...'**
+  String get connectingToWifi;
+
+  /// No description provided for @wifiConnectionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully connected to PSLab via WiFi'**
+  String get wifiConnectionSuccess;
+
+  /// No description provided for @wifiConnectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect. Make sure you are connected to PSLab WiFi network.'**
+  String get wifiConnectionFailed;
+
   /// No description provided for @whatIsPslab.
   ///
   /// In en, this message translates to:
@@ -3255,6 +3279,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share App'**
   String get shareApp;
+
+  /// No description provided for @multimeterIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The multimeter can be used to measure electrical quantities such as resistance, capacitance, voltage, frequency and pulse count using the PSLab device.'**
+  String get multimeterIntro;
+
+  /// No description provided for @resistanceCapacitanceCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To measure Resistance or Capacitance:'**
+  String get resistanceCapacitanceCaption;
+
+  /// No description provided for @resistanceCapacitanceBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the SEN pin to the resistor or capacitor terminal as shown in the figure.'**
+  String get resistanceCapacitanceBulletPoint1;
+
+  /// No description provided for @resistanceCapacitanceBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the CAP pin to the other terminal of the component.'**
+  String get resistanceCapacitanceBulletPoint2;
+
+  /// No description provided for @resistanceCapacitanceBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure the component is not connected to any external power source.'**
+  String get resistanceCapacitanceBulletPoint3;
+
+  /// No description provided for @resistanceCapacitanceBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the Resistance or Capacitance mode in the Multimeter panel.'**
+  String get resistanceCapacitanceBulletPoint4;
+
+  /// No description provided for @voltageMeasurementCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To measure Voltage:'**
+  String get voltageMeasurementCaption;
+
+  /// No description provided for @voltageMeasurementBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the power source output (PV1, PV2 or PV3) to the channel pins CH1 or CH2 as shown in the figure.'**
+  String get voltageMeasurementBulletPoint1;
+
+  /// No description provided for @voltageMeasurementBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the ground of the power source to the GND pin.'**
+  String get voltageMeasurementBulletPoint2;
+
+  /// No description provided for @voltageMeasurementBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the Voltage mode in the Multimeter.'**
+  String get voltageMeasurementBulletPoint3;
+
+  /// No description provided for @frequencyPulseCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To measure Frequency or Count Pulses:'**
+  String get frequencyPulseCaption;
+
+  /// No description provided for @frequencyPulseBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the signal source to any one of the digital input pins ID1, ID2, ID3 or ID4.'**
+  String get frequencyPulseBulletPoint1;
+
+  /// No description provided for @frequencyPulseBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure the signal ground is connected to GND.'**
+  String get frequencyPulseBulletPoint2;
+
+  /// No description provided for @frequencyPulseBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Frequency or Pulse Count mode in the Multimeter panel.'**
+  String get frequencyPulseBulletPoint3;
+
+  /// No description provided for @logicAnalyzerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The Logic Analyzer is used to capture and analyze digital signals. It helps in understanding the time relationship between multiple digital pulses such as square waves, clock signals and protocol signals.'**
+  String get logicAnalyzerIntro;
+
+  /// No description provided for @logicAnalyzerWaveGenCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To generate digital pulses for analysis:'**
+  String get logicAnalyzerWaveGenCaption;
+
+  /// No description provided for @logicAnalyzerWaveGenBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the Wave Generator instrument from the PSLab app.'**
+  String get logicAnalyzerWaveGenBulletPoint1;
+
+  /// No description provided for @logicAnalyzerWaveGenBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch the mode to PWM using the MODE button.'**
+  String get logicAnalyzerWaveGenBulletPoint2;
+
+  /// No description provided for @logicAnalyzerWaveGenBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Select one or more SQ pins (SQ1, SQ2, SQ3 or SQ4).'**
+  String get logicAnalyzerWaveGenBulletPoint3;
+
+  /// No description provided for @logicAnalyzerWaveGenBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set frequency and duty cycle for each selected pin.'**
+  String get logicAnalyzerWaveGenBulletPoint4;
+
+  /// No description provided for @logicAnalyzerWaveGenBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep duty cycles different for better understanding of timing.'**
+  String get logicAnalyzerWaveGenBulletPoint5;
+
+  /// No description provided for @logicAnalyzerConnectionCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To connect signals to Logic Analyzer:'**
+  String get logicAnalyzerConnectionCaption;
+
+  /// No description provided for @logicAnalyzerConnectionBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect the square wave output pins (SQ1, SQ2, etc.) to Logic Analyzer input pins (ID1, ID2, ID3 or ID4).'**
+  String get logicAnalyzerConnectionBulletPoint1;
+
+  /// No description provided for @logicAnalyzerConnectionBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure a common ground connection between the signal source and PSLab.'**
+  String get logicAnalyzerConnectionBulletPoint2;
+
+  /// No description provided for @logicAnalyzerConnectionBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain the same pin selection throughout the analysis.'**
+  String get logicAnalyzerConnectionBulletPoint3;
+
+  /// No description provided for @logicAnalyzerUsageCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To analyze digital signals:'**
+  String get logicAnalyzerUsageCaption;
+
+  /// No description provided for @logicAnalyzerUsageBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the Logic Analyzer instrument from the instrument list.'**
+  String get logicAnalyzerUsageBulletPoint1;
+
+  /// No description provided for @logicAnalyzerUsageBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the required channel mode (Single, Two, Three or Four Channel).'**
+  String get logicAnalyzerUsageBulletPoint2;
+
+  /// No description provided for @logicAnalyzerUsageBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign ID pins to each channel from the Channel Selection area.'**
+  String get logicAnalyzerUsageBulletPoint3;
+
+  /// No description provided for @logicAnalyzerUsageBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the edge detection mode for each channel.'**
+  String get logicAnalyzerUsageBulletPoint4;
+
+  /// No description provided for @logicAnalyzerUsageBulletPoint5.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the Analyze button to fetch and plot the digital signals.'**
+  String get logicAnalyzerUsageBulletPoint5;
+
+  /// No description provided for @logicAnalyzerEdgeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Edge selection options:'**
+  String get logicAnalyzerEdgeCaption;
+
+  /// No description provided for @logicAnalyzerEdgeBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Edge – Plots all rising and falling edges.'**
+  String get logicAnalyzerEdgeBulletPoint1;
+
+  /// No description provided for @logicAnalyzerEdgeBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising Edges – Plots only transitions from LOW to HIGH.'**
+  String get logicAnalyzerEdgeBulletPoint2;
+
+  /// No description provided for @logicAnalyzerEdgeBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Falling Edges – Plots only transitions from HIGH to LOW.'**
+  String get logicAnalyzerEdgeBulletPoint3;
+
+  /// No description provided for @logicAnalyzerEdgeBulletPoint4.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled – Ignores the selected channel.'**
+  String get logicAnalyzerEdgeBulletPoint4;
+
+  /// No description provided for @logicAnalyzerMeasurementCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'To measure time difference:'**
+  String get logicAnalyzerMeasurementCaption;
+
+  /// No description provided for @logicAnalyzerMeasurementBulletPoint1.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on any rising or falling edge on the plotted waveform.'**
+  String get logicAnalyzerMeasurementBulletPoint1;
+
+  /// No description provided for @logicAnalyzerMeasurementBulletPoint2.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the axis indicator to read the corresponding timestamp.'**
+  String get logicAnalyzerMeasurementBulletPoint2;
+
+  /// No description provided for @logicAnalyzerMeasurementBulletPoint3.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare timestamps between channels to calculate time intervals.'**
+  String get logicAnalyzerMeasurementBulletPoint3;
 }
 
 class _AppLocalizationsDelegate

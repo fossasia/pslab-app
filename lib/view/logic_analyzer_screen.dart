@@ -41,7 +41,92 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
 
   List<Widget> _getLogicAnalyzerContent() {
     return [
-      InstrumentImage(imagePath: widget.logicAnalyzerCircuit),
+      InstrumentIntroText(
+        text: appLocalizations.logicAnalyzerIntro,
+      ),
+      InstrumentImage(
+        imagePath: widget.logicAnalyzerCircuit,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.logicAnalyzerWaveGenCaption,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerWaveGenBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerWaveGenBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerWaveGenBulletPoint3,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerWaveGenBulletPoint4,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerWaveGenBulletPoint5,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.logicAnalyzerConnectionCaption,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerConnectionBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerConnectionBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerConnectionBulletPoint3,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.logicAnalyzerUsageCaption,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerUsageBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerUsageBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerUsageBulletPoint3,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerUsageBulletPoint4,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerUsageBulletPoint5,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.logicAnalyzerEdgeCaption,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerEdgeBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerEdgeBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerEdgeBulletPoint3,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerEdgeBulletPoint4,
+      ),
+      InstrumentIntroText(
+        text: appLocalizations.logicAnalyzerMeasurementCaption,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerMeasurementBulletPoint1,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerMeasurementBulletPoint2,
+      ),
+      InstrumentBulletPoint(
+        text: appLocalizations.logicAnalyzerMeasurementBulletPoint3,
+      ),
     ];
   }
 
