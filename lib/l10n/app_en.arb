@@ -486,6 +486,7 @@
     "holdPosition" : "Hold your position and let the reading stabilize",
     "followInstructions" : "Follow the on-screen instructions to set up your experiment.",
     "gesture" : "Gesture",
+    "colorProximityAmbientLight": "Color, Proximity and Ambient Light",
     "blueLabel" : "Blue",
     "greenLabel" : "Green",
     "proxLabel" : "Prox",

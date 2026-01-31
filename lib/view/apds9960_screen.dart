@@ -19,15 +19,16 @@ class APDS9960Screen extends StatefulWidget {
 }
 
 class _APDS9960ScreenState extends State<APDS9960Screen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  static const int _colorProximityMode = 0;
+
   I2C? _i2c;
   ScienceLab? _scienceLab;
-  late APDS9960Provider _provider;
+  bool _isInitialized = false;
 
-  final List<String> _modeOptions = [
-    'Color, Proximity and Ambient Light',
-    'Gesture'
-  ];
+  List<String> _modeOptions(AppLocalizations appLocalizations) => [
+        appLocalizations.colorProximityAmbientLight,
+        appLocalizations.gesture,
+      ];
 
   @override
   void initState() {
@@ -35,7 +36,7 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
     _initializeScienceLab();
   }
 
-  void _initializeScienceLab() async {
+  void _initializeScienceLab() {
     try {
       _scienceLab = getIt.get<ScienceLab>();
       if (_scienceLab != null && _scienceLab!.isConnected()) {
@@ -44,52 +45,52 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
     } catch (e) {
       logger.e('Error initializing ScienceLab: $e');
     }
-  }
-
-  void _showSensorErrorSnackbar(String message) {
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
-          backgroundColor: snackBarBackgroundColor,
-          duration: const Duration(milliseconds: 500),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      setState(() {
+        _isInitialized = true;
+      });
     }
   }
 
-  void _showSuccessSnackbar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
-          backgroundColor: snackBarBackgroundColor,
-          duration: const Duration(milliseconds: 500),
-          behavior: SnackBarBehavior.floating,
+  void _showSnackbar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: snackBarContentColor),
         ),
-      );
-    }
+        backgroundColor: snackBarBackgroundColor,
+        duration: const Duration(milliseconds: 2000),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
+
+  void _showSensorErrorSnackbar(String message) => _showSnackbar(message);
+
+  void _showSuccessSnackbar(String message) => _showSnackbar(message);
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = AppLocalizations.of(context)!;
+
+    if (!_isInitialized) {
+      return CommonScaffold(
+        title: 'APDS9960',
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return ChangeNotifierProvider(
-      create: (context) {
-        _provider = APDS9960Provider()
-          ..initializeSensors(
-            onError: _showSensorErrorSnackbar,
-            i2c: _i2c,
-            scienceLab: _scienceLab,
-          );
-        return _provider;
-      },
+      create: (context) => APDS9960Provider()
+        ..initializeSensors(
+          onError: _showSensorErrorSnackbar,
+          i2c: _i2c,
+          scienceLab: _scienceLab,
+        ),
       child: Consumer<APDS9960Provider>(
         builder: (context, provider, child) {
           return CommonScaffold(
@@ -102,10 +103,10 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildConfigureSection(provider),
+                        _buildConfigureSection(provider, appLocalizations),
                         const SizedBox(height: 24),
-                        _buildRawDataSection(provider),
-                        if (provider.mode == 0) ...[
+                        _buildRawDataSection(provider, appLocalizations),
+                        if (provider.mode == _colorProximityMode) ...[
                           const SizedBox(height: 24),
                           SensorChartWidget(
                             title:
@@ -159,7 +160,8 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
     );
   }
 
-  Widget _buildConfigureSection(APDS9960Provider provider) {
+  Widget _buildConfigureSection(
+      APDS9960Provider provider, AppLocalizations appLocalizations) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -222,7 +224,10 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
                       value: provider.mode,
                       isExpanded: true,
                       underline: const SizedBox(),
-                      items: _modeOptions.asMap().entries.map((entry) {
+                      items: _modeOptions(appLocalizations)
+                          .asMap()
+                          .entries
+                          .map((entry) {
                         return DropdownMenuItem<int>(
                           value: entry.key,
                           child: Text(
@@ -250,7 +255,8 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
     );
   }
 
-  Widget _buildRawDataSection(APDS9960Provider provider) {
+  Widget _buildRawDataSection(
+      APDS9960Provider provider, AppLocalizations appLocalizations) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -302,72 +308,58 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(24),
-            child: provider.mode == 0
-                ? _buildColorProximityData(provider)
-                : _buildGestureOnlyData(provider),
+            child: provider.mode == _colorProximityMode
+                ? _buildColorProximityData(provider, appLocalizations)
+                : _buildGestureOnlyData(provider, appLocalizations),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildColorProximityData(APDS9960Provider provider) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildColorProximityData(
+      APDS9960Provider provider, AppLocalizations appLocalizations) {
+    return Column(
       children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                      child: _buildDataCard(
-                          appLocalizations.redLabel, provider.red.toString())),
-                  const SizedBox(width: 16),
-                  Expanded(
-                      child: _buildDataCard(appLocalizations.proxLabel,
-                          provider.proximity.toString())),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                      child: _buildDataCard(appLocalizations.greenLabel,
-                          provider.green.toString())),
-                  const SizedBox(width: 16),
-                  const Expanded(child: SizedBox()),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                      child: _buildDataCard(appLocalizations.blueLabel,
-                          provider.blue.toString())),
-                  const SizedBox(width: 16),
-                  const Expanded(child: SizedBox()),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                      child: _buildDataCard(
-                          appLocalizations.clear, provider.clear.toString())),
-                  const SizedBox(width: 16),
-                  const Expanded(child: SizedBox()),
-                ],
-              ),
-            ],
-          ),
+        Row(
+          children: [
+            Expanded(
+                child: _buildDataCard(
+                    appLocalizations.redLabel, provider.red.toString())),
+            const SizedBox(width: 16),
+            Expanded(
+                child: _buildDataCard(
+                    appLocalizations.proxLabel, provider.proximity.toString())),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+                child: _buildDataCard(
+                    appLocalizations.greenLabel, provider.green.toString())),
+            const SizedBox(width: 16),
+            Expanded(
+                child: _buildDataCard(
+                    appLocalizations.blueLabel, provider.blue.toString())),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+                child: _buildDataCard(
+                    appLocalizations.clear, provider.clear.toString())),
+            const SizedBox(width: 16),
+            const Expanded(child: SizedBox()),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildGestureOnlyData(APDS9960Provider provider) {
+  Widget _buildGestureOnlyData(
+      APDS9960Provider provider, AppLocalizations appLocalizations) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -419,11 +411,5 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _provider.dispose();
-    super.dispose();
   }
 }
