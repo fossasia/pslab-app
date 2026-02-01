@@ -565,7 +565,7 @@
     "logicAnalyzerMeasurementCaption": "To measure time difference:",
     "logicAnalyzerMeasurementBulletPoint1": "Tap on any rising or falling edge on the plotted waveform.",
     "logicAnalyzerMeasurementBulletPoint2": "Use the axis indicator to read the corresponding timestamp.",
-    "logicAnalyzerMeasurementBulletPoint3": "Compare timestamps between channels to calculate time intervals."
+    "logicAnalyzerMeasurementBulletPoint3": "Compare timestamps between channels to calculate time intervals.",
     "sht21Config": "SHT21 Configurations",
     "sht21": "SHT21",
     "humidity": "Humidity",
