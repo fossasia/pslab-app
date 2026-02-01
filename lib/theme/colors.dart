@@ -85,6 +85,7 @@ Color sensorControlIconColor = Colors.grey.shade600;
 List<Color> bmp180ChartColors = [Colors.blue, Colors.green, Colors.red];
 Color chartHintTextColor = Colors.yellow;
 List<Color> apds9960ChartColors = [Colors.blue, Colors.yellow];
+List<Color> sht21ChartColors = [Colors.redAccent, Colors.blueAccent];
 Color buttonEnabledColor = primaryRed;
 Color buttonDisabledColor = Color.fromARGB(255, 240, 162, 162);
 Color waveGeneratorPropTextColor = Colors.deepOrange;

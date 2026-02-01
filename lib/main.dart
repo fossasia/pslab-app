@@ -44,7 +44,6 @@ void main() {
           create: (context) => getIt<BoardStateProvider>(),
         ),
         ChangeNotifierProvider<SHT21Provider>(
-          // FIX: Use getIt to resolve the provider instead of 'SHT21Provider()'
           create: (context) => getIt<SHT21Provider>(),
         ),
       ],

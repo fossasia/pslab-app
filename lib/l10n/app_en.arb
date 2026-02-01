@@ -528,5 +528,8 @@
     "darkExperimental": "Dark (Experimental)",
     "system": "System",
     "shareApp": "Share App",
-    "sht21Config": "SHT21 Configurations"
+    "sht21Config": "SHT21 Configurations",
+    "sht21": "SHT21",
+    "humidity": "Humidity",
+    "humidityUnitLabel": "%"
 }
