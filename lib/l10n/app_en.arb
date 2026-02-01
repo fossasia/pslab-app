@@ -89,11 +89,9 @@
     "step1ConnectMicroUsb": "1. Connect a USB cable to PSLab.",
     "step2ConnectOtg": "2. Connect the other end of the USB cable to an OTG.",
     "step3ConnectPhone": "3. Connect the OTG to the phone.",
-    "step4ConnectWireless": "4. PSLab can also be connected wirelessly (Bluetooth or Wi-Fi) if the option is present.",
-    "bluetoothWifiConnection": "Connect using Bluetooth or Wi-Fi",
-    "bluetooth": "Bluetooth",
+    "step4ConnectWireless": "4. PSLab can also be connected wirelessly via Wi-Fi if the option is present.",
+    "wifiConnection": "Connect using Wi-Fi",
     "wifi": "Wi-Fi",
-    "bluetoothComingSoon": "Bluetooth connection coming soon",
     "connectingToWifi": "Connecting to PSLab WiFi...",
     "wifiConnectionSuccess": "Successfully connected to PSLab via WiFi",
     "wifiConnectionFailed": "Failed to connect. Make sure you are connected to PSLab WiFi network.",
@@ -224,7 +222,7 @@
     "faqDownloadAndroidAppLinkText": "Playstore",
     "faqDownloadAndroidAppLinkUrl": "https://play.google.com/store/apps/details?id=io.pslab&hl=en_IN",
     "faqDownloadDesktopAppAnswer": "We are developing a desktop app for Windows, Linux and Mac in our desktop Git repository. You can find it in the install branch of the project here. The app is still under development. We are using technologies like Electron and Python, that work on all platforms. However, to make the final installer work everywhere requires some tweaks and improvements here and there. So, please expect some glitches. You can use the tracker in the repository to submit issues, bugs and feature requests.",
-    "faqHowToConnectAnswer": "To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip or a Bluetooth chip and communicate through these gateways using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.",
+    "faqHowToConnectAnswer": "To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip and communicate through this gateway using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.",
     "faqReportBugAnswer": "We have issue trackers in all our projects. They are currently hosted on GitHub. In order to submit a bug or feature request you need to login to the service.",
     "faqReportBugLinkText": "A list of our PSLab repositories is here",
     "faqReportBugLinkUrl": "https://github.com/fossasia",
@@ -568,5 +566,8 @@
     "logicAnalyzerMeasurementBulletPoint1": "Tap on any rising or falling edge on the plotted waveform.",
     "logicAnalyzerMeasurementBulletPoint2": "Use the axis indicator to read the corresponding timestamp.",
     "logicAnalyzerMeasurementBulletPoint3": "Compare timestamps between channels to calculate time intervals."
-
+    "sht21Config": "SHT21 Configurations",
+    "sht21": "SHT21",
+    "humidity": "Humidity",
+    "humidityUnitLabel": "%"
 }
