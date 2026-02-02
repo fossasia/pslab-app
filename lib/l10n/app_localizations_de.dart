@@ -316,6 +316,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get wifi => 'Wi-Fi';
 
   @override
+  String get bluetoothComingSoon => 'Bluetooth connection coming soon';
+
+  @override
+  String get connectingToWifi => 'Connecting to PSLab WiFi...';
+
+  @override
+  String get wifiConnectionSuccess =>
+      'Successfully connected to PSLab via WiFi';
+
+  @override
+  String get wifiConnectionFailed =>
+      'Failed to connect. Make sure you are connected to PSLab WiFi network.';
+
+  @override
   String get whatIsPslab => 'What is PSLab Device?';
 
   @override
@@ -1696,4 +1710,159 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get shareApp => 'Share App';
+
+  @override
+  String get multimeterIntro =>
+      'The multimeter can be used to measure electrical quantities such as resistance, capacitance, voltage, frequency and pulse count using the PSLab device.';
+
+  @override
+  String get resistanceCapacitanceCaption =>
+      'To measure Resistance or Capacitance:';
+
+  @override
+  String get resistanceCapacitanceBulletPoint1 =>
+      'Connect the SEN pin to the resistor or capacitor terminal as shown in the figure.';
+
+  @override
+  String get resistanceCapacitanceBulletPoint2 =>
+      'Connect the CAP pin to the other terminal of the component.';
+
+  @override
+  String get resistanceCapacitanceBulletPoint3 =>
+      'Ensure the component is not connected to any external power source.';
+
+  @override
+  String get resistanceCapacitanceBulletPoint4 =>
+      'Select the Resistance or Capacitance mode in the Multimeter panel.';
+
+  @override
+  String get voltageMeasurementCaption => 'To measure Voltage:';
+
+  @override
+  String get voltageMeasurementBulletPoint1 =>
+      'Connect the power source output (PV1, PV2 or PV3) to the channel pins CH1 or CH2 as shown in the figure.';
+
+  @override
+  String get voltageMeasurementBulletPoint2 =>
+      'Connect the ground of the power source to the GND pin.';
+
+  @override
+  String get voltageMeasurementBulletPoint3 =>
+      'Select the Voltage mode in the Multimeter.';
+
+  @override
+  String get frequencyPulseCaption => 'To measure Frequency or Count Pulses:';
+
+  @override
+  String get frequencyPulseBulletPoint1 =>
+      'Connect the signal source to any one of the digital input pins ID1, ID2, ID3 or ID4.';
+
+  @override
+  String get frequencyPulseBulletPoint2 =>
+      'Ensure the signal ground is connected to GND.';
+
+  @override
+  String get frequencyPulseBulletPoint3 =>
+      'Select Frequency or Pulse Count mode in the Multimeter panel.';
+
+  @override
+  String get logicAnalyzerIntro =>
+      'The Logic Analyzer is used to capture and analyze digital signals. It helps in understanding the time relationship between multiple digital pulses such as square waves, clock signals and protocol signals.';
+
+  @override
+  String get logicAnalyzerWaveGenCaption =>
+      'To generate digital pulses for analysis:';
+
+  @override
+  String get logicAnalyzerWaveGenBulletPoint1 =>
+      'Open the Wave Generator instrument from the PSLab app.';
+
+  @override
+  String get logicAnalyzerWaveGenBulletPoint2 =>
+      'Switch the mode to PWM using the MODE button.';
+
+  @override
+  String get logicAnalyzerWaveGenBulletPoint3 =>
+      'Select one or more SQ pins (SQ1, SQ2, SQ3 or SQ4).';
+
+  @override
+  String get logicAnalyzerWaveGenBulletPoint4 =>
+      'Set frequency and duty cycle for each selected pin.';
+
+  @override
+  String get logicAnalyzerWaveGenBulletPoint5 =>
+      'Keep duty cycles different for better understanding of timing.';
+
+  @override
+  String get logicAnalyzerConnectionCaption =>
+      'To connect signals to Logic Analyzer:';
+
+  @override
+  String get logicAnalyzerConnectionBulletPoint1 =>
+      'Connect the square wave output pins (SQ1, SQ2, etc.) to Logic Analyzer input pins (ID1, ID2, ID3 or ID4).';
+
+  @override
+  String get logicAnalyzerConnectionBulletPoint2 =>
+      'Ensure a common ground connection between the signal source and PSLab.';
+
+  @override
+  String get logicAnalyzerConnectionBulletPoint3 =>
+      'Maintain the same pin selection throughout the analysis.';
+
+  @override
+  String get logicAnalyzerUsageCaption => 'To analyze digital signals:';
+
+  @override
+  String get logicAnalyzerUsageBulletPoint1 =>
+      'Open the Logic Analyzer instrument from the instrument list.';
+
+  @override
+  String get logicAnalyzerUsageBulletPoint2 =>
+      'Select the required channel mode (Single, Two, Three or Four Channel).';
+
+  @override
+  String get logicAnalyzerUsageBulletPoint3 =>
+      'Assign ID pins to each channel from the Channel Selection area.';
+
+  @override
+  String get logicAnalyzerUsageBulletPoint4 =>
+      'Choose the edge detection mode for each channel.';
+
+  @override
+  String get logicAnalyzerUsageBulletPoint5 =>
+      'Press the Analyze button to fetch and plot the digital signals.';
+
+  @override
+  String get logicAnalyzerEdgeCaption => 'Edge selection options:';
+
+  @override
+  String get logicAnalyzerEdgeBulletPoint1 =>
+      'Every Edge – Plots all rising and falling edges.';
+
+  @override
+  String get logicAnalyzerEdgeBulletPoint2 =>
+      'Rising Edges – Plots only transitions from LOW to HIGH.';
+
+  @override
+  String get logicAnalyzerEdgeBulletPoint3 =>
+      'Falling Edges – Plots only transitions from HIGH to LOW.';
+
+  @override
+  String get logicAnalyzerEdgeBulletPoint4 =>
+      'Disabled – Ignores the selected channel.';
+
+  @override
+  String get logicAnalyzerMeasurementCaption => 'To measure time difference:';
+
+  @override
+  String get logicAnalyzerMeasurementBulletPoint1 =>
+      'Tap on any rising or falling edge on the plotted waveform.';
+
+  @override
+  String get logicAnalyzerMeasurementBulletPoint2 =>
+      'Use the axis indicator to read the corresponding timestamp.';
+
+  @override
+  String get logicAnalyzerMeasurementBulletPoint3 =>
+      'Compare timestamps between channels to calculate time intervals.';
 }

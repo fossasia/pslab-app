@@ -1,3 +1,4 @@
+import 'package:pslab/view/sht21_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/bmp180_screen.dart';
@@ -230,11 +231,14 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'APDS9960':
         targetScreen = const APDS9960Screen();
+        break;
       case 'VL53L0X':
         targetScreen = const VL53L0XScreen();
         break;
       case 'CCS811':
         targetScreen = const CCS811Screen();
+      case 'SHT21':
+        targetScreen = const SHT21Screen();
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(
