@@ -49,8 +49,7 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                             onChanged: (bool? value) {
                               setState(
                                 () {
-                                  oscilloscopeStateProvider
-                                      .isFourierTransformSelected = value!;
+                                  oscilloscopeStateProvider.setFourierTransform(value!);
                                 },
                               );
                             },
