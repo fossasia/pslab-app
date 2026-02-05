@@ -10,6 +10,8 @@ const multimeterScreenTitleKey = 'multimeter_screen_title';
 const waveGeneratorScreenTitleKey = 'wave_generator_screen_title';
 const oscilloscopeScreenTitleKey = 'oscilloscope_screen_title';
 
+const double narrowWidthBreakpoint = 600.0;
+
 AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
 List<String> instrumentIcons = [

@@ -25,11 +25,14 @@ class ApplicationsListItem extends StatelessWidget {
       ),
       elevation: 2,
       child: Container(
-        height: 225,
         decoration: BoxDecoration(
             color: primaryRed, borderRadius: BorderRadius.circular(5)),
         child: Stack(
           children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 225),
+              child: const SizedBox(width: double.infinity),
+            ),
             Positioned(
               top: 0,
               bottom: 10,
@@ -92,6 +95,8 @@ class ApplicationsListItem extends StatelessWidget {
                       color: instrumentCardContentColor,
                     ),
                     textAlign: TextAlign.start,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     description,
@@ -100,6 +105,8 @@ class ApplicationsListItem extends StatelessWidget {
                       color: instrumentCardContentColor,
                     ),
                     textAlign: TextAlign.start,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

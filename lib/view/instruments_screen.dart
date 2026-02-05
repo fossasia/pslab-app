@@ -192,7 +192,8 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                 behavior: const ScrollBehavior(),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    return constraints.maxWidth < constraints.maxHeight
+                    return constraints.maxWidth < narrowWidthBreakpoint ||
+                            constraints.maxWidth < constraints.maxHeight
                         ? ListView.builder(
                             itemCount: _filteredIndices.length,
                             itemBuilder: (context, index) {
@@ -215,7 +216,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 2.5,
+                              childAspectRatio: 1.2,
                             ),
                             itemCount: _filteredIndices.length,
                             itemBuilder: (context, index) {
