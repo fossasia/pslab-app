@@ -80,6 +80,7 @@
     "knobMarkerCh2": "CH2",
     "voltage": "Voltage",
     "unitHz": "Hz",
+    "cannotMeasure": "Cannot measure!",
     "countPulse": "Count Pulse",
     "measure": "Measure",
     "connectDevice": "Connect Device",

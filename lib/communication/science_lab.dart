@@ -39,6 +39,7 @@ class ScienceLab {
   List<DigitalChannel> dChannels = [];
   Map<String, DACChannel> dacChannels = {};
   static final double capacitorDischargeVoltage = 0.01 * 3.3;
+  static const double frequencyError = -1;
 
   late CommunicationHandler mCommunicationHandler;
   late SocketClient mSocketClient;
@@ -582,7 +583,7 @@ class ScienceLab {
       }
     } else {
       logger.e("Error: Can't load data");
-      return -1;
+      return frequencyError;
     }
     dChan.loadData(tempMap, data);
 
@@ -609,9 +610,22 @@ class ScienceLab {
       await Future.delayed(const Duration(milliseconds: 250));
     } catch (e) {
       logger.e("Error in getFrequency: $e");
+      return frequencyError;
     }
-    return await fetchLAChannelFrequency(
-        calculateDigitalChannel(channel)!, data!);
+
+    // Null check to prevent crash when getLAInitialStates fails
+    if (data == null) {
+      logger.e("Error in getFrequency: getLAInitialStates returned null");
+      return frequencyError;
+    }
+
+    int? channelNumber = calculateDigitalChannel(channel);
+    if (channelNumber == null) {
+      logger.e("Error in getFrequency: invalid channel $channel");
+      return frequencyError;
+    }
+
+    return await fetchLAChannelFrequency(channelNumber, data);
   }
 
   Future<void> startOneChannelLA(String? channel, int? channelMode,
