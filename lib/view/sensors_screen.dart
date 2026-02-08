@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/view/bmp180_screen.dart';
 import 'package:pslab/view/ads1115_screen.dart';
 import 'package:pslab/view/vl53l0x_screen.dart';
+import 'package:pslab/view/mlx90614_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
@@ -236,6 +237,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'SHT21':
         targetScreen = const SHT21Screen();
+        break;
+      case 'MLX90614':
+        targetScreen = const MLX90614Screen();
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(

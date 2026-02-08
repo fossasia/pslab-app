@@ -569,5 +569,8 @@
     "sht21Config": "SHT21 Configurations",
     "sht21": "SHT21",
     "humidity": "Humidity",
-    "humidityUnitLabel": "%"
+    "humidityUnitLabel": "%",
+    "mlxObjectTemp": "Object Temperature",
+    "mlxAmbientTemp": "Ambient Temperature",
+    "mlx90614Config": "MLX90614 Configurations"
 }
