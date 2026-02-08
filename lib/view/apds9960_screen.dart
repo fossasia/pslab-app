@@ -351,7 +351,7 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
                 child: _buildDataCard(
                     appLocalizations.clear, provider.clear.toString())),
             const SizedBox(width: 16),
-            const Expanded(child: SizedBox()),
+            const Spacer(),
           ],
         ),
       ],
@@ -373,8 +373,7 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
   }
 
   Widget _buildDataCard(String label, String value) {
-    return SizedBox(
-      height: 50,
+    return IntrinsicHeight(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -387,24 +386,19 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
             ),
           ),
           const SizedBox(height: 4),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                border: Border.all(color: sensorControlsTextBox),
-                borderRadius: BorderRadius.circular(4),
-                color: cardBackgroundColor,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: blackTextColor,
-                  ),
-                ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: sensorControlsTextBox),
+              borderRadius: BorderRadius.circular(4),
+              color: cardBackgroundColor,
+            ),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                color: blackTextColor,
               ),
             ),
           ),
