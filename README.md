@@ -402,27 +402,40 @@ flutter test integration_test/
    flutter pub get
    ```
 
-**Verify Setup:**
+### Verify Setup
 
-- Tests pass: `flutter test` to the repository and click clone or download button.
-  4. From the dropdown that appeared, copy the link.
-  5. Paste the URL that you copied and press clone.
-  6. Android studio should now begin building the project with gradle.
-  7. Once this process is complete and Android Studio opens, check the Console for any build errors.
+Follow the steps below to confirm that your local development environment is correctly configured.
 
- - _Note:_ If you receive a Gradle sync error titled, "failed to find ...", you should click on the link below the error message (if available) that says _Install missing platform(s) and sync project_ and allow Android studio to fetch you what is missing.
+#### 1. Check Flutter installation
+```bash
+flutter doctor
+ ```
+Resolve any critical issues reported by the command.
 
-  8. Once all build errors have been resolved, you should be all set to build the app and test it.
-  9. To Build the app, go to _Build>Make Project_ (or alternatively press the Make Project icon in the toolbar).
- 10. If the app was built successfully, you can test it by running it on either a real device or an emulated one by going to _Run>Run 'app'_ or pressing the Run icon in the toolbar.
+#### 2. Install dependencies and run tests
+```bash
+flutter pub get
+flutter test
+ ```
 
-If you want build apk only, go to Build>Build apk and apk would be build and directory where apk is generated would be prompted by Android Studio.
+#### 3. Run the application
+```bash
+flutter run
+ ```
+Run the app on a connected physical device, emulator, or desktop target.
 
-For debugging while using PSLab via OTG, consider wireless debugging / logcat.
+#### 4. (Optional) Using Android Studio
+If you prefer Android Studio:
+- Open the project directory in Android Studio.
+- Wait for the Gradle sync to complete.
+- Check the Build and Run windows for errors.
 
-To debug over Wi-Fi follow the steps given in this [Blog](http://blog.fossasia.org/android-app-debugging-over-wifi-for-pslab/). 
+Note: If you encounter a Gradle sync error such as
+“failed to find …”, use the suggested action (for example, Install missing platform(s) and sync project) to allow Android Studio to download the required components.
 
+Once the app builds successfully and launches on your target device or emulator, the setup is complete.
 
+The currently supported Flutter, Dart, and platform versions are defined in the project configuration files (for example `pubspec.yaml`, Android Gradle files, and iOS project settings).
 
 ### Permission manifests
 
