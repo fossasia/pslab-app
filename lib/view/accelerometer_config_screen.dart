@@ -118,7 +118,8 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                     ),
                     ConfigInputItem(
                       title: appLocalizations.highLimit,
-                      value: '${provider.config.highLimit} m/s²',
+                      value:
+                          '${provider.config.highLimit} ${appLocalizations.meterPerSecondSquared}',
                       controller: _highLimitController,
                       onChanged: (value) {
                         final intValue = int.tryParse(value);
