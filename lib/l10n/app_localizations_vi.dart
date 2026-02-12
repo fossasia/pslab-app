@@ -304,19 +304,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get step4ConnectWireless =>
-      '4. PSLab can also be connected wirelessly (Bluetooth or Wi-Fi) if the option is present.';
+      '4. PSLab can also be connected wirelessly via Wi-Fi if the option is present.';
 
   @override
-  String get bluetoothWifiConnection => 'Connect using Bluetooth or Wi-Fi';
-
-  @override
-  String get bluetooth => 'Bluetooth';
+  String get wifiConnection => 'Connect using Wi-Fi';
 
   @override
   String get wifi => 'Wi-Fi';
-
-  @override
-  String get bluetoothComingSoon => 'Bluetooth connection coming soon';
 
   @override
   String get connectingToWifi => 'Connecting to PSLab WiFi...';
@@ -746,7 +740,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get faqHowToConnectAnswer =>
-      'To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip or a Bluetooth chip and communicate through these gateways using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.';
+      'To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip and communicate through this gateway using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.';
 
   @override
   String get faqReportBugAnswer =>
@@ -1408,14 +1402,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get barometerHighLimitHint =>
-      'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)';
+      'Please provide the maximum limit of atm value to be recorded (0 atm to 1.10 atm)';
 
   @override
   String get gyroscopeConfigurations => 'Gyroscope Configurations';
 
   @override
   String get gyroscopeHighLimitHint =>
-      'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)';
+      'Please provide the maximum limit of angular velocity value to be recorded (0 rad/s to 1000 rad/s)';
 
   @override
   String get accelerometerConfigurations => 'Accelerometer Configurations';
@@ -1426,7 +1420,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get accelerometerHighLimitHint =>
-      'Please provide the maximum limit of lux value to be recorded';
+      'Please provide the maximum limit of acceleration value to be recorded';
 
   @override
   String get roboticArmIntro =>
@@ -1865,4 +1859,19 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get logicAnalyzerMeasurementBulletPoint3 =>
       'Compare timestamps between channels to calculate time intervals.';
+
+  @override
+  String get sht21Config => 'SHT21 Configurations';
+
+  @override
+  String get sht21 => 'SHT21';
+
+  @override
+  String get humidity => 'Humidity';
+
+  @override
+  String get humidityUnitLabel => '%';
+
+  @override
+  String get meterPerSecondSquared => 'm/s²';
 }

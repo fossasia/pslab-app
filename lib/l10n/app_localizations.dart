@@ -661,32 +661,20 @@ abstract class AppLocalizations {
   /// No description provided for @step4ConnectWireless.
   ///
   /// In en, this message translates to:
-  /// **'4. PSLab can also be connected wirelessly (Bluetooth or Wi-Fi) if the option is present.'**
+  /// **'4. PSLab can also be connected wirelessly via Wi-Fi if the option is present.'**
   String get step4ConnectWireless;
 
-  /// No description provided for @bluetoothWifiConnection.
+  /// No description provided for @wifiConnection.
   ///
   /// In en, this message translates to:
-  /// **'Connect using Bluetooth or Wi-Fi'**
-  String get bluetoothWifiConnection;
-
-  /// No description provided for @bluetooth.
-  ///
-  /// In en, this message translates to:
-  /// **'Bluetooth'**
-  String get bluetooth;
+  /// **'Connect using Wi-Fi'**
+  String get wifiConnection;
 
   /// No description provided for @wifi.
   ///
   /// In en, this message translates to:
   /// **'Wi-Fi'**
   String get wifi;
-
-  /// No description provided for @bluetoothComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Bluetooth connection coming soon'**
-  String get bluetoothComingSoon;
 
   /// No description provided for @connectingToWifi.
   ///
@@ -1471,7 +1459,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqHowToConnectAnswer.
   ///
   /// In en, this message translates to:
-  /// **'To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip or a Bluetooth chip and communicate through these gateways using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.'**
+  /// **'To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip and communicate through this gateway using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.'**
   String get faqHowToConnectAnswer;
 
   /// No description provided for @faqReportBugAnswer.
@@ -2713,7 +2701,7 @@ abstract class AppLocalizations {
   /// No description provided for @barometerHighLimitHint.
   ///
   /// In en, this message translates to:
-  /// **'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)'**
+  /// **'Please provide the maximum limit of atm value to be recorded (0 atm to 1.10 atm)'**
   String get barometerHighLimitHint;
 
   /// No description provided for @gyroscopeConfigurations.
@@ -2725,7 +2713,7 @@ abstract class AppLocalizations {
   /// No description provided for @gyroscopeHighLimitHint.
   ///
   /// In en, this message translates to:
-  /// **'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)'**
+  /// **'Please provide the maximum limit of angular velocity value to be recorded (0 rad/s to 1000 rad/s)'**
   String get gyroscopeHighLimitHint;
 
   /// No description provided for @accelerometerConfigurations.
@@ -2743,7 +2731,7 @@ abstract class AppLocalizations {
   /// No description provided for @accelerometerHighLimitHint.
   ///
   /// In en, this message translates to:
-  /// **'Please provide the maximum limit of lux value to be recorded'**
+  /// **'Please provide the maximum limit of acceleration value to be recorded'**
   String get accelerometerHighLimitHint;
 
   /// No description provided for @roboticArmIntro.
@@ -3519,6 +3507,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Compare timestamps between channels to calculate time intervals.'**
   String get logicAnalyzerMeasurementBulletPoint3;
+
+  /// No description provided for @sht21Config.
+  ///
+  /// In en, this message translates to:
+  /// **'SHT21 Configurations'**
+  String get sht21Config;
+
+  /// No description provided for @sht21.
+  ///
+  /// In en, this message translates to:
+  /// **'SHT21'**
+  String get sht21;
+
+  /// No description provided for @humidity.
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity'**
+  String get humidity;
+
+  /// No description provided for @humidityUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'%'**
+  String get humidityUnitLabel;
+
+  /// No description provided for @meterPerSecondSquared.
+  ///
+  /// In en, this message translates to:
+  /// **'m/s²'**
+  String get meterPerSecondSquared;
 }
 
 class _AppLocalizationsDelegate
