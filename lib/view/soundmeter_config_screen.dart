@@ -11,12 +11,10 @@ class SoundMeterConfigScreen extends StatefulWidget {
   const SoundMeterConfigScreen({super.key});
 
   @override
-  State<SoundMeterConfigScreen> createState() =>
-      _SoundMeterConfigScreenState();
+  State<SoundMeterConfigScreen> createState() => _SoundMeterConfigScreenState();
 }
 
-class _SoundMeterConfigScreenState
-    extends State<SoundMeterConfigScreen> {
+class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   @override
