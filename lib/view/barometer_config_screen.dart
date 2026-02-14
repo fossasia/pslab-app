@@ -56,16 +56,10 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
           builder: (context) {
             return IconButton(
               onPressed: () {
-                if (Navigator.canPop(context) &&
-                    ModalRoute.of(context)?.settings.name == '/barometer') {
-                  Navigator.popUntil(
-                      context, ModalRoute.withName('/barometer'));
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
                 } else {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/barometer',
-                    (route) => route.isFirst,
-                  );
+                  Navigator.pushReplacementNamed(context, '/barometer');
                 }
               },
               icon: Icon(
