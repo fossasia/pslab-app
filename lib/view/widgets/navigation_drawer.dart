@@ -83,18 +83,10 @@ class _NavDrawerState extends State<NavDrawer> {
                 ),
               ),
               onTap: () {
-                // Check if the HomeScreen is already in the navigation stack
-                if (Navigator.canPop(context) &&
-                    ModalRoute.of(context)?.settings.name == '/') {
-                  // If it's already in the stack, pop to it
+                if (ModalRoute.of(context)?.settings.name != '/') {
                   Navigator.popUntil(context, ModalRoute.withName('/'));
                 } else {
-                  // Otherwise, navigate to HomeScreen
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/',
-                    (route) => route.isFirst,
-                  );
+                  Navigator.pop(context);
                 }
               },
             ),

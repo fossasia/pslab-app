@@ -55,16 +55,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {
-              if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/') {
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/',
-                  (route) => route.isFirst,
-                );
-              }
+              Navigator.maybePop(context);
             },
             icon: Icon(
               Icons.arrow_back,
