@@ -39,16 +39,7 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
         leading: Builder(builder: (context) {
           return IconButton(
             onPressed: () {
-              if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/Soundmeter') {
-                Navigator.popUntil(context, ModalRoute.withName('/Soundmeter'));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/soundmeter',
-                  (route) => route.isFirst,
-                );
-              }
+              Navigator.maybePop(context);
             },
             icon: Icon(
               Icons.arrow_back,
