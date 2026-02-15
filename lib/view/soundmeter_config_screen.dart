@@ -9,13 +9,21 @@ import '../theme/colors.dart';
 
 class SoundMeterConfigScreen extends StatefulWidget {
   const SoundMeterConfigScreen({super.key});
-
   @override
   State<SoundMeterConfigScreen> createState() => _SoundMeterConfigScreenState();
 }
 
 class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +36,26 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.maybePop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: appBarContentColor,
-          ),
-        ),
+        leading: Builder(builder: (context) {
+          return IconButton(
+            onPressed: () {
+              if (Navigator.canPop(context) &&
+                  ModalRoute.of(context)?.settings.name == '/Soundmeter') {
+                Navigator.popUntil(context, ModalRoute.withName('/Soundmeter'));
+              } else {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/soundmeter',
+                  (route) => route.isFirst,
+                );
+              }
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: appBarContentColor,
+            ),
+          );
+        }),
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.soundmeterConfig,
