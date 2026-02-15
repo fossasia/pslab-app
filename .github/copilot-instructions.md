@@ -1,15 +1,17 @@
 # Project Overview
+
 **PSLab App** is a Flutter cross-platform application for performing scientific experiments with the Pocket Science Lab (PSLab) open-hardware platform. It provides instruments like oscilloscope, multimeter, wave generator, logic analyzer, and various sensor interfaces.
 
 ### Tech Stack
+
 - **Framework**: Flutter (stable channel)
 - **Language**: Dart
 - **State Management**: Provider pattern
 - **Dependency Injection**: GetIt (service locator pattern)
 - **Supported Platforms**: Android (primary), iOS, Linux, macOS, Windows, Web
 
-
 ## Repository Structure
+
 ```
 pslab-app/
 ├── android/          # Android-specific platform code
@@ -39,16 +41,17 @@ pslab-app/
 ```
 
 ## Coding Standards
-- Adhere to the coding style described in https://dart.dev/effective-dart/style.
-- Adhere to the SOLID design principles described in https://simple.wikipedia.org/wiki/SOLID_(object-oriented_design).
-- Adhere to Object-Oriented Design best practices described in http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod.
-- Keep in mind the architecture recommendations described in https://docs.flutter.dev/app-architecture/guide.
 
+- Adhere to the coding style described in <https://dart.dev/effective-dart/style>.
+- Adhere to the SOLID design principles described in <https://simple.wikipedia.org/wiki/SOLID_(object-oriented_design)>.
+- Adhere to Object-Oriented Design best practices described in <http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod>.
+- Keep in mind the architecture recommendations described in <https://docs.flutter.dev/app-architecture/guide>.
 
 ## Commit Style
+
 - Adhere to the commit style described in the file `commitstyle.md` in the `docs` folder of this project.
 
 ## UI guidelines
-- The UI of the app must be consistent
-- The UI of the app should adhere to the best practices for adaptive design described in https://docs.flutter.dev/ui/adaptive-responsive/best-practices.
 
+- The UI of the app must be consistent
+- The UI of the app should adhere to the best practices for adaptive design described in <https://docs.flutter.dev/ui/adaptive-responsive/best-practices>.
