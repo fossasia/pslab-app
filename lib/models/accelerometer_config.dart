@@ -7,7 +7,7 @@ class AccelerometerConfig {
 
   const AccelerometerConfig({
     this.updatePeriod = 1000,
-    this.highLimit = 2000,
+    this.highLimit = 20,
     this.activeSensor = 'In-built Sensor',
     this.sensorGain = 1,
     this.includeLocationData = true,
