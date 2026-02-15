@@ -1,8 +1,11 @@
 # Project Overview
 
-**PSLab App** is a Flutter cross-platform application for performing scientific experiments with the Pocket Science Lab (PSLab) open-hardware platform. It provides instruments like oscilloscope, multimeter, wave generator, logic analyzer, and various sensor interfaces.
+**PSLab App** is a Flutter cross-platform application for performing 
+scientific experiments with the Pocket Science Lab (PSLab) open-hardware 
+platform. It provides instruments like oscilloscope, multimeter, wave 
+generator, logic analyzer, and various sensor interfaces.
 
-### Tech Stack
+## Tech Stack
 
 - **Framework**: Flutter (stable channel)
 - **Language**: Dart
@@ -12,7 +15,7 @@
 
 ## Repository Structure
 
-```
+```text
 pslab-app/
 ├── android/          # Android-specific platform code
 ├── ios/              # iOS-specific platform code  
@@ -54,4 +57,5 @@ pslab-app/
 ## UI guidelines
 
 - The UI of the app must be consistent
-- The UI of the app should adhere to the best practices for adaptive design described in <https://docs.flutter.dev/ui/adaptive-responsive/best-practices>.
+- The UI of the app should adhere to the best practices for adaptive design described 
+in <https://docs.flutter.dev/ui/adaptive-responsive/best-practices>.
