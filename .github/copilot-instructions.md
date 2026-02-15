@@ -46,7 +46,7 @@ pslab-app/
 
 
 ## Commit Style
-- Adfhere to the commit style dewscribe in the file `commitstyle.md` in the `docs` folder of this project.
+- Adhere to the commit style described in the file `commitstyle.md` in the `docs` folder of this project.
 
 ## UI guidelines
 - The UI of the app must be consistent
