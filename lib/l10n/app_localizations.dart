@@ -604,6 +604,12 @@ abstract class AppLocalizations {
   /// **'Hz'**
   String get unitHz;
 
+  /// No description provided for @cannotMeasure.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot measure!'**
+  String get cannotMeasure;
+
   /// No description provided for @countPulse.
   ///
   /// In en, this message translates to:
