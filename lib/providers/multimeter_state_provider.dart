@@ -245,7 +245,7 @@ class MultimeterStateProvider extends ChangeNotifier {
       if (!isSwitchChecked) {
         double frequency =
             await _scienceLab.getFrequency(knobMarker[_selectedIndex]);
-        if (frequency < 0) {
+        if (frequency == ScienceLab.frequencyError) {
           value = appLocalizations.cannotMeasure;
           unit = "";
         } else {
