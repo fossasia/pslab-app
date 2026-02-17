@@ -79,6 +79,7 @@ dependency_overrides:
 
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.1
   flutter_test:
     sdk: flutter
   integration_test:
@@ -150,3 +151,15 @@ inno_bundle:
   url: https://pslab.io
   support_url: https://github.com/fossasia/pslab-app/issues
   updates_url: https://github.com/fossasia/pslab-app/releases
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+
+  image_path: "assets/icons/icon.png"
+
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/icon.png"
+  adaptive_icon_monochrome: "assets/icons/icon.png"
+  adaptive_icon_foreground_inset: 22
