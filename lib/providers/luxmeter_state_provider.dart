@@ -408,17 +408,22 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final lux = _sensorAvailable || _isPlayingBack ? _currentLux : null;
+    final double? rawLux =
+        (_sensorAvailable || _isPlayingBack) ? _currentLux : null;
     final time = _currentTime;
 
-    if (lux != null) {
+    if (rawLux != null) {
+      final double limit =
+          (_configProvider?.config.highLimit ?? 40000).toDouble();
+      final double clippedLux = rawLux > limit ? limit : rawLux;
+
       if (_isRecording) {
         final now = DateTime.now();
         final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
         _recordedData.add([
           now.millisecondsSinceEpoch.toString(),
           dateFormat.format(now),
-          lux.toStringAsFixed(2),
+          clippedLux.toStringAsFixed(2),
           _configProvider!.config.includeLocationData
               ? currentPosition?.latitude.toString() ?? 0
               : 0,
@@ -428,9 +433,9 @@ class LuxMeterStateProvider extends ChangeNotifier {
         ]);
       }
 
-      _luxData.add(lux);
+      _luxData.add(clippedLux);
       _timeData.add(time);
-      _luxSum += lux;
+      _luxSum += clippedLux;
       _dataCount++;
     }
 
@@ -450,6 +455,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
     for (int i = 0; i < _luxData.length; i++) {
       luxChartData.add(FlSpot(_timeData[i], _luxData[i]));
     }
+
     notifyListeners();
   }
 

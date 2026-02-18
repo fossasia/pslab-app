@@ -229,9 +229,11 @@ class GyroscopeProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final x = _gyroscopeEvent.x;
-    final y = _gyroscopeEvent.y;
-    final z = _gyroscopeEvent.z;
+    final double limit = (_configProvider.config.highLimit).toDouble();
+
+    final x = _gyroscopeEvent.x.clamp(-limit, limit);
+    final y = _gyroscopeEvent.y.clamp(-limit, limit);
+    final z = _gyroscopeEvent.z.clamp(-limit, limit);
 
     if (_isRecording) {
       final now = DateTime.now();
@@ -281,6 +283,7 @@ class GyroscopeProvider extends ChangeNotifier {
       yData.add(FlSpot(i.toDouble(), _yData[i]));
       zData.add(FlSpot(i.toDouble(), _zData[i]));
     }
+
     notifyListeners();
   }
 

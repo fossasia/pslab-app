@@ -212,9 +212,12 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final x = _accelerometerEvent.x;
-    final y = _accelerometerEvent.y;
-    final z = _accelerometerEvent.z;
+    final double limit = (_configProvider.config.highLimit).toDouble();
+
+    final x = _accelerometerEvent.x.clamp(-limit, limit);
+    final y = _accelerometerEvent.y.clamp(-limit, limit);
+    final z = _accelerometerEvent.z.clamp(-limit, limit);
+
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
@@ -241,12 +244,14 @@ class AccelerometerStateProvider extends ChangeNotifier {
     if (_yData.length > _maxLength) _yData.removeAt(0);
     if (_zData.length > _maxLength) _zData.removeAt(0);
 
-    _xMin = _xData.reduce(min);
-    _xMax = _xData.reduce(max);
-    _yMin = _yData.reduce(min);
-    _yMax = _yData.reduce(max);
-    _zMin = _zData.reduce(min);
-    _zMax = _zData.reduce(max);
+    if (_xData.isNotEmpty) {
+      _xMin = _xData.reduce(min);
+      _xMax = _xData.reduce(max);
+      _yMin = _yData.reduce(min);
+      _yMax = _yData.reduce(max);
+      _zMin = _zData.reduce(min);
+      _zMax = _zData.reduce(max);
+    }
 
     xData.clear();
     yData.clear();
