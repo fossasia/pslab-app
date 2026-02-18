@@ -217,7 +217,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
     final x = _accelerometerEvent.x.clamp(-limit, limit);
     final y = _accelerometerEvent.y.clamp(-limit, limit);
     final z = _accelerometerEvent.z.clamp(-limit, limit);
-
+    _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');

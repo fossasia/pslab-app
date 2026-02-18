@@ -421,7 +421,7 @@ class BarometerStateProvider extends ChangeNotifier {
     final double limit = (_configProvider.config.highLimit).toDouble();
     final double rawPressure = _currentPressure;
     final double clippedPressure = rawPressure > limit ? limit : rawPressure;
-
+    _currentPressure = clippedPressure;
     final time = _currentTime;
 
     if (_isRecording) {

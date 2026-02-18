@@ -234,7 +234,7 @@ class GyroscopeProvider extends ChangeNotifier {
     final x = _gyroscopeEvent.x.clamp(-limit, limit);
     final y = _gyroscopeEvent.y.clamp(-limit, limit);
     final z = _gyroscopeEvent.z.clamp(-limit, limit);
-
+    _gyroscopeEvent = GyroscopeEvent(x, y, z, DateTime.now());
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');

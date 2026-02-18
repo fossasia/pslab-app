@@ -416,7 +416,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
       final double limit =
           (_configProvider?.config.highLimit ?? 40000).toDouble();
       final double clippedLux = rawLux > limit ? limit : rawLux;
-
+      _currentLux = clippedLux;
       if (_isRecording) {
         final now = DateTime.now();
         final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
