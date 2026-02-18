@@ -7,6 +7,7 @@ Repository for the PSLab Android App for performing experiments with the [Pocket
 ![GitHub repo size](https://img.shields.io/github/repo-size/fossasia/pslab-app)
 [![Gitter](https://badges.gitter.im/fossasia/pslab.svg)](https://gitter.im/fossasia/pslab?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Twitter Follow](https://img.shields.io/twitter/follow/pslabio.svg?style=social&label=Follow&maxAge=2592000?style=flat-square)](https://twitter.com/pslabio)
+[![Translation status](https://hosted.weblate.org/widgets/fossasia/-/pslab-app/svg-badge.svg)](https://hosted.weblate.org/projects/fossasia/pslab-app/)
 
 This repository holds the Android App for performing experiments with [PSLab](https://pslab.io/). PSLab is a tiny pocket science lab that provides an array of equipment for doing science and engineering experiments. It can function like an oscilloscope, waveform generator, frequency counter, programmable voltage and current source and also as a data logger. Our website is at https://pslab.io.
 
@@ -447,6 +448,19 @@ The app may request permissions at runtime depending on the instrument/features 
 
 ## Setup to use PSLab with Android App
 To use PSLab device with Android, you simply need an OTG cable, an Android Device with USB Host feature enabled ( most modern phones have OTG support ) and PSLab Android App. Connect PSLab device to Android Phone via OTG cable. Rest is handled by App itself.
+
+## Translations
+
+We use [Weblate](https://hosted.weblate.org/projects/fossasia/pslab-app/) for managing translations.
+
+If you want to help translate the app into your language, please visit the [PSLab App project on Weblate](https://hosted.weblate.org/projects/fossasia/pslab-app/).
+
+### Technical Details
+The app uses the standard Flutter `flutter_localizations` package.
+* **Location:** Translation files are stored in `lib/l10n/` in `.arb` (Application Resource Bundle) format.
+* **Template:** The source of truth is `lib/l10n/app_en.arb`.
+* **Contribution:** While we prefer translations submitted via Weblate to avoid merge conflicts, you can also manually edit the `.arb` files and submit a Pull Request.
+
 
 ## Contributions Best Practices
 
