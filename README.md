@@ -156,11 +156,10 @@ brew install --cask flutter
 
 ##### Linux
 
-Follow the official Flutter install guide for Linux: https://docs.flutter.dev/get-started/install/linux
-
+Follow the official Flutter setup guide for Linux: <https://docs.flutter.dev/platform-integration/linux/setup>
 #### Windows
 
-Follow the official Flutter install guide for Windows: https://docs.flutter.dev/install/windows
+Follow the official Flutter setup guide for Windows: <https://docs.flutter.dev/platform-integration/windows/setup>
 
 ### Flutter development setup (VS Code)
 
@@ -171,7 +170,7 @@ Prerequisites
 - A working internet connection to download the Flutter SDK and extensions.
 
 1) Install the Flutter SDK
-- Download the Flutter SDK from https://flutter.dev and follow the platform-specific instructions. On Windows, extract the SDK (for example to `C:\src\flutter`) and add the `bin` folder to your PATH environment variable. On macOS/Linux, follow the steps on the Flutter website for adding `flutter` to your PATH.
+- Download the Flutter SDK from https://docs.flutter.dev/get-started/install and follow the platform-specific instructions. On Windows, extract the SDK (for example to `C:\src\flutter`) and add the `bin` folder to your PATH environment variable. On macOS/Linux, follow the steps on the Flutter website for adding `flutter` to your PATH.
 - After installation, open a terminal (PowerShell on Windows) and run:
 
 ```powershell
