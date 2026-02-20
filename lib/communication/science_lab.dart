@@ -625,7 +625,12 @@ class ScienceLab {
       return frequencyError;
     }
 
-    return await fetchLAChannelFrequency(channelNumber, data);
+    try {
+      return await fetchLAChannelFrequency(channelNumber, data);
+    } catch (e) {
+      logger.e("Error in getFrequency while fetching LA channel frequency: $e");
+      return frequencyError;
+    }
   }
 
   Future<void> startOneChannelLA(String? channel, int? channelMode,
