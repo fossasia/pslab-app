@@ -54,7 +54,8 @@ class CsvService {
 
       final file = File('${directory.path}/$finalFileName');
 
-      final csvData = csv.csv.encode(data);
+      final codec = csv.CsvCodec();
+      final csvData = codec.encode(data);
       await file.writeAsString(csvData);
       logger.i('${appLocalizations.csvFileSaved}: ${file.path}');
       return file;
@@ -138,9 +139,7 @@ class CsvService {
       final codec = csv.CsvCodec(dynamicTyping: true);
       final rows = codec.decode(csvString);
 
-      return List<List<dynamic>>.from(
-        rows.map((r) => List<dynamic>.from(r)),
-      );
+      return rows.map((r) => r.cast<dynamic>()).toList();
     } catch (e) {
       logger.e('${appLocalizations.csvReadingError}: $e');
       return [];
