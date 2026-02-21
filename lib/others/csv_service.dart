@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:csv/csv.dart' as csv;
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -134,12 +135,24 @@ class CsvService {
 
   Future<List<List<dynamic>>> readCsvFromFile(File file) async {
     try {
-      final csvString = await file.readAsString();
+      final lines = file
+          .openRead()
+          .transform(utf8.decoder)
+          .transform(const LineSplitter());
+
+      final List<List<dynamic>> rows = [];
 
       final codec = csv.CsvCodec(dynamicTyping: true);
-      final rows = codec.decode(csvString);
 
-      return rows.map((r) => r.cast<dynamic>()).toList();
+      await for (final line in lines) {
+        final parsedRow = codec.decode(line);
+
+        if (parsedRow.isNotEmpty) {
+          rows.add(parsedRow.first);
+        }
+      }
+
+      return rows;
     } catch (e) {
       logger.e('${appLocalizations.csvReadingError}: $e');
       return [];
