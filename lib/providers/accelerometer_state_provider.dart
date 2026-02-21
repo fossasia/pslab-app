@@ -35,12 +35,11 @@ class AccelerometerStateProvider extends ChangeNotifier {
   bool get isRecording => _isRecording;
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
-
-  late AccelerometerConfigProvider _configProvider;
+  AccelerometerConfigProvider? _configProvider;
   StreamSubscription? _locationStream;
   Position? currentPosition;
   Function? onPlaybackEnd;
-
+  double? get _currentLimit => _configProvider?.config.highLimit.toDouble();
   void setConfigProvider(AccelerometerConfigProvider configProvider) {
     _configProvider = configProvider;
   }
@@ -212,11 +211,24 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final double limit = (_configProvider.config.highLimit).toDouble();
+    final limit = _currentLimit;
 
-    final x = _accelerometerEvent.x.clamp(-limit, limit);
-    final y = _accelerometerEvent.y.clamp(-limit, limit);
-    final z = _accelerometerEvent.z.clamp(-limit, limit);
+    final bool shouldClip = limit != null && !_isPlayingBack;
+
+    final x = (shouldClip && _accelerometerEvent.x > limit)
+        ? limit
+        : _accelerometerEvent.x;
+
+    final y = (shouldClip && _accelerometerEvent.y > limit)
+        ? limit
+        : _accelerometerEvent.y;
+
+    final z = (shouldClip && _accelerometerEvent.z > limit)
+        ? limit
+        : _accelerometerEvent.z;
+
+    _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
+
     _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
     if (_isRecording) {
       final now = DateTime.now();
@@ -227,10 +239,10 @@ class AccelerometerStateProvider extends ChangeNotifier {
         x.toStringAsFixed(6),
         y.toStringAsFixed(6),
         z.toStringAsFixed(6),
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.latitude.toString() ?? 0
             : 0,
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
             : 0
       ]);
@@ -244,14 +256,12 @@ class AccelerometerStateProvider extends ChangeNotifier {
     if (_yData.length > _maxLength) _yData.removeAt(0);
     if (_zData.length > _maxLength) _zData.removeAt(0);
 
-    if (_xData.isNotEmpty) {
-      _xMin = _xData.reduce(min);
-      _xMax = _xData.reduce(max);
-      _yMin = _yData.reduce(min);
-      _yMax = _yData.reduce(max);
-      _zMin = _zData.reduce(min);
-      _zMax = _zData.reduce(max);
-    }
+    _xMin = _xData.reduce(min);
+    _xMax = _xData.reduce(max);
+    _yMin = _yData.reduce(min);
+    _yMax = _yData.reduce(max);
+    _zMin = _zData.reduce(min);
+    _zMax = _zData.reduce(max);
 
     xData.clear();
     yData.clear();
@@ -267,7 +277,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   Future<void> startRecording() async {
-    if (_configProvider.config.includeLocationData) {
+    if (_configProvider!.config.includeLocationData) {
       await _startGeoLocationUpdates();
     }
     _isRecording = true;

@@ -52,6 +52,7 @@ class BarometerStateProvider extends ChangeNotifier {
   ScienceLab? _scienceLab;
 
   final BarometerConfigProvider _configProvider;
+  double? get _currentLimit => _configProvider.config.highLimit.toDouble();
   String _currentSensorType = 'In-built Sensor';
 
   Function(String)? onSensorError;
@@ -418,9 +419,15 @@ class BarometerStateProvider extends ChangeNotifier {
   void _updateData() {
     if (!_sensorAvailable && !_isPlayingBack) return;
 
-    final double limit = (_configProvider.config.highLimit).toDouble();
+    final limit = _currentLimit;
+
+    final bool shouldClip = !_isPlayingBack && limit != null;
+
     final double rawPressure = _currentPressure;
-    final double clippedPressure = rawPressure > limit ? limit : rawPressure;
+
+    final double clippedPressure =
+        shouldClip && rawPressure > limit ? limit : rawPressure;
+
     _currentPressure = clippedPressure;
     final time = _currentTime;
 

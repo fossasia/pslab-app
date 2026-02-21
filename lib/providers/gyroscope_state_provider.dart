@@ -50,8 +50,8 @@ class GyroscopeProvider extends ChangeNotifier {
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
 
-  late GyroscopeConfigProvider _configProvider;
-
+  GyroscopeConfigProvider? _configProvider;
+  double? get _currentLimit => _configProvider?.config.highLimit.toDouble();
   Position? currentPosition;
   StreamSubscription? _locationStream;
 
@@ -229,11 +229,19 @@ class GyroscopeProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final double limit = (_configProvider.config.highLimit).toDouble();
+    final limit = _currentLimit;
 
-    final x = _gyroscopeEvent.x.clamp(-limit, limit);
-    final y = _gyroscopeEvent.y.clamp(-limit, limit);
-    final z = _gyroscopeEvent.z.clamp(-limit, limit);
+    final bool shouldClip = !_isPlayingBack && limit != null;
+
+    final double x =
+        (shouldClip && _gyroscopeEvent.x > limit) ? limit : _gyroscopeEvent.x;
+
+    final double y =
+        (shouldClip && _gyroscopeEvent.y > limit) ? limit : _gyroscopeEvent.y;
+
+    final double z =
+        (shouldClip && _gyroscopeEvent.z > limit) ? limit : _gyroscopeEvent.z;
+
     _gyroscopeEvent = GyroscopeEvent(x, y, z, DateTime.now());
     if (_isRecording) {
       final now = DateTime.now();
@@ -244,10 +252,10 @@ class GyroscopeProvider extends ChangeNotifier {
         x.toStringAsFixed(6),
         y.toStringAsFixed(6),
         z.toStringAsFixed(6),
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.latitude.toString() ?? 0
             : 0,
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
             : 0
       ]);
@@ -288,7 +296,7 @@ class GyroscopeProvider extends ChangeNotifier {
   }
 
   Future<void> startRecording() async {
-    if (_configProvider.config.includeLocationData) {
+    if (_configProvider!.config.includeLocationData) {
       await _startGeoLocationUpdates();
     }
     _isRecording = true;
