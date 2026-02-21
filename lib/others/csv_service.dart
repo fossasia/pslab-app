@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:csv/csv.dart';
+import 'package:csv/csv.dart' as csv;
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pslab/others/logger_service.dart';
@@ -55,7 +54,7 @@ class CsvService {
 
       final file = File('${directory.path}/$finalFileName');
 
-      String csvData = const ListToCsvConverter().convert(data);
+      final csvData = csv.csv.encode(data);
       await file.writeAsString(csvData);
       logger.i('${appLocalizations.csvFileSaved}: ${file.path}');
       return file;
@@ -134,12 +133,14 @@ class CsvService {
 
   Future<List<List<dynamic>>> readCsvFromFile(File file) async {
     try {
-      final input = file.openRead();
-      final fields = await input
-          .transform(utf8.decoder)
-          .transform(const CsvToListConverter(shouldParseNumbers: true))
-          .toList();
-      return fields;
+      final csvString = await file.readAsString();
+
+      final codec = csv.CsvCodec(dynamicTyping: true);
+      final rows = codec.decode(csvString);
+
+      return List<List<dynamic>>.from(
+        rows.map((r) => List<dynamic>.from(r)),
+      );
     } catch (e) {
       logger.e('${appLocalizations.csvReadingError}: $e');
       return [];
