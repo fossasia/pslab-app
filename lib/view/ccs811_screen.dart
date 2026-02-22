@@ -53,10 +53,7 @@ class _CCS811ScreenState extends State<CCS811Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
@@ -165,17 +162,25 @@ class _CCS811ScreenState extends State<CCS811Screen> {
         ),
         ChangeNotifierProxyProvider<CCS811ConfigProvider, CCS811Provider>(
           create: (context) {
-            final configProvider =
-                Provider.of<CCS811ConfigProvider>(context, listen: false);
+            final configProvider = Provider.of<CCS811ConfigProvider>(
+              context,
+              listen: false,
+            );
             _provider = CCS811Provider(configProvider);
 
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
-                _provider.initializeSensors(
-                  onError: _showSensorErrorSnackbar,
-                  i2c: _i2c,
-                  scienceLab: _scienceLab,
-                );
+                // Wait briefly for _initializeScienceLab to complete
+                // if it hasn't established _scienceLab and _i2c yet.
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  if (mounted) {
+                    _provider.initializeSensors(
+                      onError: _showSensorErrorSnackbar,
+                      i2c: _i2c,
+                      scienceLab: _scienceLab,
+                    );
+                  }
+                });
               }
             });
             return _provider;
@@ -188,7 +193,7 @@ class _CCS811ScreenState extends State<CCS811Screen> {
       child: Consumer<CCS811Provider>(
         builder: (context, provider, child) {
           return CommonScaffold(
-            title: "CCS811 Air Quality",
+            title: appLocalizations.ccs811AirQuality,
             onRecordPressed: _toggleRecording,
             isRecording: provider.isRecording,
             body: SafeArea(
@@ -200,12 +205,20 @@ class _CCS811ScreenState extends State<CCS811Screen> {
                     Row(
                       children: [
                         Expanded(
-                            child: _buildValueCard(
-                                "eCO2", "${provider.currentECO2}", "ppm")),
+                          child: _buildValueCard(
+                            "eCO2",
+                            "${provider.currentECO2}",
+                            "ppm",
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
-                            child: _buildValueCard(
-                                "TVOC", "${provider.currentTVOC}", "ppb")),
+                          child: _buildValueCard(
+                            "TVOC",
+                            "${provider.currentTVOC}",
+                            "ppb",
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -214,12 +227,20 @@ class _CCS811ScreenState extends State<CCS811Screen> {
                       child: Column(
                         children: [
                           Expanded(
-                              child: _buildChart(provider.getECO2ChartData(),
-                                  "eCO2 (ppm)", Colors.green)),
+                            child: _buildChart(
+                              provider.getECO2ChartData(),
+                              "eCO2 (ppm)",
+                              Colors.green,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           Expanded(
-                              child: _buildChart(provider.getTVOCChartData(),
-                                  "TVOC (ppb)", Colors.blue)),
+                            child: _buildChart(
+                              provider.getTVOCChartData(),
+                              "TVOC (ppb)",
+                              Colors.blue,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -240,17 +261,23 @@ class _CCS811ScreenState extends State<CCS811Screen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
-            Text(value,
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: primaryRed)),
-            Text(unit,
-                style: const TextStyle(fontSize: 14, color: Colors.grey)),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: primaryRed,
+              ),
+            ),
+            Text(
+              unit,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
           ],
         ),
       ),
@@ -274,9 +301,9 @@ class _CCS811ScreenState extends State<CCS811Screen> {
                 gridData: const FlGridData(show: true),
                 titlesData: const FlTitlesData(show: false),
                 borderData: FlBorderData(
-                    show: true,
-                    border:
-                        Border.all(color: const Color(0xff37434d), width: 1)),
+                  show: true,
+                  border: Border.all(color: const Color(0xff37434d), width: 1),
+                ),
                 lineBarsData: [
                   LineChartBarData(
                     spots: spots,

@@ -1,12 +1,13 @@
 {
-    "unitPercentage": "%",
-    "@unitPercentage": {},
-    "percentage": "%",
-    "@percentage": {},
-    "unitDeg": "°",
-    "@unitDeg": {},
-    "degreeSymbol": "°",
-    "@degreeSymbol": {},
-    "noOfChannelsOne": "1",
-    "@noOfChannelsOne": {}
+  "unitPercentage": "%",
+  "@unitPercentage": {},
+  "percentage": "%",
+  "@percentage": {},
+  "unitDeg": "°",
+  "@unitDeg": {},
+  "degreeSymbol": "°",
+  "@degreeSymbol": {},
+  "noOfChannelsOne": "1",
+  "@noOfChannelsOne": {},
+  "ccs811AirQuality": "CCS811 Air Quality"
 }

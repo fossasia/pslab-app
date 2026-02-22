@@ -43,33 +43,46 @@ class CCS811Provider extends ChangeNotifier {
   ScienceLab? _scienceLab;
   Function(String)? onSensorError;
 
+  Object? _lastUpdatePeriod;
+
   bool get sensorAvailable => _sensorAvailable;
   bool get isRecording => _isRecording;
 
   CCS811Provider(this._configProvider) {
+    _lastUpdatePeriod = _configProvider.config.updatePeriod;
     _configProvider.addListener(_onConfigChanged);
   }
 
   void _onConfigChanged() {
     if (_sensorAvailable) {
-      _reinitializeSensors();
+      final currentPeriod = _configProvider.config.updatePeriod;
+      if (currentPeriod != _lastUpdatePeriod) {
+        _lastUpdatePeriod = currentPeriod;
+        _reinitializeSensors();
+      }
     }
   }
 
   void _reinitializeSensors() {
     disposeSensors();
     initializeSensors(
-        onError: onSensorError, i2c: _i2c, scienceLab: _scienceLab);
+      onError: onSensorError,
+      i2c: _i2c,
+      scienceLab: _scienceLab,
+    );
   }
 
-  Future<void> initializeSensors(
-      {Function(String)? onError, I2C? i2c, ScienceLab? scienceLab}) async {
+  Future<void> initializeSensors({
+    Function(String)? onError,
+    I2C? i2c,
+    ScienceLab? scienceLab,
+  }) async {
     onSensorError = onError;
     _i2c = i2c;
     _scienceLab = scienceLab;
 
     if (_i2c == null || _scienceLab == null || !_scienceLab!.isConnected()) {
-      onSensorError?.call('ScienceLab not connected');
+      onSensorError?.call(appLocalizations.pslabNotConnected);
       return;
     }
 
@@ -90,9 +103,12 @@ class CCS811Provider extends ChangeNotifier {
   void _startDataCollection() {
     int interval = _configProvider.config.updatePeriod;
     _dataTimer?.cancel();
-    _dataTimer =
-        Timer.periodic(Duration(milliseconds: interval), (timer) async {
-      await _readData();
+    _dataTimer = Timer.periodic(Duration(milliseconds: interval), (
+      timer,
+    ) async {
+      if (!_isReading) {
+        await _readData();
+      }
     });
   }
 
@@ -164,7 +180,7 @@ class CCS811Provider extends ChangeNotifier {
     }
     _isRecording = true;
     _recordedData = [
-      ['Timestamp', 'DateTime', 'eCO2', 'TVOC', 'Latitude', 'Longitude']
+      ['Timestamp', 'DateTime', 'eCO2', 'TVOC', 'Latitude', 'Longitude'],
     ];
     notifyListeners();
   }
@@ -178,14 +194,39 @@ class CCS811Provider extends ChangeNotifier {
   List<List<dynamic>> getRecordedData() => _recordedData;
 
   Future<void> _startGeoLocationUpdates() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+    bool serviceEnabled;
+    LocationPermission permission;
 
-    _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-    ).listen((Position position) {
-      currentPosition = position;
-    });
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      logger.w('Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        logger.w('Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      logger.w(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+      return;
+    }
+
+    _locationStream =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).listen((Position position) {
+          currentPosition = position;
+        });
   }
 
   void disposeSensors() {

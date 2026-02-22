@@ -2,12 +2,7 @@ import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/logger_service.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../providers/locator.dart';
-
 class CCS811 {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-
   static const String tag = "CCS811";
   static const int address = 0x5A;
 
@@ -58,7 +53,8 @@ class CCS811 {
       logger.d("CCS811 HW Info ID: 0x${id.toRadixString(16)}");
       if (id != 0x81) {
         throw Exception(
-            "CCS811 Hardware ID mismatch. Expected 0x81, got 0x${id.toRadixString(16)}");
+          "CCS811 Hardware ID mismatch. Expected 0x81, got 0x${id.toRadixString(16)}",
+        );
       }
     } catch (e) {
       logger.e("Error reading CCS811 HW_ID: $e");
@@ -104,7 +100,8 @@ class CCS811 {
     List<int> data = await i2c.readBulk(address, register, 1);
     if (data.isEmpty) {
       throw Exception(
-          "Empty response from CCS811 register 0x${register.toRadixString(16)}");
+        "Empty response from CCS811 register 0x${register.toRadixString(16)}",
+      );
     }
     return data[0];
   }
@@ -120,10 +117,7 @@ class CCS811 {
           _tVOC = ((data[2] & 0xFF) << 8) | (data[3] & 0xFF);
         }
       }
-      return {
-        'eCO2': _eCO2,
-        'TVOC': _tVOC,
-      };
+      return {'eCO2': _eCO2, 'TVOC': _tVOC};
     } catch (e) {
       logger.e("Error reading CCS811 data: $e");
       rethrow;

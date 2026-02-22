@@ -230,6 +230,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'APDS9960':
         targetScreen = const APDS9960Screen();
+        break;
       case 'VL53L0X':
         targetScreen = const VL53L0XScreen();
         break;
