@@ -3,12 +3,7 @@ import 'dart:async';
 import 'package:pslab/models/experiment_config.dart';
 import 'package:pslab/models/experiment_step.dart';
 
-enum ExperimentState {
-  idle,
-  running,
-  stepCompleted,
-  finished,
-}
+enum ExperimentState { idle, running, stepCompleted, finished }
 
 class ExperimentProvider extends ChangeNotifier {
   ExperimentConfig? _currentExperiment;
@@ -21,7 +16,8 @@ class ExperimentProvider extends ChangeNotifier {
   int get currentStepIndex => _currentStepIndex;
   ExperimentState get state => _state;
 
-  ExperimentStep? get currentStep => _currentExperiment != null &&
+  ExperimentStep? get currentStep =>
+      _currentExperiment != null &&
           _currentStepIndex < _currentExperiment!.experimentSteps.length
       ? _currentExperiment!.experimentSteps[_currentStepIndex]
       : null;

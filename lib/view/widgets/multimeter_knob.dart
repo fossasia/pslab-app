@@ -250,17 +250,15 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
           children: [
             CustomPaint(
               painter: InnerDialFillPainter(),
-              child: SizedBox(
-                width: 300.w,
-                height: 300.h,
-              ),
+              child: SizedBox(width: 300.w, height: 300.h),
             ),
             GestureDetector(
               onPanUpdate: (details) {
                 if (isDragging) {
                   RenderBox renderBox = context.findRenderObject() as RenderBox;
-                  Offset localPosition =
-                      renderBox.globalToLocal(details.globalPosition);
+                  Offset localPosition = renderBox.globalToLocal(
+                    details.globalPosition,
+                  );
                   updateAngle(localPosition, renderBox.size);
                 }
               },
@@ -270,20 +268,14 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
                   max: maxValue,
                   color: pointerColor,
                 ),
-                child: SizedBox(
-                  width: 300.w,
-                  height: 300.h,
-                ),
+                child: SizedBox(width: 300.w, height: 300.h),
               ),
             ),
             IgnorePointer(
               ignoring: true,
               child: CustomPaint(
                 painter: InnerDialPainter(),
-                child: SizedBox(
-                  height: 300.h,
-                  width: 300.w,
-                ),
+                child: SizedBox(height: 300.h, width: 300.w),
               ),
             ),
             IgnorePointer(
@@ -295,7 +287,7 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
                   radius: 112.r,
                 ),
               ),
-            )
+            ),
           ],
         );
       },

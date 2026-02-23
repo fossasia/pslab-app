@@ -184,8 +184,8 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
       final numSections = maxValue;
       final anglePerSection = totalAngle / numSections;
 
-      final section =
-          ((normalizedAngle - startAngle) / anglePerSection).round();
+      final section = ((normalizedAngle - startAngle) / anglePerSection)
+          .round();
       final clampedSection = section.clamp(0, numSections);
 
       setState(() {
@@ -193,10 +193,7 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
       });
 
       powerSourceStateProvider.setValue(
-        powerSourceStateProvider.indexToValue(
-          outerValue,
-          widget.pin,
-        ),
+        powerSourceStateProvider.indexToValue(outerValue, widget.pin),
         widget.pin,
       );
     }
@@ -217,32 +214,39 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
     return RawGestureDetector(
       behavior: HitTestBehavior.opaque,
       gestures: {
-        _SelectivePanGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-            _SelectivePanGestureRecognizer>(
-          () => _SelectivePanGestureRecognizer(
-            debugOwner: this,
-            shouldClaimGesture: isTouchOnActiveArea,
-          ),
-          (_SelectivePanGestureRecognizer instance) {
-            instance.onStart = (details) {
-              FocusScope.of(context).unfocus();
-              isDragging = true;
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
-              updateAngle(renderBox.globalToLocal(details.globalPosition),
-                  renderBox.size);
-            };
-            instance.onUpdate = (details) {
-              if (isDragging) {
-                RenderBox renderBox = context.findRenderObject() as RenderBox;
-                updateAngle(renderBox.globalToLocal(details.globalPosition),
-                    renderBox.size);
-              }
-            };
-            instance.onEnd = (details) {
-              isDragging = false;
-            };
-          },
-        ),
+        _SelectivePanGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<
+              _SelectivePanGestureRecognizer
+            >(
+              () => _SelectivePanGestureRecognizer(
+                debugOwner: this,
+                shouldClaimGesture: isTouchOnActiveArea,
+              ),
+              (_SelectivePanGestureRecognizer instance) {
+                instance.onStart = (details) {
+                  FocusScope.of(context).unfocus();
+                  isDragging = true;
+                  RenderBox renderBox = context.findRenderObject() as RenderBox;
+                  updateAngle(
+                    renderBox.globalToLocal(details.globalPosition),
+                    renderBox.size,
+                  );
+                };
+                instance.onUpdate = (details) {
+                  if (isDragging) {
+                    RenderBox renderBox =
+                        context.findRenderObject() as RenderBox;
+                    updateAngle(
+                      renderBox.globalToLocal(details.globalPosition),
+                      renderBox.size,
+                    );
+                  }
+                };
+                instance.onEnd = (details) {
+                  isDragging = false;
+                };
+              },
+            ),
       },
       child: Stack(
         alignment: Alignment.center,
@@ -253,17 +257,11 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
               max: maxValue,
               color: primaryRed,
             ),
-            child: SizedBox(
-              width: 200,
-              height: 200,
-            ),
+            child: SizedBox(width: 200, height: 200),
           ),
           CustomPaint(
             painter: InnerDialPainter(),
-            child: SizedBox(
-              width: 180,
-              height: 180,
-            ),
+            child: SizedBox(width: 180, height: 180),
           ),
           CustomPaint(
             painter: InnerPointerPainter(
@@ -271,10 +269,7 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
               max: maxValue,
               color: primaryRed,
             ),
-            child: SizedBox(
-              width: 140,
-              height: 140,
-            ),
+            child: SizedBox(width: 140, height: 140),
           ),
         ],
       ),

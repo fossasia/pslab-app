@@ -32,10 +32,5 @@ class WaveGeneratorConstants {
 
   WaveConst modeSelected = WaveConst.square;
 
-  final Map<String, int> state = {
-    'SQR1': 0,
-    'SQR2': 0,
-    'SQR3': 0,
-    'SQR4': 0,
-  };
+  final Map<String, int> state = {'SQR1': 0, 'SQR2': 0, 'SQR3': 0, 'SQR4': 0};
 }

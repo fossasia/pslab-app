@@ -26,7 +26,7 @@ enum WaveConst {
   sine,
   triangular,
   square,
-  pwm
+  pwm,
 }
 
 enum WaveData {
@@ -104,7 +104,8 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return;
     }
 
@@ -112,8 +113,9 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
       accuracy: LocationAccuracy.high,
     );
 
-    currentPosition =
-        await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+    currentPosition = await Geolocator.getCurrentPosition(
+      locationSettings: locationSettings,
+    );
   }
 
   void setAnalogSelectedWave(WaveConst wave) {
@@ -172,14 +174,14 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
     String waveType1 =
         waveGeneratorConstants.wave[WaveConst.wave1]![WaveConst.waveType]! ==
-                sin
-            ? "sine"
-            : "tria";
+            sin
+        ? "sine"
+        : "tria";
     String waveType2 =
         waveGeneratorConstants.wave[WaveConst.wave2]![WaveConst.waveType]! ==
-                sin
-            ? "sine"
-            : "tria";
+            sin
+        ? "sine"
+        : "tria";
 
     if (_scienceLab.isConnected()) {
       if (waveGeneratorConstants.modeSelected == WaveConst.square) {
@@ -193,37 +195,46 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         double freqSqr1 = waveGeneratorConstants
             .wave[WaveConst.sqr1]![WaveConst.frequency]!
             .toDouble();
-        double dutySqr1 = waveGeneratorConstants
-                .wave[WaveConst.sqr1]![WaveConst.duty]!
+        double dutySqr1 =
+            waveGeneratorConstants.wave[WaveConst.sqr1]![WaveConst.duty]!
                 .toDouble() /
             100;
-        double dutySqr2 = waveGeneratorConstants
-                .wave[WaveConst.sqr2]![WaveConst.duty]!
+        double dutySqr2 =
+            waveGeneratorConstants.wave[WaveConst.sqr2]![WaveConst.duty]!
                 .toDouble() /
             100;
-        double phaseSqr2 = waveGeneratorConstants
-                .wave[WaveConst.sqr2]![WaveConst.phase]!
+        double phaseSqr2 =
+            waveGeneratorConstants.wave[WaveConst.sqr2]![WaveConst.phase]!
                 .toDouble() /
             360;
-        double dutySqr3 = waveGeneratorConstants
-                .wave[WaveConst.sqr3]![WaveConst.duty]!
+        double dutySqr3 =
+            waveGeneratorConstants.wave[WaveConst.sqr3]![WaveConst.duty]!
                 .toDouble() /
             100;
-        double phaseSqr3 = waveGeneratorConstants
-                .wave[WaveConst.sqr3]![WaveConst.phase]!
+        double phaseSqr3 =
+            waveGeneratorConstants.wave[WaveConst.sqr3]![WaveConst.phase]!
                 .toDouble() /
             360;
-        double dutySqr4 = waveGeneratorConstants
-                .wave[WaveConst.sqr4]![WaveConst.duty]!
+        double dutySqr4 =
+            waveGeneratorConstants.wave[WaveConst.sqr4]![WaveConst.duty]!
                 .toDouble() /
             100;
-        double phaseSqr4 = waveGeneratorConstants
-                .wave[WaveConst.sqr4]![WaveConst.phase]!
+        double phaseSqr4 =
+            waveGeneratorConstants.wave[WaveConst.sqr4]![WaveConst.phase]!
                 .toDouble() /
             360;
 
-        await _scienceLab.sqrPWM(freqSqr1, dutySqr1, phaseSqr2, dutySqr2,
-            phaseSqr3, dutySqr3, phaseSqr4, dutySqr4, false);
+        await _scienceLab.sqrPWM(
+          freqSqr1,
+          dutySqr1,
+          phaseSqr2,
+          dutySqr2,
+          phaseSqr3,
+          dutySqr3,
+          phaseSqr4,
+          dutySqr4,
+          false,
+        );
       }
     }
   }
@@ -249,13 +260,11 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
     int current = waveGeneratorConstants.modeSelected == WaveConst.square
         ? (waveGeneratorConstants.wave[selectedAnalogWave]?[propSelected!] ??
-            min)
+              min)
         : propSelected == WaveConst.frequency
-            ? (waveGeneratorConstants.wave[WaveConst.sqr1]?[propSelected!] ??
-                min)
-            : (waveGeneratorConstants.wave[selectedDigitalWave]
-                    ?[propSelected!] ??
-                min);
+        ? (waveGeneratorConstants.wave[WaveConst.sqr1]?[propSelected!] ?? min)
+        : (waveGeneratorConstants.wave[selectedDigitalWave]?[propSelected!] ??
+              min);
 
     if (current < max) await setValue(current + 1);
   }
@@ -278,13 +287,11 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
     int current = waveGeneratorConstants.modeSelected == WaveConst.square
         ? (waveGeneratorConstants.wave[selectedAnalogWave]?[propSelected!] ??
-            min)
+              min)
         : propSelected == WaveConst.frequency
-            ? (waveGeneratorConstants.wave[WaveConst.sqr1]?[propSelected!] ??
-                min)
-            : (waveGeneratorConstants.wave[selectedDigitalWave]
-                    ?[propSelected!] ??
-                min);
+        ? (waveGeneratorConstants.wave[WaveConst.sqr1]?[propSelected!] ?? min)
+        : (waveGeneratorConstants.wave[selectedDigitalWave]?[propSelected!] ??
+              min);
 
     if (current > min) await setValue(current - 1);
   }
@@ -304,14 +311,14 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
       double freq = waveGeneratorConstants
           .wave[WaveConst.sqr1]![WaveConst.frequency]!
           .toDouble();
-      double duty = waveGeneratorConstants
-              .wave[selectedDigitalWave]![WaveConst.duty]!
+      double duty =
+          waveGeneratorConstants.wave[selectedDigitalWave]![WaveConst.duty]!
               .toDouble() /
           100;
       double phase = 0;
       if (selectedDigitalWave != WaveConst.sqr1 && !isReference) {
-        phase = waveGeneratorConstants.wave[selectedDigitalWave]
-                    ?[WaveConst.phase]!
+        phase =
+            waveGeneratorConstants.wave[selectedDigitalWave]?[WaveConst.phase]!
                 .toDouble() ??
             0;
       }
@@ -345,9 +352,11 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         }
       } else {
         for (int i = 0; i < 5000; i++) {
-          double y = (10 / pi) *
+          double y =
+              (10 / pi) *
               (math.asin(
-                  math.sin(2 * pi * (freq / 1e6) * i + phase * pi / 180)));
+                math.sin(2 * pi * (freq / 1e6) * i + phase * pi / 180),
+              ));
           entries.add(FlSpot(i.toDouble(), y));
         }
       }
@@ -406,8 +415,9 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   }
 
   Future<void> loadPlaybackData(List<List<dynamic>> playbackData) async {
-    waveGeneratorConstants.wave =
-        parseWave(playbackData[playbackData.length - 1][2].toString());
+    waveGeneratorConstants.wave = parseWave(
+      playbackData[playbackData.length - 1][2].toString(),
+    );
     previewWave();
     await setWave();
     notifyListeners();
@@ -418,23 +428,21 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
       await _getCurrentLocation();
     }
     _recordedData = [
-      ['Timestamp', 'DateTime', 'Waveform Data', 'Latitude', 'Longitude']
+      ['Timestamp', 'DateTime', 'Waveform Data', 'Latitude', 'Longitude'],
     ];
     final now = DateTime.now();
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
-    _recordedData.add(
-      [
-        now.millisecondsSinceEpoch.toString(),
-        dateFormat.format(now),
-        waveGeneratorConstants.wave,
-        _configProvider!.config.includeLocationData
-            ? currentPosition?.latitude.toString() ?? 0
-            : 0,
-        _configProvider!.config.includeLocationData
-            ? currentPosition?.longitude.toString() ?? 0
-            : 0
-      ],
-    );
+    _recordedData.add([
+      now.millisecondsSinceEpoch.toString(),
+      dateFormat.format(now),
+      waveGeneratorConstants.wave,
+      _configProvider!.config.includeLocationData
+          ? currentPosition?.latitude.toString() ?? 0
+          : 0,
+      _configProvider!.config.includeLocationData
+          ? currentPosition?.longitude.toString() ?? 0
+          : 0,
+    ]);
     return true;
   }
 
@@ -444,20 +452,15 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
     List<Color> colors = [Colors.white, Colors.white60];
     List<LineChartBarData> plots = [];
     plots.addAll(
-      List<LineChartBarData>.generate(
-        waveData.length,
-        (index) {
-          return LineChartBarData(
-            spots: waveData[index],
-            isCurved: false,
-            color: colors[index % colors.length],
-            barWidth: 1,
-            dotData: const FlDotData(
-              show: false,
-            ),
-          );
-        },
-      ),
+      List<LineChartBarData>.generate(waveData.length, (index) {
+        return LineChartBarData(
+          spots: waveData[index],
+          isCurved: false,
+          color: colors[index % colors.length],
+          barWidth: 1,
+          dotData: const FlDotData(show: false),
+        );
+      }),
     );
     return plots;
   }

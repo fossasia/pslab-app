@@ -8,12 +8,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/power_source_config_provider.dart';
 
-enum Pin {
-  pv1,
-  pv2,
-  pv3,
-  pcs,
-}
+enum Pin { pv1, pv2, pv3, pcs }
 
 class PowerSourceStateProvider extends ChangeNotifier {
   late PowerSourceConfigProvider _configProvider;
@@ -90,17 +85,19 @@ class PowerSourceStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return;
     }
 
-    _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    ).listen((Position position) {
-      currentPosition = position;
-    });
+    _locationStream =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).listen((Position position) {
+          currentPosition = position;
+        });
   }
 
   double valueToIndex(double value, Pin pin) {
@@ -235,7 +232,8 @@ class PowerSourceStateProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+        'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3',
+      );
       _playbackIndex++;
       notifyListeners();
     }
@@ -244,10 +242,12 @@ class PowerSourceStateProvider extends ChangeNotifier {
 
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
-        final currentTimestamp =
-            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
-        final nextTimestamp =
-            int.tryParse(_playbackData![_playbackIndex][0].toString());
+        final currentTimestamp = int.tryParse(
+          _playbackData![_playbackIndex - 1][0].toString(),
+        );
+        final nextTimestamp = int.tryParse(
+          _playbackData![_playbackIndex][0].toString(),
+        );
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -326,29 +326,30 @@ class PowerSourceStateProvider extends ChangeNotifier {
         'PV3',
         'PCS',
         'Latitude',
-        'Longitude'
-      ]
+        'Longitude',
+      ],
     ];
     _loggingTimer = Timer.periodic(
-        Duration(milliseconds: _configProvider.config.loggingInterval),
-        (timer) {
-      final now = DateTime.now();
-      final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
-      _recordedData.add([
-        now.millisecondsSinceEpoch.toString(),
-        dateFormat.format(now),
-        voltagePV1.toStringAsFixed(2),
-        voltagePV2.toStringAsFixed(2),
-        voltagePV3.toStringAsFixed(2),
-        currentPCS.toStringAsFixed(2),
-        _configProvider.config.includeLocationData
-            ? currentPosition?.latitude.toString() ?? 0
-            : 0,
-        _configProvider.config.includeLocationData
-            ? currentPosition?.longitude.toString() ?? 0
-            : 0
-      ]);
-    });
+      Duration(milliseconds: _configProvider.config.loggingInterval),
+      (timer) {
+        final now = DateTime.now();
+        final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+        _recordedData.add([
+          now.millisecondsSinceEpoch.toString(),
+          dateFormat.format(now),
+          voltagePV1.toStringAsFixed(2),
+          voltagePV2.toStringAsFixed(2),
+          voltagePV3.toStringAsFixed(2),
+          currentPCS.toStringAsFixed(2),
+          _configProvider.config.includeLocationData
+              ? currentPosition?.latitude.toString() ?? 0
+              : 0,
+          _configProvider.config.includeLocationData
+              ? currentPosition?.longitude.toString() ?? 0
+              : 0,
+        ]);
+      },
+    );
     notifyListeners();
     return true;
   }

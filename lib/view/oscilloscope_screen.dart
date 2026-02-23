@@ -102,27 +102,27 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
           child: CheckboxListTile(
             title: Text(appLocalizations.automatedMeasurements),
             secondary: IconButton(
-                icon: Icon(Icons.info_outline),
-                onPressed: () {
-                  showDialog<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(appLocalizations.automatedMeasurements),
-                        content:
-                            Text(appLocalizations.automatedMeasurementsInfo),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(appLocalizations.ok),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }),
+              icon: Icon(Icons.info_outline),
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(appLocalizations.automatedMeasurements),
+                      content: Text(appLocalizations.automatedMeasurementsInfo),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(appLocalizations.ok),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
             value: _provider.isMeasurementsChecked,
             onChanged: (bool? newValue) {
               setState(() {
@@ -154,9 +154,9 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       MaterialPageRoute(
         builder: (context) =>
             ChangeNotifierProvider<OscilloscopeConfigProvider>.value(
-          value: _configProvider!,
-          child: const OscilloscopeConfigScreen(),
-        ),
+              value: _configProvider!,
+              child: const OscilloscopeConfigScreen(),
+            ),
       ),
     );
   }
@@ -203,14 +203,18 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       InstrumentHeading(text: appLocalizations.channelParameters),
       InstrumentIntroText(text: appLocalizations.channelParametersIntro),
       InstrumentBulletPoint(
-          text: appLocalizations.channelParametersBulletPoint1),
+        text: appLocalizations.channelParametersBulletPoint1,
+      ),
       InstrumentBulletPoint(
-          text: appLocalizations.channelParametersBulletPoint2),
+        text: appLocalizations.channelParametersBulletPoint2,
+      ),
       InstrumentBulletPoint(
-          text: appLocalizations.channelParametersBulletPoint3),
+        text: appLocalizations.channelParametersBulletPoint3,
+      ),
       InstrumentImage(imagePath: widget.micSchematic),
       InstrumentBulletPoint(
-          text: appLocalizations.channelParametersBulletPoint4),
+        text: appLocalizations.channelParametersBulletPoint4,
+      ),
       InstrumentHeading(text: appLocalizations.timeBaseAndTrigger),
       InstrumentIntroText(text: appLocalizations.timebaseIntro),
       InstrumentBulletPoint(text: appLocalizations.timebaseBulletPoint1),
@@ -301,9 +305,14 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
 
     if (fileName != null) {
       _csvService.writeMetaData(
-          appLocalizations.oscilloscope.toLowerCase(), data);
+        appLocalizations.oscilloscope.toLowerCase(),
+        data,
+      );
       final file = await _csvService.saveCsvFile(
-          appLocalizations.oscilloscope.toLowerCase(), fileName, data);
+        appLocalizations.oscilloscope.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -345,18 +354,20 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
               CommonScaffold(
                 title: appLocalizations.oscilloscope,
                 key: const Key(oscilloscopeScreenTitleKey),
-                onOptionsPressed:
-                    provider.isPlayingBack ? null : _showOptionsMenu,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
                 onGuidePressed: _showInstrumentGuide,
-                onRecordPressed:
-                    provider.isPlayingBack ? null : _toggleRecording,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
                 isRecording: provider.isRecording,
                 isPlayingBack: provider.isPlayingBack,
                 isPlaybackPaused: provider.isPlaybackPaused,
                 onPlaybackPauseResume: provider.isPlayingBack
                     ? (provider.isPlaybackPaused
-                        ? _provider.resumePlayback
-                        : _provider.pausePlayback)
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
                     : null,
                 onPlaybackStop: provider.isPlayingBack
                     ? () async {
@@ -371,8 +382,10 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                         margin: const EdgeInsets.only(left: 5, top: 5),
                         child: widget.playbackData != null
                             ? Container(
-                                margin:
-                                    const EdgeInsets.only(right: 5, bottom: 5),
+                                margin: const EdgeInsets.only(
+                                  right: 5,
+                                  bottom: 5,
+                                ),
                                 padding: const EdgeInsets.only(bottom: 20),
                                 color: Colors.black,
                                 child: OscilloscopeGraph(),
@@ -390,12 +403,13 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                               Expanded(
                                                 flex:
                                                     constraints.maxHeight < 600
-                                                        ? 68
-                                                        : 80,
+                                                    ? 68
+                                                    : 80,
                                                 child: Container(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          bottom: 20),
+                                                        bottom: 20,
+                                                      ),
                                                   color: Colors.black,
                                                   child:
                                                       const OscilloscopeGraph(),
@@ -404,16 +418,14 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                               Expanded(
                                                 flex:
                                                     constraints.maxHeight < 600
-                                                        ? 32
-                                                        : 20,
-                                                child: Selector<
-                                                    OscilloscopeStateProvider,
-                                                    int>(
-                                                  selector: (context,
-                                                          provider) =>
-                                                      provider.selectedIndex,
-                                                  builder: (context,
-                                                      selectedIndex, _) {
+                                                    ? 32
+                                                    : 20,
+                                                child: Selector<OscilloscopeStateProvider, int>(
+                                                  selector:
+                                                      (context, provider) =>
+                                                          provider
+                                                              .selectedIndex,
+                                                  builder: (context, selectedIndex, _) {
                                                     switch (selectedIndex) {
                                                       case 0:
                                                         return const ChannelParametersWidget();
@@ -436,11 +448,12 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                                   right: 0,
                                                   top: 0,
                                                   child: SizedBox(
-                                                      width: 135,
-                                                      child: MeasurementsList(
-                                                          dataParamsChannels:
-                                                              provider
-                                                                  .dataParamsChannels)),
+                                                    width: 135,
+                                                    child: MeasurementsList(
+                                                      dataParamsChannels: provider
+                                                          .dataParamsChannels,
+                                                    ),
+                                                  ),
                                                 )
                                               : const SizedBox.shrink(),
                                         ],
@@ -450,7 +463,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                   const Expanded(
                                     flex: 11,
                                     child: OscilloscopeScreenTabs(),
-                                  )
+                                  ),
                                 ],
                               ),
                       );
@@ -468,25 +481,22 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                               provider.isInBuiltMICSelected) &&
                           !provider.autoScale()) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(appLocalizations.noSignal),
-                          ),
+                          SnackBar(content: Text(appLocalizations.noSignal)),
                         );
                       }
                     },
-                    child: Text(appLocalizations.autoScale,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        )),
+                    child: Text(
+                      appLocalizations.autoScale,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   widget.playbackData == null
                       ? IconButton(
                           icon: provider.isRunning
-                              ? const Icon(
-                                  Icons.pause,
-                                  color: Colors.white,
-                                )
+                              ? const Icon(Icons.pause, color: Colors.white)
                               : const Icon(
                                   Icons.play_arrow,
                                   color: Colors.white,
@@ -497,9 +507,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                             } else {
                               provider.isRunning = true;
                             }
-                            setState(
-                              () {},
-                            );
+                            setState(() {});
                           },
                         )
                       : const SizedBox.shrink(),

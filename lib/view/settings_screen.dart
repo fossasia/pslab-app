@@ -43,10 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.settings,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -82,14 +79,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       selectedValue: provider.config.theme,
                       options: [
                         ConfigOption(
-                            value: 'Light',
-                            displayName: appLocalizations.light),
+                          value: 'Light',
+                          displayName: appLocalizations.light,
+                        ),
                         ConfigOption(
-                            value: 'Dark (Experimental)',
-                            displayName: appLocalizations.darkExperimental),
+                          value: 'Dark (Experimental)',
+                          displayName: appLocalizations.darkExperimental,
+                        ),
                         ConfigOption(
-                            value: 'System',
-                            displayName: appLocalizations.system),
+                          value: 'System',
+                          displayName: appLocalizations.system,
+                        ),
                       ],
                       onChanged: (value) {
                         provider.updateTheme(value);

@@ -58,12 +58,7 @@ class SensorChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: Column(
-        children: [
-          _buildHeader(),
-          _buildChart(),
-        ],
-      ),
+      child: Column(children: [_buildHeader(), _buildChart()]),
     );
   }
 
@@ -116,7 +111,8 @@ class SensorChartWidget extends StatelessWidget {
       children: [
         _buildAxisLabels(),
         Center(
-          child: customNoDataWidget ??
+          child:
+              customNoDataWidget ??
               Text(
                 appLocalizations.noData,
                 style: TextStyle(
@@ -138,8 +134,12 @@ class SensorChartWidget extends StatelessWidget {
       children: [
         _buildAxisLabels(),
         Padding(
-          padding:
-              const EdgeInsets.only(left: 50, right: 16, top: 16, bottom: 40),
+          padding: const EdgeInsets.only(
+            left: 50,
+            right: 16,
+            top: 16,
+            bottom: 40,
+          ),
           child: LineChart(
             LineChartData(
               backgroundColor: Colors.transparent,
@@ -148,22 +148,15 @@ class SensorChartWidget extends StatelessWidget {
                 drawVerticalLine: showGrid,
                 drawHorizontalLine: showGrid,
                 horizontalInterval: _calculateGridInterval(),
-                getDrawingHorizontalLine: (value) => FlLine(
-                  color: Colors.grey.withAlpha(77),
-                  strokeWidth: 0.8,
-                ),
-                getDrawingVerticalLine: (value) => FlLine(
-                  color: Colors.grey.withAlpha(77),
-                  strokeWidth: 0.8,
-                ),
+                getDrawingHorizontalLine: (value) =>
+                    FlLine(color: Colors.grey.withAlpha(77), strokeWidth: 0.8),
+                getDrawingVerticalLine: (value) =>
+                    FlLine(color: Colors.grey.withAlpha(77), strokeWidth: 0.8),
               ),
               titlesData: FlTitlesData(show: false),
               borderData: FlBorderData(
                 show: true,
-                border: Border.all(
-                  color: Colors.grey.withAlpha(120),
-                  width: 1,
-                ),
+                border: Border.all(color: Colors.grey.withAlpha(120), width: 1),
               ),
               minX: _getMinX(),
               maxX: _getMaxX(),

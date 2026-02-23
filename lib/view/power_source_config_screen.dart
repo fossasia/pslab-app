@@ -24,8 +24,10 @@ class _PowerSourceConfigScreenState extends State<PowerSourceConfigScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<PowerSourceConfigProvider>(context, listen: false);
+      final provider = Provider.of<PowerSourceConfigProvider>(
+        context,
+        listen: false,
+      );
       _updatePeriodController.text = provider.config.loggingInterval.toString();
     });
   }
@@ -50,10 +52,7 @@ class _PowerSourceConfigScreenState extends State<PowerSourceConfigScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.powerSourceConfigs,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -79,11 +78,12 @@ class _PowerSourceConfigScreenState extends State<PowerSourceConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.loggingIntervalErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.loggingIntervalErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },

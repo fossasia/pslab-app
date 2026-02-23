@@ -10,24 +10,25 @@ class ApplicationsListItem extends StatelessWidget {
   final String horizontalBarsIcon =
       'assets/icons/tile_icon_horizontal_bars.png';
 
-  const ApplicationsListItem(
-      {super.key,
-      required this.heading,
-      required this.description,
-      required this.instrumentIcon});
+  const ApplicationsListItem({
+    super.key,
+    required this.heading,
+    required this.description,
+    required this.instrumentIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       elevation: 2,
       child: Container(
         height: 225,
         decoration: BoxDecoration(
-            color: primaryRed, borderRadius: BorderRadius.circular(5)),
+          color: primaryRed,
+          borderRadius: BorderRadius.circular(5),
+        ),
         child: Stack(
           children: [
             Positioned(
@@ -44,10 +45,7 @@ class ApplicationsListItem extends StatelessWidget {
                       color: instrumentCardContentColor,
                     ),
                   ),
-                  const SizedBox(
-                    height: 100,
-                    width: 100,
-                  )
+                  const SizedBox(height: 100, width: 100),
                 ],
               ),
             ),
@@ -73,7 +71,7 @@ class ApplicationsListItem extends StatelessWidget {
                       fit: BoxFit.fill,
                       color: instrumentCardContentColor,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

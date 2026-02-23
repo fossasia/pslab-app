@@ -24,19 +24,10 @@ class ChartDataPoint {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'x': x,
-      'y': y,
-    };
+    return {'x': x, 'y': y};
   }
 
-  ChartDataPoint copyWith({
-    double? x,
-    double? y,
-  }) {
-    return ChartDataPoint(
-      x ?? this.x,
-      y ?? this.y,
-    );
+  ChartDataPoint copyWith({double? x, double? y}) {
+    return ChartDataPoint(x ?? this.x, y ?? this.y);
   }
 }

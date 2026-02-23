@@ -8,10 +8,10 @@ AppLocalizations appLocalizations = getIt.get();
 
 class StabilizePressureReadingStep extends ExperimentStep {
   StabilizePressureReadingStep()
-      : super(
-          id: 'stabilize_pressure',
-          instruction: appLocalizations.holdPositionForPressure,
-        );
+    : super(
+        id: 'stabilize_pressure',
+        instruction: appLocalizations.holdPositionForPressure,
+      );
   @override
   bool checkCondition(List<double> values, List<double> timeData) {
     if (values.length < 5) return false;
@@ -28,10 +28,10 @@ class StabilizePressureReadingStep extends ExperimentStep {
 
 class MoveToHigherAltitudeStep extends ExperimentStep {
   MoveToHigherAltitudeStep()
-      : super(
-          id: 'move_higher',
-          instruction: appLocalizations.moveToHigherAltitude,
-        );
+    : super(
+        id: 'move_higher',
+        instruction: appLocalizations.moveToHigherAltitude,
+      );
   @override
   bool checkCondition(List<double> values, List<double> timeData) {
     if (values.length < 5) return false;
@@ -48,10 +48,10 @@ class MoveToHigherAltitudeStep extends ExperimentStep {
 
 class MoveToLowerAltitudeStep extends ExperimentStep {
   MoveToLowerAltitudeStep()
-      : super(
-          id: 'move_lower',
-          instruction: appLocalizations.moveToLowerAltitude,
-        );
+    : super(
+        id: 'move_lower',
+        instruction: appLocalizations.moveToLowerAltitude,
+      );
   @override
   bool checkCondition(List<double> values, List<double> timeData) {
     if (values.length < 5) return false;

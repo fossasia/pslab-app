@@ -25,8 +25,10 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<GyroscopeConfigProvider>(context, listen: false);
+      final provider = Provider.of<GyroscopeConfigProvider>(
+        context,
+        listen: false,
+      );
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
       _sensorGainController.text = provider.config.sensorGain.toString();
@@ -52,33 +54,32 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/gyroscope') {
-                Navigator.popUntil(context, ModalRoute.withName('/gyroscope'));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/gyroscope',
-                  (route) => route.isFirst,
-                );
-              }
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: appBarContentColor,
-            ),
-          );
-        }),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name == '/gyroscope') {
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName('/gyroscope'),
+                  );
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/gyroscope',
+                    (route) => route.isFirst,
+                  );
+                }
+              },
+              icon: Icon(Icons.arrow_back, color: appBarContentColor),
+            );
+          },
+        ),
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.gyroscopeConfigurations,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -104,11 +105,12 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.updatePeriodErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.updatePeriodErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },
@@ -128,11 +130,12 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.highLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.highLimitErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },

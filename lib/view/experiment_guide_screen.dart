@@ -52,7 +52,7 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
             'title': 'Setup',
             'content': appLocalizations.followInstructions,
             'image': '',
-          }
+          },
         ];
     }
   }
@@ -92,9 +92,9 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
           MaterialPageRoute(
             builder: (context) =>
                 ChangeNotifierProvider<ExperimentProvider>.value(
-              value: _experimentProvider,
-              child: const LuxMeterScreen(isExperiment: true),
-            ),
+                  value: _experimentProvider,
+                  child: const LuxMeterScreen(isExperiment: true),
+                ),
           ),
         );
         break;
@@ -128,9 +128,7 @@ class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
           backgroundColor: appBarColor,
           foregroundColor: appBarContentColor,
         ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 

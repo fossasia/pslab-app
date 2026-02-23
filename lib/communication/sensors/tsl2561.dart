@@ -53,8 +53,10 @@ class TSL2561 {
         }
         await enable();
         await _wait();
-        await i2c
-            .writeBulk(address, [commandBit | registerTiming, timing | gain]);
+        await i2c.writeBulk(address, [
+          commandBit | registerTiming,
+          timing | gain,
+        ]);
       }
     }();
   }
@@ -75,9 +77,15 @@ class TSL2561 {
   Future<double?> getRaw() async {
     try {
       List<int> infraList = await i2c.readBulk(
-          address, commandBit | wordBit | registerChan1Low, 2);
+        address,
+        commandBit | wordBit | registerChan1Low,
+        2,
+      );
       List<int> fullList = await i2c.readBulk(
-          address, commandBit | wordBit | registerChan0Low, 2);
+        address,
+        commandBit | wordBit | registerChan0Low,
+        2,
+      );
 
       if (infraList.isNotEmpty && fullList.isNotEmpty) {
         int full = ((fullList[1] & 0xff) << 8) | (fullList[0] & 0xff);
@@ -107,13 +115,17 @@ class TSL2561 {
   }
 
   Future<void> enable() async {
-    await i2c
-        .writeBulk(address, [commandBit | registerControl, controlPowerOn]);
+    await i2c.writeBulk(address, [
+      commandBit | registerControl,
+      controlPowerOn,
+    ]);
   }
 
   Future<void> disable() async {
-    await i2c
-        .writeBulk(address, [commandBit | registerControl, controlPowerOff]);
+    await i2c.writeBulk(address, [
+      commandBit | registerControl,
+      controlPowerOff,
+    ]);
   }
 
   Future<void> _wait() async {

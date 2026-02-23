@@ -13,17 +13,10 @@ class XYPlotGraph extends StatefulWidget {
 
 class _XYPlotGraphState extends State<XYPlotGraph> {
   Widget titleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: 9,
-    );
+    final style = TextStyle(color: chartTextColor, fontSize: 9);
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        meta.formattedValue,
-        style: style,
-      ),
+      child: Text(maxLines: 1, meta.formattedValue, style: style),
     );
   }
 
@@ -137,18 +130,10 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
             borderData: FlBorderData(
               show: true,
               border: Border(
-                bottom: BorderSide(
-                  color: chartBorderColor,
-                ),
-                left: BorderSide(
-                  color: chartBorderColor,
-                ),
-                top: BorderSide(
-                  color: chartBorderColor,
-                ),
-                right: BorderSide(
-                  color: chartBorderColor,
-                ),
+                bottom: BorderSide(color: chartBorderColor),
+                left: BorderSide(color: chartBorderColor),
+                top: BorderSide(color: chartBorderColor),
+                right: BorderSide(color: chartBorderColor),
               ),
             ),
             maxX: 16,

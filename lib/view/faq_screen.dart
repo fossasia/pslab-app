@@ -38,10 +38,11 @@ class FAQScreen extends StatelessWidget {
         answer: appLocalizations.faqHowToConnectAnswer,
       ),
       FAQItem(
-          question: appLocalizations.faqReportBug,
-          answer: appLocalizations.faqReportBugAnswer,
-          linkText: appLocalizations.faqReportBugLinkText,
-          linkUrl: appLocalizations.faqReportBugLinkUrl),
+        question: appLocalizations.faqReportBug,
+        answer: appLocalizations.faqReportBugAnswer,
+        linkText: appLocalizations.faqReportBugLinkText,
+        linkUrl: appLocalizations.faqReportBugLinkUrl,
+      ),
       FAQItem(
         question: appLocalizations.faqRecordData,
         answer: appLocalizations.faqRecordDataAnswer,
@@ -76,25 +77,15 @@ class FAQScreen extends StatelessWidget {
         collapsedShape: const Border(),
         title: Padding(
           padding: const EdgeInsets.only(bottom: 0),
-          child: Row(children: [
-            Text(
-              appLocalizations.faqQ,
-              style: TextStyle(
-                color: primaryRed,
+          child: Row(
+            children: [
+              Text(appLocalizations.faqQ, style: TextStyle(color: primaryRed)),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(faq.question, style: TextStyle(color: primaryRed)),
               ),
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Flexible(
-              child: Text(
-                faq.question,
-                style: TextStyle(
-                  color: primaryRed,
-                ),
-              ),
-            ),
-          ]),
+            ],
+          ),
         ),
         childrenPadding: const EdgeInsets.fromLTRB(5, 0, 16, 16),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -102,19 +93,14 @@ class FAQScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 0),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                appLocalizations.faqA,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Flexible(
-                child: Text(
-                  faq.answer,
-                ),
-              ),
-            ]),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(appLocalizations.faqA),
+                const SizedBox(width: 10),
+                Flexible(child: Text(faq.answer)),
+              ],
+            ),
           ),
           if (faq.linkText != null && faq.linkUrl != null)
             Padding(
@@ -123,9 +109,7 @@ class FAQScreen extends StatelessWidget {
                 onTap: () => _launchURL(faq.linkUrl!),
                 child: Row(
                   children: [
-                    const SizedBox(
-                      width: 15,
-                    ),
+                    const SizedBox(width: 15),
                     Text(
                       faq.linkText!,
                       style: TextStyle(

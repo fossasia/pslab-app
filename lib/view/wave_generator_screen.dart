@@ -124,9 +124,14 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
 
     if (fileName != null) {
       _csvService.writeMetaData(
-          appLocalizations.waveGenerator.toLowerCase(), data);
+        appLocalizations.waveGenerator.toLowerCase(),
+        data,
+      );
       final file = await _csvService.saveCsvFile(
-          appLocalizations.waveGenerator.toLowerCase(), fileName, data);
+        appLocalizations.waveGenerator.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -200,9 +205,9 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
       MaterialPageRoute(
         builder: (context) =>
             ChangeNotifierProvider<WaveGeneratorConfigProvider>.value(
-          value: _configProvider!,
-          child: const WaveGeneratorConfigScreen(),
-        ),
+              value: _configProvider!,
+              child: const WaveGeneratorConfigScreen(),
+            ),
       ),
     );
   }
@@ -244,8 +249,11 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                 onOptionsPressed: _showOptionsMenu,
                 body: SafeArea(
                   child: Container(
-                    margin:
-                        const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0),
+                    margin: const EdgeInsets.only(
+                      left: 8.0,
+                      top: 8.0,
+                      right: 8.0,
+                    ),
                     child: Column(
                       children: [
                         Expanded(
@@ -271,8 +279,9 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                       style: TextButton.styleFrom(
                                         backgroundColor: primaryRed,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                       ),
                                       child: Text(
@@ -290,15 +299,17 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                   Expanded(
                                     child: TextButton(
                                       style: TextButton.styleFrom(
-                                        backgroundColor: provider
+                                        backgroundColor:
+                                            provider
                                                     .waveGeneratorConstants
                                                     .modeSelected ==
                                                 WaveConst.square
                                             ? buttonEnabledColor
                                             : buttonDisabledColor,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                       ),
                                       child: Text(
@@ -309,15 +320,14 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                         ),
                                       ),
                                       onPressed: () => {
-                                        setState(
-                                          () {
-                                            provider.waveGeneratorConstants
-                                                    .modeSelected =
-                                                WaveConst.square;
-                                            provider.propSelected = null;
-                                            provider.previewWave();
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider
+                                                  .waveGeneratorConstants
+                                                  .modeSelected =
+                                              WaveConst.square;
+                                          provider.propSelected = null;
+                                          provider.previewWave();
+                                        }),
                                       },
                                     ),
                                   ),
@@ -325,15 +335,17 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                   Expanded(
                                     child: TextButton(
                                       style: TextButton.styleFrom(
-                                        backgroundColor: provider
+                                        backgroundColor:
+                                            provider
                                                     .waveGeneratorConstants
                                                     .modeSelected ==
                                                 WaveConst.pwm
                                             ? buttonEnabledColor
                                             : buttonDisabledColor,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                       ),
                                       child: Text(
@@ -344,14 +356,14 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                         ),
                                       ),
                                       onPressed: () => {
-                                        setState(
-                                          () {
-                                            provider.waveGeneratorConstants
-                                                .modeSelected = WaveConst.pwm;
-                                            provider.propSelected = null;
-                                            provider.previewWave();
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider
+                                                  .waveGeneratorConstants
+                                                  .modeSelected =
+                                              WaveConst.pwm;
+                                          provider.propSelected = null;
+                                          provider.previewWave();
+                                        }),
                                       },
                                     ),
                                   ),
@@ -360,10 +372,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                             ),
                           ],
                         ),
-                        Expanded(
-                          flex: 40,
-                          child: WaveGeneratorMainControls(),
-                        ),
+                        Expanded(flex: 40, child: WaveGeneratorMainControls()),
                       ],
                     ),
                   ),
@@ -379,7 +388,9 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                               ModalRoute.of(context)?.settings.name ==
                                   '/oscilloscope') {
                             Navigator.popUntil(
-                                context, ModalRoute.withName('/oscilloscope'));
+                              context,
+                              ModalRoute.withName('/oscilloscope'),
+                            );
                           } else {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
@@ -390,9 +401,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                appLocalizations.notConnected,
-                              ),
+                              content: Text(appLocalizations.notConnected),
                             ),
                           );
                         }
@@ -402,7 +411,9 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                               ModalRoute.of(context)?.settings.name ==
                                   '/logicAnalyzer') {
                             Navigator.popUntil(
-                                context, ModalRoute.withName('/logicAnalyzer'));
+                              context,
+                              ModalRoute.withName('/logicAnalyzer'),
+                            );
                           } else {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
@@ -413,9 +424,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                appLocalizations.notConnected,
-                              ),
+                              content: Text(appLocalizations.notConnected),
                             ),
                           );
                         }
@@ -426,14 +435,10 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                         value: appLocalizations.oscilloscope,
                         child: ListTile(
                           dense: true,
-                          leading: Image.asset(
-                            widget.oscilloscopeIcon,
-                          ),
+                          leading: Image.asset(widget.oscilloscopeIcon),
                           title: Text(
                             appLocalizations.oscilloscope,
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
@@ -441,14 +446,10 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                         value: appLocalizations.logicAnalyzer,
                         child: ListTile(
                           dense: true,
-                          leading: Image.asset(
-                            widget.logicAnalyzerIcon,
-                          ),
+                          leading: Image.asset(widget.logicAnalyzerIcon),
                           title: Text(
                             appLocalizations.logicAnalyzer,
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),

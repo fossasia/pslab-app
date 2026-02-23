@@ -23,8 +23,10 @@ class _MultimeterConfigScreenState extends State<MultimeterConfigScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<MultimeterConfigProvider>(context, listen: false);
+      final provider = Provider.of<MultimeterConfigProvider>(
+        context,
+        listen: false,
+      );
       _updatePeriodController.text = provider.config.updatePeriod.toString();
     });
   }
@@ -50,10 +52,7 @@ class _MultimeterConfigScreenState extends State<MultimeterConfigScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.multimeterConfigs,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -79,11 +78,12 @@ class _MultimeterConfigScreenState extends State<MultimeterConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.updatePeriodErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.updatePeriodErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },

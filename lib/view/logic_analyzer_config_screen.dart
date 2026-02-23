@@ -44,10 +44,7 @@ class _LogicAnalyzerConfigScreenState extends State<LogicAnalyzerConfigScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.logicAnalyzerConfigs,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(

@@ -184,7 +184,8 @@ class APDS9960 {
   Future<double> getLux() async {
     try {
       await getColorData();
-      lux = (-0.32466 * colorData[0]) +
+      lux =
+          (-0.32466 * colorData[0]) +
           (1.57837 * colorData[1]) +
           (-0.73191 * colorData[2]);
       return lux;
@@ -215,8 +216,11 @@ class APDS9960 {
           int datasetCount = datasetCountData[0] & 0xFF;
           if (datasetCount == 0) break;
 
-          List<int> buffer =
-              await i2c.readBulk(address, gfifoU, min(128, datasetCount * 4));
+          List<int> buffer = await i2c.readBulk(
+            address,
+            gfifoU,
+            min(128, datasetCount * 4),
+          );
 
           for (int i = 0; i < datasetCount; i++) {
             List<int> bufferDataset = [];

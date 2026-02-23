@@ -47,10 +47,7 @@ class _ADS1115ScreenState extends State<ADS1115Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -63,10 +60,7 @@ class _ADS1115ScreenState extends State<ADS1115Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -304,8 +298,12 @@ class _ADS1115ScreenState extends State<ADS1115Screen> {
     );
   }
 
-  Widget _buildConfigRow(String label, String currentValue,
-      List<String> options, Function(String) onChanged) {
+  Widget _buildConfigRow(
+    String label,
+    String currentValue,
+    List<String> options,
+    Function(String) onChanged,
+  ) {
     return Row(
       children: [
         SizedBox(
@@ -333,10 +331,7 @@ class _ADS1115ScreenState extends State<ADS1115Screen> {
               child: DropdownButton<String>(
                 value: currentValue,
                 isExpanded: true,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: blackTextColor,
-                ),
+                style: TextStyle(fontSize: 14, color: blackTextColor),
                 dropdownColor: cardBackgroundColor,
                 items: options.map((String value) {
                   return DropdownMenuItem<String>(
@@ -385,10 +380,7 @@ class _ADS1115ScreenState extends State<ADS1115Screen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 value,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: blackTextColor,
-                ),
+                style: TextStyle(fontSize: 14, color: blackTextColor),
               ),
             ),
           ),

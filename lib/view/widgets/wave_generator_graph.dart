@@ -12,17 +12,10 @@ class WaveGeneratorGraph extends StatefulWidget {
 
 class _WaveGeneratorGraphState extends State<WaveGeneratorGraph> {
   Widget topTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: 9,
-    );
+    final style = TextStyle(color: chartTextColor, fontSize: 9);
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        meta.formattedValue,
-        style: style,
-      ),
+      child: Text(maxLines: 1, meta.formattedValue, style: style),
     );
   }
 
@@ -47,20 +40,10 @@ class _WaveGeneratorGraphState extends State<WaveGeneratorGraph> {
               ),
             ),
             bottomTitles: const AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
+              sideTitles: SideTitles(showTitles: false),
             ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
-            ),
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
-            ),
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           gridData: FlGridData(
             show: true,
@@ -71,18 +54,10 @@ class _WaveGeneratorGraphState extends State<WaveGeneratorGraph> {
           borderData: FlBorderData(
             show: true,
             border: Border(
-              bottom: BorderSide(
-                color: chartBorderColor,
-              ),
-              left: BorderSide(
-                color: chartBorderColor,
-              ),
-              top: BorderSide(
-                color: chartBorderColor,
-              ),
-              right: BorderSide(
-                color: chartBorderColor,
-              ),
+              bottom: BorderSide(color: chartBorderColor),
+              left: BorderSide(color: chartBorderColor),
+              top: BorderSide(color: chartBorderColor),
+              right: BorderSide(color: chartBorderColor),
             ),
           ),
           clipData: const FlClipData.all(),

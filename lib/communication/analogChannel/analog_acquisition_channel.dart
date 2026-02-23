@@ -35,8 +35,15 @@ class AnalogAcquisitionChannel {
     return calcData;
   }
 
-  void setParams(String? channel, int length, int bufferIndex, double timebase,
-      int resolution, AnalogInputSource? source, double? gain) {
+  void setParams(
+    String? channel,
+    int length,
+    int bufferIndex,
+    double timebase,
+    int resolution,
+    AnalogInputSource? source,
+    double? gain,
+  ) {
     _analogInputSource = source!;
     if (resolution != -1) _resolution = resolution;
     if (length != -1) this.length = length;

@@ -26,9 +26,11 @@ void setupLocator() {
   });
   getIt.registerLazySingleton<SocketClient>(() => SocketClient());
   getIt.registerLazySingleton<ScienceLabCommon>(
-      () => ScienceLabCommon(getIt.get<CommunicationHandler>()));
+    () => ScienceLabCommon(getIt.get<CommunicationHandler>()),
+  );
   getIt.registerLazySingleton<ScienceLab>(
-      () => getIt.get<ScienceLabCommon>().getScienceLab());
+    () => getIt.get<ScienceLabCommon>().getScienceLab(),
+  );
   getIt.registerLazySingleton<BoardStateProvider>(() => BoardStateProvider());
   getIt.registerLazySingleton<SHT21Provider>(() => SHT21Provider());
 }

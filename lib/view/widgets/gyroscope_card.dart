@@ -20,17 +20,10 @@ class GyroscopeCard extends StatefulWidget {
 class _GyroscopeCardState extends State<GyroscopeCard> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   Widget sideTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: 9,
-    );
+    final style = TextStyle(color: chartTextColor, fontSize: 9);
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        meta.formattedValue,
-        style: style,
-      ),
+      child: Text(maxLines: 1, meta.formattedValue, style: style),
     );
   }
 
@@ -52,79 +45,81 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       elevation: 2,
       child: Container(
         decoration: BoxDecoration(
-            color: cardBackgroundColor, borderRadius: BorderRadius.circular(5)),
+          color: cardBackgroundColor,
+          borderRadius: BorderRadius.circular(5),
+        ),
         child: Row(
           children: [
             Expanded(
               flex: 30,
-              child: Column(children: [
-                Container(
-                  margin: const EdgeInsets.all(15),
-                  child: Image.asset(
-                    axisImage,
-                    width: 50,
-                    height: 50,
-                    errorBuilder: (context, error, stackTrace) {
-                      IconData fallbackIcon;
-                      switch (widget.axis.toLowerCase()) {
-                        case 'x':
-                          fallbackIcon = Icons.rotate_left;
-                          break;
-                        case 'y':
-                          fallbackIcon = Icons.rotate_right;
-                          break;
-                        case 'z':
-                          fallbackIcon = Icons.rotate_90_degrees_ccw;
-                          break;
-                        default:
-                          fallbackIcon = Icons.rotate_left;
-                      }
-                      return Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          fallbackIcon,
-                          color: widget.color,
-                          size: 30,
-                        ),
-                      );
-                    },
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(15),
+                    child: Image.asset(
+                      axisImage,
+                      width: 50,
+                      height: 50,
+                      errorBuilder: (context, error, stackTrace) {
+                        IconData fallbackIcon;
+                        switch (widget.axis.toLowerCase()) {
+                          case 'x':
+                            fallbackIcon = Icons.rotate_left;
+                            break;
+                          case 'y':
+                            fallbackIcon = Icons.rotate_right;
+                            break;
+                          case 'z':
+                            fallbackIcon = Icons.rotate_90_degrees_ccw;
+                            break;
+                          default:
+                            fallbackIcon = Icons.rotate_left;
+                        }
+                        return Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            fallbackIcon,
+                            color: widget.color,
+                            size: 30,
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 8, bottom: 12),
-                  child: Text(
-                    "${currVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
-                    style: TextStyle(color: cardContentColor, fontSize: 14),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8, bottom: 12),
+                    child: Text(
+                      "${currVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
+                      style: TextStyle(color: cardContentColor, fontSize: 14),
+                    ),
                   ),
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(left: 8, top: 4),
-                  child: Text(
-                    "${appLocalizations.minValue} ${minVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
-                    style: TextStyle(color: cardContentColor, fontSize: 10),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin: const EdgeInsets.only(left: 8, top: 4),
+                    child: Text(
+                      "${appLocalizations.minValue} ${minVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
+                      style: TextStyle(color: cardContentColor, fontSize: 10),
+                    ),
                   ),
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(left: 8, top: 2),
-                  child: Text(
-                    "${appLocalizations.maxValue} ${maxVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
-                    style: TextStyle(color: cardContentColor, fontSize: 10),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin: const EdgeInsets.only(left: 8, top: 2),
+                    child: Text(
+                      "${appLocalizations.maxValue} ${maxVal.toStringAsFixed(1)} ${appLocalizations.gyroscopeAxisLabel}",
+                      style: TextStyle(color: cardContentColor, fontSize: 10),
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ),
             Expanded(
               flex: 70,
@@ -151,7 +146,8 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                         axisNameSize: 20,
                       ),
                       bottomTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                       leftTitles: AxisTitles(
                         axisNameWidget: Text(
                           appLocalizations.gyroscopeAxisLabel,
@@ -169,7 +165,8 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                         ),
                       ),
                       rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                     ),
                     gridData: const FlGridData(
                       show: true,
@@ -180,18 +177,10 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                     borderData: FlBorderData(
                       show: true,
                       border: Border(
-                        bottom: BorderSide(
-                          color: chartBorderColor,
-                        ),
-                        left: BorderSide(
-                          color: chartBorderColor,
-                        ),
-                        top: BorderSide(
-                          color: chartBorderColor,
-                        ),
-                        right: BorderSide(
-                          color: chartBorderColor,
-                        ),
+                        bottom: BorderSide(color: chartBorderColor),
+                        left: BorderSide(color: chartBorderColor),
+                        top: BorderSide(color: chartBorderColor),
+                        right: BorderSide(color: chartBorderColor),
                       ),
                     ),
                     minY: chartMinY,

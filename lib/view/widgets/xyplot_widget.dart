@@ -54,11 +54,9 @@ class _XYPlotState extends State<XYPlotWidget> {
                       activeColor: checkBoxActiveColor,
                       value: oscilloscopeStateProvider.isXYPlotSelected,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isXYPlotSelected = value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.isXYPlotSelected = value!;
+                        });
                       },
                     ),
                     Text(
@@ -83,14 +81,12 @@ class _XYPlotState extends State<XYPlotWidget> {
                     DropdownMenu<String>(
                       width: 95,
                       initialSelection: oscilloscopeStateProvider.xyPlotAxis1,
-                      dropdownMenuEntries: channelEntries.map(
-                        (String value) {
-                          return DropdownMenuEntry<String>(
-                            label: value,
-                            value: value,
-                          );
-                        },
-                      ).toList(),
+                      dropdownMenuEntries: channelEntries.map((String value) {
+                        return DropdownMenuEntry<String>(
+                          label: value,
+                          value: value,
+                        );
+                      }).toList(),
                       inputDecorationTheme: const InputDecorationTheme(
                         border: InputBorder.none,
                       ),
@@ -105,14 +101,12 @@ class _XYPlotState extends State<XYPlotWidget> {
                     DropdownMenu<String>(
                       width: 95,
                       initialSelection: oscilloscopeStateProvider.xyPlotAxis2,
-                      dropdownMenuEntries: channelEntries.map(
-                        (String value) {
-                          return DropdownMenuEntry<String>(
-                            label: value,
-                            value: value,
-                          );
-                        },
-                      ).toList(),
+                      dropdownMenuEntries: channelEntries.map((String value) {
+                        return DropdownMenuEntry<String>(
+                          label: value,
+                          value: value,
+                        );
+                      }).toList(),
                       inputDecorationTheme: const InputDecorationTheme(
                         border: InputBorder.none,
                       ),
@@ -126,7 +120,7 @@ class _XYPlotState extends State<XYPlotWidget> {
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -150,7 +144,7 @@ class _XYPlotState extends State<XYPlotWidget> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

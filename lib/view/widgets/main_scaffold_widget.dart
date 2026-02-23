@@ -90,25 +90,21 @@ class _MainScaffoldState extends State<MainScaffold>
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            icon: Icon(
-              Icons.menu,
-              color: appBarContentColor,
-            ),
-          );
-        }),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(Icons.menu, color: appBarContentColor),
+            );
+          },
+        ),
         backgroundColor: appBarColor,
         title: AnimatedSwitcher(
           duration: const Duration(milliseconds: 0),
           transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
+            return FadeTransition(opacity: animation, child: child);
           },
           child: _isSearching
               ? TextField(
@@ -116,10 +112,7 @@ class _MainScaffoldState extends State<MainScaffold>
                   controller: _searchController,
                   onChanged: _onSearchChanged,
                   autofocus: true,
-                  style: TextStyle(
-                    color: appBarContentColor,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(color: appBarContentColor, fontSize: 18),
                   decoration: InputDecoration(
                     hintText: widget.searchHint,
                     hintStyle: TextStyle(
@@ -136,19 +129,13 @@ class _MainScaffoldState extends State<MainScaffold>
               : Text(
                   key: widget.scaffoldKey,
                   widget.title,
-                  style: TextStyle(
-                    color: appBarContentColor,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(color: appBarContentColor, fontSize: 18),
                 ),
         ),
         actions: _isSearching
             ? [
                 IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    color: appBarContentColor,
-                  ),
+                  icon: Icon(Icons.clear, color: appBarContentColor),
                   onPressed: () {
                     if (_searchController.text.isNotEmpty) {
                       _searchController.clear();
@@ -162,10 +149,7 @@ class _MainScaffoldState extends State<MainScaffold>
             : [
                 if (widget.showSearch)
                   IconButton(
-                    icon: Icon(
-                      Icons.search,
-                      color: appBarContentColor,
-                    ),
+                    icon: Icon(Icons.search, color: appBarContentColor),
                     onPressed: _toggleSearch,
                   ),
                 Consumer<BoardStateProvider>(
@@ -174,8 +158,8 @@ class _MainScaffoldState extends State<MainScaffold>
                       icon: Image.asset(
                         provider.pslabIsConnected
                             ? (provider.scienceLabCommon.isWiFiConnected()
-                                ? widget.icWiFiConnected
-                                : widget.icUsbConnected)
+                                  ? widget.icWiFiConnected
+                                  : widget.icUsbConnected)
                             : widget.icUsbDisconnected,
                         width: 24,
                         height: 24,
@@ -186,7 +170,9 @@ class _MainScaffoldState extends State<MainScaffold>
                             ModalRoute.of(context)?.settings.name ==
                                 '/connectDevice') {
                           Navigator.popUntil(
-                              context, ModalRoute.withName('/connectDevice'));
+                            context,
+                            ModalRoute.withName('/connectDevice'),
+                          );
                         } else {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
@@ -202,9 +188,7 @@ class _MainScaffoldState extends State<MainScaffold>
               ],
       ),
       body: widget.body,
-      drawer: NavDrawer(
-        selectedIndex: widget.index,
-      ),
+      drawer: NavDrawer(selectedIndex: widget.index),
     );
   }
 }

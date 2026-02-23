@@ -25,8 +25,10 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<BarometerConfigProvider>(context, listen: false);
+      final provider = Provider.of<BarometerConfigProvider>(
+        context,
+        listen: false,
+      );
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
     });
@@ -62,19 +64,13 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
                   Navigator.pushReplacementNamed(context, '/barometer');
                 }
               },
-              icon: Icon(
-                Icons.arrow_back,
-                color: appBarContentColor,
-              ),
+              icon: Icon(Icons.arrow_back, color: appBarContentColor),
             );
           },
         ),
         title: Text(
           appLocalizations.barometerConfig,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -100,11 +96,12 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.updatePeriodErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.updatePeriodErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },
@@ -126,11 +123,12 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.highLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.highLimitErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },
@@ -141,8 +139,9 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
                       selectedValue: provider.config.activeSensor,
                       options: [
                         ConfigOption(
-                            value: 'In-built Sensor',
-                            displayName: appLocalizations.inBuiltSensor),
+                          value: 'In-built Sensor',
+                          displayName: appLocalizations.inBuiltSensor,
+                        ),
                         ConfigOption(value: 'BMP180', displayName: 'BMP180'),
                       ],
                       onChanged: (value) {

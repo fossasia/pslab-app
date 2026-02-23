@@ -36,13 +36,13 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 1.0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0.0, 1.0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeInOut,
+          ),
+        );
     _animationController.forward();
   }
 
@@ -50,8 +50,10 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
     setState(() {
       double delta = details.primaryDelta! / MediaQuery.of(context).size.height;
       _currentHeightFactor -= delta;
-      _currentHeightFactor =
-          _currentHeightFactor.clamp(_minHeightFactor, _maxHeightFactor);
+      _currentHeightFactor = _currentHeightFactor.clamp(
+        _minHeightFactor,
+        _maxHeightFactor,
+      );
     });
   }
 
@@ -225,12 +227,9 @@ class InstrumentIntroText extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Text(
         text,
-        style: style ??
-            TextStyle(
-              fontSize: 15.0,
-              color: blackTextColor,
-              height: 1.5,
-            ),
+        style:
+            style ??
+            TextStyle(fontSize: 15.0, color: blackTextColor, height: 1.5),
       ),
     );
   }
@@ -246,7 +245,8 @@ class InstrumentHeading extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Text(
         text,
-        style: style ??
+        style:
+            style ??
             TextStyle(
               fontSize: 20.0,
               color: guideDrawerHeadingColor,
@@ -279,12 +279,9 @@ class InstrumentBulletPoint extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: style ??
-                  TextStyle(
-                    fontSize: 15.0,
-                    color: blackTextColor,
-                    height: 1.5,
-                  ),
+              style:
+                  style ??
+                  TextStyle(fontSize: 15.0, color: blackTextColor, height: 1.5),
             ),
           ),
         ],

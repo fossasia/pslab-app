@@ -44,10 +44,7 @@ class _VL53L0XScreenState extends State<VL53L0XScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -60,10 +57,7 @@ class _VL53L0XScreenState extends State<VL53L0XScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -259,10 +253,7 @@ class _VL53L0XScreenState extends State<VL53L0XScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 value,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: blackTextColor,
-                ),
+                style: TextStyle(fontSize: 14, color: blackTextColor),
               ),
             ),
           ),

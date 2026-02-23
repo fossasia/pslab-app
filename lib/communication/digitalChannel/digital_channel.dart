@@ -14,7 +14,7 @@ class DigitalChannel {
     'LA4',
     'RES',
     'EXT',
-    'FRQ'
+    'FRQ',
   ];
   late String channelName, dataType;
   late int initialStateOverride,
@@ -50,7 +50,9 @@ class DigitalChannel {
   }
 
   void loadData(
-      LinkedHashMap<String, int> initialStates, List<double> timestamps) {
+    LinkedHashMap<String, int> initialStates,
+    List<double> timestamps,
+  ) {
     if (initialStateOverride != 0) {
       initialState = (initialStateOverride - 1) == 1;
       initialStateOverride = 0;

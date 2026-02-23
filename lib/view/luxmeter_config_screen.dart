@@ -25,8 +25,10 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<LuxMeterConfigProvider>(context, listen: false);
+      final provider = Provider.of<LuxMeterConfigProvider>(
+        context,
+        listen: false,
+      );
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
       _sensorGainController.text = provider.config.sensorGain.toString();
@@ -56,10 +58,7 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.luxmeterConfigurations,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -85,11 +84,12 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.updatePeriodErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.updatePeriodErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },
@@ -109,11 +109,12 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.highLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.highLimitErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },
@@ -124,8 +125,9 @@ class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
                       selectedValue: provider.config.activeSensor,
                       options: [
                         ConfigOption(
-                            value: 'In-built Sensor',
-                            displayName: appLocalizations.inBuiltSensor),
+                          value: 'In-built Sensor',
+                          displayName: appLocalizations.inBuiltSensor,
+                        ),
                         ConfigOption(value: 'BH1750', displayName: 'BH1750'),
                         ConfigOption(value: 'TSL2561', displayName: 'TSL2561'),
                       ],

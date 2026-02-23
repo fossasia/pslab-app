@@ -42,9 +42,7 @@ class _LogicAnalyzerChannelSelectionState
     return Consumer<LogicAnalyzerStateProvider>(
       builder: (context, provider, _) {
         return Container(
-          margin: const EdgeInsets.only(
-            left: 15,
-          ),
+          margin: const EdgeInsets.only(left: 15),
           child: Column(
             children: [
               Text(
@@ -138,26 +136,19 @@ class _LogicAnalyzerChannelSelectionState
                                   color: logicAnalyzerTextColor,
                                   fontSize: 14,
                                 ),
-                                items: channelNames.map(
-                                  (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  },
-                                ).toList(),
+                                items: channelNames.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                                 onChanged: (value) => {
-                                  setState(
-                                    () {
-                                      provider.channelSelectSpinner1 = value!;
-                                    },
-                                  ),
+                                  setState(() {
+                                    provider.channelSelectSpinner1 = value!;
+                                  }),
                                 },
                               ),
-                              Divider(
-                                height: 1,
-                                color: logicAnalyzerTextColor,
-                              ),
+                              Divider(height: 1, color: logicAnalyzerTextColor),
                               DropdownButton(
                                 dropdownColor: primaryRed,
                                 padding: const EdgeInsets.symmetric(
@@ -171,20 +162,16 @@ class _LogicAnalyzerChannelSelectionState
                                   color: logicAnalyzerTextColor,
                                   fontSize: 14,
                                 ),
-                                items: analysisOptions.map(
-                                  (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  },
-                                ).toList(),
+                                items: analysisOptions.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                                 onChanged: (value) => {
-                                  setState(
-                                    () {
-                                      provider.edgeSelectSpinner1 = value!;
-                                    },
-                                  ),
+                                  setState(() {
+                                    provider.edgeSelectSpinner1 = value!;
+                                  }),
                                 },
                               ),
                             ],
@@ -193,8 +180,9 @@ class _LogicAnalyzerChannelSelectionState
                         provider.channelMode > 1
                             ? Container(
                                 margin: const EdgeInsets.only(top: 10),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
                                 decoration: BoxDecoration(
                                   color: primaryRed,
                                   borderRadius: BorderRadius.circular(6),
@@ -216,21 +204,17 @@ class _LogicAnalyzerChannelSelectionState
                                         color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
-                                      items: channelNames.map(
-                                        (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        },
-                                      ).toList(),
+                                      items: channelNames.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
                                       onChanged: (value) => {
-                                        setState(
-                                          () {
-                                            provider.channelSelectSpinner2 =
-                                                value!;
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider.channelSelectSpinner2 =
+                                              value!;
+                                        }),
                                       },
                                     ),
                                     Divider(
@@ -250,21 +234,18 @@ class _LogicAnalyzerChannelSelectionState
                                         color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
-                                      items: analysisOptions.map(
-                                        (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        },
-                                      ).toList(),
+                                      items: analysisOptions.map((
+                                        String value,
+                                      ) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
                                       onChanged: (value) => {
-                                        setState(
-                                          () {
-                                            provider.edgeSelectSpinner2 =
-                                                value!;
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider.edgeSelectSpinner2 = value!;
+                                        }),
                                       },
                                     ),
                                   ],
@@ -274,8 +255,9 @@ class _LogicAnalyzerChannelSelectionState
                         provider.channelMode > 2
                             ? Container(
                                 margin: const EdgeInsets.only(top: 10),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
                                 decoration: BoxDecoration(
                                   color: primaryRed,
                                   borderRadius: BorderRadius.circular(6),
@@ -297,21 +279,17 @@ class _LogicAnalyzerChannelSelectionState
                                         color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
-                                      items: channelNames.map(
-                                        (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        },
-                                      ).toList(),
+                                      items: channelNames.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
                                       onChanged: (value) => {
-                                        setState(
-                                          () {
-                                            provider.channelSelectSpinner3 =
-                                                value!;
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider.channelSelectSpinner3 =
+                                              value!;
+                                        }),
                                       },
                                     ),
                                     Divider(
@@ -331,21 +309,18 @@ class _LogicAnalyzerChannelSelectionState
                                         color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
-                                      items: analysisOptions.map(
-                                        (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        },
-                                      ).toList(),
+                                      items: analysisOptions.map((
+                                        String value,
+                                      ) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
                                       onChanged: (value) => {
-                                        setState(
-                                          () {
-                                            provider.edgeSelectSpinner3 =
-                                                value!;
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider.edgeSelectSpinner3 = value!;
+                                        }),
                                       },
                                     ),
                                   ],
@@ -355,8 +330,9 @@ class _LogicAnalyzerChannelSelectionState
                         provider.channelMode > 3
                             ? Container(
                                 margin: const EdgeInsets.only(top: 10),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
                                 decoration: BoxDecoration(
                                   color: primaryRed,
                                   borderRadius: BorderRadius.circular(6),
@@ -378,21 +354,17 @@ class _LogicAnalyzerChannelSelectionState
                                         color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
-                                      items: channelNames.map(
-                                        (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        },
-                                      ).toList(),
+                                      items: channelNames.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
                                       onChanged: (value) => {
-                                        setState(
-                                          () {
-                                            provider.channelSelectSpinner4 =
-                                                value!;
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider.channelSelectSpinner4 =
+                                              value!;
+                                        }),
                                       },
                                     ),
                                     Divider(
@@ -412,21 +384,18 @@ class _LogicAnalyzerChannelSelectionState
                                         color: logicAnalyzerTextColor,
                                         fontSize: 14,
                                       ),
-                                      items: analysisOptions.map(
-                                        (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        },
-                                      ).toList(),
+                                      items: analysisOptions.map((
+                                        String value,
+                                      ) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
                                       onChanged: (value) => {
-                                        setState(
-                                          () {
-                                            provider.edgeSelectSpinner4 =
-                                                value!;
-                                          },
-                                        ),
+                                        setState(() {
+                                          provider.edgeSelectSpinner4 = value!;
+                                        }),
                                       },
                                     ),
                                   ],
@@ -458,10 +427,8 @@ class _LogicAnalyzerChannelSelectionState
                     fontSize: 14,
                   ),
                 ),
-                onPressed: () => {
-                  provider.analyze(),
-                },
-              )
+                onPressed: () => {provider.analyze()},
+              ),
             ],
           ),
         );

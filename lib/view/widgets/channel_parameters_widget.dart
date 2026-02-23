@@ -60,11 +60,9 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       value: oscilloscopeStateProvider.isCH1Selected,
                       activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isCH1Selected = value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.isCH1Selected = value!;
+                        });
                       },
                     ),
                     Text(
@@ -91,23 +89,23 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: DropdownMenu<String>(
-                        initialSelection: yAxisRanges[oscilloscopeStateProvider
-                            .oscillscopeRangeSelection],
+                        initialSelection:
+                            yAxisRanges[oscilloscopeStateProvider
+                                .oscillscopeRangeSelection],
                         width: 140,
-                        dropdownMenuEntries: yAxisRanges.map(
-                          (String value) {
-                            return DropdownMenuEntry<String>(
-                              label: value,
-                              value: value,
-                            );
-                          },
-                        ).toList(),
+                        dropdownMenuEntries: yAxisRanges.map((String value) {
+                          return DropdownMenuEntry<String>(
+                            label: value,
+                            value: value,
+                          );
+                        }).toList(),
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
                         textStyle: TextStyle(
-                            color: oscilloscopeOptionLabelColor,
-                            fontSize: 14.5),
+                          color: oscilloscopeOptionLabelColor,
+                          fontSize: 14.5,
+                        ),
                         onSelected: (String? value) {
                           switch (yAxisRanges.indexOf(value!)) {
                             case 0:
@@ -161,11 +159,9 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       value: oscilloscopeStateProvider.isCH2Selected,
                       activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isCH2Selected = value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.isCH2Selected = value!;
+                        });
                       },
                     ),
                     Text(
@@ -219,11 +215,9 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       value: oscilloscopeStateProvider.isCH3Selected,
                       activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isCH3Selected = value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.isCH3Selected = value!;
+                        });
                       },
                     ),
                     Text(
@@ -250,30 +244,26 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                           oscilloscopeStateProvider.isInBuiltMICSelected,
                       onChanged: (bool? value) async {
                         await Permission.microphone.request();
-                        setState(
-                          () {
-                            if (value == null) {
-                              oscilloscopeStateProvider.isInBuiltMICSelected =
-                                  false;
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  false;
-                              oscilloscopeStateProvider.setTimebaseDivisions(8);
+                        setState(() {
+                          if (value == null) {
+                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                                false;
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                false;
+                            oscilloscopeStateProvider.setTimebaseDivisions(8);
+                          } else {
+                            if (value == true) {
+                              oscilloscopeStateProvider.setTimebaseDivisions(6);
                             } else {
-                              if (value == true) {
-                                oscilloscopeStateProvider
-                                    .setTimebaseDivisions(6);
-                              } else {
-                                oscilloscopeStateProvider
-                                    .setTimebaseDivisions(8);
-                              }
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  true;
-                              oscilloscopeStateProvider.isInBuiltMICSelected =
-                                  value;
-                              oscilloscopeStateProvider.isMICSelected = !value;
+                              oscilloscopeStateProvider.setTimebaseDivisions(8);
                             }
-                          },
-                        );
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                true;
+                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                                value;
+                            oscilloscopeStateProvider.isMICSelected = !value;
+                          }
+                        });
                       },
                       child: Radio<bool>(
                         activeColor: radioButtonActiveColor,
@@ -294,21 +284,19 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                     RadioGroup(
                       groupValue: oscilloscopeStateProvider.isMICSelected,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            if (value == null) {
-                              oscilloscopeStateProvider.isMICSelected = false;
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  false;
-                            } else {
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  true;
-                              oscilloscopeStateProvider.isMICSelected = value;
-                              oscilloscopeStateProvider.isInBuiltMICSelected =
-                                  !value;
-                            }
-                          },
-                        );
+                        setState(() {
+                          if (value == null) {
+                            oscilloscopeStateProvider.isMICSelected = false;
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                false;
+                          } else {
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                true;
+                            oscilloscopeStateProvider.isMICSelected = value;
+                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                                !value;
+                          }
+                        });
                       },
                       child: Radio<bool>(
                         activeColor: radioButtonActiveColor,
@@ -352,7 +340,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

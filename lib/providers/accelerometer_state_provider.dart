@@ -10,8 +10,12 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 class AccelerometerStateProvider extends ChangeNotifier {
-  AccelerometerEvent _accelerometerEvent =
-      AccelerometerEvent(0, 0, 0, DateTime.now());
+  AccelerometerEvent _accelerometerEvent = AccelerometerEvent(
+    0,
+    0,
+    0,
+    DateTime.now(),
+  );
   StreamSubscription? _accelerometerSubscription;
   final List<double> _xData = [];
   final List<double> _yData = [];
@@ -67,13 +71,13 @@ class AccelerometerStateProvider extends ChangeNotifier {
 
       _locationStream = Stream.periodic(const Duration(seconds: 6))
           .asyncMap(
-        (_) => Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        ),
-      )
+            (_) => Geolocator.getCurrentPosition(
+              locationSettings: locationSettings,
+            ),
+          )
           .listen((Position position) {
-        currentPosition = position;
-      });
+            currentPosition = position;
+          });
     } catch (e) {
       logger.e('Error starting location updates: $e');
     }
@@ -143,7 +147,8 @@ class AccelerometerStateProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 5');
+        'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 5',
+      );
       _playbackIndex++;
       notifyListeners();
     }
@@ -152,10 +157,12 @@ class AccelerometerStateProvider extends ChangeNotifier {
 
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
-        final currentTimestamp =
-            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
-        final nextTimestamp =
-            int.tryParse(_playbackData![_playbackIndex][0].toString());
+        final currentTimestamp = int.tryParse(
+          _playbackData![_playbackIndex - 1][0].toString(),
+        );
+        final nextTimestamp = int.tryParse(
+          _playbackData![_playbackIndex][0].toString(),
+        );
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -244,7 +251,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
             : 0,
         _configProvider!.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
-            : 0
+            : 0,
       ]);
     }
 
@@ -289,8 +296,8 @@ class AccelerometerStateProvider extends ChangeNotifier {
         'ReadingsY',
         'ReadingsZ',
         'Latitude',
-        'Longitude'
-      ]
+        'Longitude',
+      ],
     ];
     notifyListeners();
   }

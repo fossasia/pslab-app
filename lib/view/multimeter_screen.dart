@@ -96,15 +96,9 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
         text: appLocalizations.frequencyPulseCaption,
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
-      InstrumentBulletPoint(
-        text: appLocalizations.frequencyPulseBulletPoint1,
-      ),
-      InstrumentBulletPoint(
-        text: appLocalizations.frequencyPulseBulletPoint2,
-      ),
-      InstrumentBulletPoint(
-        text: appLocalizations.frequencyPulseBulletPoint3,
-      ),
+      InstrumentBulletPoint(text: appLocalizations.frequencyPulseBulletPoint1),
+      InstrumentBulletPoint(text: appLocalizations.frequencyPulseBulletPoint2),
+      InstrumentBulletPoint(text: appLocalizations.frequencyPulseBulletPoint3),
     ];
   }
 
@@ -148,9 +142,9 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
       MaterialPageRoute(
         builder: (context) =>
             ChangeNotifierProvider<MultimeterConfigProvider>.value(
-          value: _configProvider!,
-          child: const MultimeterConfigScreen(),
-        ),
+              value: _configProvider!,
+              child: const MultimeterConfigScreen(),
+            ),
       ),
     );
   }
@@ -241,9 +235,14 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
 
     if (fileName != null) {
       _csvService.writeMetaData(
-          appLocalizations.multimeter.toLowerCase(), data);
+        appLocalizations.multimeter.toLowerCase(),
+        data,
+      );
       final file = await _csvService.saveCsvFile(
-          appLocalizations.multimeter.toLowerCase(), fileName, data);
+        appLocalizations.multimeter.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -273,11 +272,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => _provider,
-        ),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => _provider)],
       child: Consumer<MultimeterStateProvider>(
         builder: (context, provider, _) {
           return Stack(
@@ -287,18 +282,20 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                     ? '${appLocalizations.multimeterTitle} - ${appLocalizations.playback}'
                     : appLocalizations.multimeterTitle,
                 key: const Key(multimeterScreenTitleKey),
-                onOptionsPressed:
-                    provider.isPlayingBack ? null : _showOptionsMenu,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
                 onGuidePressed: _showInstrumentGuide,
-                onRecordPressed:
-                    provider.isPlayingBack ? null : _toggleRecording,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
                 isRecording: provider.isRecording,
                 isPlayingBack: provider.isPlayingBack,
                 isPlaybackPaused: provider.isPlaybackPaused,
                 onPlaybackPauseResume: provider.isPlayingBack
                     ? (provider.isPlaybackPaused
-                        ? _provider.resumePlayback
-                        : _provider.pausePlayback)
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
                     : null,
                 onPlaybackStop: provider.isPlayingBack
                     ? () async {
@@ -318,7 +315,9 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                    width: 1, color: multimeterBorderLightRed),
+                                  width: 1,
+                                  color: multimeterBorderLightRed,
+                                ),
                               ),
                               child: Column(
                                 children: [
@@ -326,7 +325,9 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                     flex: 75,
                                     child: Container(
                                       padding: const EdgeInsets.only(
-                                          right: 10, bottom: 10),
+                                        right: 10,
+                                        bottom: 10,
+                                      ),
                                       alignment: Alignment.centerRight,
                                       child: Text(
                                         provider.value,
@@ -349,9 +350,7 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                       alignment: Alignment.center,
                                       child: Text(
                                         provider.unit,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                        ),
+                                        style: TextStyle(fontSize: 20),
                                       ),
                                     ),
                                   ),
@@ -370,20 +369,26 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                       child: Container(
                                         width: double.infinity,
                                         margin: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          border: Border.all(
-                                              width: 3,
-                                              color: multimeterBorderRed),
+                                          horizontal: 10,
                                         ),
-                                        child: Text(appLocalizations.voltage,
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: multimeterBorderRed,
-                                                fontWeight: FontWeight.bold),
-                                            textAlign: TextAlign.center),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            10.0,
+                                          ),
+                                          border: Border.all(
+                                            width: 3,
+                                            color: multimeterBorderRed,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          appLocalizations.voltage,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: multimeterBorderRed,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                     ),
                                     Expanded(
@@ -394,22 +399,24 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                             flex: constraints.maxWidth < 600
                                                 ? 67
                                                 : (constraints.maxWidth >
-                                                        constraints.maxHeight
-                                                    ? 56
-                                                    : 63),
+                                                          constraints.maxHeight
+                                                      ? 56
+                                                      : 63),
                                             child: Container(
                                               height: double.infinity,
                                               margin: const EdgeInsets.only(
-                                                  top: 5,
-                                                  left: 10,
-                                                  right: 2,
-                                                  bottom: 10),
+                                                top: 5,
+                                                left: 10,
+                                                right: 2,
+                                                bottom: 10,
+                                              ),
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
                                                 border: Border.all(
-                                                    width: 3,
-                                                    color: Colors.black),
+                                                  width: 3,
+                                                  color: Colors.black,
+                                                ),
                                               ),
                                               child: Align(
                                                 alignment:
@@ -423,11 +430,12 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                                     Text(
                                                       appLocalizations.unitHz,
                                                       style: TextStyle(
-                                                          fontSize: 15,
-                                                          color:
-                                                              multimeterBorderBlack,
-                                                          fontWeight:
-                                                              FontWeight.bold),
+                                                        fontSize: 15,
+                                                        color:
+                                                            multimeterBorderBlack,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                       textAlign:
                                                           TextAlign.center,
                                                     ),
@@ -446,11 +454,12 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                                       appLocalizations
                                                           .countPulse,
                                                       style: TextStyle(
-                                                          fontSize: 15,
-                                                          color:
-                                                              multimeterBorderBlack,
-                                                          fontWeight:
-                                                              FontWeight.bold),
+                                                        fontSize: 15,
+                                                        color:
+                                                            multimeterBorderBlack,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                       textAlign:
                                                           TextAlign.center,
                                                     ),
@@ -463,40 +472,41 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                             flex: constraints.maxWidth < 600
                                                 ? 33
                                                 : (constraints.maxWidth >
-                                                        constraints.maxHeight
-                                                    ? 44
-                                                    : 37),
+                                                          constraints.maxHeight
+                                                      ? 44
+                                                      : 37),
                                             child: Container(
                                               height: double.infinity,
                                               margin: const EdgeInsets.only(
-                                                  top: 5,
-                                                  left: 2,
-                                                  right: 10,
-                                                  bottom: 10),
+                                                top: 5,
+                                                left: 2,
+                                                right: 10,
+                                                bottom: 10,
+                                              ),
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(10.0),
                                                 border: Border.all(
-                                                    width: 3,
-                                                    color:
-                                                        multimeterBorderBlack),
+                                                  width: 3,
+                                                  color: multimeterBorderBlack,
+                                                ),
                                               ),
                                               child: Align(
                                                 alignment:
                                                     Alignment.bottomCenter,
                                                 child: Text(
-                                                    appLocalizations.measure,
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color:
-                                                            multimeterBorderBlack,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                    textAlign:
-                                                        TextAlign.center),
+                                                  appLocalizations.measure,
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    color:
+                                                        multimeterBorderBlack,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
                                               ),
                                             ),
-                                          )
+                                          ),
                                         ],
                                       ),
                                     ),

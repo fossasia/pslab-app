@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:pslab/others/logger_service.dart';
 
 class TemperatureService {
-  static const MethodChannel _methodChannel =
-      MethodChannel('io.pslab/temperature');
-  static const EventChannel _eventChannel =
-      EventChannel('io.pslab/temperature_stream');
+  static const MethodChannel _methodChannel = MethodChannel(
+    'io.pslab/temperature',
+  );
+  static const EventChannel _eventChannel = EventChannel(
+    'io.pslab/temperature_stream',
+  );
 
   static StreamSubscription<dynamic>? _temperatureSubscription;
   static final StreamController<double> _temperatureController =
@@ -16,8 +18,9 @@ class TemperatureService {
 
   static Future<bool> isTemperatureSensorAvailable() async {
     try {
-      final bool isAvailable =
-          await _methodChannel.invokeMethod('isTemperatureSensorAvailable');
+      final bool isAvailable = await _methodChannel.invokeMethod(
+        'isTemperatureSensorAvailable',
+      );
       logger.d('Temperature sensor available: $isAvailable');
       return isAvailable;
     } on PlatformException catch (e) {
@@ -28,8 +31,9 @@ class TemperatureService {
 
   static Future<double> getCurrentTemperature() async {
     try {
-      final double temperature =
-          await _methodChannel.invokeMethod('getCurrentTemperature');
+      final double temperature = await _methodChannel.invokeMethod(
+        'getCurrentTemperature',
+      );
       logger.d('Current temperature: $temperature°C');
       return temperature;
     } on PlatformException catch (e) {
@@ -40,8 +44,9 @@ class TemperatureService {
 
   static Future<bool> startTemperatureUpdates() async {
     try {
-      final bool success =
-          await _methodChannel.invokeMethod('startTemperatureUpdates');
+      final bool success = await _methodChannel.invokeMethod(
+        'startTemperatureUpdates',
+      );
       if (success) {
         _startListening();
         logger.d('Temperature updates started');

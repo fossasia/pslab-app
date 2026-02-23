@@ -72,16 +72,9 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
 
   List<Widget> _getGyroscopeContent() {
     return [
-      InstrumentIntroText(
-        text: appLocalizations.gyroscopeIntro,
-      ),
-      const InstrumentImage(
-        imagePath: imagePath,
-        height: 200.0,
-      ),
-      InstrumentIntroText(
-        text: appLocalizations.gyroscopeDesc,
-      ),
+      InstrumentIntroText(text: appLocalizations.gyroscopeIntro),
+      const InstrumentImage(imagePath: imagePath, height: 200.0),
+      InstrumentIntroText(text: appLocalizations.gyroscopeDesc),
     ];
   }
 
@@ -200,7 +193,10 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
     if (fileName != null) {
       _csvService.writeMetaData(appLocalizations.gyroscope.toLowerCase(), data);
       final file = await _csvService.saveCsvFile(
-          appLocalizations.gyroscope.toLowerCase(), fileName, data);
+        appLocalizations.gyroscope.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -231,61 +227,69 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GyroscopeProvider>.value(
       value: _provider,
-      child: Stack(children: [
-        Consumer<GyroscopeProvider>(
-          builder: (context, provider, child) {
-            return CommonScaffold(
-              title: provider.isPlayingBack
-                  ? '${appLocalizations.gyroscopeTitle} - ${appLocalizations.playback}'
-                  : appLocalizations.gyroscopeTitle,
-              onGuidePressed: _showInstrumentGuide,
-              onOptionsPressed:
-                  provider.isPlayingBack ? null : _showOptionsMenu,
-              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
-              isRecording: provider.isRecording,
-              isPlayingBack: provider.isPlayingBack,
-              isPlaybackPaused: provider.isPlaybackPaused,
-              onPlaybackPauseResume: provider.isPlayingBack
-                  ? (provider.isPlaybackPaused
-                      ? _provider.resumePlayback
-                      : _provider.pausePlayback)
-                  : null,
-              onPlaybackStop: provider.isPlayingBack
-                  ? () async {
-                      await _provider.stopPlayback();
-                    }
-                  : null,
-              body: SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: GyroscopeCard(
+      child: Stack(
+        children: [
+          Consumer<GyroscopeProvider>(
+            builder: (context, provider, child) {
+              return CommonScaffold(
+                title: provider.isPlayingBack
+                    ? '${appLocalizations.gyroscopeTitle} - ${appLocalizations.playback}'
+                    : appLocalizations.gyroscopeTitle,
+                onGuidePressed: _showInstrumentGuide,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
+                isRecording: provider.isRecording,
+                isPlayingBack: provider.isPlayingBack,
+                isPlaybackPaused: provider.isPlaybackPaused,
+                onPlaybackPauseResume: provider.isPlayingBack
+                    ? (provider.isPlaybackPaused
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
+                    : null,
+                onPlaybackStop: provider.isPlayingBack
+                    ? () async {
+                        await _provider.stopPlayback();
+                      }
+                    : null,
+                body: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: GyroscopeCard(
                           color: xOrientationChartLineColor,
-                          axis: appLocalizations.xAxis),
-                    ),
-                    Expanded(
-                      child: GyroscopeCard(
+                          axis: appLocalizations.xAxis,
+                        ),
+                      ),
+                      Expanded(
+                        child: GyroscopeCard(
                           color: yOrientationChartLineColor,
-                          axis: appLocalizations.yAxis),
-                    ),
-                    Expanded(
-                      child: GyroscopeCard(
+                          axis: appLocalizations.yAxis,
+                        ),
+                      ),
+                      Expanded(
+                        child: GyroscopeCard(
                           color: zOrientationChartLineColor,
-                          axis: appLocalizations.zAxis),
-                    ),
-                  ],
+                          axis: appLocalizations.zAxis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
-        if (_showGuide)
-          InstrumentOverviewDrawer(
-            instrumentName: appLocalizations.gyroscopeTitle,
-            content: _getGyroscopeContent(),
-            onHide: _hideInstrumentGuide,
+              );
+            },
           ),
-      ]),
+          if (_showGuide)
+            InstrumentOverviewDrawer(
+              instrumentName: appLocalizations.gyroscopeTitle,
+              content: _getGyroscopeContent(),
+              onHide: _hideInstrumentGuide,
+            ),
+        ],
+      ),
     );
   }
 }

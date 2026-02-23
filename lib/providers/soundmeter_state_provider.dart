@@ -73,17 +73,19 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return;
     }
 
-    _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    ).listen((Position position) {
-      currentPosition = position;
-    });
+    _locationStream =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).listen((Position position) {
+          currentPosition = position;
+        });
   }
 
   void initializeSensors({Function(String)? onError}) async {
@@ -201,7 +203,8 @@ class SoundMeterStateProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+        'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3',
+      );
       _playbackIndex++;
       notifyListeners();
     }
@@ -210,10 +213,12 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
-        final currentTimestamp =
-            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
-        final nextTimestamp =
-            int.tryParse(_playbackData![_playbackIndex][0].toString());
+        final currentTimestamp = int.tryParse(
+          _playbackData![_playbackIndex - 1][0].toString(),
+        );
+        final nextTimestamp = int.tryParse(
+          _playbackData![_playbackIndex][0].toString(),
+        );
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -295,7 +300,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
             : 0,
         _configProvider!.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
-            : 0
+            : 0,
       ]);
     }
     _dbData.add(db);
@@ -325,7 +330,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
     }
     _isRecording = true;
     _recordedData = [
-      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']
+      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude'],
     ];
     notifyListeners();
   }

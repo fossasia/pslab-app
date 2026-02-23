@@ -26,8 +26,9 @@ class ServoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RoboticArmStateProvider>(context);
-    final sliderSize =
-        provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.75;
+    final sliderSize = provider.maxAngle == 180
+        ? cardHeight * 0.95
+        : cardHeight * 0.75;
 
     return Container(
       decoration: BoxDecoration(
@@ -53,18 +54,15 @@ class ServoCard extends StatelessWidget {
             top: 0,
             right: 0,
             child: Draggable<Map<String, dynamic>>(
-              data: {
-                'servoId': servoId,
-                'degree': value,
-              },
+              data: {'servoId': servoId, 'degree': value},
               feedback: Material(
                 color: Colors.transparent,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
                   ),
+                  decoration: BoxDecoration(color: Colors.black),
                   child: Text(
                     '${value.floor()} °',
                     style: const TextStyle(
@@ -75,10 +73,16 @@ class ServoCard extends StatelessWidget {
                   ),
                 ),
               ),
-              childWhenDragging:
-                  const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
-              child:
-                  const Icon(Icons.drag_handle, size: 24, color: Colors.grey),
+              childWhenDragging: const Icon(
+                Icons.drag_handle,
+                size: 24,
+                color: Colors.grey,
+              ),
+              child: const Icon(
+                Icons.drag_handle,
+                size: 24,
+                color: Colors.grey,
+              ),
             ),
           ),
           Positioned.fill(

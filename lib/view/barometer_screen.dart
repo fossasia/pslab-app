@@ -62,10 +62,14 @@ class _BarometerScreenState extends State<BarometerScreen> {
     if (!widget.isExperiment) return;
     final experimentProvider = context.read<ExperimentProvider>();
     if (experimentProvider.state == ExperimentState.running) {
-      final pressureData =
-          _provider.getPressureChartData().map((spot) => spot.y).toList();
-      final timeData =
-          _provider.getPressureChartData().map((spot) => spot.x).toList();
+      final pressureData = _provider
+          .getPressureChartData()
+          .map((spot) => spot.y)
+          .toList();
+      final timeData = _provider
+          .getPressureChartData()
+          .map((spot) => spot.x)
+          .toList();
       experimentProvider.checkStepCondition(pressureData, timeData);
     }
   }
@@ -85,10 +89,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
@@ -111,18 +112,10 @@ class _BarometerScreenState extends State<BarometerScreen> {
 
   List<Widget> _getBarometerContent() {
     return [
-      InstrumentBulletPoint(
-        text: appLocalizations.baroMeterBulletPoint1,
-      ),
-      InstrumentBulletPoint(
-        text: appLocalizations.baroMeterBulletPoint2,
-      ),
-      const InstrumentImage(
-        imagePath: imagePath,
-      ),
-      InstrumentBulletPoint(
-        text: appLocalizations.baroMeterBulletPoint3,
-      ),
+      InstrumentBulletPoint(text: appLocalizations.baroMeterBulletPoint1),
+      InstrumentBulletPoint(text: appLocalizations.baroMeterBulletPoint2),
+      const InstrumentImage(imagePath: imagePath),
+      InstrumentBulletPoint(text: appLocalizations.baroMeterBulletPoint3),
       InstrumentBulletPoint(text: appLocalizations.baroMeterBulletPoint4),
     ];
   }
@@ -244,7 +237,10 @@ class _BarometerScreenState extends State<BarometerScreen> {
     if (fileName != null) {
       _csvService.writeMetaData(appLocalizations.barometer.toLowerCase(), data);
       final file = await _csvService.saveCsvFile(
-          appLocalizations.barometer.toLowerCase(), fileName, data);
+        appLocalizations.barometer.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -288,11 +284,15 @@ class _BarometerScreenState extends State<BarometerScreen> {
             return _configProvider!;
           },
         ),
-        ChangeNotifierProxyProvider<BarometerConfigProvider,
-            BarometerStateProvider>(
+        ChangeNotifierProxyProvider<
+          BarometerConfigProvider,
+          BarometerStateProvider
+        >(
           create: (context) {
-            final configProvider =
-                Provider.of<BarometerConfigProvider>(context, listen: false);
+            final configProvider = Provider.of<BarometerConfigProvider>(
+              context,
+              listen: false,
+            );
             _provider = BarometerStateProvider(configProvider);
 
             _provider.onPlaybackEnd = () {
@@ -322,83 +322,79 @@ class _BarometerScreenState extends State<BarometerScreen> {
           },
         ),
       ],
-      child: Stack(children: [
-        Consumer<BarometerStateProvider>(
-          builder: (context, provider, child) {
-            return CommonScaffold(
-              title: provider.isPlayingBack
-                  ? '${appLocalizations.barometerTitle} - ${appLocalizations.playback}'
-                  : appLocalizations.barometerTitle,
-              onGuidePressed: _showInstrumentGuide,
-              onOptionsPressed:
-                  provider.isPlayingBack ? null : _showOptionsMenu,
-              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
-              isRecording: provider.isRecording,
-              isPlayingBack: provider.isPlayingBack,
-              isPlaybackPaused: provider.isPlaybackPaused,
-              onPlaybackPauseResume: provider.isPlayingBack
-                  ? (provider.isPlaybackPaused
-                      ? _provider.resumePlayback
-                      : _provider.pausePlayback)
-                  : null,
-              onPlaybackStop: provider.isPlayingBack
-                  ? () async {
-                      await _provider.stopPlayback();
-                    }
-                  : null,
-              body: SafeArea(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                final isLargeScreen = constraints.maxWidth > 900;
-                if (isLargeScreen) {
-                  return Row(
-                    children: [
-                      const Expanded(
-                        flex: 35,
-                        child: BarometerCard(),
-                      ),
-                      Expanded(
-                        flex: 65,
-                        child: _buildChartSection(),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      const Expanded(
-                        flex: 45,
-                        child: BarometerCard(),
-                      ),
-                      Expanded(
-                        flex: 55,
-                        child: _buildChartSection(),
-                      ),
-                    ],
-                  );
-                }
-              })),
-            );
-          },
-        ),
-        if (_showGuide)
-          InstrumentOverviewDrawer(
-            instrumentName: appLocalizations.barometer,
-            content: _getBarometerContent(),
-            onHide: _hideInstrumentGuide,
-          ),
-        if (widget.isExperiment)
-          ExperimentOverlayWidget(
-            onExperimentComplete: () async {
-              if (_provider.isRecording) {
-                final data = _provider.stopRecording();
-                await _showSaveFileDialog(data);
-              }
-              if (context.mounted) {
-                Navigator.pop(context);
-              }
+      child: Stack(
+        children: [
+          Consumer<BarometerStateProvider>(
+            builder: (context, provider, child) {
+              return CommonScaffold(
+                title: provider.isPlayingBack
+                    ? '${appLocalizations.barometerTitle} - ${appLocalizations.playback}'
+                    : appLocalizations.barometerTitle,
+                onGuidePressed: _showInstrumentGuide,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
+                isRecording: provider.isRecording,
+                isPlayingBack: provider.isPlayingBack,
+                isPlaybackPaused: provider.isPlaybackPaused,
+                onPlaybackPauseResume: provider.isPlayingBack
+                    ? (provider.isPlaybackPaused
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
+                    : null,
+                onPlaybackStop: provider.isPlayingBack
+                    ? () async {
+                        await _provider.stopPlayback();
+                      }
+                    : null,
+                body: SafeArea(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isLargeScreen = constraints.maxWidth > 900;
+                      if (isLargeScreen) {
+                        return Row(
+                          children: [
+                            const Expanded(flex: 35, child: BarometerCard()),
+                            Expanded(flex: 65, child: _buildChartSection()),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            const Expanded(flex: 45, child: BarometerCard()),
+                            Expanded(flex: 55, child: _buildChartSection()),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
             },
           ),
-      ]),
+          if (_showGuide)
+            InstrumentOverviewDrawer(
+              instrumentName: appLocalizations.barometer,
+              content: _getBarometerContent(),
+              onHide: _hideInstrumentGuide,
+            ),
+          if (widget.isExperiment)
+            ExperimentOverlayWidget(
+              onExperimentComplete: () async {
+                if (_provider.isRecording) {
+                  final data = _provider.stopRecording();
+                  await _showSaveFileDialog(data);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+        ],
+      ),
     );
   }
 
@@ -418,22 +414,24 @@ class _BarometerScreenState extends State<BarometerScreen> {
         double altitudeInterval = provider.getAltitudeInterval();
 
         return Container(
-            margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
-            padding: EdgeInsets.all(cardPadding),
-            decoration: BoxDecoration(
-              color: chartBackgroundColor,
-              borderRadius: BorderRadius.zero,
-            ),
-            child: _buildChart(
-                screenWidth,
-                maxPressure,
-                maxTime,
-                minTime,
-                timeInterval,
-                spots,
-                maxAltitude,
-                minAltitude,
-                altitudeInterval));
+          margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
+          padding: EdgeInsets.all(cardPadding),
+          decoration: BoxDecoration(
+            color: chartBackgroundColor,
+            borderRadius: BorderRadius.zero,
+          ),
+          child: _buildChart(
+            screenWidth,
+            maxPressure,
+            maxTime,
+            minTime,
+            timeInterval,
+            spots,
+            maxAltitude,
+            minAltitude,
+            altitudeInterval,
+          ),
+        );
       },
     );
   }
@@ -443,12 +441,9 @@ class _BarometerScreenState extends State<BarometerScreen> {
     final fontSize = screenWidth < 400
         ? 7.0
         : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: fontSize,
-    );
+        ? 8.0
+        : 9.0;
+    final style = TextStyle(color: chartTextColor, fontSize: fontSize);
     String timeText;
     if (value < 60) {
       timeText = '${value.toInt()}s';
@@ -463,11 +458,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
     }
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        timeText,
-        style: style,
-      ),
+      child: Text(maxLines: 1, timeText, style: style),
     );
   }
 
@@ -476,12 +467,9 @@ class _BarometerScreenState extends State<BarometerScreen> {
     final fontSize = screenWidth < 400
         ? 7.0
         : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: fontSize,
-    );
+        ? 8.0
+        : 9.0;
+    final style = TextStyle(color: chartTextColor, fontSize: fontSize);
 
     const double seaLevelPressureAtm = 1.0;
     const double temperatureK = 288.15;
@@ -493,10 +481,13 @@ class _BarometerScreenState extends State<BarometerScreen> {
     double altitude = 0.0;
 
     if (pressureAtm > 0) {
-      altitude = (temperatureK / lapseRate) *
+      altitude =
+          (temperatureK / lapseRate) *
           (1 -
-              pow(pressureAtm / seaLevelPressureAtm,
-                  (gasConstant * lapseRate) / gravity));
+              pow(
+                pressureAtm / seaLevelPressureAtm,
+                (gasConstant * lapseRate) / gravity,
+              ));
     }
 
     String altitudeText;
@@ -508,28 +499,26 @@ class _BarometerScreenState extends State<BarometerScreen> {
 
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        altitudeText,
-        style: style,
-      ),
+      child: Text(altitudeText, style: style),
     );
   }
 
   Widget _buildChart(
-      double screenWidth,
-      double maxPressure,
-      double maxTime,
-      double minTime,
-      double timeInterval,
-      List<FlSpot> spots,
-      double maxAltitude,
-      double minAltitude,
-      double altitudeInterval) {
+    double screenWidth,
+    double maxPressure,
+    double maxTime,
+    double minTime,
+    double timeInterval,
+    List<FlSpot> spots,
+    double maxAltitude,
+    double minAltitude,
+    double altitudeInterval,
+  ) {
     final chartFontSize = screenWidth < 400
         ? 8.0
         : screenWidth < 600
-            ? 9.0
-            : 10.0;
+        ? 9.0
+        : 10.0;
     final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 29.0 : 32.0;

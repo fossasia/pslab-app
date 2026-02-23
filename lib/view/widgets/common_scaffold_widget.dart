@@ -52,25 +52,21 @@ class _CommonScaffoldState extends State<CommonScaffold> {
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              Navigator.maybePop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: appBarContentColor,
-            ),
-          );
-        }),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.maybePop(context);
+              },
+              icon: Icon(Icons.arrow_back, color: appBarContentColor),
+            );
+          },
+        ),
         backgroundColor: primaryRed,
         title: Text(
           key: widget.scaffoldKey,
           widget.title,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
         actions: [
           if (widget.actions != null) ...widget.actions!,
@@ -89,10 +85,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
             if (widget.onPlaybackStop != null)
               IconButton(
                 onPressed: widget.onPlaybackStop,
-                icon: Icon(
-                  Icons.stop,
-                  color: appBarContentColor,
-                ),
+                icon: Icon(Icons.stop, color: appBarContentColor),
                 tooltip: appLocalizations.stopPlayback,
               ),
           ] else if (widget.onRecordPressed != null)
@@ -103,24 +96,19 @@ class _CommonScaffoldState extends State<CommonScaffold> {
                 width: 24,
                 height: 24,
               ),
-              tooltip:
-                  widget.isRecording ? 'Stop Recording' : 'Start Recording',
+              tooltip: widget.isRecording
+                  ? 'Stop Recording'
+                  : 'Start Recording',
             ),
           if (widget.onGuidePressed != null)
             IconButton(
               onPressed: widget.onGuidePressed,
-              icon: Icon(
-                Icons.info,
-                color: appBarContentColor,
-              ),
+              icon: Icon(Icons.info, color: appBarContentColor),
             ),
           if (widget.onOptionsPressed != null)
             IconButton(
               onPressed: widget.onOptionsPressed,
-              icon: Icon(
-                Icons.more_vert,
-                color: appBarContentColor,
-              ),
+              icon: Icon(Icons.more_vert, color: appBarContentColor),
             ),
         ],
       ),

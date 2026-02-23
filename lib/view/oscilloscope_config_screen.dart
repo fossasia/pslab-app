@@ -44,10 +44,7 @@ class _OscilloscopeConfigScreenState extends State<OscilloscopeConfigScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.oscilloscopeConfigs,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(

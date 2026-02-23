@@ -78,8 +78,10 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
     int bytesToBeReadTemp = bytesToRead;
     try {
       while (numBytesRead < bytesToRead) {
-        Uint8List? receivedData =
-            await mDevice?.read(bytesToBeReadTemp, timeoutMillis);
+        Uint8List? receivedData = await mDevice?.read(
+          bytesToBeReadTemp,
+          timeoutMillis,
+        );
         int? readNow = receivedData?.length;
         logger.d("Received chunk: $receivedData");
         if (readNow == 0) {

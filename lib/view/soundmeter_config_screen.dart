@@ -36,24 +36,20 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              Navigator.maybePop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: appBarContentColor,
-            ),
-          );
-        }),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.maybePop(context);
+              },
+              icon: Icon(Icons.arrow_back, color: appBarContentColor),
+            );
+          },
+        ),
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.soundmeterConfig,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(

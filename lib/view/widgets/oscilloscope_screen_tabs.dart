@@ -37,11 +37,9 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                setState(
-                  () {
-                    oscilloscopeStateProvider.updateSelectedIndex(0);
-                  },
-                );
+                setState(() {
+                  oscilloscopeStateProvider.updateSelectedIndex(0);
+                });
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -49,20 +47,22 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 8),
+                        vertical: 4,
+                        horizontal: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
-                      child: Image.asset(
-                        widget.channelParametersImage,
-                      ),
+                      child: Image.asset(widget.channelParametersImage),
                     ),
                   ),
                   Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 4,
+                      horizontal: 2,
+                    ),
                     color: oscilloscopeStateProvider.selectedIndex == 0
                         ? oscilloscopeOptionTitleColor
                         : Colors.transparent,
@@ -78,10 +78,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                       ),
                     ),
                   ),
-                  Divider(
-                    color: oscilloscopeTabBorderColor,
-                    height: 2,
-                  )
+                  Divider(color: oscilloscopeTabBorderColor, height: 2),
                 ],
               ),
             ),
@@ -89,11 +86,9 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                setState(
-                  () {
-                    oscilloscopeStateProvider.updateSelectedIndex(1);
-                  },
-                );
+                setState(() {
+                  oscilloscopeStateProvider.updateSelectedIndex(1);
+                });
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -101,38 +96,38 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 8),
+                        vertical: 4,
+                        horizontal: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
-                      child: Image.asset(
-                        widget.timebaseTriggerImage,
-                      ),
+                      child: Image.asset(widget.timebaseTriggerImage),
                     ),
                   ),
                   Container(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 2),
-                      color: oscilloscopeStateProvider.selectedIndex == 1
-                          ? oscilloscopeOptionTitleColor
-                          : Colors.transparent,
-                      child: Text(
-                        appLocalizations.timeBase,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: oscilloscopeOptionLabelColor,
-                          fontSize: 9.5,
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
-                  Divider(
-                    color: oscilloscopeTabBorderColor,
-                    height: 2,
-                  )
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 4,
+                      horizontal: 2,
+                    ),
+                    color: oscilloscopeStateProvider.selectedIndex == 1
+                        ? oscilloscopeOptionTitleColor
+                        : Colors.transparent,
+                    child: Text(
+                      appLocalizations.timeBase,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
+                        fontSize: 9.5,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Divider(color: oscilloscopeTabBorderColor, height: 2),
                 ],
               ),
             ),
@@ -140,11 +135,9 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                setState(
-                  () {
-                    oscilloscopeStateProvider.updateSelectedIndex(2);
-                  },
-                );
+                setState(() {
+                  oscilloscopeStateProvider.updateSelectedIndex(2);
+                });
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -152,38 +145,38 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 8),
+                        vertical: 4,
+                        horizontal: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
-                      child: Image.asset(
-                        widget.dataAnalysisImage,
-                      ),
+                      child: Image.asset(widget.dataAnalysisImage),
                     ),
                   ),
                   Container(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 2),
-                      color: oscilloscopeStateProvider.selectedIndex == 2
-                          ? oscilloscopeOptionTitleColor
-                          : Colors.transparent,
-                      child: Text(
-                        appLocalizations.dataAnalysis,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: oscilloscopeOptionLabelColor,
-                          fontSize: 9.5,
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
-                  Divider(
-                    color: oscilloscopeTabBorderColor,
-                    height: 2,
-                  )
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 4,
+                      horizontal: 2,
+                    ),
+                    color: oscilloscopeStateProvider.selectedIndex == 2
+                        ? oscilloscopeOptionTitleColor
+                        : Colors.transparent,
+                    child: Text(
+                      appLocalizations.dataAnalysis,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: oscilloscopeOptionLabelColor,
+                        fontSize: 9.5,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Divider(color: oscilloscopeTabBorderColor, height: 2),
                 ],
               ),
             ),
@@ -191,11 +184,9 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                setState(
-                  () {
-                    oscilloscopeStateProvider.updateSelectedIndex(3);
-                  },
-                );
+                setState(() {
+                  oscilloscopeStateProvider.updateSelectedIndex(3);
+                });
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -203,20 +194,22 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 8),
+                        vertical: 4,
+                        horizontal: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: oscilloscopeTabInnerBoxColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                       margin: const EdgeInsets.all(4),
-                      child: Image.asset(
-                        widget.xyPlotImage,
-                      ),
+                      child: Image.asset(widget.xyPlotImage),
                     ),
                   ),
                   Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 4,
+                      horizontal: 2,
+                    ),
                     color: oscilloscopeStateProvider.selectedIndex == 3
                         ? oscilloscopeOptionTitleColor
                         : Colors.transparent,

@@ -50,17 +50,13 @@ class AnalyticsClass {
     initialValues = [amplitude, frequency, phase, 0];
 
     LevenbergMarquardt optimizer = LevenbergMarquardt(
-      ParametrizedUnaryFunction.list(
-        DataType.float,
-        4,
-        (List<double> params) {
-          double a1 = params[0];
-          double a2 = params[1];
-          double a3 = params[2];
-          double a4 = params[3];
-          return (x) => (a4 + a1 * sin((a2 * (2 * pi)).abs() * x + a3));
-        },
-      ),
+      ParametrizedUnaryFunction.list(DataType.float, 4, (List<double> params) {
+        double a1 = params[0];
+        double a2 = params[1];
+        double a3 = params[2];
+        double a4 = params[3];
+        return (x) => (a4 + a1 * sin((a2 * (2 * pi)).abs() * x + a3));
+      }),
       initialValues: initialValues,
     );
 
@@ -91,7 +87,7 @@ class AnalyticsClass {
     return [returnAmplitude, returnFrequency, returnOffset, returnPhase];
   }
 
-//---------------------------- Square Fit ---------------------------------//
+  //---------------------------- Square Fit ---------------------------------//
   List<double> squareFit(List<double> xReal, List<double> yReal) {
     double mx = yReal.reduce(max);
     double mn = xReal.reduce(min);
@@ -160,19 +156,16 @@ class AnalyticsClass {
     initialValues = [amplitude, frequency, phase, dc, 0];
 
     LevenbergMarquardt optimizer = LevenbergMarquardt(
-      ParametrizedUnaryFunction.list(
-        DataType.float,
-        5,
-        (List<double> params) {
-          double amp = params[0];
-          double freq = params[1];
-          double phase = params[2];
-          double dc = params[3];
-          double offset = params[4];
-          return (x) => (offset +
-              amp * signalSquare(2 * pi * freq * (x - phase), freq, dc));
-        },
-      ),
+      ParametrizedUnaryFunction.list(DataType.float, 5, (List<double> params) {
+        double amp = params[0];
+        double freq = params[1];
+        double phase = params[2];
+        double dc = params[3];
+        double offset = params[4];
+        return (x) =>
+            (offset +
+            amp * signalSquare(2 * pi * freq * (x - phase), freq, dc));
+      }),
       initialValues: initialValues,
     );
 
@@ -202,7 +195,7 @@ class AnalyticsClass {
       returnFrequency,
       returnPhase,
       returnDC,
-      returnOffset
+      returnOffset,
     ];
   }
 
@@ -218,8 +211,10 @@ class AnalyticsClass {
     for (int i = 0; i < voltageLength; i++) {
       voltage[i] = voltage[i] - voltageMean;
     }
-    frequency = fftFrequency(voltageLength, samplingInterval)
-        .sublist(0, (voltageLength / 2).round());
+    frequency = fftFrequency(
+      voltageLength,
+      samplingInterval,
+    ).sublist(0, (voltageLength / 2).round());
     complex = fft(voltage.map((x) => Complex(x)).toList());
     amplitude = List<double>.filled((complex.length / 2).round(), 0);
     for (int i = 0; i < complex.length / 2; i++) {
@@ -251,8 +246,10 @@ class AnalyticsClass {
     for (int i = 0; i < voltageLength; i++) {
       voltage[i] = voltage[i] - voltageMean;
     }
-    frequency = fftFrequency(voltageLength, samplingInterval)
-        .sublist(0, (voltageLength / 2).round());
+    frequency = fftFrequency(
+      voltageLength,
+      samplingInterval,
+    ).sublist(0, (voltageLength / 2).round());
     complex = fft(voltage.map((x) => Complex(x)).toList());
     amplitude = List<double>.filled((complex.length / 2).round(), 0);
     for (int i = 0; i < complex.length / 2; i++) {

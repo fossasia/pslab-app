@@ -3,11 +3,7 @@ abstract class ExperimentStep {
   final String instruction;
   final Duration? timeout;
 
-  ExperimentStep({
-    required this.id,
-    required this.instruction,
-    this.timeout,
-  });
+  ExperimentStep({required this.id, required this.instruction, this.timeout});
 
   bool checkCondition(List<double> values, List<double> timeData);
 }

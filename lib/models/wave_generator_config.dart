@@ -1,22 +1,16 @@
 class WaveGeneratorConfig {
   final bool includeLocationData;
 
-  const WaveGeneratorConfig({
-    this.includeLocationData = true,
-  });
+  const WaveGeneratorConfig({this.includeLocationData = true});
 
-  WaveGeneratorConfig copyWith({
-    bool? includeLocationData,
-  }) {
+  WaveGeneratorConfig copyWith({bool? includeLocationData}) {
     return WaveGeneratorConfig(
       includeLocationData: includeLocationData ?? this.includeLocationData,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'includeLocationData': includeLocationData,
-    };
+    return {'includeLocationData': includeLocationData};
   }
 
   factory WaveGeneratorConfig.fromJson(Map<String, dynamic> json) {

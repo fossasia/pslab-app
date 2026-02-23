@@ -17,10 +17,14 @@ class DACChannel {
     range = span;
     slope = span[1] - span[0];
     intercept = span[0];
-    vToCode = Polynomial.fromCoefficients(
-        DataType.float, [3300.0 / slope, -3300.0 * intercept / slope]);
-    codeToV = Polynomial.fromCoefficients(
-        DataType.float, [slope / 3300.0, intercept]);
+    vToCode = Polynomial.fromCoefficients(DataType.float, [
+      3300.0 / slope,
+      -3300.0 * intercept / slope,
+    ]);
+    codeToV = Polynomial.fromCoefficients(DataType.float, [
+      slope / 3300.0,
+      intercept,
+    ]);
     calibrationEnabled = "false";
     offset = 0;
   }

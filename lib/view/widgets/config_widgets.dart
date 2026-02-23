@@ -33,10 +33,7 @@ class ConfigInputItem extends StatelessWidget {
       ),
       subtitle: Text(
         value,
-        style: TextStyle(
-          fontSize: 14,
-          color: hintTextColor,
-        ),
+        style: TextStyle(fontSize: 14, color: hintTextColor),
       ),
       onTap: () =>
           _showInputDialog(context, title, controller, onChanged, hint),
@@ -45,11 +42,12 @@ class ConfigInputItem extends StatelessWidget {
   }
 
   void _showInputDialog(
-      BuildContext context,
-      String title,
-      TextEditingController controller,
-      Function(String) onChanged,
-      String? hint) {
+    BuildContext context,
+    String title,
+    TextEditingController controller,
+    Function(String) onChanged,
+    String? hint,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -64,10 +62,7 @@ class ConfigInputItem extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: Text(
                     hint,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: hintTextColor,
-                    ),
+                    style: TextStyle(fontSize: 14, color: hintTextColor),
                   ),
                 ),
               TextField(
@@ -136,10 +131,7 @@ class ConfigDropdownItem extends StatelessWidget {
       ),
       subtitle: Text(
         selectedValue,
-        style: TextStyle(
-          fontSize: 14,
-          color: hintTextColor,
-        ),
+        style: TextStyle(fontSize: 14, color: hintTextColor),
       ),
       onTap: () => _showDropdownDialog(context),
       contentPadding: EdgeInsets.zero,
@@ -156,19 +148,20 @@ class ConfigDropdownItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: options.map((option) {
               return RadioGroup(
-                  groupValue: selectedValue,
-                  onChanged: (String? value) {
-                    if (value != null) {
-                      onChanged(value);
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: RadioListTile<String>(
-                    title: Text(option.displayName),
-                    value: option.value,
-                    activeColor: primaryRed,
-                    contentPadding: EdgeInsets.zero,
-                  ));
+                groupValue: selectedValue,
+                onChanged: (String? value) {
+                  if (value != null) {
+                    onChanged(value);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: RadioListTile<String>(
+                  title: Text(option.displayName),
+                  value: option.value,
+                  activeColor: primaryRed,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              );
             }).toList(),
           ),
           actions: [
@@ -214,10 +207,7 @@ class ConfigCheckboxItem extends StatelessWidget {
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          fontSize: 14,
-          color: hintTextColor,
-        ),
+        style: TextStyle(fontSize: 14, color: hintTextColor),
       ),
       trailing: Checkbox(
         value: value,
@@ -240,8 +230,5 @@ class ConfigOption {
   final String value;
   final String displayName;
 
-  const ConfigOption({
-    required this.value,
-    required this.displayName,
-  });
+  const ConfigOption({required this.value, required this.displayName});
 }

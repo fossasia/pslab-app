@@ -15,8 +15,11 @@ class AudioJack {
   }
 
   Future<void> start() async {
-    await flutterAudioCapture.start(_listener, _onError,
-        sampleRate: samplingRate);
+    await flutterAudioCapture.start(
+      _listener,
+      _onError,
+      sampleRate: samplingRate,
+    );
     _isListening = true;
   }
 

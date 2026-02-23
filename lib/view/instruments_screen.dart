@@ -44,14 +44,17 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   void _filterInstruments(String query) {
     setState(() {
       if (query.isEmpty) {
-        _filteredIndices =
-            List<int>.generate(_instrumentDatas.length, (index) => index);
+        _filteredIndices = List<int>.generate(
+          _instrumentDatas.length,
+          (index) => index,
+        );
       } else {
         _filteredIndices = List.generate(_instrumentDatas.length, (i) => i)
-            .where((i) => _instrumentDatas[i]
-                .heading
-                .toLowerCase()
-                .contains(query.toLowerCase()))
+            .where(
+              (i) => _instrumentDatas[i].heading.toLowerCase().contains(
+                query.toLowerCase(),
+              ),
+            )
             .toList();
       }
     });
@@ -87,41 +90,85 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     });
 
     _instrumentDatas = [
-      _InstrumentData(appLocalizations.oscilloscope,
-          appLocalizations.oscilloscopeDesc, '/oscilloscope'),
-      _InstrumentData(appLocalizations.multimeter,
-          appLocalizations.multimeterDesc, '/multimeter'),
-      _InstrumentData(appLocalizations.logicAnalyzer,
-          appLocalizations.logicAnalyzerDesc, '/logicAnalyzer'),
       _InstrumentData(
-          appLocalizations.sensors, appLocalizations.sensorsDesc, '/sensors'),
-      _InstrumentData(appLocalizations.waveGenerator,
-          appLocalizations.waveGeneratorDesc, '/waveGenerator'),
-      _InstrumentData(appLocalizations.powerSource,
-          appLocalizations.powerSourceDesc, '/powerSource'),
-      _InstrumentData(appLocalizations.luxMeter, appLocalizations.luxMeterDesc,
-          '/luxmeter'),
-      _InstrumentData(appLocalizations.accelerometer,
-          appLocalizations.accelerometerDesc, '/accelerometer'),
-      _InstrumentData(appLocalizations.barometer,
-          appLocalizations.barometerDesc, '/barometer'),
+        appLocalizations.oscilloscope,
+        appLocalizations.oscilloscopeDesc,
+        '/oscilloscope',
+      ),
       _InstrumentData(
-          appLocalizations.compass, appLocalizations.compassDesc, '/compass'),
-      _InstrumentData(appLocalizations.gyroscope,
-          appLocalizations.gyroscopeDesc, '/gyroscope'),
-      _InstrumentData(appLocalizations.thermometer,
-          appLocalizations.thermometerDesc, '/thermometer'),
-      _InstrumentData(appLocalizations.roboticArm,
-          appLocalizations.roboticArmDesc, '/roboticArm'),
+        appLocalizations.multimeter,
+        appLocalizations.multimeterDesc,
+        '/multimeter',
+      ),
+      _InstrumentData(
+        appLocalizations.logicAnalyzer,
+        appLocalizations.logicAnalyzerDesc,
+        '/logicAnalyzer',
+      ),
+      _InstrumentData(
+        appLocalizations.sensors,
+        appLocalizations.sensorsDesc,
+        '/sensors',
+      ),
+      _InstrumentData(
+        appLocalizations.waveGenerator,
+        appLocalizations.waveGeneratorDesc,
+        '/waveGenerator',
+      ),
+      _InstrumentData(
+        appLocalizations.powerSource,
+        appLocalizations.powerSourceDesc,
+        '/powerSource',
+      ),
+      _InstrumentData(
+        appLocalizations.luxMeter,
+        appLocalizations.luxMeterDesc,
+        '/luxmeter',
+      ),
+      _InstrumentData(
+        appLocalizations.accelerometer,
+        appLocalizations.accelerometerDesc,
+        '/accelerometer',
+      ),
+      _InstrumentData(
+        appLocalizations.barometer,
+        appLocalizations.barometerDesc,
+        '/barometer',
+      ),
+      _InstrumentData(
+        appLocalizations.compass,
+        appLocalizations.compassDesc,
+        '/compass',
+      ),
+      _InstrumentData(
+        appLocalizations.gyroscope,
+        appLocalizations.gyroscopeDesc,
+        '/gyroscope',
+      ),
+      _InstrumentData(
+        appLocalizations.thermometer,
+        appLocalizations.thermometerDesc,
+        '/thermometer',
+      ),
+      _InstrumentData(
+        appLocalizations.roboticArm,
+        appLocalizations.roboticArmDesc,
+        '/roboticArm',
+      ),
       // Instruments below are not yet implemented.
       //_InstrumentData(appLocalizations.gasSensor, appLocalizations.gasSensorDesc, '/gassensor'),
       //_InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensorDesc, '/dustsensor'),
-      _InstrumentData(appLocalizations.soundMeter,
-          appLocalizations.soundMeterDesc, '/soundmeter'),
+      _InstrumentData(
+        appLocalizations.soundMeter,
+        appLocalizations.soundMeterDesc,
+        '/soundmeter',
+      ),
     ];
 
-    _filteredIndices =
-        List<int>.generate(_instrumentDatas.length, (index) => index);
+    _filteredIndices = List<int>.generate(
+      _instrumentDatas.length,
+      (index) => index,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setPortraitOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -160,30 +207,27 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                     Icon(
                       Icons.search_off,
                       size: 64,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withAlpha(128),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha(128),
                     ),
                     const SizedBox(height: 16),
                     Text(
                       appLocalizations.noInstrumentsFoundMessage,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(179),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withAlpha(179),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       appLocalizations.tryDifferentSearchSuggestion,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(128),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withAlpha(128),
+                      ),
                     ),
                   ],
                 ),
@@ -214,9 +258,9 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                         : GridView.builder(
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 2.5,
-                            ),
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 2.5,
+                                ),
                             itemCount: _filteredIndices.length,
                             itemBuilder: (context, index) {
                               final int originalIndex = _filteredIndices[index];

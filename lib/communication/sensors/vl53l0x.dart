@@ -26,7 +26,7 @@ class VL53L0X {
     [dynamicSpadRefEnStartOffset, 0x00],
     [dynamicSpadNumRequestedRefSpad, 0x2C],
     [0xFF, 0x00],
-    [globalConfigRefEnStartSelect, 0xB4]
+    [globalConfigRefEnStartSelect, 0xB4],
   ];
   static const List<List<int>> tuningConfig = [
     [0xFF, 0x01],
@@ -108,30 +108,30 @@ class VL53L0X {
     [0x8E, 0x01],
     [0x00, 0x01],
     [0xFF, 0x00],
-    [0x80, 0x00]
+    [0x80, 0x00],
   ];
   static const List<List<int>> spad1 = [
     [0x80, 0x01],
     [0xFF, 0x01],
     [0x00, 0x00],
-    [0xFF, 0x06]
+    [0xFF, 0x06],
   ];
   static const List<List<int>> spad2 = [
     [0xFF, 0x07],
     [0x81, 0x01],
     [0x80, 0x01],
     [0x94, 0x6B],
-    [maybeTimerReg, 0x00]
+    [maybeTimerReg, 0x00],
   ];
   static const List<List<int>> spad3 = [
     [0x81, 0x00],
-    [0xFF, 0x06]
+    [0xFF, 0x06],
   ];
   static const List<List<int>> spad4 = [
     [0xFF, 0x01],
     [0x00, 0x01],
     [0xFF, 0x00],
-    [0x80, 0x00]
+    [0x80, 0x00],
   ];
   final I2C i2c;
   late int stopByte;
@@ -151,7 +151,7 @@ class VL53L0X {
         [0x88, 0x00],
         [0x80, 0x01],
         [0xFF, 0x01],
-        [0x00, 0x00]
+        [0x00, 0x00],
       ];
       for (List<int> regValPair in initSequence) {
         await i2c.write(address, [regValPair[1]], regValPair[0]);
@@ -160,12 +160,13 @@ class VL53L0X {
       List<List<int>> postReadSequence = [
         [0x00, 0x01],
         [0xFF, 0x00],
-        [0x80, 0x00]
+        [0x80, 0x00],
       ];
       for (List<int> regValPair in postReadSequence) {
         await i2c.write(address, [regValPair[1]], regValPair[0]);
       }
-      int configControl = await i2c.readByte(address, msrcConfigControl) |
+      int configControl =
+          await i2c.readByte(address, msrcConfigControl) |
           (disableSignalRateMsrc | disableSignalRatePreRange);
       await i2c.write(address, [configControl], msrcConfigControl);
       await i2c.write(address, [0xFF], systemSequenceConfig);
@@ -229,8 +230,11 @@ class VL53L0X {
     int spadCount = spadInfo[0];
     int spadIsAperture = spadInfo[1];
     await i2c.write(address, [0], globalConfigSpadEnablesRef0);
-    List<int> spadMap =
-        await i2c.readBulk(address, globalConfigSpadEnablesRef0, 6);
+    List<int> spadMap = await i2c.readBulk(
+      address,
+      globalConfigSpadEnablesRef0,
+      6,
+    );
     for (List<int> regValPair in spadConfig) {
       await i2c.write(address, [regValPair[1]], regValPair[0]);
     }
@@ -272,7 +276,7 @@ class VL53L0X {
         [0x00, 0x01],
         [0xFF, 0x00],
         [0x80, 0x00],
-        [sysrangeStart, 0x01]
+        [sysrangeStart, 0x01],
       ];
       for (List<int> regValPair in startSequence) {
         await i2c.write(address, [regValPair[1]], regValPair[0]);

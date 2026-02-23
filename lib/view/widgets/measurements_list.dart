@@ -4,10 +4,7 @@ import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
 class MeasurementsList extends StatefulWidget {
   final List<String> dataParamsChannels;
-  const MeasurementsList({
-    super.key,
-    required this.dataParamsChannels,
-  });
+  const MeasurementsList({super.key, required this.dataParamsChannels});
 
   @override
   State<StatefulWidget> createState() => _MeasurementsListState();
@@ -31,9 +28,7 @@ class _MeasurementsListState extends State<MeasurementsList> {
         return Card(
           elevation: 8,
           color: Colors.grey[800],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
             child: Text(
@@ -42,10 +37,7 @@ class _MeasurementsListState extends State<MeasurementsList> {
               'Vp-: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.negativePeak]?.toStringAsFixed(2)} V\n'
               'f: ${formatFrequency(OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.frequency])}  '
               'P: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.period]?.toStringAsFixed(2)} ms',
-              style: TextStyle(
-                color: colors[index],
-                fontSize: 8,
-              ),
+              style: TextStyle(color: colors[index], fontSize: 8),
             ),
           ),
         );

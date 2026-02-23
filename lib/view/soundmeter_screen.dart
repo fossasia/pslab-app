@@ -45,15 +45,9 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
 
   List<Widget> _getSoundMeterContent() {
     return [
-      InstrumentIntroText(
-        text: appLocalizations.soundMeterIntro,
-      ),
-      const InstrumentImage(
-        imagePath: imagePath,
-      ),
-      InstrumentIntroText(
-        text: appLocalizations.soundMeterDesc,
-      ),
+      InstrumentIntroText(text: appLocalizations.soundMeterIntro),
+      const InstrumentImage(imagePath: imagePath),
+      InstrumentIntroText(text: appLocalizations.soundMeterDesc),
     ];
   }
 
@@ -171,9 +165,14 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
 
     if (fileName != null) {
       _csvService.writeMetaData(
-          appLocalizations.soundMeter.toLowerCase(), data);
+        appLocalizations.soundMeter.toLowerCase(),
+        data,
+      );
       final file = await _csvService.saveCsvFile(
-          appLocalizations.soundMeter.toLowerCase(), fileName, data);
+        appLocalizations.soundMeter.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -232,10 +231,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
@@ -257,17 +253,19 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
                     ? '${appLocalizations.soundMeter} - ${appLocalizations.playback}'
                     : appLocalizations.soundMeterTitle,
                 onGuidePressed: _showInstrumentGuide,
-                onOptionsPressed:
-                    provider.isPlayingBack ? null : _showOptionsMenu,
-                onRecordPressed:
-                    provider.isPlayingBack ? null : _toggleRecording,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
                 isRecording: provider.isRecording,
                 isPlayingBack: provider.isPlayingBack,
                 isPlaybackPaused: provider.isPlaybackPaused,
                 onPlaybackPauseResume: provider.isPlayingBack
                     ? (provider.isPlaybackPaused
-                        ? _provider.resumePlayback
-                        : _provider.pausePlayback)
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
                     : null,
                 onPlaybackStop: provider.isPlayingBack
                     ? () async {
@@ -281,27 +279,15 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
                       if (isLargeScreen) {
                         return Row(
                           children: [
-                            const Expanded(
-                              flex: 35,
-                              child: SoundMeterCard(),
-                            ),
-                            Expanded(
-                              flex: 65,
-                              child: _buildChartSection(),
-                            ),
+                            const Expanded(flex: 35, child: SoundMeterCard()),
+                            Expanded(flex: 65, child: _buildChartSection()),
                           ],
                         );
                       } else {
                         return Column(
                           children: [
-                            const Expanded(
-                              flex: 45,
-                              child: SoundMeterCard(),
-                            ),
-                            Expanded(
-                              flex: 55,
-                              child: _buildChartSection(),
-                            ),
+                            const Expanded(flex: 45, child: SoundMeterCard()),
+                            Expanded(flex: 55, child: _buildChartSection()),
                           ],
                         );
                       }
@@ -339,8 +325,13 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
             color: chartBackgroundColor,
             borderRadius: BorderRadius.zero,
           ),
-          child:
-              _buildChart(screenWidth, maxTime, minTime, timeInterval, spots),
+          child: _buildChart(
+            screenWidth,
+            maxTime,
+            minTime,
+            timeInterval,
+            spots,
+          ),
         );
       },
     );
@@ -351,12 +342,9 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     final fontSize = screenWidth < 400
         ? 7.0
         : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: fontSize,
-    );
+        ? 8.0
+        : 9.0;
+    final style = TextStyle(color: chartTextColor, fontSize: fontSize);
     String timeText;
     if (value < 60) {
       timeText = '${value.toInt()}s';
@@ -371,21 +359,22 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
     }
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        timeText,
-        style: style,
-      ),
+      child: Text(maxLines: 1, timeText, style: style),
     );
   }
 
-  Widget _buildChart(double screenWidth, double maxTime, double minTime,
-      double timeInterval, List<FlSpot> spots) {
+  Widget _buildChart(
+    double screenWidth,
+    double maxTime,
+    double minTime,
+    double timeInterval,
+    List<FlSpot> spots,
+  ) {
     final chartFontSize = screenWidth < 400
         ? 8.0
         : screenWidth < 600
-            ? 9.0
-            : 10.0;
+        ? 9.0
+        : 10.0;
     final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 25.0 : 30.0;
@@ -448,7 +437,9 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
             ),
             rightTitles: AxisTitles(
               sideTitles: SideTitles(
-                  showTitles: false, reservedSize: reservedSizeRight),
+                showTitles: false,
+                reservedSize: reservedSizeRight,
+              ),
             ),
           ),
           gridData: FlGridData(

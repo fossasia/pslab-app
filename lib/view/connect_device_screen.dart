@@ -29,10 +29,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
   void _showSnackBar(String message, {Color? backgroundColor}) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-      ),
+      SnackBar(content: Text(message), backgroundColor: backgroundColor),
     );
   }
 
@@ -87,15 +84,13 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     Center(
                       child: Image.asset(
                         provider.pslabIsConnected
                             ? (provider.scienceLabCommon.isWiFiConnected()
-                                ? ConnectDeviceScreen.iconWifiConnected
-                                : ConnectDeviceScreen.iconUsbConnected)
+                                  ? ConnectDeviceScreen.iconWifiConnected
+                                  : ConnectDeviceScreen.iconUsbConnected)
                             : ConnectDeviceScreen.iconUsbDisconnected,
                         width: 80,
                         height: 80,
@@ -104,7 +99,11 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     Center(
                       child: Container(
                         margin: const EdgeInsets.only(
-                            top: 20, bottom: 60, left: 40, right: 40),
+                          top: 20,
+                          bottom: 60,
+                          left: 40,
+                          right: 40,
+                        ),
                         child: Text(
                           provider.pslabIsConnected
                               ? '${appLocalizations.deviceConnected}\n\n${provider.pslabVersionID}'
@@ -122,7 +121,10 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       visible: !provider.pslabIsConnected,
                       child: Container(
                         margin: const EdgeInsets.only(
-                            left: 40, right: 40, bottom: 20),
+                          left: 40,
+                          right: 40,
+                          bottom: 20,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -141,30 +143,22 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                             Text(
                               appLocalizations.step1ConnectMicroUsb,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
+                              style: const TextStyle(fontSize: 16),
                             ),
                             Text(
                               appLocalizations.step2ConnectOtg,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
+                              style: const TextStyle(fontSize: 16),
                             ),
                             Text(
                               appLocalizations.step3ConnectPhone,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
+                              style: const TextStyle(fontSize: 16),
                             ),
                             Text(
                               appLocalizations.step4ConnectWireless,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ],
                         ),
@@ -175,9 +169,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       child: Center(
                         child: Text(
                           appLocalizations.wifiConnection,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                     ),
@@ -216,8 +208,11 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       ),
                     ),
                     Container(
-                      margin:
-                          const EdgeInsets.only(top: 30, left: 120, right: 120),
+                      margin: const EdgeInsets.only(
+                        top: 30,
+                        left: 120,
+                        right: 120,
+                      ),
                       child: Divider(color: dividerColor, height: 1),
                     ),
                     Center(
@@ -227,7 +222,8 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         child: GestureDetector(
                           onTap: () async {
                             await launchUrl(
-                                Uri.parse(appLocalizations.pslabUrl));
+                              Uri.parse(appLocalizations.pslabUrl),
+                            );
                           },
                           child: Text(
                             appLocalizations.whatIsPslab,
@@ -243,9 +239,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),

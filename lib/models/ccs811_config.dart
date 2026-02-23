@@ -9,10 +9,7 @@ class CCS811Config extends Equatable {
     this.includeLocationData = false,
   });
 
-  CCS811Config copyWith({
-    int? updatePeriod,
-    bool? includeLocationData,
-  }) {
+  CCS811Config copyWith({int? updatePeriod, bool? includeLocationData}) {
     return CCS811Config(
       updatePeriod: updatePeriod ?? this.updatePeriod,
       includeLocationData: includeLocationData ?? this.includeLocationData,
@@ -34,8 +31,5 @@ class CCS811Config extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        updatePeriod,
-        includeLocationData,
-      ];
+  List<Object?> get props => [updatePeriod, includeLocationData];
 }

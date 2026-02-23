@@ -109,7 +109,8 @@ class ADS1115 {
       setDataRate(128);
 
       logger.d(
-          "ADS1115 initialized with gain: $_gain, channel: $_channel, rate: $_rate");
+        "ADS1115 initialized with gain: $_gain, channel: $_channel, rate: $_rate",
+      );
     } catch (e) {
       logger.e("Error initializing ADS1115: $e");
       rethrow;
@@ -121,7 +122,8 @@ class ADS1115 {
       List<int> data = await i2c.readBulk(address, register, 2);
       if (data.length < 2) {
         throw Exception(
-            "Expected 2 bytes but got ${data.length} from register $register");
+          "Expected 2 bytes but got ${data.length} from register $register",
+        );
       }
       return ((data[0] & 0xFF) << 8) | (data[1] & 0xFF);
     } catch (e) {
@@ -173,7 +175,8 @@ class ADS1115 {
     }
 
     try {
-      int config = regConfigCqueNone |
+      int config =
+          regConfigCqueNone |
           regConfigClatNonlat |
           regConfigCpolActvlow |
           regConfigCmodeTrad |
@@ -219,7 +222,8 @@ class ADS1115 {
 
   Future<double> _readADCDifferential(String chan) async {
     try {
-      int config = regConfigCqueNone |
+      int config =
+          regConfigCqueNone |
           regConfigClatNonlat |
           regConfigCpolActvlow |
           regConfigCmodeTrad |

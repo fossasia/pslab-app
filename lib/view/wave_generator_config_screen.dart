@@ -44,10 +44,7 @@ class _WaveGeneratorConfigScreenState extends State<WaveGeneratorConfigScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.waveGeneratorConfigs,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(

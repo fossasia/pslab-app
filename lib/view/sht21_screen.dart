@@ -51,10 +51,7 @@ class _SHT21ScreenState extends State<SHT21Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -67,10 +64,7 @@ class _SHT21ScreenState extends State<SHT21Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -283,10 +277,7 @@ class _SHT21ScreenState extends State<SHT21Screen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 value,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: blackTextColor,
-                ),
+                style: TextStyle(fontSize: 14, color: blackTextColor),
               ),
             ),
           ),

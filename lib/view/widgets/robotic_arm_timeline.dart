@@ -67,7 +67,8 @@ class TimelineScrollView extends StatelessWidget {
                               child: Stack(
                                 children: [
                                   Positioned(
-                                    top: -MediaQuery.of(context).size.height *
+                                    top:
+                                        -MediaQuery.of(context).size.height *
                                         0.005,
                                     left: 1,
                                     child: Text(
@@ -78,7 +79,7 @@ class TimelineScrollView extends StatelessWidget {
                                         color: Colors.white,
                                         fontSize:
                                             MediaQuery.of(context).size.height *
-                                                0.05,
+                                            0.05,
                                       ),
                                     ),
                                   ),
@@ -98,18 +99,23 @@ class TimelineScrollView extends StatelessWidget {
                             );
                           },
                           onWillAcceptWithDetails:
-                              (DragTargetDetails<Map<String, dynamic>>
-                                  details) {
-                            final data = details.data;
-                            return data['servoId'] == boxIndex;
-                          },
+                              (
+                                DragTargetDetails<Map<String, dynamic>> details,
+                              ) {
+                                final data = details.data;
+                                return data['servoId'] == boxIndex;
+                              },
                           onAcceptWithDetails:
-                              (DragTargetDetails<Map<String, dynamic>>
-                                  details) {
-                            final data = details.data;
-                            onUpdate(index, boxIndex,
-                                data['degree'].floorToDouble());
-                          },
+                              (
+                                DragTargetDetails<Map<String, dynamic>> details,
+                              ) {
+                                final data = details.data;
+                                onUpdate(
+                                  index,
+                                  boxIndex,
+                                  data['degree'].floorToDouble(),
+                                );
+                              },
                         ),
                       ),
                     );

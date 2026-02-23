@@ -109,10 +109,10 @@ class MyApp extends StatelessWidget {
                 '/sensors': (context) => const SensorsScreen(),
                 '/experiments': (context) => const ExperimentsScreen(),
                 '/loggedData': (context) => LoggedDataScreen(
-                      instrumentNames: instrumentNames,
-                      appBarName: appLocalizations!.loggedData,
-                      instrumentIcons: instrumentIcons,
-                    ),
+                  instrumentNames: instrumentNames,
+                  appBarName: appLocalizations!.loggedData,
+                  instrumentIcons: instrumentIcons,
+                ),
               },
             );
           },
@@ -127,5 +127,7 @@ void _preCacheImages(BuildContext context) {
     precacheImage(AssetImage(path), context);
   }
   precacheImage(
-      const AssetImage('assets/icons/ic_nav_header_logo.png'), context);
+    const AssetImage('assets/icons/ic_nav_header_logo.png'),
+    context,
+  );
 }

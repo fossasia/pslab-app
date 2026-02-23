@@ -20,8 +20,9 @@ class _BarometerCardState extends State<BarometerCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
-    BarometerStateProvider provider =
-        Provider.of<BarometerStateProvider>(context);
+    BarometerStateProvider provider = Provider.of<BarometerStateProvider>(
+      context,
+    );
     double currentPressure = provider.getCurrentPressure();
     double minPressure = provider.getMinPressure();
     double maxPressure = provider.getMaxPressure();
@@ -36,9 +37,7 @@ class _BarometerCardState extends State<BarometerCard> {
 
     return Card(
       margin: EdgeInsets.all(cardMargin),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 1,
       child: Container(
         decoration: BoxDecoration(
@@ -97,12 +96,13 @@ class _BarometerCardState extends State<BarometerCard> {
                     Expanded(
                       flex: screenWidth < 500 ? 60 : 65,
                       child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentPressure,
-                          minValue: 0,
-                          maxValue: 2,
-                          unit: appLocalizations.atm,
-                          currentValueFontSize: pressureValueFontSize),
+                        gaugeSize: gaugeSize,
+                        currentValue: currentPressure,
+                        minValue: 0,
+                        maxValue: 2,
+                        unit: appLocalizations.atm,
+                        currentValueFontSize: pressureValueFontSize,
+                      ),
                     ),
                   ],
                 );

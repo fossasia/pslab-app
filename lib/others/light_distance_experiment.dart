@@ -8,10 +8,7 @@ AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
 class MoveTowardsLightStep extends ExperimentStep {
   MoveTowardsLightStep()
-      : super(
-          id: 'move_towards',
-          instruction: appLocalizations.moveTowardsLight,
-        );
+    : super(id: 'move_towards', instruction: appLocalizations.moveTowardsLight);
 
   @override
   bool checkCondition(List<double> values, List<double> timeData) {
@@ -32,10 +29,7 @@ class MoveTowardsLightStep extends ExperimentStep {
 
 class MoveAwayFromLightStep extends ExperimentStep {
   MoveAwayFromLightStep()
-      : super(
-          id: 'move_away',
-          instruction: appLocalizations.moveAwayFromLight,
-        );
+    : super(id: 'move_away', instruction: appLocalizations.moveAwayFromLight);
 
   @override
   bool checkCondition(List<double> values, List<double> timeData) {
@@ -56,10 +50,7 @@ class MoveAwayFromLightStep extends ExperimentStep {
 
 class StabilizeReadingStep extends ExperimentStep {
   StabilizeReadingStep()
-      : super(
-          id: 'stabilize',
-          instruction: appLocalizations.holdPosition,
-        );
+    : super(id: 'stabilize', instruction: appLocalizations.holdPosition);
 
   @override
   bool checkCondition(List<double> values, List<double> timeData) {

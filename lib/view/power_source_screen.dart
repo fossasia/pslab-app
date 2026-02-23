@@ -108,9 +108,9 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
       MaterialPageRoute(
         builder: (context) =>
             ChangeNotifierProvider<PowerSourceConfigProvider>.value(
-          value: _configProvider!,
-          child: const PowerSourceConfigScreen(),
-        ),
+              value: _configProvider!,
+              child: const PowerSourceConfigScreen(),
+            ),
       ),
     );
   }
@@ -201,9 +201,14 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
 
     if (fileName != null) {
       _csvService.writeMetaData(
-          appLocalizations.powerSource.toLowerCase(), data);
+        appLocalizations.powerSource.toLowerCase(),
+        data,
+      );
       final file = await _csvService.saveCsvFile(
-          appLocalizations.powerSource.toLowerCase(), fileName, data);
+        appLocalizations.powerSource.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -233,9 +238,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => _provider),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => _provider)],
       child: Consumer<PowerSourceStateProvider>(
         builder: (context, provider, _) {
           final powerSourceCards = [
@@ -255,18 +258,19 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           Text(
                             appLocalizations.pinPV1,
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                              decimal: true,
+                            ),
                             controller: TextEditingController(
                               text: provider.voltagePV1.toStringAsFixed(2),
                             ),
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
+                            style: TextStyle(fontSize: 18),
                             textAlign: TextAlign.center,
                             onSubmitted: (value) async {
                               double parsedValue =
@@ -303,7 +307,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPV1(
-                                          provider.voltagePV1 + provider.step);
+                                        provider.voltagePV1 + provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -322,7 +327,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPV1(
-                                          provider.voltagePV1 - provider.step);
+                                        provider.voltagePV1 - provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -341,11 +347,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                   ),
                   Expanded(
                     flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 1000,
-                      pin: Pin.pv1,
-                    ),
-                  )
+                    child: PowerSourceKnob(maxValue: 1000, pin: Pin.pv1),
+                  ),
                 ],
               ),
             ),
@@ -365,12 +368,15 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           Text(
                             appLocalizations.pinPV2,
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                              decimal: true,
+                            ),
                             controller: TextEditingController(
                               text: provider.voltagePV2.toStringAsFixed(2),
                             ),
@@ -380,9 +386,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                   double.tryParse(value) ?? 0.0;
                               await provider.setPV2(parsedValue);
                             },
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
+                            style: TextStyle(fontSize: 18),
                             decoration: InputDecoration(
                               suffixText: ' V',
                               enabledBorder: OutlineInputBorder(
@@ -413,7 +417,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPV2(
-                                          provider.voltagePV2 + provider.step);
+                                        provider.voltagePV2 + provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -432,7 +437,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPV2(
-                                          provider.voltagePV2 - provider.step);
+                                        provider.voltagePV2 - provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -451,11 +457,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                   ),
                   Expanded(
                     flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 660,
-                      pin: Pin.pv2,
-                    ),
-                  )
+                    child: PowerSourceKnob(maxValue: 660, pin: Pin.pv2),
+                  ),
                 ],
               ),
             ),
@@ -475,12 +478,15 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           Text(
                             appLocalizations.pinPV3,
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                              decimal: true,
+                            ),
                             controller: TextEditingController(
                               text: provider.voltagePV3.toStringAsFixed(2),
                             ),
@@ -490,9 +496,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                   double.tryParse(value) ?? 0.0;
                               await provider.setPV3(parsedValue);
                             },
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
+                            style: TextStyle(fontSize: 18),
                             decoration: InputDecoration(
                               suffixText: ' V',
                               enabledBorder: OutlineInputBorder(
@@ -523,7 +527,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPV3(
-                                          provider.voltagePV3 + provider.step);
+                                        provider.voltagePV3 + provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -542,7 +547,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPV3(
-                                          provider.voltagePV3 - provider.step);
+                                        provider.voltagePV3 - provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -561,11 +567,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                   ),
                   Expanded(
                     flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 330,
-                      pin: Pin.pv3,
-                    ),
-                  )
+                    child: PowerSourceKnob(maxValue: 330, pin: Pin.pv3),
+                  ),
                 ],
               ),
             ),
@@ -585,18 +588,19 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                           Text(
                             appLocalizations.pinPCS,
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           TextField(
                             keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                              decimal: true,
+                            ),
                             controller: TextEditingController(
                               text: provider.currentPCS.toStringAsFixed(2),
                             ),
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
+                            style: TextStyle(fontSize: 18),
                             textAlign: TextAlign.center,
                             onSubmitted: (value) async {
                               double parsedValue =
@@ -633,7 +637,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPCS(
-                                          provider.currentPCS + provider.step);
+                                        provider.currentPCS + provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -652,7 +657,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                                     color: scaffoldBackgroundColor,
                                     onPressed: () async {
                                       await provider.setPCS(
-                                          provider.currentPCS - provider.step);
+                                        provider.currentPCS - provider.step,
+                                      );
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: primaryRed,
@@ -671,11 +677,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                   ),
                   Expanded(
                     flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 330,
-                      pin: Pin.pcs,
-                    ),
-                  )
+                    child: PowerSourceKnob(maxValue: 330, pin: Pin.pcs),
+                  ),
                 ],
               ),
             ),
@@ -685,18 +688,20 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
               CommonScaffold(
                 title: appLocalizations.powerSourceTitle,
                 key: const Key(powerSourceScreenTitleKey),
-                onOptionsPressed:
-                    provider.isPlayingBack ? null : _showOptionsMenu,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
                 onGuidePressed: _showInstrumentGuide,
-                onRecordPressed:
-                    provider.isPlayingBack ? null : _toggleRecording,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
                 isRecording: provider.isRecording,
                 isPlayingBack: provider.isPlayingBack,
                 isPlaybackPaused: provider.isPlaybackPaused,
                 onPlaybackPauseResume: provider.isPlayingBack
                     ? (provider.isPlaybackPaused
-                        ? _provider.resumePlayback
-                        : _provider.pausePlayback)
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
                     : null,
                 onPlaybackStop: provider.isPlayingBack
                     ? () async {
@@ -708,15 +713,13 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       return constraints.maxWidth < 600
-                          ? ListView(
-                              children: powerSourceCards,
-                            )
+                          ? ListView(children: powerSourceCards)
                           : GridView(
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 1.5,
-                              ),
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 1.5,
+                                  ),
                               children: powerSourceCards,
                             );
                     },

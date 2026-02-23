@@ -92,17 +92,19 @@ class LuxMeterStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return;
     }
 
-    _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    ).listen((Position position) {
-      currentPosition = position;
-    });
+    _locationStream =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).listen((Position position) {
+          currentPosition = position;
+        });
   }
 
   void _onConfigChanged() async {
@@ -212,7 +214,8 @@ class LuxMeterStateProvider extends ChangeNotifier {
       });
 
       logger.d(
-          'BH1750 initialized with gain $gainValue at interval $intervalMs ms');
+        'BH1750 initialized with gain $gainValue at interval $intervalMs ms',
+      );
     } catch (e) {
       logger.e("Error initializing BH1750: $e");
       _handleSensorError(e);
@@ -263,8 +266,9 @@ class LuxMeterStateProvider extends ChangeNotifier {
         }
       });
 
-      logger
-          .d('TSL2561 initialized with gain $gain at interval $intervalMs ms');
+      logger.d(
+        'TSL2561 initialized with gain $gain at interval $intervalMs ms',
+      );
     } catch (e) {
       logger.e("Error initializing TSL2561: $e");
       _handleSensorError(e);
@@ -327,7 +331,8 @@ class LuxMeterStateProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+        'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3',
+      );
       _playbackIndex++;
       notifyListeners();
     }
@@ -336,10 +341,12 @@ class LuxMeterStateProvider extends ChangeNotifier {
 
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
-        final currentTimestamp =
-            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
-        final nextTimestamp =
-            int.tryParse(_playbackData![_playbackIndex][0].toString());
+        final currentTimestamp = int.tryParse(
+          _playbackData![_playbackIndex - 1][0].toString(),
+        );
+        final nextTimestamp = int.tryParse(
+          _playbackData![_playbackIndex][0].toString(),
+        );
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -408,13 +415,14 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final double? rawLux =
-        (_sensorAvailable || _isPlayingBack) ? _currentLux : null;
+    final double? rawLux = (_sensorAvailable || _isPlayingBack)
+        ? _currentLux
+        : null;
     final time = _currentTime;
 
     if (rawLux != null) {
-      final double limit =
-          (_configProvider?.config.highLimit ?? 40000).toDouble();
+      final double limit = (_configProvider?.config.highLimit ?? 40000)
+          .toDouble();
       final double clippedLux = rawLux > limit ? limit : rawLux;
       _currentLux = clippedLux;
       if (_isRecording) {
@@ -429,7 +437,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
               : 0,
           _configProvider!.config.includeLocationData
               ? currentPosition?.longitude.toString() ?? 0
-              : 0
+              : 0,
         ]);
       }
 
@@ -478,7 +486,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
     }
     _isRecording = true;
     _recordedData = [
-      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']
+      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude'],
     ];
     notifyListeners();
   }

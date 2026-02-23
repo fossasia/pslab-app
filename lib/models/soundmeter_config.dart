@@ -1,20 +1,14 @@
 class SoundMeterConfig {
   final bool includeLocationData;
-  const SoundMeterConfig({
-    this.includeLocationData = true,
-  });
-  SoundMeterConfig copyWith({
-    bool? includeLocationData,
-  }) {
+  const SoundMeterConfig({this.includeLocationData = true});
+  SoundMeterConfig copyWith({bool? includeLocationData}) {
     return SoundMeterConfig(
       includeLocationData: includeLocationData ?? this.includeLocationData,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'includeLocationData': includeLocationData,
-    };
+    return {'includeLocationData': includeLocationData};
   }
 
   factory SoundMeterConfig.fromJson(Map<String, dynamic> json) {

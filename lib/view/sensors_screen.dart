@@ -62,23 +62,19 @@ class _SensorsScreenState extends State<SensorsScreen> {
                 const SizedBox(height: 20),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 24,
+                  ),
                   decoration: BoxDecoration(
                     color: sensorStatusBackgroundColor,
                     borderRadius: BorderRadius.circular(25),
-                    border: Border.all(
-                      color: sensorStatusBorder,
-                      width: 1,
-                    ),
+                    border: Border.all(color: sensorStatusBorder, width: 1),
                   ),
                   child: Text(
                     _getStatusText(boardProvider),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: blackTextColor,
-                    ),
+                    style: TextStyle(fontSize: 16, color: blackTextColor),
                   ),
                 ),
                 if (_hasScanned) ...[
@@ -92,9 +88,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Expanded(
-                    child: _buildSensorList(),
-                  ),
+                  Expanded(child: _buildSensorList()),
                 ],
               ],
             ),
@@ -194,8 +188,10 @@ class _SensorsScreenState extends State<SensorsScreen> {
               },
               child: Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 16,
+                ),
                 decoration: BoxDecoration(
                   color: primaryRed,
                   border: isDetected
@@ -243,8 +239,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('$sensorName ${appLocalizations.screenNotImplemented}'),
+            content: Text(
+              '$sensorName ${appLocalizations.screenNotImplemented}',
+            ),
             duration: const Duration(milliseconds: 500),
           ),
         );
@@ -253,9 +250,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => targetScreen!,
-      ),
+      MaterialPageRoute(builder: (context) => targetScreen!),
     );
   }
 }

@@ -9,12 +9,7 @@ class AnalogConstants {
     'RES',
     'VOL',
   ];
-  List<String> biPolars = [
-    'CH1',
-    'CH2',
-    'CH3',
-    'MIC',
-  ];
+  List<String> biPolars = ['CH1', 'CH2', 'CH3', 'MIC'];
   Map<String, List<double>> inputRanges = {};
   Map<String, int> picADCMultiplex = {};
 

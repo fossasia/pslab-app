@@ -26,8 +26,10 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider =
-          Provider.of<AccelerometerConfigProvider>(context, listen: false);
+      final provider = Provider.of<AccelerometerConfigProvider>(
+        context,
+        listen: false,
+      );
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
       _sensorGainController.text = provider.config.sensorGain.toString();
@@ -53,34 +55,32 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              if (Navigator.canPop(context) &&
-                  ModalRoute.of(context)?.settings.name == '/accelerometer') {
-                Navigator.popUntil(
-                    context, ModalRoute.withName('/accelerometer'));
-              } else {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/accelerometer',
-                  (route) => route.isFirst,
-                );
-              }
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: appBarContentColor,
-            ),
-          );
-        }),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name == '/accelerometer') {
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName('/accelerometer'),
+                  );
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/accelerometer',
+                    (route) => route.isFirst,
+                  );
+                }
+              },
+              icon: Icon(Icons.arrow_back, color: appBarContentColor),
+            );
+          },
+        ),
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.accelerometerConfigurations,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -106,11 +106,12 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.updatePeriodErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.updatePeriodErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },
@@ -130,11 +131,12 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content: Text(
-                                  appLocalizations.highLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
+                              content: Text(
+                                appLocalizations.highLimitErrorMessage,
+                                style: TextStyle(color: snackBarContentColor),
+                              ),
+                              backgroundColor: snackBarBackgroundColor,
+                            ),
                           );
                         }
                       },
@@ -145,8 +147,9 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                       selectedValue: provider.config.activeSensor,
                       options: [
                         ConfigOption(
-                            value: 'In-built Sensor',
-                            displayName: appLocalizations.inBuiltSensor),
+                          value: 'In-built Sensor',
+                          displayName: appLocalizations.inBuiltSensor,
+                        ),
                         ConfigOption(value: 'MPU6050', displayName: 'MPU6050'),
                       ],
                       onChanged: (value) {

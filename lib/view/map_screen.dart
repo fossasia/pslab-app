@@ -10,11 +10,7 @@ class MapScreen extends StatelessWidget {
   final double latitude;
   final double longitude;
 
-  const MapScreen({
-    super.key,
-    required this.latitude,
-    required this.longitude,
-  });
+  const MapScreen({super.key, required this.latitude, required this.longitude});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +19,7 @@ class MapScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           appLocalizations.location,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
         backgroundColor: primaryRed,
         iconTheme: IconThemeData(color: appBarContentColor),
@@ -48,10 +41,7 @@ class MapScreen extends StatelessWidget {
                   point: LatLng(latitude, longitude),
                   width: 40,
                   height: 40,
-                  child: const Icon(
-                    Icons.location_on,
-                    size: 40,
-                  ),
+                  child: const Icon(Icons.location_on, size: 40),
                 ),
               ],
             ),
@@ -60,7 +50,8 @@ class MapScreen extends StatelessWidget {
                 TextSourceAttribution(
                   appLocalizations.openStreetMapContributors,
                   onTap: () => launchUrl(
-                      Uri.parse('https://openstreetmap.org/copyright')),
+                    Uri.parse('https://openstreetmap.org/copyright'),
+                  ),
                 ),
               ],
             ),

@@ -21,8 +21,9 @@ class _ThermometerCardState extends State<ThermometerCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
-    ThermometerStateProvider provider =
-        Provider.of<ThermometerStateProvider>(context);
+    ThermometerStateProvider provider = Provider.of<ThermometerStateProvider>(
+      context,
+    );
     double currentTemp = provider.getCurrentTemperature();
     double minTemp = provider.getMinTemperature();
     double maxTemp = provider.getMaxTemperature();
@@ -36,9 +37,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
 
     return Card(
       margin: EdgeInsets.all(cardMargin),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 1,
       child: Container(
         decoration: BoxDecoration(
@@ -55,12 +54,13 @@ class _ThermometerCardState extends State<ThermometerCard> {
                     Expanded(
                       flex: 40,
                       child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentTemp,
-                          minValue: -40,
-                          maxValue: 125,
-                          unit: appLocalizations.celsius,
-                          currentValueFontSize: tempValueFontSize),
+                        gaugeSize: gaugeSize,
+                        currentValue: currentTemp,
+                        minValue: -40,
+                        maxValue: 125,
+                        unit: appLocalizations.celsius,
+                        currentValueFontSize: tempValueFontSize,
+                      ),
                     ),
                     Expanded(
                       flex: 60,
@@ -92,12 +92,13 @@ class _ThermometerCardState extends State<ThermometerCard> {
                     Expanded(
                       flex: screenWidth < 500 ? 60 : 65,
                       child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentTemp,
-                          minValue: -40,
-                          maxValue: 125,
-                          unit: appLocalizations.celsius,
-                          currentValueFontSize: tempValueFontSize),
+                        gaugeSize: gaugeSize,
+                        currentValue: currentTemp,
+                        minValue: -40,
+                        maxValue: 125,
+                        unit: appLocalizations.celsius,
+                        currentValueFontSize: tempValueFontSize,
+                      ),
                     ),
                   ],
                 );

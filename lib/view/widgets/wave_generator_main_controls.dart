@@ -66,33 +66,37 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      provider.waveGeneratorConstants
+                                      provider
+                                                  .waveGeneratorConstants
                                                   .modeSelected ==
                                               WaveConst.square
-                                          ? (provider.waveGeneratorConstants
-                                                              .wave[
-                                                          provider
-                                                              .selectedAnalogWave]
-                                                      ?[WaveConst.waveType] ==
-                                                  WaveGeneratorStateProvider.sin
-                                              ? iconSin
-                                              : iconTriangular)
+                                          ? (provider
+                                                        .waveGeneratorConstants
+                                                        .wave[provider
+                                                        .selectedAnalogWave]?[WaveConst
+                                                        .waveType] ==
+                                                    WaveGeneratorStateProvider
+                                                        .sin
+                                                ? iconSin
+                                                : iconTriangular)
                                           : iconPwm,
                                       height: 40,
                                       width: 40,
                                     ),
                                     Text(
-                                      provider.waveGeneratorConstants
+                                      provider
+                                                  .waveGeneratorConstants
                                                   .modeSelected ==
                                               WaveConst.square
-                                          ? (provider.waveGeneratorConstants
-                                                              .wave[
-                                                          provider
-                                                              .selectedAnalogWave]
-                                                      ?[WaveConst.waveType] ==
-                                                  WaveGeneratorStateProvider.sin
-                                              ? appLocalizations.sine
-                                              : appLocalizations.tri)
+                                          ? (provider
+                                                        .waveGeneratorConstants
+                                                        .wave[provider
+                                                        .selectedAnalogWave]?[WaveConst
+                                                        .waveType] ==
+                                                    WaveGeneratorStateProvider
+                                                        .sin
+                                                ? appLocalizations.sine
+                                                : appLocalizations.tri)
                                           : appLocalizations.pwm.toUpperCase(),
                                       style: TextStyle(
                                         color: Colors.white,
@@ -108,16 +112,15 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                             Expanded(
                               flex: 80,
                               child: Container(
-                                margin: EdgeInsets.only(
-                                  right: 8,
-                                ),
+                                margin: EdgeInsets.only(right: 8),
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      provider.waveGeneratorConstants
+                                      provider
+                                                  .waveGeneratorConstants
                                                   .modeSelected ==
                                               WaveConst.square
                                           ? '${appLocalizations.frequency}: ${provider.waveGeneratorConstants.wave[provider.selectedAnalogWave]?[WaveConst.frequency]} Hz'
@@ -133,7 +136,8 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          provider.waveGeneratorConstants
+                                          provider
+                                                      .waveGeneratorConstants
                                                       .modeSelected ==
                                                   WaveConst.square
                                               ? '${appLocalizations.phase}: ${provider.waveGeneratorConstants.wave[provider.selectedAnalogWave]?[WaveConst.phase] ?? '--'}°'
@@ -144,7 +148,8 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        provider.waveGeneratorConstants
+                                        provider
+                                                    .waveGeneratorConstants
                                                     .modeSelected ==
                                                 WaveConst.pwm
                                             ? Text(
@@ -175,20 +180,19 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                       child: Transform.translate(
                         offset: const Offset(0, -8),
                         child: Container(
-                          margin: const EdgeInsets.only(
-                            left: 32,
-                          ),
+                          margin: const EdgeInsets.only(left: 32),
                           alignment: Alignment.centerLeft,
                           child: provider.propSelected != null
                               ? Text(
-                                  provider.waveGeneratorConstants
+                                  provider
+                                              .waveGeneratorConstants
                                               .modeSelected ==
                                           WaveConst.square
                                       ? '${labelMap[provider.propSelected]}: ${provider.waveGeneratorConstants.wave[provider.selectedAnalogWave]?[provider.propSelected]}${unitMap[provider.propSelected]}'
                                       : (provider.propSelected ==
-                                              WaveConst.frequency
-                                          ? '${labelMap[provider.propSelected]}: ${provider.waveGeneratorConstants.wave[WaveConst.sqr1]?[provider.propSelected]}${unitMap[provider.propSelected]}'
-                                          : '${labelMap[provider.propSelected]}: ${provider.waveGeneratorConstants.wave[provider.selectedDigitalWave]?[provider.propSelected]}${unitMap[provider.propSelected]}'),
+                                                WaveConst.frequency
+                                            ? '${labelMap[provider.propSelected]}: ${provider.waveGeneratorConstants.wave[WaveConst.sqr1]?[provider.propSelected]}${unitMap[provider.propSelected]}'
+                                            : '${labelMap[provider.propSelected]}: ${provider.waveGeneratorConstants.wave[provider.selectedDigitalWave]?[provider.propSelected]}${unitMap[provider.propSelected]}'),
                                   style: TextStyle(
                                     color: waveGeneratorPropTextColor,
                                     fontSize: 16,
@@ -230,38 +234,43 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                     data: SliderThemeData(
                       inactiveTrackColor: sliderInActiveColor,
                       trackHeight: 1,
-                      thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 6),
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 6,
+                      ),
                     ),
                     child: Slider(
                       activeColor: provider.propSelected == null
                           ? buttonDisabledColor
                           : sliderActiveColor,
-                      min: minValues[provider.propSelected]?.toDouble() ??
+                      min:
+                          minValues[provider.propSelected]?.toDouble() ??
                           WaveData.freqMin.value.toDouble(),
-                      max: maxValues[provider.propSelected]?.toDouble() ??
+                      max:
+                          maxValues[provider.propSelected]?.toDouble() ??
                           WaveData.freqMax.value.toDouble(),
-                      value: provider.waveGeneratorConstants.modeSelected ==
+                      value:
+                          provider.waveGeneratorConstants.modeSelected ==
                               WaveConst.square
                           ? provider
-                                  .waveGeneratorConstants
-                                  .wave[provider.selectedAnalogWave]![
-                                      provider.propSelected]
-                                  ?.toDouble() ??
-                              WaveData.freqMin.value.toDouble()
+                                    .waveGeneratorConstants
+                                    .wave[provider.selectedAnalogWave]![provider
+                                        .propSelected]
+                                    ?.toDouble() ??
+                                WaveData.freqMin.value.toDouble()
                           : (provider.propSelected == WaveConst.frequency
-                              ? provider
-                                      .waveGeneratorConstants
-                                      .wave[WaveConst.sqr1]![
-                                          provider.propSelected]
-                                      ?.toDouble() ??
-                                  WaveData.freqMin.value.toDouble()
-                              : provider
-                                      .waveGeneratorConstants
-                                      .wave[provider.selectedDigitalWave]![
-                                          provider.propSelected]
-                                      ?.toDouble() ??
-                                  WaveData.freqMin.value.toDouble()),
+                                ? provider
+                                          .waveGeneratorConstants
+                                          .wave[WaveConst.sqr1]![provider
+                                              .propSelected]
+                                          ?.toDouble() ??
+                                      WaveData.freqMin.value.toDouble()
+                                : provider
+                                          .waveGeneratorConstants
+                                          .wave[provider
+                                              .selectedDigitalWave]![provider
+                                              .propSelected]
+                                          ?.toDouble() ??
+                                      WaveData.freqMin.value.toDouble()),
                       onChanged: (value) async {
                         if (provider.propSelected != null) {
                           await provider.setValue(value.round());

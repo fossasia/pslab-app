@@ -72,16 +72,28 @@ class AnalogInputSource {
     slope = 2 * (B - A);
     intercept = 2 * A;
     if (!calibrationReady || _gain == 8) {
-      calPoly10 = Polynomial.fromCoefficients(
-          DataType.float, [0, slope / 1023, intercept]);
-      calPoly12 = Polynomial.fromCoefficients(
-          DataType.float, [0, slope / 4095, intercept]);
+      calPoly10 = Polynomial.fromCoefficients(DataType.float, [
+        0,
+        slope / 1023,
+        intercept,
+      ]);
+      calPoly12 = Polynomial.fromCoefficients(DataType.float, [
+        0,
+        slope / 4095,
+        intercept,
+      ]);
     }
 
-    voltToCode10 = Polynomial.fromCoefficients(
-        DataType.float, [0, 1023 / slope, -1023 * intercept / slope]);
-    voltToCode12 = Polynomial.fromCoefficients(
-        DataType.float, [0, 4095.0, -4095 * intercept / slope]);
+    voltToCode10 = Polynomial.fromCoefficients(DataType.float, [
+      0,
+      1023 / slope,
+      -1023 * intercept / slope,
+    ]);
+    voltToCode12 = Polynomial.fromCoefficients(DataType.float, [
+      0,
+      4095.0,
+      -4095 * intercept / slope,
+    ]);
   }
 
   List<double> cal12(List<double> raw) {

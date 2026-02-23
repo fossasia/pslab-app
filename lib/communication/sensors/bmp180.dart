@@ -97,7 +97,8 @@ class BMP180 {
       md = await readInt16(calMD);
 
       logger.d(
-          "Calibration values: [$ac1, $ac2, $ac3, $ac4, $ac5, $ac6, $b1, $b2, $mb, $mc, $md]");
+        "Calibration values: [$ac1, $ac2, $ac3, $ac4, $ac5, $ac6, $b1, $b2, $mb, $mc, $md]",
+      );
     } catch (e) {
       logger.e("Error initializing BMP180 calibration values: $e");
       rethrow;
@@ -109,7 +110,8 @@ class BMP180 {
       List<int> data = await i2c.readBulk(address, registerAddress, 2);
       if (data.length < 2) {
         throw Exception(
-            "Expected 2 bytes but got ${data.length} from register $registerAddress");
+          "Expected 2 bytes but got ${data.length} from register $registerAddress",
+        );
       }
       int value = ((data[0] & 0xFF) << 8) | (data[1] & 0xFF);
       if (value >= 0x8000) value -= 0x10000;
@@ -125,7 +127,8 @@ class BMP180 {
       List<int> data = await i2c.readBulk(address, registerAddress, 2);
       if (data.length < 2) {
         throw Exception(
-            "Expected 2 bytes but got ${data.length} from register $registerAddress");
+          "Expected 2 bytes but got ${data.length} from register $registerAddress",
+        );
       }
       return ((data[0] & 0xFF) << 8) | (data[1] & 0xFF);
     } catch (e) {
@@ -176,7 +179,8 @@ class BMP180 {
       List<int> data = await i2c.readBulk(address, pressData, 3);
       if (data.length < 3) {
         throw Exception(
-            "Expected 3 bytes but got ${data.length} from pressure data");
+          "Expected 3 bytes but got ${data.length} from pressure data",
+        );
       }
       int msb = data[0] & 0xFF;
       int lsb = data[1] & 0xFF;

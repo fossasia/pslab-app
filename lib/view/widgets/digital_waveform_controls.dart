@@ -39,25 +39,23 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                         style: TextButton.styleFrom(
                           backgroundColor:
                               waveGeneratorStateProvider.selectedDigitalWave ==
-                                      WaveConst.sqr1
-                                  ? buttonEnabledColor
-                                  : buttonDisabledColor,
+                                  WaveConst.sqr1
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                         child: Text(
                           appLocalizations.sqr1.toUpperCase(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         onPressed: () => {
                           setState(() {
-                            waveGeneratorStateProvider
-                                .setDigitalSelectedWave(WaveConst.sqr1);
-                          })
+                            waveGeneratorStateProvider.setDigitalSelectedWave(
+                              WaveConst.sqr1,
+                            );
+                          }),
                         },
                       ),
                     ),
@@ -67,25 +65,23 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                         style: TextButton.styleFrom(
                           backgroundColor:
                               waveGeneratorStateProvider.selectedDigitalWave ==
-                                      WaveConst.sqr2
-                                  ? buttonEnabledColor
-                                  : buttonDisabledColor,
+                                  WaveConst.sqr2
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                         child: Text(
                           appLocalizations.sqr2.toUpperCase(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         onPressed: () => {
                           setState(() {
-                            waveGeneratorStateProvider
-                                .setDigitalSelectedWave(WaveConst.sqr2);
-                          })
+                            waveGeneratorStateProvider.setDigitalSelectedWave(
+                              WaveConst.sqr2,
+                            );
+                          }),
                         },
                       ),
                     ),
@@ -95,25 +91,23 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                         style: TextButton.styleFrom(
                           backgroundColor:
                               waveGeneratorStateProvider.selectedDigitalWave ==
-                                      WaveConst.sqr3
-                                  ? buttonEnabledColor
-                                  : buttonDisabledColor,
+                                  WaveConst.sqr3
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                         child: Text(
                           appLocalizations.sqr3.toUpperCase(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         onPressed: () => {
                           setState(() {
-                            waveGeneratorStateProvider
-                                .setDigitalSelectedWave(WaveConst.sqr3);
-                          })
+                            waveGeneratorStateProvider.setDigitalSelectedWave(
+                              WaveConst.sqr3,
+                            );
+                          }),
                         },
                       ),
                     ),
@@ -123,25 +117,23 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                         style: TextButton.styleFrom(
                           backgroundColor:
                               waveGeneratorStateProvider.selectedDigitalWave ==
-                                      WaveConst.sqr4
-                                  ? buttonEnabledColor
-                                  : buttonDisabledColor,
+                                  WaveConst.sqr4
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                         child: Text(
                           appLocalizations.sqr4.toUpperCase(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         onPressed: () => {
                           setState(() {
-                            waveGeneratorStateProvider
-                                .setDigitalSelectedWave(WaveConst.sqr4);
-                          })
+                            waveGeneratorStateProvider.setDigitalSelectedWave(
+                              WaveConst.sqr4,
+                            );
+                          }),
                         },
                       ),
                     ),
@@ -160,40 +152,39 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                         style: TextButton.styleFrom(
                           backgroundColor:
                               waveGeneratorStateProvider.propSelected ==
-                                      WaveConst.frequency
-                                  ? buttonEnabledColor
-                                  : buttonDisabledColor,
+                                  WaveConst.frequency
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                         child: Text(
                           appLocalizations.freq,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         onPressed: () => {
                           setState(() {
-                            waveGeneratorStateProvider
-                                .setPropSelected(WaveConst.frequency);
-                          })
+                            waveGeneratorStateProvider.setPropSelected(
+                              WaveConst.frequency,
+                            );
+                          }),
                         },
                       ),
                     ),
                     const SizedBox(width: 4),
                     Expanded(
                       flex: 35,
-                      child: waveGeneratorStateProvider.selectedDigitalWave !=
+                      child:
+                          waveGeneratorStateProvider.selectedDigitalWave !=
                               WaveConst.sqr1
                           ? TextButton(
                               style: TextButton.styleFrom(
                                 backgroundColor:
                                     waveGeneratorStateProvider.propSelected ==
-                                            WaveConst.phase
-                                        ? buttonEnabledColor
-                                        : buttonDisabledColor,
+                                        WaveConst.phase
+                                    ? buttonEnabledColor
+                                    : buttonDisabledColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(6),
                                 ),
@@ -207,9 +198,10 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                               ),
                               onPressed: () => {
                                 setState(() {
-                                  waveGeneratorStateProvider
-                                      .setPropSelected(WaveConst.phase);
-                                })
+                                  waveGeneratorStateProvider.setPropSelected(
+                                    WaveConst.phase,
+                                  );
+                                }),
                               },
                             )
                           : Container(),
@@ -221,25 +213,23 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
                         style: TextButton.styleFrom(
                           backgroundColor:
                               waveGeneratorStateProvider.propSelected ==
-                                      WaveConst.duty
-                                  ? buttonEnabledColor
-                                  : buttonDisabledColor,
+                                  WaveConst.duty
+                              ? buttonEnabledColor
+                              : buttonDisabledColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                         child: Text(
                           appLocalizations.duty,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                         onPressed: () => {
                           setState(() {
-                            waveGeneratorStateProvider
-                                .setPropSelected(WaveConst.duty);
-                          })
+                            waveGeneratorStateProvider.setPropSelected(
+                              WaveConst.duty,
+                            );
+                          }),
                         },
                       ),
                     ),
@@ -269,7 +259,7 @@ class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

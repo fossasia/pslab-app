@@ -77,7 +77,9 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(2),
                             border: Border.all(color: Colors.grey.shade400),
@@ -85,9 +87,13 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(appLocalizations.servo,
-                                  style: const TextStyle(
-                                      fontSize: 10, color: Colors.black)),
+                              Text(
+                                appLocalizations.servo,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.black,
+                                ),
+                              ),
                               const SizedBox(width: 4),
                               DropdownButton<int>(
                                 isDense: true,
@@ -95,13 +101,16 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                 dropdownColor: Colors.white,
                                 underline: const SizedBox(),
                                 style: const TextStyle(
-                                    fontSize: 10, color: Colors.black),
+                                  fontSize: 10,
+                                  color: Colors.black,
+                                ),
                                 items: List.generate(4, (i) {
                                   return DropdownMenuItem(
                                     value: i,
                                     child: Text(
-                                        '${appLocalizations.servo} ${i + 1}',
-                                        style: const TextStyle(fontSize: 10)),
+                                      '${appLocalizations.servo} ${i + 1}',
+                                      style: const TextStyle(fontSize: 10),
+                                    ),
                                   );
                                 }),
                                 onChanged: (v) =>
@@ -115,20 +124,23 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _StatCard(
-                                icon: Icons.show_chart,
-                                label: appLocalizations.avgAngleLabel,
-                                value:
-                                    '${avg.toStringAsFixed(1)}${appLocalizations.degreeSymbol}'),
+                              icon: Icons.show_chart,
+                              label: appLocalizations.avgAngleLabel,
+                              value:
+                                  '${avg.toStringAsFixed(1)}${appLocalizations.degreeSymbol}',
+                            ),
                             _StatCard(
-                                icon: Icons.arrow_upward,
-                                label: appLocalizations.maxAngleLabel,
-                                value:
-                                    '${max.toStringAsFixed(1)}${appLocalizations.degreeSymbol}'),
+                              icon: Icons.arrow_upward,
+                              label: appLocalizations.maxAngleLabel,
+                              value:
+                                  '${max.toStringAsFixed(1)}${appLocalizations.degreeSymbol}',
+                            ),
                             _StatCard(
-                                icon: Icons.arrow_downward,
-                                label: appLocalizations.minAngleLabel,
-                                value:
-                                    '${min.toStringAsFixed(1)}${appLocalizations.degreeSymbol}'),
+                              icon: Icons.arrow_downward,
+                              label: appLocalizations.minAngleLabel,
+                              value:
+                                  '${min.toStringAsFixed(1)}${appLocalizations.degreeSymbol}',
+                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -136,20 +148,23 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _StatCard(
-                                icon: Icons.timeline,
-                                label: appLocalizations.avgDutyLabel,
-                                value:
-                                    '${avgDuty.toStringAsFixed(1)}${appLocalizations.percentage}'),
+                              icon: Icons.timeline,
+                              label: appLocalizations.avgDutyLabel,
+                              value:
+                                  '${avgDuty.toStringAsFixed(1)}${appLocalizations.percentage}',
+                            ),
                             _StatCard(
-                                icon: Icons.trending_up,
-                                label: appLocalizations.maxDutyLabel,
-                                value:
-                                    '${maxDuty.toStringAsFixed(1)}${appLocalizations.percentage}'),
+                              icon: Icons.trending_up,
+                              label: appLocalizations.maxDutyLabel,
+                              value:
+                                  '${maxDuty.toStringAsFixed(1)}${appLocalizations.percentage}',
+                            ),
                             _StatCard(
-                                icon: Icons.low_priority,
-                                label: appLocalizations.minDutyLabel,
-                                value:
-                                    '${minDuty.toStringAsFixed(1)}${appLocalizations.percentage}'),
+                              icon: Icons.low_priority,
+                              label: appLocalizations.minDutyLabel,
+                              value:
+                                  '${minDuty.toStringAsFixed(1)}${appLocalizations.percentage}',
+                            ),
                           ],
                         ),
                       ],
@@ -188,8 +203,8 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                     : 250;
                                 final chartWidth =
                                     calculatedWidth < constraints.maxWidth
-                                        ? constraints.maxWidth
-                                        : calculatedWidth;
+                                    ? constraints.maxWidth
+                                    : calculatedWidth;
 
                                 return SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
@@ -203,8 +218,9 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                             : 100,
                                         minY: 0,
                                         maxY: 1.04,
-                                        lineTouchData:
-                                            const LineTouchData(enabled: false),
+                                        lineTouchData: const LineTouchData(
+                                          enabled: false,
+                                        ),
                                         gridData: FlGridData(
                                           show: true,
                                           drawVerticalLine: true,
@@ -213,12 +229,14 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                           verticalInterval: 10,
                                           getDrawingHorizontalLine: (_) =>
                                               const FlLine(
-                                                  color: Colors.white12,
-                                                  strokeWidth: 1),
+                                                color: Colors.white12,
+                                                strokeWidth: 1,
+                                              ),
                                           getDrawingVerticalLine: (_) =>
                                               const FlLine(
-                                                  color: Colors.white10,
-                                                  strokeWidth: 1),
+                                                color: Colors.white10,
+                                                strokeWidth: 1,
+                                              ),
                                         ),
                                         titlesData: FlTitlesData(
                                           topTitles: AxisTitles(
@@ -228,8 +246,7 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                               interval: 1,
                                               getTitlesWidget: (value, _) {
                                                 if (pwmSpots.isEmpty) {
-                                                  return const SizedBox
-                                                      .shrink();
+                                                  return const SizedBox.shrink();
                                                 }
                                                 for (final label
                                                     in labelPoints) {
@@ -258,11 +275,12 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                               interval: 20,
                                               getTitlesWidget: (value, _) =>
                                                   Text(
-                                                '${value.toInt()} ms',
-                                                style: const TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 9),
-                                              ),
+                                                    '${value.toInt()} ms',
+                                                    style: const TextStyle(
+                                                      color: Colors.white70,
+                                                      fontSize: 9,
+                                                    ),
+                                                  ),
                                             ),
                                           ),
                                           leftTitles: AxisTitles(
@@ -273,37 +291,45 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                               getTitlesWidget: (value, _) {
                                                 if (value == 1) {
                                                   return Text(
-                                                      appLocalizations.high
-                                                          .toUpperCase(),
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 8));
+                                                    appLocalizations.high
+                                                        .toUpperCase(),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8,
+                                                    ),
+                                                  );
                                                 } else if (value == 0) {
                                                   return Text(
-                                                      appLocalizations.low
-                                                          .toUpperCase(),
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 8));
+                                                    appLocalizations.low
+                                                        .toUpperCase(),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 8,
+                                                    ),
+                                                  );
                                                 }
                                                 return const SizedBox.shrink();
                                               },
                                             ),
                                           ),
                                           rightTitles: const AxisTitles(
-                                            sideTitles:
-                                                SideTitles(showTitles: false),
+                                            sideTitles: SideTitles(
+                                              showTitles: false,
+                                            ),
                                           ),
                                         ),
                                         borderData: FlBorderData(
                                           show: true,
                                           border: const Border(
                                             bottom: BorderSide(
-                                                color: Colors.white38),
+                                              color: Colors.white38,
+                                            ),
                                             left: BorderSide(
-                                                color: Colors.white38),
+                                              color: Colors.white38,
+                                            ),
                                             right: BorderSide(
-                                                color: Colors.white38),
+                                              color: Colors.white38,
+                                            ),
                                           ),
                                         ),
                                         lineBarsData: [
@@ -312,10 +338,12 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                                             isStepLineChart: true,
                                             color: Colors.green,
                                             barWidth: 0.6,
-                                            belowBarData:
-                                                BarAreaData(show: false),
-                                            dotData:
-                                                const FlDotData(show: false),
+                                            belowBarData: BarAreaData(
+                                              show: false,
+                                            ),
+                                            dotData: const FlDotData(
+                                              show: false,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -346,8 +374,10 @@ class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
                 child: TextButton(
                   style: TextButton.styleFrom(
                     side: const BorderSide(color: Colors.black54),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -371,8 +401,11 @@ class _StatCard extends StatelessWidget {
   final String label;
   final String value;
 
-  const _StatCard(
-      {required this.icon, required this.label, required this.value});
+  const _StatCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -390,11 +423,14 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(label, style: const TextStyle(fontSize: 7, color: Colors.black)),
           const SizedBox(height: 1),
-          Text(value,
-              style: const TextStyle(
-                  fontSize: 7,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 7,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );

@@ -174,8 +174,14 @@ class ScienceLab {
     return (voltage / current) * resistanceScaling;
   }
 
-  Future<void> captureTraces(int number, int samples, double timeGap,
-      String? channelOneInput, bool trigger, int? ch123sa) async {
+  Future<void> captureTraces(
+    int number,
+    int samples,
+    double timeGap,
+    String? channelOneInput,
+    bool trigger,
+    int? ch123sa,
+  ) async {
     ch123sa ??= 0;
     channelOneInput ??= 'CH1';
     timebase = timeGap;
@@ -185,8 +191,15 @@ class ScienceLab {
       return;
     }
     int chosa = analogInputSources[channelOneInput]!.chosa;
-    aChannels[0].setParams(channelOneInput, samples, 0, timebase, 10,
-        analogInputSources[channelOneInput], null);
+    aChannels[0].setParams(
+      channelOneInput,
+      samples,
+      0,
+      timebase,
+      10,
+      analogInputSources[channelOneInput],
+      null,
+    );
     try {
       mPacketHandler.sendByte(mCommandsProto.adc);
       if (number == 1) {
@@ -203,8 +216,15 @@ class ScienceLab {
           mPacketHandler.sendByte(mCommandsProto.captureOne);
           mPacketHandler.sendByte(chosa | 0x80);
         } else if (timeGap > 1) {
-          aChannels[0].setParams(channelOneInput, samples, 0, timebase, 12,
-              analogInputSources[channelOneInput], null);
+          aChannels[0].setParams(
+            channelOneInput,
+            samples,
+            0,
+            timebase,
+            12,
+            analogInputSources[channelOneInput],
+            null,
+          );
           mPacketHandler.sendByte(mCommandsProto.captureDmaSpeed);
           mPacketHandler.sendByte(chosa | 0x80);
         } else {
@@ -218,8 +238,15 @@ class ScienceLab {
         if (samples > maxSamples / 2) {
           samples = (maxSamples / 2).toInt();
         }
-        aChannels[1].setParams('CH2', samples, samples, timebase, 10,
-            analogInputSources['CH2'], null);
+        aChannels[1].setParams(
+          'CH2',
+          samples,
+          samples,
+          timebase,
+          10,
+          analogInputSources['CH2'],
+          null,
+        );
         mPacketHandler.sendByte(mCommandsProto.captureTwo);
         mPacketHandler.sendByte(chosa | (0x80 * (trigger ? 1 : 0)));
       } else {
@@ -231,13 +258,21 @@ class ScienceLab {
         }
         int i = 1;
         for (String temp in ['CH2', 'CH3', 'MIC']) {
-          aChannels[i].setParams(temp, samples, i * samples, timebase, 10,
-              analogInputSources[temp], null);
+          aChannels[i].setParams(
+            temp,
+            samples,
+            i * samples,
+            timebase,
+            10,
+            analogInputSources[temp],
+            null,
+          );
           i++;
         }
         mPacketHandler.sendByte(mCommandsProto.captureFour);
-        mPacketHandler
-            .sendByte(chosa | (ch123sa << 4) | (0x80 * (trigger ? 1 : 0)));
+        mPacketHandler.sendByte(
+          chosa | (ch123sa << 4) | (0x80 * (trigger ? 1 : 0)),
+        );
       }
       this.samples = samples;
       mPacketHandler.sendInt(samples);
@@ -271,7 +306,8 @@ class ScienceLab {
         mPacketHandler.sendByte(mCommandsProto.common);
         mPacketHandler.sendByte(mCommandsProto.retrieveBuffer);
         mPacketHandler.sendInt(
-            aChannels[channelNumber - 1].bufferIndex + (i * dataSplitting));
+          aChannels[channelNumber - 1].bufferIndex + (i * dataSplitting),
+        );
         mPacketHandler.sendInt(dataSplitting);
         Uint8List data = Uint8List(dataSplitting * 2 + 1);
         await mPacketHandler.read(data, dataSplitting * 2 + 1);
@@ -282,9 +318,11 @@ class ScienceLab {
       if ((samples % dataSplitting) != 0) {
         mPacketHandler.sendByte(mCommandsProto.common);
         mPacketHandler.sendByte(mCommandsProto.retrieveBuffer);
-        mPacketHandler.sendInt(aChannels[channelNumber - 1].bufferIndex +
-            samples -
-            samples % dataSplitting);
+        mPacketHandler.sendInt(
+          aChannels[channelNumber - 1].bufferIndex +
+              samples -
+              samples % dataSplitting,
+        );
         mPacketHandler.sendInt(samples % dataSplitting);
         Uint8List data = Uint8List(2 * (samples % dataSplitting) + 1);
         await mPacketHandler.read(data, 2 * (samples % dataSplitting) + 1);
@@ -305,8 +343,9 @@ class ScienceLab {
 
     logger.d("RAW DATA: ${buffer.sublist(0, samples).toString()}");
 
-    aChannels[channelNumber - 1].yAxis =
-        aChannels[channelNumber - 1].fixValue(buffer.sublist(0, samples));
+    aChannels[channelNumber - 1].yAxis = aChannels[channelNumber - 1].fixValue(
+      buffer.sublist(0, samples),
+    );
     return true;
   }
 
@@ -377,7 +416,11 @@ class ScienceLab {
   }
 
   Future<void> _loadTable(
-      String channel, List<double> y, String mode, double amp) async {
+    String channel,
+    List<double> y,
+    String mode,
+    double amp,
+  ) async {
     waveType[channel] = mode;
     List<String> channels = [];
     List<double> points = y;
@@ -467,21 +510,29 @@ class ScienceLab {
   }
 
   int calculateBufferPosition(
-      int channel, int offset, int channels, int bytes) {
+    int channel,
+    int offset,
+    int channels,
+    int bytes,
+  ) {
     int multiplier = (channels < 3) ? 2 : 1;
     return (channel - 1) * bytes * multiplier + offset;
   }
 
   Future<List<int>?> fetchIntDataFromLA(
-      int bytes, int? channel, int channels) async {
+    int bytes,
+    int? channel,
+    int channels,
+  ) async {
     channel ??= 1;
     try {
       List<int> l = [];
       for (int i = 0; i < bytes / dataSplitting; i++) {
         mPacketHandler.sendByte(mCommandsProto.common);
         mPacketHandler.sendByte(mCommandsProto.retrieveBuffer);
-        mPacketHandler.sendInt(calculateBufferPosition(
-            channel, i * dataSplitting, channels, bytes));
+        mPacketHandler.sendInt(
+          calculateBufferPosition(channel, i * dataSplitting, channels, bytes),
+        );
         mPacketHandler.sendInt(dataSplitting);
         Uint8List data = Uint8List(dataSplitting * 2 + 1);
         await mPacketHandler.read(data, dataSplitting * 2 + 1);
@@ -493,8 +544,14 @@ class ScienceLab {
       if ((bytes % dataSplitting) != 0) {
         mPacketHandler.sendByte(mCommandsProto.common);
         mPacketHandler.sendByte(mCommandsProto.retrieveBuffer);
-        mPacketHandler.sendInt(calculateBufferPosition(
-            channel, bytes - bytes % dataSplitting, channels, bytes));
+        mPacketHandler.sendInt(
+          calculateBufferPosition(
+            channel,
+            bytes - bytes % dataSplitting,
+            channels,
+            bytes,
+          ),
+        );
         mPacketHandler.sendInt(bytes % dataSplitting);
         Uint8List data = Uint8List(2 * (bytes % dataSplitting) + 1);
         await mPacketHandler.read(data, 2 * (bytes % dataSplitting) + 1);
@@ -525,8 +582,11 @@ class ScienceLab {
     return null;
   }
 
-  Future<bool> fetchLAChannel(int channelNumber,
-      LinkedHashMap<String, int> initialStates, int channels) async {
+  Future<bool> fetchLAChannel(
+    int channelNumber,
+    LinkedHashMap<String, int> initialStates,
+    int channels,
+  ) async {
     DigitalChannel dChan = dChannels[channelNumber];
 
     LinkedHashMap<String, int> tempMap = LinkedHashMap<String, int>();
@@ -544,8 +604,11 @@ class ScienceLab {
       }
       i++;
     }
-    List<int>? temp =
-        await fetchIntDataFromLA(i, dChan.channelNumber + 1, channels);
+    List<int>? temp = await fetchIntDataFromLA(
+      i,
+      dChan.channelNumber + 1,
+      channels,
+    );
     List<double> data = List.filled(temp!.length - 1, 0.0);
     if (temp[0] == 1) {
       for (int j = 1; j < temp.length; j++) {
@@ -562,7 +625,9 @@ class ScienceLab {
   }
 
   Future<double> fetchLAChannelFrequency(
-      int channelNumber, LinkedHashMap<String, int> initialStates) async {
+    int channelNumber,
+    LinkedHashMap<String, int> initialStates,
+  ) async {
     double laChannelFrequency = 0;
     DigitalChannel dChan = dChannels[channelNumber];
 
@@ -611,11 +676,17 @@ class ScienceLab {
       logger.e("Error in getFrequency: $e");
     }
     return await fetchLAChannelFrequency(
-        calculateDigitalChannel(channel)!, data!);
+      calculateDigitalChannel(channel)!,
+      data!,
+    );
   }
 
-  Future<void> startOneChannelLA(String? channel, int? channelMode,
-      String? triggerChannel, int? triggerMode) async {
+  Future<void> startOneChannelLA(
+    String? channel,
+    int? channelMode,
+    String? triggerChannel,
+    int? triggerMode,
+  ) async {
     channel ??= 'LA1';
     channelMode ??= 1;
     triggerChannel ??= 'LA1';
@@ -650,12 +721,13 @@ class ScienceLab {
   }
 
   Future<void> startTwoChannelLA(
-      List<String>? channels,
-      List<int>? modes,
-      int? maximumTime,
-      int? trigger,
-      String? edge,
-      String? triggerChannel) async {
+    List<String>? channels,
+    List<int>? modes,
+    int? maximumTime,
+    int? trigger,
+    String? edge,
+    String? triggerChannel,
+  ) async {
     maximumTime ??= 67;
     trigger ??= 0;
     edge ??= 'rising';
@@ -663,7 +735,7 @@ class ScienceLab {
     modes ??= [1, 1];
     List<int> chans = [
       calculateDigitalChannel(channels[0])!,
-      calculateDigitalChannel(channels[1])!
+      calculateDigitalChannel(channels[1])!,
     ];
     triggerChannel ??= channels[0];
     if (trigger != 0) {
@@ -699,8 +771,13 @@ class ScienceLab {
     }
   }
 
-  Future<void> startFourChannelLA(int? trigger, double? maximumTime,
-      List<int>? modes, String? edge, List<bool>? triggerChannel) async {
+  Future<void> startFourChannelLA(
+    int? trigger,
+    double? maximumTime,
+    List<int>? modes,
+    String? edge,
+    List<bool>? triggerChannel,
+  ) async {
     trigger ??= 1;
     maximumTime ??= 0.001;
     modes ??= [1, 1, 1, 1];
@@ -712,7 +789,8 @@ class ScienceLab {
       mPacketHandler.sendByte(mCommandsProto.startFourChanLa);
       mPacketHandler.sendInt((maxSamples / 4).toInt());
       mPacketHandler.sendInt(
-          modes[0] | (modes[1] << 4) | (modes[2] << 8) | (modes[3] << 12));
+        modes[0] | (modes[1] << 4) | (modes[2] << 8) | (modes[3] << 12),
+      );
       mPacketHandler.sendByte(prescale);
       int triggerOptions = 0;
       for (int i = 0; i < 3; i++) {
@@ -751,31 +829,36 @@ class ScienceLab {
       mPacketHandler.sendByte(mCommandsProto.getInitialDigitalStates);
       Uint8List initialStatesBytes = Uint8List(13);
       await mPacketHandler.read(initialStatesBytes, 13);
-      int initial = (initialStatesBytes[0] & 0xFF) |
+      int initial =
+          (initialStatesBytes[0] & 0xFF) |
           ((initialStatesBytes[1] << 8) & 0xFF00);
-      int A = ((((initialStatesBytes[2] & 0xFF) |
-                      ((initialStatesBytes[3] << 8) & 0xFF00)) -
-                  initial) /
-              2)
-          .toInt();
-      int B = ((((initialStatesBytes[4] & 0xFF) |
-                          ((initialStatesBytes[5] << 8) & 0xFF00)) -
+      int A =
+          ((((initialStatesBytes[2] & 0xFF) |
+                          ((initialStatesBytes[3] << 8) & 0xFF00)) -
                       initial) /
-                  2 -
-              maxSamples / 4)
-          .toInt();
-      int C = ((((initialStatesBytes[6] & 0xFF) |
-                          ((initialStatesBytes[7] << 8) & 0xFF00)) -
-                      initial) /
-                  2 -
-              2 * maxSamples / 4)
-          .toInt();
-      int D = ((((initialStatesBytes[8] & 0xFF) |
-                          ((initialStatesBytes[9] << 8) & 0xFF00)) -
-                      initial) /
-                  2 -
-              3 * maxSamples / 4)
-          .toInt();
+                  2)
+              .toInt();
+      int B =
+          ((((initialStatesBytes[4] & 0xFF) |
+                              ((initialStatesBytes[5] << 8) & 0xFF00)) -
+                          initial) /
+                      2 -
+                  maxSamples / 4)
+              .toInt();
+      int C =
+          ((((initialStatesBytes[6] & 0xFF) |
+                              ((initialStatesBytes[7] << 8) & 0xFF00)) -
+                          initial) /
+                      2 -
+                  2 * maxSamples / 4)
+              .toInt();
+      int D =
+          ((((initialStatesBytes[8] & 0xFF) |
+                              ((initialStatesBytes[9] << 8) & 0xFF00)) -
+                          initial) /
+                      2 -
+                  3 * maxSamples / 4)
+              .toInt();
       int s = initialStatesBytes[10] & 0xFF;
 
       if (A == 0) {
@@ -1006,7 +1089,10 @@ class ScienceLab {
   }
 
   Future<List<double>?> getCap(
-      int currentRange, double trim, int chargeTime) async {
+    int currentRange,
+    double trim,
+    int chargeTime,
+  ) async {
     await dischargeCap(30000, 1000);
     try {
       mPacketHandler.sendByte(mCommandsProto.common);
@@ -1019,7 +1105,8 @@ class ScienceLab {
       }
       mPacketHandler.sendInt(chargeTime);
       await Future.delayed(
-          Duration(seconds: (chargeTime * 1e-6 + 0.02).toInt()));
+        Duration(seconds: (chargeTime * 1e-6 + 0.02).toInt()),
+      );
       int vCode;
       int i = 0;
       do {
@@ -1205,7 +1292,10 @@ class ScienceLab {
   }
 
   Future<double> setWaves(
-      double frequency, double phase, double frequency2) async {
+    double frequency,
+    double phase,
+    double frequency2,
+  ) async {
     int highRes, tableSize, highRes2, tableSize2;
     int wavelength = 0, wavelength2 = 0;
 
@@ -1235,7 +1325,8 @@ class ScienceLab {
 
     if (frequency < 1 || frequency2 < 1) {
       logger.e(
-          "extremely low frequencies will have reduced amplitudes due to AC coupling restrictions");
+        "extremely low frequencies will have reduced amplitudes due to AC coupling restrictions",
+      );
     }
 
     List<int> p = [1, 8, 64, 256];
@@ -1267,10 +1358,11 @@ class ScienceLab {
     }
 
     int phaseCoarse = (tableSize2 * (phase) / 360).toInt();
-    int phaseFine = (wavelength2 *
-            (phase - (phaseCoarse) * 360 / tableSize2) /
-            (360 / tableSize2))
-        .toInt();
+    int phaseFine =
+        (wavelength2 *
+                (phase - (phaseCoarse) * 360 / tableSize2) /
+                (360 / tableSize2))
+            .toInt();
 
     try {
       mPacketHandler.sendByte(mCommandsProto.wavegen);
@@ -1280,7 +1372,8 @@ class ScienceLab {
       mPacketHandler.sendInt(phaseCoarse);
       mPacketHandler.sendInt(phaseFine);
       mPacketHandler.sendByte(
-          (prescalar2 << 4) | (prescalar << 2) | (highRes2 << 1) | (highRes));
+        (prescalar2 << 4) | (prescalar << 2) | (highRes2 << 1) | (highRes),
+      );
       await mPacketHandler.getAcknowledgement();
 
       sin1Frequency = retFrequency;
@@ -1384,20 +1477,24 @@ class ScienceLab {
       mPacketHandler.sendByte(mCommandsProto.sqr4);
       mPacketHandler.sendInt(period);
 
-      mPacketHandler
-          .sendInt(angle1 != null ? base + (angle1 * range ~/ maxAngle) : -1);
+      mPacketHandler.sendInt(
+        angle1 != null ? base + (angle1 * range ~/ maxAngle) : -1,
+      );
       mPacketHandler.sendInt(0);
 
-      mPacketHandler
-          .sendInt(angle2 != null ? base + (angle2 * range ~/ maxAngle) : -1);
+      mPacketHandler.sendInt(
+        angle2 != null ? base + (angle2 * range ~/ maxAngle) : -1,
+      );
       mPacketHandler.sendInt(0);
 
-      mPacketHandler
-          .sendInt(angle3 != null ? base + (angle3 * range ~/ maxAngle) : -1);
+      mPacketHandler.sendInt(
+        angle3 != null ? base + (angle3 * range ~/ maxAngle) : -1,
+      );
       mPacketHandler.sendInt(0);
 
-      mPacketHandler
-          .sendInt(angle4 != null ? base + (angle4 * range ~/ maxAngle) : -1);
+      mPacketHandler.sendInt(
+        angle4 != null ? base + (angle4 * range ~/ maxAngle) : -1,
+      );
 
       mPacketHandler.sendByte(params);
       await mPacketHandler.getAcknowledgement();

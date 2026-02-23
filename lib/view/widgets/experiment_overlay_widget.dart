@@ -8,10 +8,7 @@ import '/theme/colors.dart';
 class ExperimentOverlayWidget extends StatefulWidget {
   final VoidCallback? onExperimentComplete;
 
-  const ExperimentOverlayWidget({
-    super.key,
-    this.onExperimentComplete,
-  });
+  const ExperimentOverlayWidget({super.key, this.onExperimentComplete});
 
   @override
   State<ExperimentOverlayWidget> createState() =>
@@ -161,13 +158,14 @@ class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
                   ),
                 ),
                 MaterialButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      appLocalizations.endExperiment,
-                      style: TextStyle(color: buttonTextColor),
-                    ))
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    appLocalizations.endExperiment,
+                    style: TextStyle(color: buttonTextColor),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -191,11 +189,7 @@ class _ExperimentOverlayWidgetState extends State<ExperimentOverlayWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.check,
-                    color: buttonTextColor,
-                    size: 20,
-                  ),
+                  Icon(Icons.check, color: buttonTextColor, size: 20),
                   const SizedBox(width: 8),
                   Text(
                     appLocalizations.stepCompleted,

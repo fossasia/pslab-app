@@ -19,8 +19,9 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
-    SoundMeterStateProvider provider =
-        Provider.of<SoundMeterStateProvider>(context);
+    SoundMeterStateProvider provider = Provider.of<SoundMeterStateProvider>(
+      context,
+    );
     double currentDb = provider.getCurrentDb();
     double minDb = provider.getMinDb();
     double maxDb = provider.getMaxDb();
@@ -34,9 +35,7 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
 
     return Card(
       margin: EdgeInsets.all(cardMargin),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 1,
       child: Container(
         decoration: BoxDecoration(
@@ -93,12 +92,13 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
                     Expanded(
                       flex: screenWidth < 500 ? 60 : 65,
                       child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentDb,
-                          minValue: 0,
-                          maxValue: 200,
-                          unit: appLocalizations.db,
-                          currentValueFontSize: dbValueFontSize),
+                        gaugeSize: gaugeSize,
+                        currentValue: currentDb,
+                        minValue: 0,
+                        maxValue: 200,
+                        unit: appLocalizations.db,
+                        currentValueFontSize: dbValueFontSize,
+                      ),
                     ),
                   ],
                 );

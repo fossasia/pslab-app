@@ -41,12 +41,8 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
 
   List<Widget> _getLogicAnalyzerContent() {
     return [
-      InstrumentIntroText(
-        text: appLocalizations.logicAnalyzerIntro,
-      ),
-      InstrumentImage(
-        imagePath: widget.logicAnalyzerCircuit,
-      ),
+      InstrumentIntroText(text: appLocalizations.logicAnalyzerIntro),
+      InstrumentImage(imagePath: widget.logicAnalyzerCircuit),
       InstrumentIntroText(
         text: appLocalizations.logicAnalyzerWaveGenCaption,
         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -202,9 +198,14 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
 
     if (fileName != null) {
       _csvService.writeMetaData(
-          appLocalizations.logicAnalyzer.toLowerCase(), data);
+        appLocalizations.logicAnalyzer.toLowerCase(),
+        data,
+      );
       final file = await _csvService.saveCsvFile(
-          appLocalizations.logicAnalyzer.toLowerCase(), fileName, data);
+        appLocalizations.logicAnalyzer.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -271,9 +272,9 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
       MaterialPageRoute(
         builder: (context) =>
             ChangeNotifierProvider<LogicAnalyzerConfigProvider>.value(
-          value: _configProvider!,
-          child: const LogicAnalyzerConfigScreen(),
-        ),
+              value: _configProvider!,
+              child: const LogicAnalyzerConfigScreen(),
+            ),
       ),
     );
   }
@@ -300,11 +301,7 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => _provider,
-        ),
-      ],
+      providers: [ChangeNotifierProvider(create: (context) => _provider)],
       child: Consumer<LogicAnalyzerStateProvider>(
         builder: (context, provider, _) {
           return Stack(
@@ -316,16 +313,11 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
                 body: SafeArea(
                   minimum: const EdgeInsets.only(right: 0, bottom: 0),
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: chartBackgroundColor,
-                    ),
+                    decoration: BoxDecoration(color: chartBackgroundColor),
                     padding: const EdgeInsets.only(bottom: 5, top: 5),
                     child: Row(
                       children: [
-                        Expanded(
-                          flex: 73,
-                          child: LogicAnalyzerGraph(),
-                        ),
+                        Expanded(flex: 73, child: LogicAnalyzerGraph()),
                         Expanded(
                           flex: 27,
                           child: LogicAnalyzerChannelSelection(),

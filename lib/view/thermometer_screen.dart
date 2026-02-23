@@ -43,10 +43,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: Colors.white),
-          ),
+          content: Text(message, style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.grey[700],
           duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
@@ -68,11 +65,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
   }
 
   List<Widget> _getThermometerContent() {
-    return [
-      InstrumentIntroText(
-        text: appLocalizations.thermometerIntro,
-      ),
-    ];
+    return [InstrumentIntroText(text: appLocalizations.thermometerIntro)];
   }
 
   @override
@@ -86,7 +79,8 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
               provider.isInitialized()) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSensorErrorSnackbar(
-                  appLocalizations.temperatureSensorUnavailableMessage);
+                appLocalizations.temperatureSensorUnavailableMessage,
+              );
               _snackbarShown = true;
             });
           }
@@ -97,36 +91,27 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
                 title: appLocalizations.thermometerTitle,
                 onGuidePressed: _showInstrumentGuide,
                 body: SafeArea(
-                    child: LayoutBuilder(builder: (context, constraints) {
-                  final isLargeScreen = constraints.maxWidth > 900;
-                  if (isLargeScreen) {
-                    return Row(
-                      children: [
-                        const Expanded(
-                          flex: 35,
-                          child: ThermometerCard(),
-                        ),
-                        Expanded(
-                          flex: 65,
-                          child: _buildChartSection(),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      children: [
-                        const Expanded(
-                          flex: 45,
-                          child: ThermometerCard(),
-                        ),
-                        Expanded(
-                          flex: 55,
-                          child: _buildChartSection(),
-                        ),
-                      ],
-                    );
-                  }
-                })),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isLargeScreen = constraints.maxWidth > 900;
+                      if (isLargeScreen) {
+                        return Row(
+                          children: [
+                            const Expanded(flex: 35, child: ThermometerCard()),
+                            Expanded(flex: 65, child: _buildChartSection()),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            const Expanded(flex: 45, child: ThermometerCard()),
+                            Expanded(flex: 55, child: _buildChartSection()),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ),
               ),
               if (_showGuide)
                 InstrumentOverviewDrawer(
@@ -158,8 +143,13 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
             color: chartBackgroundColor,
             borderRadius: BorderRadius.zero,
           ),
-          child:
-              _buildChart(screenWidth, maxTime, minTime, timeInterval, spots),
+          child: _buildChart(
+            screenWidth,
+            maxTime,
+            minTime,
+            timeInterval,
+            spots,
+          ),
         );
       },
     );
@@ -170,12 +160,9 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
     final fontSize = screenWidth < 400
         ? 7.0
         : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: fontSize,
-    );
+        ? 8.0
+        : 9.0;
+    final style = TextStyle(color: chartTextColor, fontSize: fontSize);
     String timeText;
     if (value < 60) {
       timeText = '${value.toInt()}s';
@@ -190,21 +177,22 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
     }
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        timeText,
-        style: style,
-      ),
+      child: Text(maxLines: 1, timeText, style: style),
     );
   }
 
-  Widget _buildChart(double screenWidth, double maxTime, double minTime,
-      double timeInterval, List<FlSpot> spots) {
+  Widget _buildChart(
+    double screenWidth,
+    double maxTime,
+    double minTime,
+    double timeInterval,
+    List<FlSpot> spots,
+  ) {
     final chartFontSize = screenWidth < 400
         ? 8.0
         : screenWidth < 600
-            ? 9.0
-            : 10.0;
+        ? 9.0
+        : 10.0;
     final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 25.0 : 30.0;
@@ -273,7 +261,9 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
             ),
             rightTitles: AxisTitles(
               sideTitles: SideTitles(
-                  showTitles: false, reservedSize: reservedSizeRight),
+                showTitles: false,
+                reservedSize: reservedSizeRight,
+              ),
             ),
           ),
           gridData: FlGridData(

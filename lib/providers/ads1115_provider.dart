@@ -46,7 +46,7 @@ class ADS1115Provider extends ChangeNotifier {
     "GAIN_TWO",
     "GAIN_FOUR",
     "GAIN_EIGHT",
-    "GAIN_SIXTEEN"
+    "GAIN_SIXTEEN",
   ];
 
   final List<String> availableChannels = [
@@ -55,7 +55,7 @@ class ADS1115Provider extends ChangeNotifier {
     "UNI_2",
     "UNI_3",
     "DIFF_01",
-    "DIFF_23"
+    "DIFF_23",
   ];
 
   final List<int> availableRates = [8, 16, 32, 64, 128, 250, 475, 860];
@@ -133,8 +133,9 @@ class ADS1115Provider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
-    _dataTimer =
-        Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+    _dataTimer = Timer.periodic(Duration(milliseconds: _timegapMs), (
+      timer,
+    ) async {
       try {
         await _fetchSensorData();
         _collectedReadings++;

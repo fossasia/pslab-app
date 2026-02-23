@@ -87,24 +87,27 @@ class BarometerStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return;
     }
 
-    _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    ).listen((Position position) {
-      currentPosition = position;
-    });
+    _locationStream =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).listen((Position position) {
+          currentPosition = position;
+        });
   }
 
   void _onConfigChanged() {
     final newSensorType = _configProvider.config.activeSensor;
     if (_currentSensorType != newSensorType) {
-      logger
-          .d("Sensor type changed from $_currentSensorType to $newSensorType");
+      logger.d(
+        "Sensor type changed from $_currentSensorType to $newSensorType",
+      );
       _currentSensorType = newSensorType;
       _reinitializeSensors();
     }
@@ -115,7 +118,10 @@ class BarometerStateProvider extends ChangeNotifier {
     disposeSensors();
     _clearData();
     initializeSensors(
-        onError: onSensorError, i2c: _i2c, scienceLab: _scienceLab);
+      onError: onSensorError,
+      i2c: _i2c,
+      scienceLab: _scienceLab,
+    );
   }
 
   void _clearData() {
@@ -133,8 +139,11 @@ class BarometerStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void initializeSensors(
-      {Function(String)? onError, I2C? i2c, ScienceLab? scienceLab}) {
+  void initializeSensors({
+    Function(String)? onError,
+    I2C? i2c,
+    ScienceLab? scienceLab,
+  }) {
     onSensorError = onError;
     _i2c = i2c;
     _scienceLab = scienceLab;
@@ -220,7 +229,8 @@ class BarometerStateProvider extends ChangeNotifier {
     bool isConnected = await _checkBMP180Connection();
     if (!isConnected) {
       logger.e(
-          "BMP180 sensor not found at address 0x${BMP180.address.toRadixString(16)}");
+        "BMP180 sensor not found at address 0x${BMP180.address.toRadixString(16)}",
+      );
       _handleSensorError("BMP180 sensor not connected or not responding");
       return;
     }
@@ -242,12 +252,14 @@ class BarometerStateProvider extends ChangeNotifier {
   void _startDataCollection() {
     if (_currentSensorType == 'BMP180') {
       final updatePeriod = _configProvider.config.updatePeriod;
-      logger
-          .d("Starting BMP180 data collection with period: ${updatePeriod}ms");
+      logger.d(
+        "Starting BMP180 data collection with period: ${updatePeriod}ms",
+      );
 
       _dataTimer?.cancel();
-      _dataTimer =
-          Timer.periodic(Duration(milliseconds: updatePeriod), (timer) async {
+      _dataTimer = Timer.periodic(Duration(milliseconds: updatePeriod), (
+        timer,
+      ) async {
         await _readBMP180Data();
       });
     }
@@ -266,7 +278,8 @@ class BarometerStateProvider extends ChangeNotifier {
       _currentAltitude = data['altitude'];
 
       logger.d(
-          "BMP180 data - Temp: $_currentTemperature°C, Pressure: $_currentPressure atm, Altitude: $_currentAltitude m");
+        "BMP180 data - Temp: $_currentTemperature°C, Pressure: $_currentPressure atm, Altitude: $_currentAltitude m",
+      );
       notifyListeners();
     } catch (e) {
       logger.e("Error reading BMP180 data: $e");
@@ -321,7 +334,8 @@ class BarometerStateProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+        'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3',
+      );
       _playbackIndex++;
       notifyListeners();
     }
@@ -330,10 +344,12 @@ class BarometerStateProvider extends ChangeNotifier {
 
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
-        final currentTimestamp =
-            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
-        final nextTimestamp =
-            int.tryParse(_playbackData![_playbackIndex][0].toString());
+        final currentTimestamp = int.tryParse(
+          _playbackData![_playbackIndex - 1][0].toString(),
+        );
+        final nextTimestamp = int.tryParse(
+          _playbackData![_playbackIndex][0].toString(),
+        );
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -425,8 +441,9 @@ class BarometerStateProvider extends ChangeNotifier {
 
     final double rawPressure = _currentPressure;
 
-    final double clippedPressure =
-        shouldClip && rawPressure > limit ? limit : rawPressure;
+    final double clippedPressure = shouldClip && rawPressure > limit
+        ? limit
+        : rawPressure;
 
     _currentPressure = clippedPressure;
     final time = _currentTime;
@@ -444,7 +461,7 @@ class BarometerStateProvider extends ChangeNotifier {
             : 0,
         _configProvider.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
-            : 0
+            : 0,
       ]);
     }
 
@@ -482,10 +499,13 @@ class BarometerStateProvider extends ChangeNotifier {
 
     if (pressureAtm <= 0) return 0.0;
 
-    double altitude = (temperatureK / lapseRate) *
+    double altitude =
+        (temperatureK / lapseRate) *
         (1 -
-            pow(pressureAtm / seaLevelPressureAtm,
-                (gasConstant * lapseRate) / gravity));
+            pow(
+              pressureAtm / seaLevelPressureAtm,
+              (gasConstant * lapseRate) / gravity,
+            ));
 
     return altitude;
   }
@@ -496,7 +516,14 @@ class BarometerStateProvider extends ChangeNotifier {
     }
     _isRecording = true;
     _recordedData = [
-      ['Timestamp', 'DateTime', 'Pressure', 'Altitude', 'Latitude', 'Longitude']
+      [
+        'Timestamp',
+        'DateTime',
+        'Pressure',
+        'Altitude',
+        'Latitude',
+        'Longitude',
+      ],
     ];
     notifyListeners();
   }

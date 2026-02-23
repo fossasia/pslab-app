@@ -29,9 +29,7 @@ class _NavDrawerState extends State<NavDrawer> {
       width: MediaQuery.of(context).size.width < 600
           ? MediaQuery.of(context).size.width * 0.75
           : MediaQuery.of(context).size.width * 0.45,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       backgroundColor: Theme.of(context).colorScheme.surface,
       child: ScrollConfiguration(
         behavior: const ScrollBehavior(),
@@ -45,9 +43,11 @@ class _NavDrawerState extends State<NavDrawer> {
                   SizedBox(
                     height: 80,
                     width: 80,
-                    child: Image.asset(navHeaderLogo,
-                        fit: BoxFit.contain,
-                        color: Theme.of(context).colorScheme.onSurface),
+                    child: Image.asset(
+                      navHeaderLogo,
+                      fit: BoxFit.contain,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   Consumer<BoardStateProvider>(
                     builder: (context, provider, _) {
@@ -56,7 +56,9 @@ class _NavDrawerState extends State<NavDrawer> {
                         child: Text(
                           provider.pslabVersionID,
                           style: const TextStyle(
-                              fontSize: 14, fontStyle: FontStyle.normal),
+                            fontSize: 14,
+                            fontStyle: FontStyle.normal,
+                          ),
                         ),
                       );
                     },
@@ -69,8 +71,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.apps,
-                color:
-                    widget.selectedIndex == 0 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 0
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.instrumentsTitle,
@@ -95,8 +98,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.science,
-                color:
-                    widget.selectedIndex == 13 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 13
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.experiments,
@@ -112,7 +116,9 @@ class _NavDrawerState extends State<NavDrawer> {
                 if (Navigator.canPop(context) &&
                     ModalRoute.of(context)?.settings.name == '/experiments') {
                   Navigator.popUntil(
-                      context, ModalRoute.withName('/experiments'));
+                    context,
+                    ModalRoute.withName('/experiments'),
+                  );
                 } else {
                   Navigator.pushNamedAndRemoveUntil(
                     context,
@@ -127,8 +133,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.wifi_tethering,
-                color:
-                    widget.selectedIndex == 1 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 1
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.loggedDataMenu,
@@ -144,7 +151,9 @@ class _NavDrawerState extends State<NavDrawer> {
                 if (Navigator.canPop(context) &&
                     ModalRoute.of(context)?.settings.name == '/loggedData') {
                   Navigator.popUntil(
-                      context, ModalRoute.withName('/loggedData'));
+                    context,
+                    ModalRoute.withName('/loggedData'),
+                  );
                 } else {
                   Navigator.pushNamedAndRemoveUntil(
                     context,
@@ -160,8 +169,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.developer_board,
-                color:
-                    widget.selectedIndex == 2 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 2
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.connectDevice,
@@ -177,7 +187,9 @@ class _NavDrawerState extends State<NavDrawer> {
                 if (Navigator.canPop(context) &&
                     ModalRoute.of(context)?.settings.name == '/connectDevice') {
                   Navigator.popUntil(
-                      context, ModalRoute.withName('/connectDevice'));
+                    context,
+                    ModalRoute.withName('/connectDevice'),
+                  );
                 } else {
                   Navigator.pushNamedAndRemoveUntil(
                     context,
@@ -192,8 +204,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.create_new_folder,
-                color:
-                    widget.selectedIndex == 3 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 3
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.configFileMenu,
@@ -214,8 +227,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.settings,
-                color:
-                    widget.selectedIndex == 4 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 4
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.settings,
@@ -246,8 +260,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.info,
-                color:
-                    widget.selectedIndex == 5 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 5
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.aboutUs,
@@ -277,8 +292,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.menu_book,
-                color:
-                    widget.selectedIndex == 6 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 6
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.documentationMenu,
@@ -292,11 +308,13 @@ class _NavDrawerState extends State<NavDrawer> {
               ),
               onTap: () async {
                 final launched = await launchUrl(
-                    Uri.parse(appLocalizations.documentationLink));
+                  Uri.parse(appLocalizations.documentationLink),
+                );
                 if (!launched && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(appLocalizations.documentationError)),
+                      content: Text(appLocalizations.documentationError),
+                    ),
                   );
                 }
               },
@@ -306,8 +324,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.star,
-                color:
-                    widget.selectedIndex == 7 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 7
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.rateApp,
@@ -322,7 +341,8 @@ class _NavDrawerState extends State<NavDrawer> {
               onTap: () async {
                 if (Platform.isIOS) {
                   final launched = await launchUrl(
-                      Uri.parse(appLocalizations.iOSRatingLink));
+                    Uri.parse(appLocalizations.iOSRatingLink),
+                  );
                   if (!launched && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(appLocalizations.ratingError)),
@@ -330,7 +350,8 @@ class _NavDrawerState extends State<NavDrawer> {
                   }
                 } else {
                   final launched = await launchUrl(
-                      Uri.parse(appLocalizations.androidRatingLink));
+                    Uri.parse(appLocalizations.androidRatingLink),
+                  );
                   if (!launched && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(appLocalizations.ratingError)),
@@ -340,39 +361,43 @@ class _NavDrawerState extends State<NavDrawer> {
               },
             ),
             ListTile(
-                focusColor: listTileFocusColor,
-                dense: true,
-                leading: Icon(
-                  Icons.shopping_cart,
-                  color:
-                      widget.selectedIndex == 8 ? selectedMenuColor : menuColor,
+              focusColor: listTileFocusColor,
+              dense: true,
+              leading: Icon(
+                Icons.shopping_cart,
+                color: widget.selectedIndex == 8
+                    ? selectedMenuColor
+                    : menuColor,
+              ),
+              title: Text(
+                appLocalizations.buyPsLabMenu,
+                style: TextStyle(
+                  color: widget.selectedIndex == 8
+                      ? selectedMenuColor
+                      : Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
-                title: Text(
-                  appLocalizations.buyPsLabMenu,
-                  style: TextStyle(
-                    color: widget.selectedIndex == 8
-                        ? selectedMenuColor
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-                onTap: () async {
-                  final launched =
-                      await launchUrl(Uri.parse(appLocalizations.shopLink));
-                  if (!launched && context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(appLocalizations.shopError)),
-                    );
-                  }
-                }),
+              ),
+              onTap: () async {
+                final launched = await launchUrl(
+                  Uri.parse(appLocalizations.shopLink),
+                );
+                if (!launched && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(appLocalizations.shopError)),
+                  );
+                }
+              },
+            ),
             ListTile(
               focusColor: listTileFocusColor,
               dense: true,
               leading: Icon(
                 Icons.feedback,
-                color:
-                    widget.selectedIndex == 9 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 9
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.faqMenu,
@@ -402,8 +427,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.share,
-                color:
-                    widget.selectedIndex == 10 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 10
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.shareAppMenu,
@@ -426,8 +452,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.article,
-                color:
-                    widget.selectedIndex == 11 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 11
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.privacyPolicyMenu,
@@ -441,11 +468,13 @@ class _NavDrawerState extends State<NavDrawer> {
               ),
               onTap: () async {
                 final launched = await launchUrl(
-                    Uri.parse(appLocalizations.privacyPolicyLink));
+                  Uri.parse(appLocalizations.privacyPolicyLink),
+                );
                 if (!launched && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(appLocalizations.privacyPolicyError)),
+                      content: Text(appLocalizations.privacyPolicyError),
+                    ),
                   );
                 }
               },
@@ -455,8 +484,9 @@ class _NavDrawerState extends State<NavDrawer> {
               dense: true,
               leading: Icon(
                 Icons.attribution,
-                color:
-                    widget.selectedIndex == 12 ? selectedMenuColor : menuColor,
+                color: widget.selectedIndex == 12
+                    ? selectedMenuColor
+                    : menuColor,
               ),
               title: Text(
                 appLocalizations.softwareLicenses,
@@ -473,7 +503,9 @@ class _NavDrawerState extends State<NavDrawer> {
                     ModalRoute.of(context)?.settings.name ==
                         '/softwareLicenses') {
                   Navigator.popUntil(
-                      context, ModalRoute.withName('/softwareLicenses'));
+                    context,
+                    ModalRoute.withName('/softwareLicenses'),
+                  );
                 } else {
                   Navigator.pushNamedAndRemoveUntil(
                     context,

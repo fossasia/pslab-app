@@ -23,8 +23,9 @@ class SocketClient {
     int bytesToBeReadTemp = bytesToRead;
 
     try {
-      await for (Uint8List receivedData
-          in _socketStream.timeout(Duration(milliseconds: timeoutMillis))) {
+      await for (Uint8List receivedData in _socketStream.timeout(
+        Duration(milliseconds: timeoutMillis),
+      )) {
         int readNow = receivedData.length;
 
         if (readNow == 0) {

@@ -81,9 +81,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
     return Container(
       decoration: BoxDecoration(
         color: cardBackgroundColor,
-        border: Border(
-          top: BorderSide(color: primaryRed, width: 2),
-        ),
+        border: Border(top: BorderSide(color: primaryRed, width: 2)),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.zero,
           topRight: Radius.zero,
@@ -105,9 +103,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
               children: [
                 _buildPlayPauseButton(),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: _buildNumberOfReadingsField(),
-                ),
+                Expanded(child: _buildNumberOfReadingsField()),
                 const SizedBox(width: 12),
                 _buildLoopButton(),
                 if (widget.onClearData != null || widget.onReset != null) ...[
@@ -174,8 +170,10 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
         ),
         decoration: InputDecoration(
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 8,
+          ),
           hintText: appLocalizations.numberOfSampes,
         ),
         cursorColor: blackTextColor,
@@ -241,11 +239,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: sensorStatusBorder),
           ),
-          child: Icon(
-            icon,
-            color: sensorControlIconColor,
-            size: 18,
-          ),
+          child: Icon(icon, color: sensorControlIconColor, size: 18),
         ),
       ),
     );
@@ -273,9 +267,7 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
               trackHeight: 2,
               valueIndicatorColor: primaryRed,
-              valueIndicatorTextStyle: const TextStyle(
-                fontSize: 12,
-              ),
+              valueIndicatorTextStyle: const TextStyle(fontSize: 12),
             ),
             child: Slider(
               value: widget.timegapMs.toDouble(),

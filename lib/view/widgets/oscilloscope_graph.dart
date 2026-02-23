@@ -15,32 +15,18 @@ class OscilloscopeGraph extends StatefulWidget {
 
 class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
   Widget sideTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: 9,
-    );
+    final style = TextStyle(color: chartTextColor, fontSize: 9);
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        meta.formattedValue,
-        style: style,
-      ),
+      child: Text(maxLines: 1, meta.formattedValue, style: style),
     );
   }
 
   Widget topTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: 9,
-    );
+    final style = TextStyle(color: chartTextColor, fontSize: 9);
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        meta.formattedValue,
-        style: style,
-      ),
+      child: Text(maxLines: 1, meta.formattedValue, style: style),
     );
   }
 
@@ -51,9 +37,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
     return Consumer<OscilloscopeStateProvider>(
       builder: (context, provider, _) {
         if (oscilloscopeStateProvider.isXYPlotSelected) {
-          return const SizedBox(
-            child: XYPlotGraph(),
-          );
+          return const SizedBox(child: XYPlotGraph());
         } else {
           return SizedBox(
             child: LineChart(
@@ -64,7 +48,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   topTitles: AxisTitles(
                     axisNameWidget: Text(
                       oscilloscopeStateProvider
-                                  .oscilloscopeAxesScale.xAxisScale ==
+                                  .oscilloscopeAxesScale
+                                  .xAxisScale ==
                               875
                           ? 'Time (\u00b5s)'
                           : 'Time (ms)',
@@ -84,7 +69,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                     ),
                   ),
                   bottomTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   leftTitles: AxisTitles(
                     axisNameWidget: Text(
                       'CH1 (V)',
@@ -145,29 +131,24 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                 borderData: FlBorderData(
                   show: true,
                   border: Border(
-                    bottom: BorderSide(
-                      color: chartBorderColor,
-                    ),
-                    left: BorderSide(
-                      color: chartBorderColor,
-                    ),
-                    top: BorderSide(
-                      color: chartBorderColor,
-                    ),
-                    right: BorderSide(
-                      color: chartBorderColor,
-                    ),
+                    bottom: BorderSide(color: chartBorderColor),
+                    left: BorderSide(color: chartBorderColor),
+                    top: BorderSide(color: chartBorderColor),
+                    right: BorderSide(color: chartBorderColor),
                   ),
                 ),
                 maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
                 minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
-                maxX: oscilloscopeStateProvider
-                            .oscilloscopeAxesScale.xAxisScale ==
+                maxX:
+                    oscilloscopeStateProvider
+                            .oscilloscopeAxesScale
+                            .xAxisScale ==
                         875
                     ? oscilloscopeStateProvider.oscilloscopeAxesScale.xAxisScale
                     : oscilloscopeStateProvider
-                            .oscilloscopeAxesScale.xAxisScale /
-                        1000,
+                              .oscilloscopeAxesScale
+                              .xAxisScale /
+                          1000,
                 minX: 0,
                 clipData: const FlClipData.all(),
                 lineBarsData: oscilloscopeStateProvider.createPlots(),

@@ -22,16 +22,21 @@ void main() async {
       app.main();
       await tester.pumpAndSettle();
 
-      final instrumentsScreenTitle =
-          find.byKey(const ValueKey(instrumentsScreenTitleKey));
-      final powerSourceScreenTitle =
-          find.byKey(const ValueKey(powerSourceScreenTitleKey));
-      final multimeterScreenTitle =
-          find.byKey(const ValueKey(multimeterScreenTitleKey));
-      final waveGeneratorScreenTitle =
-          find.byKey(const ValueKey(waveGeneratorScreenTitleKey));
-      final oscilloscopeScreenTitle =
-          find.byKey(const ValueKey(oscilloscopeScreenTitleKey));
+      final instrumentsScreenTitle = find.byKey(
+        const ValueKey(instrumentsScreenTitleKey),
+      );
+      final powerSourceScreenTitle = find.byKey(
+        const ValueKey(powerSourceScreenTitleKey),
+      );
+      final multimeterScreenTitle = find.byKey(
+        const ValueKey(multimeterScreenTitleKey),
+      );
+      final waveGeneratorScreenTitle = find.byKey(
+        const ValueKey(waveGeneratorScreenTitleKey),
+      );
+      final oscilloscopeScreenTitle = find.byKey(
+        const ValueKey(oscilloscopeScreenTitleKey),
+      );
 
       final notConnectedText = find.text('Not Connected');
       final backButton = find.byIcon(Icons.arrow_back);

@@ -7,10 +7,7 @@ class MultimeterConfig {
     this.includeLocationData = true,
   });
 
-  MultimeterConfig copyWith({
-    int? updatePeriod,
-    bool? includeLocationData,
-  }) {
+  MultimeterConfig copyWith({int? updatePeriod, bool? includeLocationData}) {
     return MultimeterConfig(
       updatePeriod: updatePeriod ?? this.updatePeriod,
       includeLocationData: includeLocationData ?? this.includeLocationData,

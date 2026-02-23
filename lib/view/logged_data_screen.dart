@@ -23,11 +23,12 @@ class LoggedDataScreen extends StatefulWidget {
   final String appBarName;
   final List<String> instrumentIcons;
 
-  const LoggedDataScreen(
-      {super.key,
-      required this.instrumentNames,
-      required this.appBarName,
-      required this.instrumentIcons});
+  const LoggedDataScreen({
+    super.key,
+    required this.instrumentNames,
+    required this.appBarName,
+    required this.instrumentIcons,
+  });
 
   @override
   State<LoggedDataScreen> createState() => _LoggedDataScreenState();
@@ -73,7 +74,8 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   Future<void> _deleteFile(String filePath, {bool askConfirm = true}) async {
     bool confirmed = true;
     if (askConfirm) {
-      confirmed = await showDialog<bool>(
+      confirmed =
+          await showDialog<bool>(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
@@ -340,10 +342,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       appBar: AppBar(
         title: Text(
           widget.appBarName,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
         backgroundColor: primaryRed,
         iconTheme: IconThemeData(color: appBarContentColor),
@@ -357,194 +356,177 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _files.isEmpty
-              ? Center(
-                  child: Text(
-                    appLocalizations.noLoggedData,
-                    style: TextStyle(color: Theme.of(context).primaryColor),
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadFiles,
-                  child: ListView.builder(
-                    itemCount: _files.length,
-                    itemBuilder: (context, index) {
-                      final file = _files[index].file as File;
-                      final stat = file.statSync();
-                      final fileName = file.path.split('/').last;
-                      final instrumentName = _files[index].instrumentName;
-                      final formattedDate =
-                          DateFormat.yMMMd().add_jm().format(stat.modified);
+          ? Center(
+              child: Text(
+                appLocalizations.noLoggedData,
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadFiles,
+              child: ListView.builder(
+                itemCount: _files.length,
+                itemBuilder: (context, index) {
+                  final file = _files[index].file as File;
+                  final stat = file.statSync();
+                  final fileName = file.path.split('/').last;
+                  final instrumentName = _files[index].instrumentName;
+                  final formattedDate = DateFormat.yMMMd().add_jm().format(
+                    stat.modified,
+                  );
 
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        color: Theme.of(context).colorScheme.surface,
-                        margin:
-                            const EdgeInsets.only(left: 8, right: 8, top: 8),
-                        child: ListTile(
-                          onTap: () => _openFile(file, instrumentName),
-                          leading: Image.asset(
-                            widget.instrumentIcons[
-                                widget.instrumentNames.indexOf(instrumentName)],
-                            color: primaryRed,
-                          ),
-                          title: Text(fileName,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                              '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
-                          isThreeLine: true,
-                          trailing: PopupMenuButton<String>(
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.black),
-                            onSelected: (value) async {
-                              if (value == appLocalizations.play) {
-                                _playFile(file, instrumentName);
-                              } else if (value == appLocalizations.location) {
-                                final data =
-                                    await _csvService.readCsvFromFile(file);
-                                if (!context.mounted) return;
-                                double latitude = 0;
-                                double longitude = 0;
-                                if (data[data.length - 1]
-                                        [data[data.length - 1].length - 2]
-                                    is double) {
-                                  latitude = data[data.length - 1]
-                                          [data[data.length - 1].length - 2]
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    color: Theme.of(context).colorScheme.surface,
+                    margin: const EdgeInsets.only(left: 8, right: 8, top: 8),
+                    child: ListTile(
+                      onTap: () => _openFile(file, instrumentName),
+                      leading: Image.asset(
+                        widget.instrumentIcons[widget.instrumentNames.indexOf(
+                          instrumentName,
+                        )],
+                        color: primaryRed,
+                      ),
+                      title: Text(
+                        fileName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate',
+                      ),
+                      isThreeLine: true,
+                      trailing: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert, color: Colors.black),
+                        onSelected: (value) async {
+                          if (value == appLocalizations.play) {
+                            _playFile(file, instrumentName);
+                          } else if (value == appLocalizations.location) {
+                            final data = await _csvService.readCsvFromFile(
+                              file,
+                            );
+                            if (!context.mounted) return;
+                            double latitude = 0;
+                            double longitude = 0;
+                            if (data[data.length -
+                                    1][data[data.length - 1].length - 2]
+                                is double) {
+                              latitude =
+                                  data[data.length -
+                                          1][data[data.length - 1].length - 2]
                                       .toDouble();
-                                  longitude = data[data.length - 1]
-                                          [data[data.length - 1].length - 1]
+                              longitude =
+                                  data[data.length -
+                                          1][data[data.length - 1].length - 1]
                                       .toDouble();
-                                }
-                                if (latitude == 0 && longitude == 0) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        appLocalizations
-                                            .noLocationDataAvailable,
-                                        style: TextStyle(
-                                            color: snackBarContentColor),
-                                      ),
-                                      backgroundColor: snackBarBackgroundColor,
-                                    ),
-                                  );
-                                  return;
-                                }
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MapScreen(
-                                      latitude: latitude,
-                                      longitude: longitude,
-                                    ),
-                                  ),
-                                );
-                              } else if (value == appLocalizations.share) {
-                                _csvService.shareFile(file.path);
-                              } else if (value == appLocalizations.delete) {
-                                _deleteFile(file.path);
-                              }
-                            },
-                            itemBuilder: (BuildContext context) => [
-                              if (instrumentName == appLocalizations.soundMeter.toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.barometer
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.powerSource
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.gyroscope
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.luxMeter.toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.waveGenerator
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.oscilloscope
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.multimeter
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.logicAnalyzer
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.accelerometer
-                                          .toLowerCase())
-                                PopupMenuItem<String>(
-                                  value: appLocalizations.play,
-                                  child: ListTile(
-                                    dense: true,
-                                    leading: Icon(
-                                      Icons.play_arrow,
-                                      color: primaryRed,
-                                    ),
-                                    title: Text(
-                                      appLocalizations.play,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              PopupMenuItem<String>(
-                                value: appLocalizations.location,
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.map,
-                                    color: primaryRed,
-                                  ),
-                                  title: Text(
-                                    appLocalizations.location,
+                            }
+                            if (latitude == 0 && longitude == 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    appLocalizations.noLocationDataAvailable,
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: snackBarContentColor,
                                     ),
                                   ),
+                                  backgroundColor: snackBarBackgroundColor,
+                                ),
+                              );
+                              return;
+                            }
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MapScreen(
+                                  latitude: latitude,
+                                  longitude: longitude,
                                 ),
                               ),
-                              PopupMenuItem<String>(
-                                value: appLocalizations.share,
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.share,
-                                    color: primaryRed,
-                                  ),
-                                  title: Text(
-                                    appLocalizations.share,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                    ),
-                                  ),
+                            );
+                          } else if (value == appLocalizations.share) {
+                            _csvService.shareFile(file.path);
+                          } else if (value == appLocalizations.delete) {
+                            _deleteFile(file.path);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          if (instrumentName ==
+                                  appLocalizations.soundMeter.toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.barometer.toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.powerSource.toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.gyroscope.toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.luxMeter.toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.waveGenerator
+                                      .toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.oscilloscope.toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.multimeter.toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.logicAnalyzer
+                                      .toLowerCase() ||
+                              instrumentName ==
+                                  appLocalizations.accelerometer.toLowerCase())
+                            PopupMenuItem<String>(
+                              value: appLocalizations.play,
+                              child: ListTile(
+                                dense: true,
+                                leading: Icon(
+                                  Icons.play_arrow,
+                                  color: primaryRed,
+                                ),
+                                title: Text(
+                                  appLocalizations.play,
+                                  style: TextStyle(color: Colors.black),
                                 ),
                               ),
-                              PopupMenuItem<String>(
-                                value: appLocalizations.delete,
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.delete,
-                                    color: primaryRed,
-                                  ),
-                                  title: Text(
-                                    appLocalizations.delete,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
+                            ),
+                          PopupMenuItem<String>(
+                            value: appLocalizations.location,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.map, color: primaryRed),
+                              title: Text(
+                                appLocalizations.location,
+                                style: TextStyle(color: Colors.black),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                          PopupMenuItem<String>(
+                            value: appLocalizations.share,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.share, color: primaryRed),
+                              title: Text(
+                                appLocalizations.share,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: appLocalizations.delete,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.delete, color: primaryRed),
+                              title: Text(
+                                appLocalizations.delete,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }

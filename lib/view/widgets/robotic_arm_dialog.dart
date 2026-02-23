@@ -56,7 +56,8 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
       alignment: Alignment.topCenter,
       child: Container(
         margin: EdgeInsets.only(
-            top: kToolbarHeight + MediaQuery.of(context).padding.top),
+          top: kToolbarHeight + MediaQuery.of(context).padding.top,
+        ),
         child: Material(
           elevation: 4,
           child: Container(
@@ -75,7 +76,8 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                       icon: const Icon(Icons.remove, size: 18),
                       padding: EdgeInsets.zero,
                       onPressed: () => updateValue(
-                          (double.tryParse(controller.text) ?? 0) - 1),
+                        (double.tryParse(controller.text) ?? 0) - 1,
+                      ),
                     ),
                     Expanded(
                       child: TextField(
@@ -86,15 +88,21 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         style: const TextStyle(fontSize: 10),
                         decoration: InputDecoration(
                           labelText: 'Servo${widget.index + 1}',
-                          labelStyle:
-                              const TextStyle(fontSize: 8, color: Colors.black),
+                          labelStyle: const TextStyle(
+                            fontSize: 8,
+                            color: Colors.black,
+                          ),
                           floatingLabelBehavior: FloatingLabelBehavior.auto,
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 12),
+                            vertical: 5,
+                            horizontal: 12,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                                color: Colors.black87, width: 1.5),
+                              color: Colors.black87,
+                              width: 1.5,
+                            ),
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
@@ -112,7 +120,8 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                       icon: const Icon(Icons.add, size: 18),
                       padding: EdgeInsets.zero,
                       onPressed: () => updateValue(
-                          (double.tryParse(controller.text) ?? 0) + 1),
+                        (double.tryParse(controller.text) ?? 0) + 1,
+                      ),
                     ),
                   ],
                 ),
@@ -135,7 +144,9 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                       onPressed: () => Navigator.pop(context),
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 6),
+                          horizontal: 8,
+                          vertical: 6,
+                        ),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         side: const BorderSide(color: Colors.black26),
@@ -157,8 +168,8 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content:
-                                    Text(appLocalizations.enterAngleRange)),
+                              content: Text(appLocalizations.enterAngleRange),
+                            ),
                           );
                         }
                       },
@@ -167,14 +178,18 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                         foregroundColor: Colors.black,
                         side: const BorderSide(color: Colors.black26),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
                         textStyle: const TextStyle(
-                            fontSize: 11, color: Colors.black26),
+                          fontSize: 11,
+                          color: Colors.black26,
+                        ),
                       ),
                       child: Text(appLocalizations.ok),
                     ),
@@ -196,16 +211,11 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
         minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         backgroundColor: Colors.grey.shade200,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       child: Text(
         '$angle°',
-        style: const TextStyle(
-          fontSize: 9,
-          color: Colors.black,
-        ),
+        style: const TextStyle(fontSize: 9, color: Colors.black),
       ),
     );
   }

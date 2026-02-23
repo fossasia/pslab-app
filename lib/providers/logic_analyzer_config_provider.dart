@@ -25,7 +25,9 @@ class LogicAnalyzerConfigProvider extends ChangeNotifier {
   Future<void> _saveConfigToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
-        'logic_analyzer_config', json.encode(_config.toJson()));
+      'logic_analyzer_config',
+      json.encode(_config.toJson()),
+    );
   }
 
   void updateConfig(LogicAnalyzerConfig newConfig) {

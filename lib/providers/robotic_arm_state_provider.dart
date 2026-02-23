@@ -53,8 +53,10 @@ class RoboticArmStateProvider extends ChangeNotifier {
   }
 
   void _initTimelineDegrees() {
-    timelineDegrees =
-        List.generate(totalTimelineItems, (_) => List.filled(4, null));
+    timelineDegrees = List.generate(
+      totalTimelineItems,
+      (_) => List.filled(4, null),
+    );
   }
 
   void setSelectedDuration(String value) {
@@ -101,8 +103,9 @@ class RoboticArmStateProvider extends ChangeNotifier {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    scienceLab =
-        ScienceLabCommon(ScienceLabCommon.communicationHandler).getScienceLab();
+    scienceLab = ScienceLabCommon(
+      ScienceLabCommon.communicationHandler,
+    ).getScienceLab();
     await scienceLab.connect();
   }
 
@@ -139,8 +142,9 @@ class RoboticArmStateProvider extends ChangeNotifier {
             servoValues[2],
             servoValues[3],
             maxAngle: maxAngle,
-            frequency:
-                selectedFrequency == appLocalizations.frequency50Hz ? 50 : 100,
+            frequency: selectedFrequency == appLocalizations.frequency50Hz
+                ? 50
+                : 100,
           );
         } catch (e) {
           logger.e(e);
@@ -157,8 +161,9 @@ class RoboticArmStateProvider extends ChangeNotifier {
     } else {
       timelineScrollController.jumpTo(timelinePosition * scrollAmountPerTick);
 
-      _timelineTimer =
-          Timer.periodic(const Duration(seconds: 1), (timer) async {
+      _timelineTimer = Timer.periodic(const Duration(seconds: 1), (
+        timer,
+      ) async {
         if (manualEnabled) return;
 
         if (timelinePosition >= totalTimelineItems) {
@@ -220,8 +225,14 @@ class RoboticArmStateProvider extends ChangeNotifier {
   }) async {
     List<List<dynamic>> csvData = [];
 
-    csvData
-        .add(['Timestamp', 'Servo1', 'Servo2', 'Servo3', 'Servo4', 'DateTime']);
+    csvData.add([
+      'Timestamp',
+      'Servo1',
+      'Servo2',
+      'Servo3',
+      'Servo4',
+      'DateTime',
+    ]);
 
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
 
@@ -236,7 +247,7 @@ class RoboticArmStateProvider extends ChangeNotifier {
         row[1]?.toString() ?? 'null',
         row[2]?.toString() ?? 'null',
         row[3]?.toString() ?? 'null',
-        dateTime
+        dateTime,
       ]);
     }
 
@@ -283,13 +294,11 @@ class RoboticArmStateProvider extends ChangeNotifier {
     timelinePosition = 0;
   }
 
-  Map<String, dynamic> generateSummary(
-    int servoIndex,
-    int maxAngle,
-  ) {
+  Map<String, dynamic> generateSummary(int servoIndex, int maxAngle) {
     const int base = 750;
-    int frequency =
-        selectedFrequency == appLocalizations.frequency50Hz ? 50 : 100;
+    int frequency = selectedFrequency == appLocalizations.frequency50Hz
+        ? 50
+        : 100;
     int range = maxAngle == 360 ? 3800 : 1900;
     int period = 1000000 ~/ frequency;
     double periodMs = period / 1000;

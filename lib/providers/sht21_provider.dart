@@ -57,8 +57,9 @@ class SHT21Provider extends ChangeNotifier {
     _isRunning = true;
     _collectedReadings = 0;
 
-    _dataTimer =
-        Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+    _dataTimer = Timer.periodic(Duration(milliseconds: _timegapMs), (
+      timer,
+    ) async {
       try {
         await _fetchSensorData();
         _collectedReadings++;

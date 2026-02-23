@@ -53,12 +53,9 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       activeColor: checkBoxActiveColor,
                       value: oscilloscopeStateProvider.isTriggerSelected,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isTriggerSelected =
-                                value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.isTriggerSelected = value!;
+                        });
                       },
                     ),
                     Text(
@@ -76,14 +73,12 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         width: 95,
                         initialSelection:
                             oscilloscopeStateProvider.triggerChannel,
-                        dropdownMenuEntries: channelEntries.map(
-                          (String value) {
-                            return DropdownMenuEntry<String>(
-                              label: value,
-                              value: value,
-                            );
-                          },
-                        ).toList(),
+                        dropdownMenuEntries: channelEntries.map((String value) {
+                          return DropdownMenuEntry<String>(
+                            label: value,
+                            value: value,
+                          );
+                        }).toList(),
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
@@ -102,7 +97,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           inactiveTrackColor: sliderInActiveColor,
                           trackHeight: 1,
                           thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 6),
+                            enabledThumbRadius: 6,
+                          ),
                         ),
                         child: Selector<OscilloscopeStateProvider, double>(
                           selector: (context, provider) =>
@@ -112,14 +108,14 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                               activeColor: sliderActiveColor,
                               min: -yAxisScale,
                               max: yAxisScale,
-                              value: oscilloscopeStateProvider.trigger
-                                  .clamp(-yAxisScale, yAxisScale),
+                              value: oscilloscopeStateProvider.trigger.clamp(
+                                -yAxisScale,
+                                yAxisScale,
+                              ),
                               onChanged: (double value) {
-                                setState(
-                                  () {
-                                    oscilloscopeStateProvider.trigger = value;
-                                  },
-                                );
+                                setState(() {
+                                  oscilloscopeStateProvider.trigger = value;
+                                });
                               },
                             );
                           },
@@ -143,20 +139,25 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           fontStyle: FontStyle.normal,
                         ),
                         onSubmitted: (value) {
-                          String triggerValue =
-                              value.replaceAll("V", "").trim();
+                          String triggerValue = value
+                              .replaceAll("V", "")
+                              .trim();
                           double parsedValue =
                               double.tryParse(triggerValue) ?? 0.0;
                           if (parsedValue >
                               oscilloscopeStateProvider
-                                  .oscilloscopeAxesScale.yAxisScaleMax) {
+                                  .oscilloscopeAxesScale
+                                  .yAxisScaleMax) {
                             parsedValue = oscilloscopeStateProvider
-                                .oscilloscopeAxesScale.yAxisScaleMax;
+                                .oscilloscopeAxesScale
+                                .yAxisScaleMax;
                           } else if (parsedValue <
                               oscilloscopeStateProvider
-                                  .oscilloscopeAxesScale.yAxisScaleMin) {
+                                  .oscilloscopeAxesScale
+                                  .yAxisScaleMin) {
                             parsedValue = oscilloscopeStateProvider
-                                .oscilloscopeAxesScale.yAxisScaleMin;
+                                .oscilloscopeAxesScale
+                                .yAxisScaleMin;
                           }
                           setState(() {
                             oscilloscopeStateProvider.trigger = parsedValue;
@@ -170,24 +171,23 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         width: 155,
                         initialSelection:
                             oscilloscopeStateProvider.triggerMode ==
-                                    MODE.rising.toString()
-                                ? 'Rising Edge'
-                                : oscilloscopeStateProvider.triggerMode ==
-                                        MODE.falling.toString()
-                                    ? 'Falling Edge'
-                                    : 'Dual Edge',
-                        dropdownMenuEntries: <String>[
-                          'Rising Edge',
-                          'Falling Edge',
-                          'Dual Edge',
-                        ].map(
-                          (String value) {
-                            return DropdownMenuEntry<String>(
-                              label: value,
-                              value: value,
-                            );
-                          },
-                        ).toList(),
+                                MODE.rising.toString()
+                            ? 'Rising Edge'
+                            : oscilloscopeStateProvider.triggerMode ==
+                                  MODE.falling.toString()
+                            ? 'Falling Edge'
+                            : 'Dual Edge',
+                        dropdownMenuEntries:
+                            <String>[
+                              'Rising Edge',
+                              'Falling Edge',
+                              'Dual Edge',
+                            ].map((String value) {
+                              return DropdownMenuEntry<String>(
+                                label: value,
+                                value: value,
+                              );
+                            }).toList(),
                         inputDecorationTheme: const InputDecorationTheme(
                           border: InputBorder.none,
                         ),
@@ -198,16 +198,18 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         onSelected: (String? value) {
                           switch (value) {
                             case 'Rising Edge':
-                              oscilloscopeStateProvider.triggerMode =
-                                  MODE.rising.toString();
+                              oscilloscopeStateProvider.triggerMode = MODE
+                                  .rising
+                                  .toString();
                               break;
                             case 'Falling Edge':
-                              oscilloscopeStateProvider.triggerMode =
-                                  MODE.falling.toString();
+                              oscilloscopeStateProvider.triggerMode = MODE
+                                  .falling
+                                  .toString();
                               break;
                             case 'Dual Edge':
-                              oscilloscopeStateProvider.triggerMode =
-                                  MODE.dual.toString();
+                              oscilloscopeStateProvider.triggerMode = MODE.dual
+                                  .toString();
                               break;
                           }
                         },
@@ -239,7 +241,8 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           inactiveTrackColor: sliderInActiveColor,
                           trackHeight: 1,
                           thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 6),
+                            enabledThumbRadius: 6,
+                          ),
                         ),
                         child: Slider(
                           activeColor: sliderActiveColor,
@@ -249,71 +252,69 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           divisions:
                               oscilloscopeStateProvider.timebaseDivisions,
                           value: oscilloscopeStateProvider.timebaseSlider.clamp(
-                              0,
-                              oscilloscopeStateProvider.timebaseDivisions
-                                  .toDouble()),
+                            0,
+                            oscilloscopeStateProvider.timebaseDivisions
+                                .toDouble(),
+                          ),
                           onChanged: (double value) {
-                            setState(
-                              () {
-                                oscilloscopeStateProvider.timebaseSlider =
-                                    value;
-                                oscilloscopeStateProvider.setTimebase(value);
-                              },
-                            );
+                            setState(() {
+                              oscilloscopeStateProvider.timebaseSlider = value;
+                              oscilloscopeStateProvider.setTimebase(value);
+                            });
                             switch (value) {
                               case 0:
                                 oscilloscopeStateProvider.samples = 512;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               case 1:
                                 oscilloscopeStateProvider.samples = 512;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               case 2:
                                 oscilloscopeStateProvider.samples = 512;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               case 3:
                                 oscilloscopeStateProvider.samples = 512;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               case 4:
                                 oscilloscopeStateProvider.samples = 1024;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               case 5:
                                 oscilloscopeStateProvider.samples = 1024;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               case 6:
                                 oscilloscopeStateProvider.samples = 1024;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               case 7:
                                 oscilloscopeStateProvider.samples = 1024;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                               default:
                                 oscilloscopeStateProvider.samples = 512;
                                 oscilloscopeStateProvider.timeGap =
                                     (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
+                                    oscilloscopeStateProvider.samples;
                                 break;
                             }
                           },
@@ -360,7 +361,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

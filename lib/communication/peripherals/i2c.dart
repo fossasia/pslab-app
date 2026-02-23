@@ -111,7 +111,10 @@ class I2C {
   }
 
   Future<List<int>> readBulk(
-      int deviceAddress, int registerAddress, int bytesToRead) async {
+    int deviceAddress,
+    int registerAddress,
+    int bytesToRead,
+  ) async {
     packetHandler.sendByte(commandsProto.i2cHeader);
     packetHandler.sendByte(commandsProto.i2cReadBulk);
     packetHandler.sendByte(deviceAddress);
@@ -153,33 +156,44 @@ class I2C {
   }
 
   Future<void> write(
-      int deviceAddress, List<int> data, int registerAddress) async {
+    int deviceAddress,
+    List<int> data,
+    int registerAddress,
+  ) async {
     List<int> finalData = [registerAddress, ...data];
     await writeBulk(deviceAddress, finalData);
   }
 
   Future<void> writeByte(
-      int deviceAddress, int registerAddress, int data) async {
+    int deviceAddress,
+    int registerAddress,
+    int data,
+  ) async {
     await write(deviceAddress, [data], registerAddress);
   }
 
   Future<void> writeInt(
-      int deviceAddress, int registerAddress, int data) async {
-    await write(
-        deviceAddress, [data & 0xFF, (data >> 8) & 0xFF], registerAddress);
+    int deviceAddress,
+    int registerAddress,
+    int data,
+  ) async {
+    await write(deviceAddress, [
+      data & 0xFF,
+      (data >> 8) & 0xFF,
+    ], registerAddress);
   }
 
   Future<void> writeLong(
-      int deviceAddress, int registerAddress, int data) async {
-    await write(
-        deviceAddress,
-        [
-          data & 0xFF,
-          (data >> 8) & 0xFF,
-          (data >> 16) & 0xFF,
-          (data >> 24) & 0xFF
-        ],
-        registerAddress);
+    int deviceAddress,
+    int registerAddress,
+    int data,
+  ) async {
+    await write(deviceAddress, [
+      data & 0xFF,
+      (data >> 8) & 0xFF,
+      (data >> 16) & 0xFF,
+      (data >> 24) & 0xFF,
+    ], registerAddress);
   }
 
   Future<List<int>> scan(int? frequency) async {

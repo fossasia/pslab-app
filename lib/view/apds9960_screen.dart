@@ -26,7 +26,7 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
 
   final List<String> _modeOptions = [
     'Color, Proximity and Ambient Light',
-    'Gesture'
+    'Gesture',
   ];
 
   @override
@@ -50,10 +50,7 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -66,10 +63,7 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(milliseconds: 500),
           behavior: SnackBarBehavior.floating,
@@ -210,8 +204,10 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
                 const SizedBox(width: 40),
                 Expanded(
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       border: Border.all(color: sensorControlsTextBox),
                       borderRadius: BorderRadius.circular(4),
@@ -322,20 +318,29 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
               Row(
                 children: [
                   Expanded(
-                      child: _buildDataCard(
-                          appLocalizations.redLabel, provider.red.toString())),
+                    child: _buildDataCard(
+                      appLocalizations.redLabel,
+                      provider.red.toString(),
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _buildDataCard(appLocalizations.proxLabel,
-                          provider.proximity.toString())),
+                    child: _buildDataCard(
+                      appLocalizations.proxLabel,
+                      provider.proximity.toString(),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
-                      child: _buildDataCard(appLocalizations.greenLabel,
-                          provider.green.toString())),
+                    child: _buildDataCard(
+                      appLocalizations.greenLabel,
+                      provider.green.toString(),
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   const Expanded(child: SizedBox()),
                 ],
@@ -344,8 +349,11 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
               Row(
                 children: [
                   Expanded(
-                      child: _buildDataCard(appLocalizations.blueLabel,
-                          provider.blue.toString())),
+                    child: _buildDataCard(
+                      appLocalizations.blueLabel,
+                      provider.blue.toString(),
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   const Expanded(child: SizedBox()),
                 ],
@@ -354,8 +362,11 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
               Row(
                 children: [
                   Expanded(
-                      child: _buildDataCard(
-                          appLocalizations.clear, provider.clear.toString())),
+                    child: _buildDataCard(
+                      appLocalizations.clear,
+                      provider.clear.toString(),
+                    ),
+                  ),
                   const SizedBox(width: 16),
                   const Expanded(child: SizedBox()),
                 ],
@@ -373,8 +384,10 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
       children: [
         Expanded(
           flex: 2,
-          child:
-              _buildDataCard(appLocalizations.gesture, provider.gestureString),
+          child: _buildDataCard(
+            appLocalizations.gesture,
+            provider.gestureString,
+          ),
         ),
       ],
     );
@@ -408,10 +421,7 @@ class _APDS9960ScreenState extends State<APDS9960Screen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: blackTextColor,
-                  ),
+                  style: TextStyle(fontSize: 14, color: blackTextColor),
                 ),
               ),
             ),

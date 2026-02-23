@@ -42,8 +42,12 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
       showDialog(
         context: context,
         builder: (_) => PlaybackSummaryDialog(
-          frequency: int.parse(provider.selectedFrequency
-              .replaceAll(appLocalizations.hzSuffix, '')),
+          frequency: int.parse(
+            provider.selectedFrequency.replaceAll(
+              appLocalizations.hzSuffix,
+              '',
+            ),
+          ),
           maxAngle: provider.maxAngle,
           getSummary: provider.generateSummary,
         ),
@@ -65,15 +69,9 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
 
   List<Widget> _getRoboticArmContent() {
     return [
-      InstrumentIntroText(
-        text: appLocalizations.roboticArmIntro,
-      ),
-      const InstrumentImage(
-        imagePath: imagePath,
-      ),
-      InstrumentIntroText(
-        text: appLocalizations.roboticArmConnection,
-      ),
+      InstrumentIntroText(text: appLocalizations.roboticArmIntro),
+      const InstrumentImage(imagePath: imagePath),
+      InstrumentIntroText(text: appLocalizations.roboticArmConnection),
     ];
   }
 
@@ -103,9 +101,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<RoboticArmStateProvider>.value(
-          value: provider,
-        ),
+        ChangeNotifierProvider<RoboticArmStateProvider>.value(value: provider),
       ],
       child: Consumer<RoboticArmStateProvider>(
         builder: (context, provider, _) {
@@ -121,20 +117,21 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                   provider.manualEnabled
                       ? Icons.play_arrow
                       : provider.isPlaying
-                          ? Icons.pause
-                          : Icons.play_arrow,
+                      ? Icons.pause
+                      : Icons.play_arrow,
                   color: Colors.white,
                 ),
                 tooltip: provider.manualEnabled
                     ? appLocalizations.manualMode
                     : provider.isPlaying
-                        ? appLocalizations.pause
-                        : appLocalizations.play,
+                    ? appLocalizations.pause
+                    : appLocalizations.play,
                 onPressed: () {
                   if (!provider.manualEnabled) {
                     setState(() {
                       provider.togglePlayPause(
-                          scrollAmountPerTick: scrollAmount);
+                        scrollAmountPerTick: scrollAmount,
+                      );
                     });
                   }
                 },
@@ -157,7 +154,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                     barrierDismissible: true,
                     builder: (BuildContext context) {
                       return ChangeNotifierProvider<
-                          RoboticArmStateProvider>.value(
+                        RoboticArmStateProvider
+                      >.value(
                         value: provider,
                         child: Dialog(
                           backgroundColor: Colors.transparent,
@@ -226,7 +224,9 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                                   decoration: const InputDecoration(
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 6, vertical: 6),
+                                      horizontal: 6,
+                                      vertical: 6,
+                                    ),
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
@@ -239,17 +239,21 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                                       child: TextButton(
                                         style: TextButton.styleFrom(
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 6),
+                                            horizontal: 6,
+                                          ),
                                           minimumSize: Size.zero,
                                           tapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
                                         ),
                                         onPressed: () =>
                                             Navigator.of(context).pop(null),
-                                        child: Text(appLocalizations.cancel,
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.black)),
+                                        child: Text(
+                                          appLocalizations.cancel,
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.black,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 6),
@@ -258,23 +262,28 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                                       child: TextButton(
                                         style: TextButton.styleFrom(
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 6),
+                                            horizontal: 6,
+                                          ),
                                           minimumSize: Size.zero,
                                           tapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
                                         ),
                                         onPressed: () {
-                                          Navigator.of(context).pop(
-                                              fileNameController.text.trim());
+                                          Navigator.of(
+                                            context,
+                                          ).pop(fileNameController.text.trim());
                                         },
-                                        child: Text(appLocalizations.save,
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.black)),
+                                        child: Text(
+                                          appLocalizations.save,
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.black,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -285,8 +294,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
 
                   try {
                     await provider.exportTimelineToCsv(
-                      instrumentName:
-                          appLocalizations.roboticArmTitle.toLowerCase(),
+                      instrumentName: appLocalizations.roboticArmTitle
+                          .toLowerCase(),
                       fileName: (enteredFileName!),
                     );
 
@@ -358,8 +367,9 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                             children: List.generate(4, (index) {
                               return Expanded(
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 1),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 1,
+                                  ),
                                   child: SizedBox(
                                     height: servoHeight,
                                     child: ServoCard(
@@ -398,12 +408,15 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                               onUpdate: (index, servo, value) {
                                 setState(() {
                                   provider.updateTimelineDegree(
-                                      index, servo, value);
+                                    index,
+                                    servo,
+                                    value,
+                                  );
                                 });
                               },
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

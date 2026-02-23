@@ -78,8 +78,11 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
     return interval > 0 ? interval : 1.0;
   }
 
-  double _getSafeYInterval(double minValue, double maxValue,
-      {int divisions = 5}) {
+  double _getSafeYInterval(
+    double minValue,
+    double maxValue, {
+    int divisions = 5,
+  }) {
     final double range = maxValue - minValue;
     if (range <= 0) return 1.0;
     final double interval = (range / divisions).ceilToDouble();
@@ -99,13 +102,21 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
     return null;
   }
 
-  Widget _buildChart(double screenWidth, double minY, double maxY, double maxX,
-      double minX, double timeInterval, double yInterval, List<FlSpot> spots) {
+  Widget _buildChart(
+    double screenWidth,
+    double minY,
+    double maxY,
+    double maxX,
+    double minX,
+    double timeInterval,
+    double yInterval,
+    List<FlSpot> spots,
+  ) {
     final chartFontSize = screenWidth < 400
         ? 8.0
         : screenWidth < 600
-            ? 9.0
-            : 10.0;
+        ? 9.0
+        : 10.0;
     final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 35.0 : 40.0;
@@ -169,7 +180,9 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
             ),
             rightTitles: AxisTitles(
               sideTitles: SideTitles(
-                  showTitles: false, reservedSize: reservedSizeRight),
+                showTitles: false,
+                reservedSize: reservedSizeRight,
+              ),
             ),
           ),
           gridData: FlGridData(
@@ -277,8 +290,10 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                     value: selectedAxis,
                     dropdownColor: primaryRed,
                     underline: Container(),
-                    icon:
-                        Icon(Icons.arrow_drop_down, color: appBarContentColor),
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: appBarContentColor,
+                    ),
                     items: ['x', 'y', 'z'].map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -310,8 +325,10 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
         child: spots.isEmpty
             ? Center(child: Text(appLocalizations.noValidData))
             : Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
                 child: InteractiveViewer(
                   constrained: false,
                   scaleEnabled: false,
@@ -320,13 +337,22 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                     width: spots.length * 12.0 < screenWidth
                         ? screenWidth
                         : spots.length * 12.0,
-                    height: MediaQuery.of(context).size.height -
+                    height:
+                        MediaQuery.of(context).size.height -
                         kToolbarHeight -
                         MediaQuery.of(context).padding.top -
                         MediaQuery.of(context).padding.bottom -
                         48,
-                    child: _buildChart(screenWidth, minY, maxY, maxX, minX,
-                        timeInterval, yInterval, spots),
+                    child: _buildChart(
+                      screenWidth,
+                      minY,
+                      maxY,
+                      maxX,
+                      minX,
+                      timeInterval,
+                      yInterval,
+                      spots,
+                    ),
                   ),
                 ),
               ),
@@ -339,12 +365,9 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
     final fontSize = screenWidth < 400
         ? 7.0
         : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: blackTextColor,
-      fontSize: fontSize,
-    );
+        ? 8.0
+        : 9.0;
+    final style = TextStyle(color: blackTextColor, fontSize: fontSize);
 
     String timeText;
     if (value < 60) {
@@ -361,11 +384,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
 
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        timeText,
-        style: style,
-      ),
+      child: Text(maxLines: 1, timeText, style: style),
     );
   }
 }

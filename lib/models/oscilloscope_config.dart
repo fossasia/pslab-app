@@ -1,22 +1,16 @@
 class OscilloscopeConfig {
   final bool includeLocationData;
 
-  const OscilloscopeConfig({
-    this.includeLocationData = true,
-  });
+  const OscilloscopeConfig({this.includeLocationData = true});
 
-  OscilloscopeConfig copyWith({
-    bool? includeLocationData,
-  }) {
+  OscilloscopeConfig copyWith({bool? includeLocationData}) {
     return OscilloscopeConfig(
       includeLocationData: includeLocationData ?? this.includeLocationData,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'includeLocationData': includeLocationData,
-    };
+    return {'includeLocationData': includeLocationData};
   }
 
   factory OscilloscopeConfig.fromJson(Map<String, dynamic> json) {

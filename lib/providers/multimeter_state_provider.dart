@@ -95,17 +95,19 @@ class MultimeterStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return;
     }
 
-    _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
-    ).listen((Position position) {
-      currentPosition = position;
-    });
+    _locationStream =
+        Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        ).listen((Position position) {
+          currentPosition = position;
+        });
   }
 
   int getSelectedIndex() => _selectedIndex;
@@ -122,104 +124,105 @@ class MultimeterStateProvider extends ChangeNotifier {
 
   Future<void> logData() async {
     _timer = Timer.periodic(
-        Duration(milliseconds: _configProvider!.config.updatePeriod),
-        (timer) async {
-      if (_isProcessing) {
-        return;
-      }
-      _isProcessing = true;
-
-      if (_scienceLab.isConnected()) {
-        switch (_selectedIndex) {
-          case 3:
-            double? resistance;
-            double? avgResistance = 0.0;
-            int loops = 20;
-            for (int i = 0; i < loops; i++) {
-              resistance = await _scienceLab.getResistance();
-              if (resistance == null) {
-                avgResistance = null;
-                break;
-              } else {
-                avgResistance = avgResistance! + resistance / loops;
-              }
-            }
-            String resistanceValue;
-            String resistanceUnit;
-            if (avgResistance == null) {
-              resistanceValue = "Infinity";
-              resistanceUnit = "\u2126";
-            } else {
-              if (avgResistance > 10e5) {
-                resistanceValue = (avgResistance / 10e5).toStringAsFixed(2);
-                resistanceUnit = "M\u2126";
-              } else if (avgResistance > 10e2) {
-                resistanceValue = (avgResistance / 10e2).toStringAsFixed(2);
-                resistanceUnit = "k\u2126";
-              } else if (avgResistance > 1) {
-                resistanceValue = avgResistance.toStringAsFixed(2);
-                resistanceUnit = "\u2126";
-              } else {
-                resistanceValue = "Cannot measure!";
-                resistanceUnit = "\u2126";
-              }
-            }
-            value = resistanceValue;
-            unit = resistanceUnit;
-            break;
-          case 4:
-            double? capacitance = await _scienceLab.getCapacitance();
-            String capacitanceValue;
-            String capacitanceUnit;
-            if (capacitance == null) {
-              capacitanceValue = "Cannot measure!";
-              capacitanceUnit = "pF";
-            } else {
-              if (capacitance < 1e-9) {
-                capacitanceValue = (capacitance / 1e-12).toStringAsFixed(2);
-                capacitanceUnit = "pF";
-              } else if (capacitance < 1e-6) {
-                capacitanceValue = (capacitance / 1e-9).toStringAsFixed(2);
-                capacitanceUnit = "nF";
-              } else if (capacitance < 1e-3) {
-                capacitanceValue = (capacitance / 1e-6).toStringAsFixed(2);
-                capacitanceUnit = "\u00B5F";
-              } else if (capacitance < 1e-1) {
-                capacitanceValue = (capacitance / 1e-3).toStringAsFixed(2);
-                capacitanceUnit = "mF";
-              } else {
-                capacitanceValue = capacitance.toStringAsFixed(2);
-                capacitanceUnit = "F";
-              }
-            }
-            value = capacitanceValue;
-            unit = capacitanceUnit;
-            break;
-          case 5:
-            await getIDData();
-            break;
-          case 6:
-            await getIDData();
-            break;
-          case 7:
-            await getIDData();
-            break;
-          case 8:
-            await getIDData();
-            break;
-          default:
-            double? voltage =
-                await _scienceLab.getVoltage(knobMarker[_selectedIndex], 1);
-            String voltageValue = voltage.toStringAsFixed(2);
-            String voltageUnit = appLocalizations.unitVolts;
-            value = voltageValue;
-            unit = voltageUnit;
+      Duration(milliseconds: _configProvider!.config.updatePeriod),
+      (timer) async {
+        if (_isProcessing) {
+          return;
         }
-        if (_isRecording) {
-          final now = DateTime.now();
-          final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
-          _recordedData.add(
-            [
+        _isProcessing = true;
+
+        if (_scienceLab.isConnected()) {
+          switch (_selectedIndex) {
+            case 3:
+              double? resistance;
+              double? avgResistance = 0.0;
+              int loops = 20;
+              for (int i = 0; i < loops; i++) {
+                resistance = await _scienceLab.getResistance();
+                if (resistance == null) {
+                  avgResistance = null;
+                  break;
+                } else {
+                  avgResistance = avgResistance! + resistance / loops;
+                }
+              }
+              String resistanceValue;
+              String resistanceUnit;
+              if (avgResistance == null) {
+                resistanceValue = "Infinity";
+                resistanceUnit = "\u2126";
+              } else {
+                if (avgResistance > 10e5) {
+                  resistanceValue = (avgResistance / 10e5).toStringAsFixed(2);
+                  resistanceUnit = "M\u2126";
+                } else if (avgResistance > 10e2) {
+                  resistanceValue = (avgResistance / 10e2).toStringAsFixed(2);
+                  resistanceUnit = "k\u2126";
+                } else if (avgResistance > 1) {
+                  resistanceValue = avgResistance.toStringAsFixed(2);
+                  resistanceUnit = "\u2126";
+                } else {
+                  resistanceValue = "Cannot measure!";
+                  resistanceUnit = "\u2126";
+                }
+              }
+              value = resistanceValue;
+              unit = resistanceUnit;
+              break;
+            case 4:
+              double? capacitance = await _scienceLab.getCapacitance();
+              String capacitanceValue;
+              String capacitanceUnit;
+              if (capacitance == null) {
+                capacitanceValue = "Cannot measure!";
+                capacitanceUnit = "pF";
+              } else {
+                if (capacitance < 1e-9) {
+                  capacitanceValue = (capacitance / 1e-12).toStringAsFixed(2);
+                  capacitanceUnit = "pF";
+                } else if (capacitance < 1e-6) {
+                  capacitanceValue = (capacitance / 1e-9).toStringAsFixed(2);
+                  capacitanceUnit = "nF";
+                } else if (capacitance < 1e-3) {
+                  capacitanceValue = (capacitance / 1e-6).toStringAsFixed(2);
+                  capacitanceUnit = "\u00B5F";
+                } else if (capacitance < 1e-1) {
+                  capacitanceValue = (capacitance / 1e-3).toStringAsFixed(2);
+                  capacitanceUnit = "mF";
+                } else {
+                  capacitanceValue = capacitance.toStringAsFixed(2);
+                  capacitanceUnit = "F";
+                }
+              }
+              value = capacitanceValue;
+              unit = capacitanceUnit;
+              break;
+            case 5:
+              await getIDData();
+              break;
+            case 6:
+              await getIDData();
+              break;
+            case 7:
+              await getIDData();
+              break;
+            case 8:
+              await getIDData();
+              break;
+            default:
+              double? voltage = await _scienceLab.getVoltage(
+                knobMarker[_selectedIndex],
+                1,
+              );
+              String voltageValue = voltage.toStringAsFixed(2);
+              String voltageUnit = appLocalizations.unitVolts;
+              value = voltageValue;
+              unit = voltageUnit;
+          }
+          if (_isRecording) {
+            final now = DateTime.now();
+            final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+            _recordedData.add([
               now.millisecondsSinceEpoch.toString(),
               dateFormat.format(now),
               _selectedIndex,
@@ -230,21 +233,22 @@ class MultimeterStateProvider extends ChangeNotifier {
                   : 0,
               _configProvider!.config.includeLocationData
                   ? currentPosition?.longitude.toString() ?? 0
-                  : 0
-            ],
-          );
+                  : 0,
+            ]);
+          }
+          notifyListeners();
+          _isProcessing = false;
         }
-        notifyListeners();
-        _isProcessing = false;
-      }
-    });
+      },
+    );
   }
 
   Future<void> getIDData() async {
     try {
       if (!isSwitchChecked) {
-        double frequency =
-            await _scienceLab.getFrequency(knobMarker[_selectedIndex]);
+        double frequency = await _scienceLab.getFrequency(
+          knobMarker[_selectedIndex],
+        );
         value = frequency.toStringAsFixed(2);
         unit = appLocalizations.unitHz;
       } else {
@@ -274,7 +278,8 @@ class MultimeterStateProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+        'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3',
+      );
       _playbackIndex++;
       notifyListeners();
     }
@@ -283,10 +288,12 @@ class MultimeterStateProvider extends ChangeNotifier {
 
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
-        final currentTimestamp =
-            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
-        final nextTimestamp =
-            int.tryParse(_playbackData![_playbackIndex][0].toString());
+        final currentTimestamp = int.tryParse(
+          _playbackData![_playbackIndex - 1][0].toString(),
+        );
+        final nextTimestamp = int.tryParse(
+          _playbackData![_playbackIndex][0].toString(),
+        );
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -370,8 +377,8 @@ class MultimeterStateProvider extends ChangeNotifier {
         'Reading',
         'Unit',
         'Latitude',
-        'Longitude'
-      ]
+        'Longitude',
+      ],
     ];
     notifyListeners();
     return true;

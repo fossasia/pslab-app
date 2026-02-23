@@ -25,7 +25,9 @@ class AccelerometerConfigProvider extends ChangeNotifier {
   Future<void> _saveConfigToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
-        'accelerometer_config', json.encode(_config.toJson()));
+      'accelerometer_config',
+      json.encode(_config.toJson()),
+    );
   }
 
   void updateConfig(AccelerometerConfig newConfig) {

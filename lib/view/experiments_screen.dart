@@ -61,13 +61,13 @@ class _ExperimentsScreenState extends State<ExperimentsScreen> {
   }
 
   Widget _buildExperimentCard(
-      BuildContext context, Map<String, dynamic> experiment) {
+    BuildContext context,
+    Map<String, dynamic> experiment,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
@@ -108,9 +108,7 @@ class _ExperimentsScreenState extends State<ExperimentsScreen> {
                       children: [
                         Text(
                           experiment['title'],
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
+                          style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).colorScheme.onSurface,
@@ -125,8 +123,8 @@ class _ExperimentsScreenState extends State<ExperimentsScreen> {
               Text(
                 experiment['description'],
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: snackBarBackgroundColor,
-                    ),
+                  color: snackBarBackgroundColor,
+                ),
               ),
               const SizedBox(height: 16),
               Row(

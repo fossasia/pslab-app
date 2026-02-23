@@ -37,7 +37,10 @@ class CsvService {
   }
 
   Future<File?> saveCsvFile(
-      String instrumentName, String fileName, List<List<dynamic>> data) async {
+    String instrumentName,
+    String fileName,
+    List<List<dynamic>> data,
+  ) async {
     try {
       if (data.length <= 1) {
         logger.w('${appLocalizations.noDataRecorded} $fileName');
@@ -74,7 +77,8 @@ class CsvService {
           .where((item) => item.path.endsWith('.csv'))
           .toList();
       files.sort(
-          (a, b) => b.statSync().modified.compareTo(a.statSync().modified));
+        (a, b) => b.statSync().modified.compareTo(a.statSync().modified),
+      );
       return files;
     } catch (e) {
       logger.e('${appLocalizations.csvGettingError}: $e');
@@ -110,7 +114,8 @@ class CsvService {
     try {
       final xFile = XFile(filePath);
       await SharePlus.instance.share(
-          ShareParams(files: [xFile], text: appLocalizations.sharingMessage));
+        ShareParams(files: [xFile], text: appLocalizations.sharingMessage),
+      );
     } catch (e) {
       logger.e('${appLocalizations.sharingError}: $e');
     }
@@ -170,7 +175,7 @@ class CsvService {
     final metaData = [
       instrumentName,
       metaDataTime.split(' ')[0],
-      metaDataTime.split(' ')[1]
+      metaDataTime.split(' ')[1],
     ];
     data.insert(0, metaData);
   }

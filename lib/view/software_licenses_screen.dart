@@ -19,7 +19,8 @@ class SoftwareLicensesScreen extends StatelessWidget {
     }
     final licenses = allDependencies.toList();
     for (var key in lm.keys) {
-      licenses.add(Package(
+      licenses.add(
+        Package(
           name: key,
           description: '',
           authors: [],
@@ -27,7 +28,9 @@ class SoftwareLicensesScreen extends StatelessWidget {
           license: lm[key]!.join('\n\n'),
           isMarkdown: false,
           isSdk: false,
-          dependencies: []));
+          dependencies: [],
+        ),
+      );
     }
     return licenses..sort((a, b) => a.name.compareTo(b.name));
   }
@@ -75,11 +78,14 @@ class MiscOssLicenseSingle extends StatelessWidget {
 
   const MiscOssLicenseSingle({super.key, required this.package});
   String _bodyText() {
-    return package.license!.split('\n').map((line) {
-      if (line.startsWith('//')) line = line.substring(2);
-      line = line.trim();
-      return line;
-    }).join('\n');
+    return package.license!
+        .split('\n')
+        .map((line) {
+          if (line.startsWith('//')) line = line.substring(2);
+          line = line.trim();
+          return line;
+        })
+        .join('\n');
   }
 
   @override
@@ -92,25 +98,32 @@ class MiscOssLicenseSingle extends StatelessWidget {
           children: [
             if (package.description.isNotEmpty)
               Padding(
-                padding:
-                    const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
+                padding: const EdgeInsets.only(
+                  top: 12.0,
+                  left: 12.0,
+                  right: 12.0,
+                ),
                 child: Text(
                   package.description,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
             if (package.homepage != null)
               Padding(
-                padding:
-                    const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
+                padding: const EdgeInsets.only(
+                  top: 12.0,
+                  left: 12.0,
+                  right: 12.0,
+                ),
                 child: InkWell(
                   child: Text(
                     package.homepage!,
                     style: const TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline),
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                   onTap: () => launchUrlString(package.homepage!),
                 ),
@@ -118,13 +131,16 @@ class MiscOssLicenseSingle extends StatelessWidget {
             if (package.description.isNotEmpty || package.homepage != null)
               const Divider(),
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
+              padding: const EdgeInsets.only(
+                top: 12.0,
+                left: 12.0,
+                right: 12.0,
+              ),
               child: Text(
                 _bodyText(),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-            )
+            ),
           ],
         ),
       ),

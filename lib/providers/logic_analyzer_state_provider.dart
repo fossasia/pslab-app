@@ -98,7 +98,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   }
 
   void setConfigProvider(
-      LogicAnalyzerConfigProvider logicAnalyzerConfigProvider) {
+    LogicAnalyzerConfigProvider logicAnalyzerConfigProvider,
+  ) {
     _configProvider = logicAnalyzerConfigProvider;
   }
 
@@ -123,7 +124,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return;
     }
 
@@ -131,8 +133,9 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       accuracy: LocationAccuracy.high,
     );
 
-    currentPosition =
-        await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+    currentPosition = await Geolocator.getCurrentPosition(
+      locationSettings: locationSettings,
+    );
   }
 
   Future<void> analyze() async {
@@ -151,31 +154,36 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         analysisEdgesNames.add(edgeSelectSpinner1);
         break;
       case 2:
-        analysisChannelNames
-            .addAll([channelSelectSpinner1, channelSelectSpinner2]);
+        analysisChannelNames.addAll([
+          channelSelectSpinner1,
+          channelSelectSpinner2,
+        ]);
         analysisEdgesNames.addAll([edgeSelectSpinner1, edgeSelectSpinner2]);
         break;
       case 3:
         analysisChannelNames.addAll([
           channelSelectSpinner1,
           channelSelectSpinner2,
-          channelSelectSpinner3
+          channelSelectSpinner3,
         ]);
-        analysisEdgesNames.addAll(
-            [edgeSelectSpinner1, edgeSelectSpinner2, edgeSelectSpinner3]);
+        analysisEdgesNames.addAll([
+          edgeSelectSpinner1,
+          edgeSelectSpinner2,
+          edgeSelectSpinner3,
+        ]);
         break;
       case 4:
         analysisChannelNames.addAll([
           channelSelectSpinner1,
           channelSelectSpinner2,
           channelSelectSpinner3,
-          channelSelectSpinner4
+          channelSelectSpinner4,
         ]);
         analysisEdgesNames.addAll([
           edgeSelectSpinner1,
           edgeSelectSpinner2,
           edgeSelectSpinner3,
-          edgeSelectSpinner4
+          edgeSelectSpinner4,
         ]);
         break;
       default:
@@ -264,8 +272,12 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
           tempInput.add(FlSpot(xaxis[i], (yaxis[i + 1] + 2 * currentChannel)));
         }
       }
-      tempInput.add(FlSpot(xaxis[xaxis.length - 1],
-          (yaxis[xaxis.length - 1] + 2 * currentChannel)));
+      tempInput.add(
+        FlSpot(
+          xaxis[xaxis.length - 1],
+          (yaxis[xaxis.length - 1] + 2 * currentChannel),
+        ),
+      );
     } else {
       tempInput.add(FlSpot(xaxis[0], (yaxis[0] + 2 * currentChannel)));
     }
@@ -276,12 +288,15 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   void singleChannelFourthRisingEdge(List<double> xData) {
     tempInput = [];
     double xaxis = xData[0];
-    tempInput
-        .add(FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()));
-    tempInput
-        .add(FlSpot(xaxis.toDouble(), (1 + 2 * currentChannel).toDouble()));
-    tempInput
-        .add(FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()));
+    tempInput.add(
+      FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()),
+    );
+    tempInput.add(
+      FlSpot(xaxis.toDouble(), (1 + 2 * currentChannel).toDouble()),
+    );
+    tempInput.add(
+      FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()),
+    );
     double check = xaxis;
     int count = 0;
 
@@ -291,11 +306,14 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         if (xaxis != check) {
           if (count == 3) {
             tempInput.add(
-                FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()));
+              FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()),
+            );
             tempInput.add(
-                FlSpot(xaxis.toDouble(), (1 + 2 * currentChannel).toDouble()));
+              FlSpot(xaxis.toDouble(), (1 + 2 * currentChannel).toDouble()),
+            );
             tempInput.add(
-                FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()));
+              FlSpot(xaxis.toDouble(), (0 + 2 * currentChannel).toDouble()),
+            );
             count = 0;
           } else {
             count++;
@@ -312,12 +330,21 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     tempInput = [];
 
     for (int i = 1; i < xData.length; i += 6) {
-      tempInput.add(FlSpot(
-          xData[i].toDouble(), (yData[i] + 2 * currentChannel).toDouble()));
-      tempInput.add(FlSpot(xData[i + 1].toDouble(),
-          (yData[i + 1] + 2 * currentChannel).toDouble()));
-      tempInput.add(FlSpot(xData[i + 2].toDouble(),
-          (yData[i + 2] + 2 * currentChannel).toDouble()));
+      tempInput.add(
+        FlSpot(xData[i].toDouble(), (yData[i] + 2 * currentChannel).toDouble()),
+      );
+      tempInput.add(
+        FlSpot(
+          xData[i + 1].toDouble(),
+          (yData[i + 1] + 2 * currentChannel).toDouble(),
+        ),
+      );
+      tempInput.add(
+        FlSpot(
+          xData[i + 2].toDouble(),
+          (yData[i + 2] + 2 * currentChannel).toDouble(),
+        ),
+      );
     }
 
     setDataSet();
@@ -327,12 +354,21 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     tempInput = [];
 
     for (int i = 4; i < xData.length; i += 6) {
-      tempInput.add(FlSpot(
-          xData[i].toDouble(), (yData[i] + 2 * currentChannel).toDouble()));
-      tempInput.add(FlSpot(xData[i + 1].toDouble(),
-          (yData[i + 1] + 2 * currentChannel).toDouble()));
-      tempInput.add(FlSpot(xData[i + 2].toDouble(),
-          (yData[i + 2] + 2 * currentChannel).toDouble()));
+      tempInput.add(
+        FlSpot(xData[i].toDouble(), (yData[i] + 2 * currentChannel).toDouble()),
+      );
+      tempInput.add(
+        FlSpot(
+          xData[i + 1].toDouble(),
+          (yData[i + 1] + 2 * currentChannel).toDouble(),
+        ),
+      );
+      tempInput.add(
+        FlSpot(
+          xData[i + 2].toDouble(),
+          (yData[i + 2] + 2 * currentChannel).toDouble(),
+        ),
+      );
     }
 
     setDataSet();
@@ -345,7 +381,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       double xaxis = xData[i];
       double yaxis = yData[i];
       tempInput.add(
-          FlSpot(xaxis.toDouble(), (yaxis + 2 * currentChannel).toDouble()));
+        FlSpot(xaxis.toDouble(), (yaxis + 2 * currentChannel).toDouble()),
+      );
     }
 
     setDataSet();
@@ -427,7 +464,9 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   }
 
   Future<void> captureTwo(
-      List<String> channelNames, List<String> edgeNames) async {
+    List<String> channelNames,
+    List<String> edgeNames,
+  ) async {
     List<String> edgeOption = List.filled(channelMode, "");
     bool holder1, holder2;
 
@@ -435,10 +474,12 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       channels[0] = channelNames[0];
       channels[1] = channelNames[1];
 
-      int channelNumber1 =
-          _scienceLab.calculateDigitalChannel(channelNames[0])!;
-      int channelNumber2 =
-          _scienceLab.calculateDigitalChannel(channelNames[1])!;
+      int channelNumber1 = _scienceLab.calculateDigitalChannel(
+        channelNames[0],
+      )!;
+      int channelNumber2 = _scienceLab.calculateDigitalChannel(
+        channelNames[1],
+      )!;
 
       digitalChannels.add(_scienceLab.getDigitalChannel(channelNumber1));
       digitalChannels.add(_scienceLab.getDigitalChannel(channelNumber2));
@@ -476,7 +517,13 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       }
 
       await _scienceLab.startTwoChannelLA(
-          channelNames, modes, 67, null, null, null);
+        channelNames,
+        modes,
+        67,
+        null,
+        null,
+        null,
+      );
       await Future.delayed(const Duration(seconds: 1));
       LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
@@ -522,7 +569,9 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   }
 
   Future<void> captureThree(
-      List<String> channelNames, List<String> edgeNames) async {
+    List<String> channelNames,
+    List<String> edgeNames,
+  ) async {
     List<String> edgeOption = List.filled(channelMode, "");
     bool holder1, holder2, holder3;
 
@@ -531,12 +580,15 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       channels[1] = channelNames[1];
       channels[2] = channelNames[2];
 
-      int channelNumber1 =
-          _scienceLab.calculateDigitalChannel(channelNames[0])!;
-      int channelNumber2 =
-          _scienceLab.calculateDigitalChannel(channelNames[1])!;
-      int channelNumber3 =
-          _scienceLab.calculateDigitalChannel(channelNames[2])!;
+      int channelNumber1 = _scienceLab.calculateDigitalChannel(
+        channelNames[0],
+      )!;
+      int channelNumber2 = _scienceLab.calculateDigitalChannel(
+        channelNames[1],
+      )!;
+      int channelNumber3 = _scienceLab.calculateDigitalChannel(
+        channelNames[2],
+      )!;
 
       digitalChannels.add(_scienceLab.getDigitalChannel(channelNumber1));
       digitalChannels.add(_scienceLab.getDigitalChannel(channelNumber2));
@@ -580,7 +632,12 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       triggerChannel.add(true);
       triggerChannel.add(true);
       await _scienceLab.startFourChannelLA(
-          null, null, modes, null, triggerChannel);
+        null,
+        null,
+        modes,
+        null,
+        triggerChannel,
+      );
       await Future.delayed(const Duration(seconds: 1));
       LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
@@ -631,7 +688,9 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   }
 
   Future<void> captureFour(
-      List<String> channelNames, List<String> edgeNames) async {
+    List<String> channelNames,
+    List<String> edgeNames,
+  ) async {
     List<String> edgeOption = List.filled(channelMode, "");
     bool holder1, holder2, holder3, holder4;
 
@@ -641,14 +700,18 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       channels[2] = channelNames[2];
       channels[3] = channelNames[3];
 
-      int channelNumber1 =
-          _scienceLab.calculateDigitalChannel(channelNames[0])!;
-      int channelNumber2 =
-          _scienceLab.calculateDigitalChannel(channelNames[1])!;
-      int channelNumber3 =
-          _scienceLab.calculateDigitalChannel(channelNames[2])!;
-      int channelNumber4 =
-          _scienceLab.calculateDigitalChannel(channelNames[3])!;
+      int channelNumber1 = _scienceLab.calculateDigitalChannel(
+        channelNames[0],
+      )!;
+      int channelNumber2 = _scienceLab.calculateDigitalChannel(
+        channelNames[1],
+      )!;
+      int channelNumber3 = _scienceLab.calculateDigitalChannel(
+        channelNames[2],
+      )!;
+      int channelNumber4 = _scienceLab.calculateDigitalChannel(
+        channelNames[3],
+      )!;
 
       digitalChannels.add(_scienceLab.getDigitalChannel(channelNumber1));
       digitalChannels.add(_scienceLab.getDigitalChannel(channelNumber2));
@@ -694,7 +757,12 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
       triggerChannel.add(true);
 
       await _scienceLab.startFourChannelLA(
-          null, null, modes, null, triggerChannel);
+        null,
+        null,
+        modes,
+        null,
+        triggerChannel,
+      );
       await Future.delayed(const Duration(seconds: 1));
       LinkedHashMap<String, int>? data = await _scienceLab.getLAInitialStates();
       await Future.delayed(const Duration(seconds: 1));
@@ -783,14 +851,17 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   }
 
   void loadPlaybackData(List<List<dynamic>> playbackData) {
-    dataSets =
-        parseFlSpotList(playbackData[playbackData.length - 1][2].toString());
+    dataSets = parseFlSpotList(
+      playbackData[playbackData.length - 1][2].toString(),
+    );
     maxY = double.parse(playbackData[playbackData.length - 1][3].toString());
     minY = double.parse(playbackData[playbackData.length - 1][4].toString());
-    analysisChannelNames =
-        parseList(playbackData[playbackData.length - 1][5].toString());
-    analysisEdgesNames =
-        parseList(playbackData[playbackData.length - 1][6].toString());
+    analysisChannelNames = parseList(
+      playbackData[playbackData.length - 1][5].toString(),
+    );
+    analysisEdgesNames = parseList(
+      playbackData[playbackData.length - 1][6].toString(),
+    );
     channelMode = analysisChannelNames.length;
     setConfigData();
     isData = true;
@@ -849,28 +920,26 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         'Channels',
         'Edges',
         'Latitude',
-        'Longitude'
-      ]
+        'Longitude',
+      ],
     ];
     final now = DateTime.now();
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
-    _recordedData.add(
-      [
-        now.millisecondsSinceEpoch.toString(),
-        dateFormat.format(now),
-        dataSets,
-        maxY,
-        minY,
-        analysisChannelNames,
-        analysisEdgesNames,
-        _configProvider!.config.includeLocationData
-            ? currentPosition?.latitude.toString() ?? 0
-            : 0,
-        _configProvider!.config.includeLocationData
-            ? currentPosition?.longitude.toString() ?? 0
-            : 0
-      ],
-    );
+    _recordedData.add([
+      now.millisecondsSinceEpoch.toString(),
+      dateFormat.format(now),
+      dataSets,
+      maxY,
+      minY,
+      analysisChannelNames,
+      analysisEdgesNames,
+      _configProvider!.config.includeLocationData
+          ? currentPosition?.latitude.toString() ?? 0
+          : 0,
+      _configProvider!.config.includeLocationData
+          ? currentPosition?.longitude.toString() ?? 0
+          : 0,
+    ]);
     return true;
   }
 
@@ -879,20 +948,16 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   List<LineChartBarData> createPlots() {
     List<LineChartBarData> plots = [];
     plots.addAll(
-      List<LineChartBarData>.generate(
-        dataSets.length,
-        (index) {
-          return LineChartBarData(
-            spots: dataSets[index],
-            color: logicAnalyzerChannelColors[
-                index % logicAnalyzerChannelColors.length],
-            barWidth: 2,
-            dotData: const FlDotData(
-              show: false,
-            ),
-          );
-        },
-      ),
+      List<LineChartBarData>.generate(dataSets.length, (index) {
+        return LineChartBarData(
+          spots: dataSets[index],
+          color:
+              logicAnalyzerChannelColors[index %
+                  logicAnalyzerChannelColors.length],
+          barWidth: 2,
+          dotData: const FlDotData(show: false),
+        );
+      }),
     );
     return plots;
   }

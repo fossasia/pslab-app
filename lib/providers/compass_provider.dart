@@ -10,10 +10,18 @@ import 'locator.dart';
 
 class CompassProvider extends ChangeNotifier {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  MagnetometerEvent _magnetometerEvent =
-      MagnetometerEvent(0, 0, 0, DateTime.now());
-  AccelerometerEvent _accelerometerEvent =
-      AccelerometerEvent(0, 0, 0, DateTime.now());
+  MagnetometerEvent _magnetometerEvent = MagnetometerEvent(
+    0,
+    0,
+    0,
+    DateTime.now(),
+  );
+  AccelerometerEvent _accelerometerEvent = AccelerometerEvent(
+    0,
+    0,
+    0,
+    DateTime.now(),
+  );
   StreamSubscription? _magnetometerSubscription;
   StreamSubscription? _accelerometerSubscription;
   String _selectedAxis = 'X';
@@ -115,10 +123,12 @@ class CompassProvider extends ChangeNotifier {
     double roll = atan2(-ax, az);
 
     double xH = mx * cos(pitch) + mz * sin(pitch);
-    double yH = mx * sin(roll) * sin(pitch) +
+    double yH =
+        mx * sin(roll) * sin(pitch) +
         my * cos(roll) -
         mz * sin(roll) * cos(pitch);
-    double zH = -mx * cos(roll) * sin(pitch) +
+    double zH =
+        -mx * cos(roll) * sin(pitch) +
         my * sin(roll) +
         mz * cos(roll) * cos(pitch);
 

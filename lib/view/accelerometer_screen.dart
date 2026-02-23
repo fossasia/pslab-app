@@ -74,18 +74,10 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
 
   List<Widget> _getAccelerometerContent() {
     return [
-      InstrumentIntroText(
-        text: appLocalizations.accelerometerIntro,
-      ),
-      const InstrumentImage(
-        imagePath: imagePath,
-      ),
-      InstrumentIntroText(
-        text: appLocalizations.accelerometerImageDesc,
-      ),
-      InstrumentIntroText(
-        text: appLocalizations.accelerometerSteps,
-      ),
+      InstrumentIntroText(text: appLocalizations.accelerometerIntro),
+      const InstrumentImage(imagePath: imagePath),
+      InstrumentIntroText(text: appLocalizations.accelerometerImageDesc),
+      InstrumentIntroText(text: appLocalizations.accelerometerSteps),
       InstrumentBulletPoint(text: appLocalizations.accelerometerBulletPoint1),
       InstrumentBulletPoint(text: appLocalizations.accelerometerBulletPoint2),
       InstrumentBulletPoint(text: appLocalizations.accelerometerBulletPoint3),
@@ -208,9 +200,14 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
 
     if (fileName != null) {
       _csvService.writeMetaData(
-          appLocalizations.accelerometer.toLowerCase(), data);
+        appLocalizations.accelerometer.toLowerCase(),
+        data,
+      );
       final file = await _csvService.saveCsvFile(
-          appLocalizations.accelerometer.toLowerCase(), fileName, data);
+        appLocalizations.accelerometer.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -241,61 +238,69 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AccelerometerStateProvider>.value(
       value: _provider,
-      child: Stack(children: [
-        Consumer<AccelerometerStateProvider>(
-          builder: (context, provider, child) {
-            return CommonScaffold(
-              title: provider.isPlayingBack
-                  ? '${appLocalizations.accelerometerTitle} - ${appLocalizations.playback}'
-                  : appLocalizations.accelerometerTitle,
-              onGuidePressed: _showInstrumentGuide,
-              onOptionsPressed:
-                  provider.isPlayingBack ? null : _showOptionsMenu,
-              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
-              isRecording: provider.isRecording,
-              isPlayingBack: provider.isPlayingBack,
-              isPlaybackPaused: provider.isPlaybackPaused,
-              onPlaybackPauseResume: provider.isPlayingBack
-                  ? (provider.isPlaybackPaused
-                      ? _provider.resumePlayback
-                      : _provider.pausePlayback)
-                  : null,
-              onPlaybackStop: provider.isPlayingBack
-                  ? () async {
-                      await _provider.stopPlayback();
-                    }
-                  : null,
-              body: SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: AccelerometerCard(
+      child: Stack(
+        children: [
+          Consumer<AccelerometerStateProvider>(
+            builder: (context, provider, child) {
+              return CommonScaffold(
+                title: provider.isPlayingBack
+                    ? '${appLocalizations.accelerometerTitle} - ${appLocalizations.playback}'
+                    : appLocalizations.accelerometerTitle,
+                onGuidePressed: _showInstrumentGuide,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
+                isRecording: provider.isRecording,
+                isPlayingBack: provider.isPlayingBack,
+                isPlaybackPaused: provider.isPlaybackPaused,
+                onPlaybackPauseResume: provider.isPlayingBack
+                    ? (provider.isPlaybackPaused
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
+                    : null,
+                onPlaybackStop: provider.isPlayingBack
+                    ? () async {
+                        await _provider.stopPlayback();
+                      }
+                    : null,
+                body: SafeArea(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: AccelerometerCard(
                           color: xOrientationChartLineColor,
-                          axis: appLocalizations.xAxis),
-                    ),
-                    Expanded(
-                      child: AccelerometerCard(
+                          axis: appLocalizations.xAxis,
+                        ),
+                      ),
+                      Expanded(
+                        child: AccelerometerCard(
                           color: yOrientationChartLineColor,
-                          axis: appLocalizations.yAxis),
-                    ),
-                    Expanded(
-                      child: AccelerometerCard(
+                          axis: appLocalizations.yAxis,
+                        ),
+                      ),
+                      Expanded(
+                        child: AccelerometerCard(
                           color: zOrientationChartLineColor,
-                          axis: appLocalizations.zAxis),
-                    ),
-                  ],
+                          axis: appLocalizations.zAxis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
-        if (_showGuide)
-          InstrumentOverviewDrawer(
-            instrumentName: appLocalizations.accelerometer,
-            content: _getAccelerometerContent(),
-            onHide: _hideInstrumentGuide,
+              );
+            },
           ),
-      ]),
+          if (_showGuide)
+            InstrumentOverviewDrawer(
+              instrumentName: appLocalizations.accelerometer,
+              content: _getAccelerometerContent(),
+              onHide: _hideInstrumentGuide,
+            ),
+        ],
+      ),
     );
   }
 }

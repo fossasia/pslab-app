@@ -23,13 +23,15 @@ class PacketHandler {
     _mCommandsProto = CommandsProto();
     _mCommunicationHandler = communicationHandler;
     _socketClient = getIt.get<SocketClient>();
-    _connected = (getIt.get<ScienceLabCommon>().isWiFiConnected() ||
+    _connected =
+        (getIt.get<ScienceLabCommon>().isWiFiConnected() ||
         _mCommunicationHandler.isConnected());
     _buffer = Uint8List(10000);
   }
 
   bool isConnected() {
-    _connected = (getIt.get<ScienceLabCommon>().isWiFiConnected() ||
+    _connected =
+        (getIt.get<ScienceLabCommon>().isWiFiConnected() ||
         _mCommunicationHandler.isConnected());
     return _connected;
   }
@@ -166,8 +168,11 @@ class PacketHandler {
   Future<int> _commonRead(int bytesToRead) async {
     final List<int> bytesRead = [0];
     if (_mCommunicationHandler.isConnected()) {
-      bytesRead[0] =
-          await _mCommunicationHandler.read(_buffer, bytesToRead, _timeout);
+      bytesRead[0] = await _mCommunicationHandler.read(
+        _buffer,
+        bytesToRead,
+        _timeout,
+      );
     } else if (getIt.get<ScienceLabCommon>().isWiFiConnected()) {
       bytesRead[0] = await _socketClient.read(_buffer, bytesToRead, _timeout);
     }

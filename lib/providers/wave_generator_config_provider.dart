@@ -25,7 +25,9 @@ class WaveGeneratorConfigProvider extends ChangeNotifier {
   Future<void> _saveConfigToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
-        'wave_generator_config', json.encode(_config.toJson()));
+      'wave_generator_config',
+      json.encode(_config.toJson()),
+    );
   }
 
   void updateConfig(WaveGeneratorConfig newConfig) {

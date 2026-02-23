@@ -77,8 +77,9 @@ class AndroidUSBCommunicationHandler implements CommunicationHandler {
     int bytesToBeReadTemp = bytesToRead;
 
     try {
-      await for (Uint8List receivedData in mPort!.inputStream!
-          .timeout(Duration(milliseconds: timeoutMillis))) {
+      await for (Uint8List receivedData in mPort!.inputStream!.timeout(
+        Duration(milliseconds: timeoutMillis),
+      )) {
         int readNow = receivedData.length;
 
         if (readNow == 0) {

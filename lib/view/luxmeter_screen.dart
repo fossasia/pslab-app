@@ -53,18 +53,10 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
 
   List<Widget> _getLuxMeterContent() {
     return [
-      InstrumentBulletPoint(
-        text: appLocalizations.luxMeterDesc,
-      ),
-      InstrumentBulletPoint(
-        text: appLocalizations.luxMeterSensorIntro,
-      ),
-      const InstrumentImage(
-        imagePath: imagePath,
-      ),
-      InstrumentBulletPoint(
-        text: appLocalizations.luxMeterBulletPoint1,
-      ),
+      InstrumentBulletPoint(text: appLocalizations.luxMeterDesc),
+      InstrumentBulletPoint(text: appLocalizations.luxMeterSensorIntro),
+      const InstrumentImage(imagePath: imagePath),
+      InstrumentBulletPoint(text: appLocalizations.luxMeterBulletPoint1),
       InstrumentBulletPoint(text: appLocalizations.luxMeterBulletPoint2),
     ];
   }
@@ -109,9 +101,9 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       MaterialPageRoute(
         builder: (context) =>
             ChangeNotifierProvider<LuxMeterConfigProvider>.value(
-          value: _configProvider,
-          child: const LuxMeterConfigScreen(),
-        ),
+              value: _configProvider,
+              child: const LuxMeterConfigScreen(),
+            ),
       ),
     );
   }
@@ -185,7 +177,10 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     if (fileName != null) {
       _csvService.writeMetaData(appLocalizations.luxMeter.toLowerCase(), data);
       final file = await _csvService.saveCsvFile(
-          appLocalizations.luxMeter.toLowerCase(), fileName, data);
+        appLocalizations.luxMeter.toLowerCase(),
+        fileName,
+        data,
+      );
       if (mounted) {
         if (file != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -250,10 +245,14 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
 
     final experimentProvider = context.read<ExperimentProvider>();
     if (experimentProvider.state == ExperimentState.running) {
-      final luxData =
-          _provider.getLuxChartData().map((spot) => spot.y).toList();
-      final timeData =
-          _provider.getLuxChartData().map((spot) => spot.x).toList();
+      final luxData = _provider
+          .getLuxChartData()
+          .map((spot) => spot.y)
+          .toList();
+      final timeData = _provider
+          .getLuxChartData()
+          .map((spot) => spot.x)
+          .toList();
 
       experimentProvider.checkStepCondition(luxData, timeData);
     }
@@ -272,10 +271,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: snackBarContentColor),
-          ),
+          content: Text(message, style: TextStyle(color: snackBarContentColor)),
           backgroundColor: snackBarBackgroundColor,
           duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
@@ -290,85 +286,82 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
       providers: [
         ChangeNotifierProvider<LuxMeterStateProvider>.value(value: _provider),
         ChangeNotifierProvider<LuxMeterConfigProvider>.value(
-            value: _configProvider),
-      ],
-      child: Stack(children: [
-        Consumer<LuxMeterStateProvider>(
-          builder: (context, provider, child) {
-            return CommonScaffold(
-              title: provider.isPlayingBack
-                  ? '${appLocalizations.luxMeterTitle} - ${appLocalizations.playback}'
-                  : appLocalizations.luxMeterTitle,
-              onOptionsPressed:
-                  provider.isPlayingBack ? null : _showOptionsMenu,
-              onGuidePressed: _showInstrumentGuide,
-              onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
-              isRecording: provider.isRecording,
-              isPlayingBack: provider.isPlayingBack,
-              isPlaybackPaused: provider.isPlaybackPaused,
-              onPlaybackPauseResume: provider.isPlayingBack
-                  ? (provider.isPlaybackPaused
-                      ? _provider.resumePlayback
-                      : _provider.pausePlayback)
-                  : null,
-              onPlaybackStop: provider.isPlayingBack
-                  ? () async {
-                      await _provider.stopPlayback();
-                    }
-                  : null,
-              body: SafeArea(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                final isLargeScreen = constraints.maxWidth > 900;
-                if (isLargeScreen) {
-                  return Row(
-                    children: [
-                      const Expanded(
-                        flex: 35,
-                        child: LuxMeterCard(),
-                      ),
-                      Expanded(
-                        flex: 65,
-                        child: _buildChartSection(),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      const Expanded(
-                        flex: 45,
-                        child: LuxMeterCard(),
-                      ),
-                      Expanded(
-                        flex: 55,
-                        child: _buildChartSection(),
-                      ),
-                    ],
-                  );
-                }
-              })),
-            );
-          },
+          value: _configProvider,
         ),
-        if (_showGuide)
-          InstrumentOverviewDrawer(
-            instrumentName: appLocalizations.luxMeterTitle,
-            content: _getLuxMeterContent(),
-            onHide: _hideInstrumentGuide,
-          ),
-        if (widget.isExperiment)
-          ExperimentOverlayWidget(
-            onExperimentComplete: () async {
-              if (_provider.isRecording) {
-                final data = _provider.stopRecording();
-                await _showSaveFileDialog(data);
-              }
-              if (context.mounted) {
-                Navigator.pop(context);
-              }
+      ],
+      child: Stack(
+        children: [
+          Consumer<LuxMeterStateProvider>(
+            builder: (context, provider, child) {
+              return CommonScaffold(
+                title: provider.isPlayingBack
+                    ? '${appLocalizations.luxMeterTitle} - ${appLocalizations.playback}'
+                    : appLocalizations.luxMeterTitle,
+                onOptionsPressed: provider.isPlayingBack
+                    ? null
+                    : _showOptionsMenu,
+                onGuidePressed: _showInstrumentGuide,
+                onRecordPressed: provider.isPlayingBack
+                    ? null
+                    : _toggleRecording,
+                isRecording: provider.isRecording,
+                isPlayingBack: provider.isPlayingBack,
+                isPlaybackPaused: provider.isPlaybackPaused,
+                onPlaybackPauseResume: provider.isPlayingBack
+                    ? (provider.isPlaybackPaused
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
+                    : null,
+                onPlaybackStop: provider.isPlayingBack
+                    ? () async {
+                        await _provider.stopPlayback();
+                      }
+                    : null,
+                body: SafeArea(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isLargeScreen = constraints.maxWidth > 900;
+                      if (isLargeScreen) {
+                        return Row(
+                          children: [
+                            const Expanded(flex: 35, child: LuxMeterCard()),
+                            Expanded(flex: 65, child: _buildChartSection()),
+                          ],
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            const Expanded(flex: 45, child: LuxMeterCard()),
+                            Expanded(flex: 55, child: _buildChartSection()),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
             },
           ),
-      ]),
+          if (_showGuide)
+            InstrumentOverviewDrawer(
+              instrumentName: appLocalizations.luxMeterTitle,
+              content: _getLuxMeterContent(),
+              onHide: _hideInstrumentGuide,
+            ),
+          if (widget.isExperiment)
+            ExperimentOverlayWidget(
+              onExperimentComplete: () async {
+                if (_provider.isRecording) {
+                  final data = _provider.stopRecording();
+                  await _showSaveFileDialog(data);
+                }
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+        ],
+      ),
     );
   }
 
@@ -392,7 +385,13 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             borderRadius: BorderRadius.zero,
           ),
           child: _buildChart(
-              screenWidth, maxLux, maxTime, minTime, timeInterval, spots),
+            screenWidth,
+            maxLux,
+            maxTime,
+            minTime,
+            timeInterval,
+            spots,
+          ),
         );
       },
     );
@@ -403,12 +402,9 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     final fontSize = screenWidth < 400
         ? 7.0
         : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: fontSize,
-    );
+        ? 8.0
+        : 9.0;
+    final style = TextStyle(color: chartTextColor, fontSize: fontSize);
     String timeText;
     if (value < 60) {
       timeText = '${value.toInt()}s';
@@ -423,21 +419,23 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
     }
     return SideTitleWidget(
       meta: meta,
-      child: Text(
-        maxLines: 1,
-        timeText,
-        style: style,
-      ),
+      child: Text(maxLines: 1, timeText, style: style),
     );
   }
 
-  Widget _buildChart(double screenWidth, double maxLux, double maxTime,
-      double minTime, double timeInterval, List<FlSpot> spots) {
+  Widget _buildChart(
+    double screenWidth,
+    double maxLux,
+    double maxTime,
+    double minTime,
+    double timeInterval,
+    List<FlSpot> spots,
+  ) {
     final chartFontSize = screenWidth < 400
         ? 8.0
         : screenWidth < 600
-            ? 9.0
-            : 10.0;
+        ? 9.0
+        : 10.0;
     final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 27.0 : 30.0;
@@ -500,7 +498,9 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             ),
             rightTitles: AxisTitles(
               sideTitles: SideTitles(
-                  showTitles: false, reservedSize: reservedSizeRight),
+                showTitles: false,
+                reservedSize: reservedSizeRight,
+              ),
             ),
           ),
           gridData: FlGridData(

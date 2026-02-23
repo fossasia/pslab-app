@@ -30,15 +30,18 @@ class GaugeWidget extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxSize = min(constraints.maxWidth, constraints.maxHeight);
-        final adaptiveGaugeSize =
-            min(gaugeSize, maxSize * 0.9).clamp(80.0, 300.0);
+        final adaptiveGaugeSize = min(
+          gaugeSize,
+          maxSize * 0.9,
+        ).clamp(80.0, 300.0);
 
         final adaptiveFontSize = (adaptiveGaugeSize * 0.08).clamp(10.0, 20.0);
         final errorFontSize = (adaptiveFontSize * 0.4).clamp(6.0, 10.0);
 
         double range = maxValue - minValue;
-        double normalizedValue =
-            range > 0 ? (currentValue - minValue) / range : 0;
+        double normalizedValue = range > 0
+            ? (currentValue - minValue) / range
+            : 0;
         double gaugeValue = (normalizedValue * 100).clamp(0.0, 100.0);
 
         return Center(
@@ -46,7 +49,11 @@ class GaugeWidget extends StatelessWidget {
             width: adaptiveGaugeSize,
             height: adaptiveGaugeSize,
             child: _buildGauge(
-                adaptiveGaugeSize, gaugeValue, adaptiveFontSize, errorFontSize),
+              adaptiveGaugeSize,
+              gaugeValue,
+              adaptiveFontSize,
+              errorFontSize,
+            ),
           ),
         );
       },
@@ -54,7 +61,11 @@ class GaugeWidget extends StatelessWidget {
   }
 
   Widget _buildGauge(
-      double size, double gaugeValue, double fontSize, double errorFontSize) {
+    double size,
+    double gaugeValue,
+    double fontSize,
+    double errorFontSize,
+  ) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -98,9 +109,7 @@ class GaugeWidget extends StatelessWidget {
           background: gaugeAxisColor,
           segmentSpacing: 2,
         ),
-        progressBar: GaugeProgressBar.basic(
-          color: gaugeProgressColor,
-        ),
+        progressBar: GaugeProgressBar.basic(color: gaugeProgressColor),
         pointer: GaugePointer.needle(
           width: (size * 0.09).clamp(4.0, 20.0),
           height: (size * 0.35).clamp(15.0, 80.0),
@@ -112,7 +121,10 @@ class GaugeWidget extends StatelessWidget {
   }
 
   Widget _buildCenterDisplay(
-      double size, double fontSize, double errorFontSize) {
+    double size,
+    double fontSize,
+    double errorFontSize,
+  ) {
     return Container(
       width: size * 0.6,
       height: size * 0.6,

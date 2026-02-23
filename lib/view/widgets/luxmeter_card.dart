@@ -16,8 +16,9 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
-    LuxMeterStateProvider provider =
-        Provider.of<LuxMeterStateProvider>(context);
+    LuxMeterStateProvider provider = Provider.of<LuxMeterStateProvider>(
+      context,
+    );
     double currentLux = provider.getCurrentLux();
     double minLux = provider.getMinLux();
     double maxLux = provider.getMaxLux();
@@ -31,9 +32,7 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
 
     return Card(
       margin: EdgeInsets.all(cardMargin),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 1,
       child: Container(
         decoration: BoxDecoration(
@@ -50,12 +49,13 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
                     Expanded(
                       flex: 40,
                       child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentLux,
-                          minValue: 0,
-                          maxValue: 10000,
-                          unit: 'Lx',
-                          currentValueFontSize: luxValueFontSize),
+                        gaugeSize: gaugeSize,
+                        currentValue: currentLux,
+                        minValue: 0,
+                        maxValue: 10000,
+                        unit: 'Lx',
+                        currentValueFontSize: luxValueFontSize,
+                      ),
                     ),
                     Expanded(
                       flex: 60,
@@ -87,12 +87,13 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
                     Expanded(
                       flex: screenWidth < 500 ? 60 : 65,
                       child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentLux,
-                          minValue: 0,
-                          maxValue: 10000,
-                          unit: 'Lx',
-                          currentValueFontSize: luxValueFontSize),
+                        gaugeSize: gaugeSize,
+                        currentValue: currentLux,
+                        minValue: 0,
+                        maxValue: 10000,
+                        unit: 'Lx',
+                        currentValueFontSize: luxValueFontSize,
+                      ),
                     ),
                   ],
                 );
