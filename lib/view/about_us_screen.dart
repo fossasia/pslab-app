@@ -19,7 +19,8 @@ Widget buildContactList(List<Map<String, dynamic>> items) {
     physics: const NeverScrollableScrollPhysics(),
     shrinkWrap: true,
     itemCount: items.length,
-    separatorBuilder: (_, __) => const Divider(thickness: 0.5, height: 1),
+    separatorBuilder: (context, index) =>
+        const Divider(thickness: 0.5, height: 1),
     itemBuilder: (context, index) {
       final item = items[index];
       return ListTile(

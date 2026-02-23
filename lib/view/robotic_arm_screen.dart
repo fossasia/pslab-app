@@ -83,7 +83,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
       barrierDismissible: true,
       barrierLabel: appLocalizations.angleDialog,
       transitionDuration: const Duration(milliseconds: 200),
-      pageBuilder: (context, _, __) {
+      pageBuilder: (context, animation, secondaryAnimation) {
         return SafeArea(
           child: AngleInputTopDialog(
             index: index,
