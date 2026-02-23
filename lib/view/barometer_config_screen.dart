@@ -52,6 +52,23 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
           statusBarBrightness: Brightness.dark,
         ),
         backgroundColor: primaryRed,
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pushReplacementNamed(context, '/barometer');
+                }
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                color: appBarContentColor,
+              ),
+            );
+          },
+        ),
         title: Text(
           appLocalizations.barometerConfig,
           style: TextStyle(

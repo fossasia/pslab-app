@@ -1048,6 +1048,18 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setFourierTransform(bool enabled) {
+    isFourierTransformSelected = enabled;
+
+    if (!enabled) {
+      oscilloscopeAxesScale.setYAxisScaleMax(oscilloscopeAxesScale.yAxisScale);
+      oscilloscopeAxesScale.setYAxisScaleMin(-oscilloscopeAxesScale.yAxisScale);
+      oscilloscopeAxesScale.setXAxisScale(timebase);
+    }
+
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _monitor = false;

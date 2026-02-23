@@ -1402,14 +1402,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get barometerHighLimitHint =>
-      'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)';
+      'Please provide the maximum limit of atm value to be recorded (0 atm to 1.10 atm)';
 
   @override
   String get gyroscopeConfigurations => 'Gyroscope Configurations';
 
   @override
   String get gyroscopeHighLimitHint =>
-      'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)';
+      'Please provide the maximum limit of angular velocity value to be recorded (0 rad/s to 1000 rad/s)';
 
   @override
   String get accelerometerConfigurations => 'Accelerometer Configurations';
@@ -1420,7 +1420,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get accelerometerHighLimitHint =>
-      'Please provide the maximum limit of lux value to be recorded';
+      'Please provide the maximum limit of acceleration value to be recorded';
 
   @override
   String get roboticArmIntro =>
@@ -1874,6 +1874,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get ccs811AirQuality => 'CCS811 Air Quality';
+
+  @override
+  String get meterPerSecondSquared => 'm/s²';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

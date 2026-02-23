@@ -35,12 +35,11 @@ class AccelerometerStateProvider extends ChangeNotifier {
   bool get isRecording => _isRecording;
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
-
-  late AccelerometerConfigProvider _configProvider;
+  AccelerometerConfigProvider? _configProvider;
   StreamSubscription? _locationStream;
   Position? currentPosition;
   Function? onPlaybackEnd;
-
+  double? get _currentLimit => _configProvider?.config.highLimit.toDouble();
   void setConfigProvider(AccelerometerConfigProvider configProvider) {
     _configProvider = configProvider;
   }
@@ -212,9 +211,25 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final x = _accelerometerEvent.x;
-    final y = _accelerometerEvent.y;
-    final z = _accelerometerEvent.z;
+    final limit = _currentLimit;
+
+    final bool shouldClip = limit != null && !_isPlayingBack;
+
+    final x = (shouldClip && _accelerometerEvent.x > limit)
+        ? limit
+        : _accelerometerEvent.x;
+
+    final y = (shouldClip && _accelerometerEvent.y > limit)
+        ? limit
+        : _accelerometerEvent.y;
+
+    final z = (shouldClip && _accelerometerEvent.z > limit)
+        ? limit
+        : _accelerometerEvent.z;
+
+    _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
+
+    _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
@@ -224,10 +239,10 @@ class AccelerometerStateProvider extends ChangeNotifier {
         x.toStringAsFixed(6),
         y.toStringAsFixed(6),
         z.toStringAsFixed(6),
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.latitude.toString() ?? 0
             : 0,
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
             : 0
       ]);
@@ -262,7 +277,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   Future<void> startRecording() async {
-    if (_configProvider.config.includeLocationData) {
+    if (_configProvider!.config.includeLocationData) {
       await _startGeoLocationUpdates();
     }
     _isRecording = true;

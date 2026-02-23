@@ -12,6 +12,7 @@ import 'app_localizations_fr.dart';
 import 'app_localizations_he.dart';
 import 'app_localizations_hi.dart';
 import 'app_localizations_id.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_ja.dart';
 import 'app_localizations_nb.dart';
 import 'app_localizations_pt.dart';
@@ -113,6 +114,7 @@ abstract class AppLocalizations {
     Locale('he'),
     Locale('hi'),
     Locale('id'),
+    Locale('it'),
     Locale('ja'),
     Locale('nb'),
     Locale('pt'),
@@ -2701,7 +2703,7 @@ abstract class AppLocalizations {
   /// No description provided for @barometerHighLimitHint.
   ///
   /// In en, this message translates to:
-  /// **'Please provide the maximum limit of lux value to be recorded (0 atm to 1.10 atm)'**
+  /// **'Please provide the maximum limit of atm value to be recorded (0 atm to 1.10 atm)'**
   String get barometerHighLimitHint;
 
   /// No description provided for @gyroscopeConfigurations.
@@ -2713,7 +2715,7 @@ abstract class AppLocalizations {
   /// No description provided for @gyroscopeHighLimitHint.
   ///
   /// In en, this message translates to:
-  /// **'Please provide the maximum limit of lux value to be recorded (0 rad/s to 1000 rad/s)'**
+  /// **'Please provide the maximum limit of angular velocity value to be recorded (0 rad/s to 1000 rad/s)'**
   String get gyroscopeHighLimitHint;
 
   /// No description provided for @accelerometerConfigurations.
@@ -2731,7 +2733,7 @@ abstract class AppLocalizations {
   /// No description provided for @accelerometerHighLimitHint.
   ///
   /// In en, this message translates to:
-  /// **'Please provide the maximum limit of lux value to be recorded'**
+  /// **'Please provide the maximum limit of acceleration value to be recorded'**
   String get accelerometerHighLimitHint;
 
   /// No description provided for @roboticArmIntro.
@@ -3537,6 +3539,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CCS811 Air Quality'**
   String get ccs811AirQuality;
+
+  /// No description provided for @meterPerSecondSquared.
+  ///
+  /// In en, this message translates to:
+  /// **'m/s²'**
+  String get meterPerSecondSquared;
 }
 
 class _AppLocalizationsDelegate
@@ -3557,6 +3565,7 @@ class _AppLocalizationsDelegate
     'he',
     'hi',
     'id',
+    'it',
     'ja',
     'nb',
     'pt',
@@ -3611,6 +3620,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsHi();
     case 'id':
       return AppLocalizationsId();
+    case 'it':
+      return AppLocalizationsIt();
     case 'ja':
       return AppLocalizationsJa();
     case 'nb':

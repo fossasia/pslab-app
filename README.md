@@ -7,6 +7,7 @@ Repository for the PSLab Android App for performing experiments with the [Pocket
 ![GitHub repo size](https://img.shields.io/github/repo-size/fossasia/pslab-app)
 [![Gitter](https://badges.gitter.im/fossasia/pslab.svg)](https://gitter.im/fossasia/pslab?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Twitter Follow](https://img.shields.io/twitter/follow/pslabio.svg?style=social&label=Follow&maxAge=2592000?style=flat-square)](https://twitter.com/pslabio)
+[![Translation status](https://hosted.weblate.org/widgets/fossasia/-/pslab-app/svg-badge.svg)](https://hosted.weblate.org/projects/fossasia/pslab-app/)
 
 This repository holds the Android App for performing experiments with [PSLab](https://pslab.io/). PSLab is a tiny pocket science lab that provides an array of equipment for doing science and engineering experiments. It can function like an oscilloscope, waveform generator, frequency counter, programmable voltage and current source and also as a data logger. Our website is at https://pslab.io.
 
@@ -112,10 +113,10 @@ Sign up for the latest updates and test new features early by joining our beta p
 | Logical Analyzer       | Captures and displays signals from digital system                 | :heavy_check_mark: |
 | Wave Generator         | Generates arbitrary analog and digital waveforms                  | :heavy_check_mark: |
 | Power Source           | Generates programmable voltage and currents	                     | :heavy_check_mark: |
-| Luxmeter              | Measures the ambient light intensity                              | :heavy_check_mark: |
-| Barometer             | Measures the Pressure                                             | :heavy_check_mark: |
+| Luxmeter              | Measures the ambient light intensity                               | :heavy_check_mark: |
+| Barometer             | Measures the Pressure                                              | :heavy_check_mark: |
 | Accelerometer          | Measures the acceleration of the device                           | :heavy_check_mark: |
-| Gyrometer             | Measures the rate of rotation                                     | :heavy_check_mark: |
+| Gyrometer             | Measures the rate of rotation                                      | :heavy_check_mark: |
 | Compass                | Measures the absolute rotation relative to earth magnetic poles   | :heavy_check_mark: |
 | Thermometer            | Measures the ambient temperature                                  | :heavy_check_mark: |
 | Gas Sensor             | Detects gases, including NH3, NOx, alcohol, benzene, smoke and CO2| :heavy_check_mark: |
@@ -135,14 +136,15 @@ This is a **Flutter cross-platform application** that supports:
 
 The app interfaces with PSLab hardware devices via USB and provides scientific instrument functionality.
 
-### Required Software Versions
+### Required Software 
 
-**Flutter & Dart:**
-- Flutter: `>=3.35.4`
-- Dart: `>=3.9.0 <4.0.0`
+**Flutter & Dart**
+- Flutter (stable channel)
+- Dart (bundled with Flutter)
 
-**Java:**
-- Java 17 (required for Android Kotlin compilation)
+**Java**
+- Java (LTS version required for Android builds)
+
 
 ### Flutter SDK Setup
 
@@ -153,16 +155,12 @@ brew install --cask flutter
 ```
 
 ##### Linux
-```
-mkdir ~/flutter && cd ~/flutter
-wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.35.4-stable.tar.xz
-tar -xf flutter_linux_3.35.4-stable.tar.xz
-rm -rf flutter_linux_3.35.4-stable.tar.xz
-echo 'export PATH="$HOME/flutter/flutter/bin:$PATH"' >> ~/.bash_profile
-```
 
+Follow the official Flutter setup guide for Linux: <https://docs.flutter.dev/platform-integration/linux/setup>
 #### Windows
-Download from [here](https://docs.flutter.dev/install)
+
+Follow the official Flutter setup guide for Windows: <https://docs.flutter.dev/platform-integration/windows/setup>
+
 ### Flutter development setup (VS Code)
 
 The instructions below explain how to install the Flutter SDK, set up Visual Studio Code with the Flutter and Dart extensions, and run the project using `flutter run`. These steps avoid Android Studio-specific instructions and focus on a minimal, cross-platform Flutter workflow.
@@ -172,7 +170,7 @@ Prerequisites
 - A working internet connection to download the Flutter SDK and extensions.
 
 1) Install the Flutter SDK
-- Download the Flutter SDK from https://flutter.dev and follow the platform-specific instructions. On Windows, extract the SDK (for example to `C:\src\flutter`) and add the `bin` folder to your PATH environment variable. On macOS/Linux, follow the steps on the Flutter website for adding `flutter` to your PATH.
+- Download the Flutter SDK from https://docs.flutter.dev/get-started/install and follow the platform-specific instructions. On Windows, extract the SDK (for example to `C:\src\flutter`) and add the `bin` folder to your PATH environment variable. On macOS/Linux, follow the steps on the Flutter website for adding `flutter` to your PATH.
 - After installation, open a terminal (PowerShell on Windows) and run:
 
 ```powershell
@@ -215,61 +213,6 @@ Notes and troubleshooting
 - Building Android APKs or running on Android devices may require Android SDK tools. If you need Android targets later, install the Android SDK separately; Android Studio is not required for Flutter development but can simplify SDK installation.
 - For fast iteration in VS Code, use the Debug panel (press F5) or the Flutter toolbar (Run and Debug).
 
----
-
-### Flutter development setup (VS Code)
-
-The instructions below explain how to install the Flutter SDK, set up Visual Studio Code with the Flutter and Dart extensions, and run the project using `flutter run`. These steps avoid Android Studio-specific instructions and focus on a minimal, cross-platform Flutter workflow.
-
-Prerequisites
-- A supported operating system (Windows, macOS, or Linux).
-- A working internet connection to download the Flutter SDK and extensions.
-
-1) Install the Flutter SDK
-- Download the Flutter SDK from https://flutter.dev and follow the platform-specific instructions. On Windows, extract the SDK (for example to `C:\src\flutter`) and add the `bin` folder to your PATH environment variable. On macOS/Linux, follow the steps on the Flutter website for adding `flutter` to your PATH.
-- After installation, open a terminal (PowerShell on Windows) and run:
-
-```powershell
-flutter --version
-flutter doctor
-```
-
-Resolve any missing components suggested by `flutter doctor`. If you plan to build desktop apps, follow the platform-specific toolchain steps suggested by `flutter doctor` (e.g., install Visual Studio on Windows for Windows desktop builds).
-
-2) Set up Visual Studio Code
-- Install VS Code (if you don't have it) and open the project folder in VS Code.
-- Install the following extensions from the Extensions view:
-  - Flutter (includes the Dart extension)
-  - Dart (if the Flutter extension did not install it automatically)
-- (Optional) If VS Code cannot find the Flutter SDK, set the `dart.flutterSdkPath` setting to the SDK location in your VS Code settings.
-
-3) Prepare the project and run
-- In the project root, fetch packages and generate any code:
-
-```powershell
-flutter pub get
-flutter pub run build_runner build --delete-conflicting-outputs  # if the project uses code generation
-```
-
-- Run the app on the default device (emulator, connected device, or desktop target):
-
-```powershell
-flutter run
-```
-
-If you want to run on a specific device, list available devices and pass `-d`:
-
-```powershell
-flutter devices
-flutter run -d windows   # example: run on Windows desktop
-```
-
-Notes and troubleshooting
-- If you see issues related to missing SDKs or tools, run `flutter doctor` and follow the recommended fixes.
-- Building Android APKs or running on Android devices may require Android SDK tools. If you need Android targets later, install the Android SDK separately; Android Studio is not required for Flutter development but can simplify SDK installation.
-- For fast iteration in VS Code, use the Debug panel (press F5) or the Flutter toolbar (Run and Debug).
-
----
 
 ### Application Flavors
 
@@ -299,17 +242,16 @@ export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 ```
 
 **Android Requirements:**
-- Compile SDK: 36 (Android 14)
-- Min SDK: 24 (Android 7.0)
-- Target SDK: 36 (Android 14)
-- Java 17 compatibility (configured in build.gradle)
+- Android SDK (stable)
+- Java (LTS version)
+- See Android configuration in the project Gradle files.
 
 ### iOS Development Setup (macOS only)
 
 **Requirements:**
-- iOS 14.0+ (specified in Podfile)
-- Xcode 12.0+
+- Xcode
 - CocoaPods
+- iOS deployment target is defined in the project configuration.
 
 ```bash
 # Install CocoaPods
@@ -359,7 +301,7 @@ cd ios && pod install && cd ..
 # Android - no additional steps needed
 ```
 
-### Required Permissions
+### Android permissions used
 
 The app requires these permissions (configured in AndroidManifest.xml):
 
@@ -374,14 +316,14 @@ The app requires these permissions (configured in AndroidManifest.xml):
 ### Key Dependencies
 
 **Hardware Communication:**
-- `usb_serial: ^0.5.0` - USB device communication
-- `flusbserial: ^0.3.0` - Additional USB serial support
+- usb_serial
+- flusbserial
 
 **Sensors & Hardware:**
-- `sensors_plus: ^6.1.2` - Device sensors
-- `light: ^4.1.0` - Light sensor
-- `geolocator: ^14.0.2` - GPS functionality
-- `permission_handler: ^12.0.1` - Runtime permissions
+- sensors_plus
+- light
+- geolocator
+- permission_handler
 
 **Audio Processing:**
 - `flutter_audio_capture` (Git dependency) - Audio capture for oscilloscope
@@ -451,7 +393,7 @@ flutter test integration_test/
    ```
 
 4. **Android build issues:**
-   - Ensure Java 17 is installed: `java -version`
+   - Ensure an LTS Java version is installed: java -version 
    - Clean build: `flutter clean && flutter pub get`
 
 5. **Git dependency issues:**
@@ -460,39 +402,64 @@ flutter test integration_test/
    flutter pub get
    ```
 
-**Verify Setup:**
-- `flutter doctor` shows no critical issues
-- `flutter build apk --debug` completes successfully
-- Tests pass: `flutter test` to the repository and click clone or download button.
-  4. From the dropdown that appeared, copy the link.
-  5. Paste the URL that you copied and press clone.
-  6. Android studio should now begin building the project with gradle.
-  7. Once this process is complete and Android Studio opens, check the Console for any build errors.
+### Verify Setup
 
- - _Note:_ If you receive a Gradle sync error titled, "failed to find ...", you should click on the link below the error message (if available) that says _Install missing platform(s) and sync project_ and allow Android studio to fetch you what is missing.
+Follow the steps below to confirm that your local development environment is correctly configured.
 
-  8. Once all build errors have been resolved, you should be all set to build the app and test it.
-  9. To Build the app, go to _Build>Make Project_ (or alternatively press the Make Project icon in the toolbar).
- 10. If the app was built successfully, you can test it by running it on either a real device or an emulated one by going to _Run>Run 'app'_ or pressing the Run icon in the toolbar.
+#### 1. Check Flutter installation
+```bash
+flutter doctor
+ ```
+Resolve any critical issues reported by the command.
 
-If you want build apk only, go to Build>Build apk and apk would be build and directory where apk is generated would be prompted by Android Studio.
+#### 2. Install dependencies and run tests
+```bash
+flutter pub get
+flutter test
+ ```
 
-You can't debug the usual way as PSLab device is connected to micro-USB port through OTG cable. So Android Device is not connected to PC through USB cable.
+#### 3. Run the application
+```bash
+flutter run
+ ```
+Run the app on a connected physical device, emulator, or desktop target.
 
-To debug over Wi-Fi follow the steps given in this [Blog](http://blog.fossasia.org/android-app-debugging-over-wifi-for-pslab/). 
+#### 4. (Optional) Using Android Studio
+If you prefer Android Studio:
+- Open the project directory in Android Studio.
+- Wait for the Gradle sync to complete.
+- Check the Build and Run windows for errors.
 
-* **Note :**
-If you built your own hardware, change VendorID and/or ProductID in [CommunicationHandler.java](https://github.com/fossasia/pslab-app/blob/master/app/src/main/java/io/pslab/communication/CommunicationHandler.java).
+Note: If you encounter a Gradle sync error such as
+“failed to find …”, use the suggested action (for example, Install missing platform(s) and sync project) to allow Android Studio to download the required components.
 
-### Permissions Required
+Once the app builds successfully and launches on your target device or emulator, the setup is complete.
 
-1. Record_Audio : It is required for oscilloscope to accept inputs from the phone inbuilt microphone. You can find its implementation in [AudioJack.java](https://github.com/fossasia/pslab-app/blob/development/app/src/main/java/io/pslab/others/AudioJack.java).
-2. Access_Fine_Location and Internet : It is required for use in lux meter and compass to get the coordinates for tagging the data on the map. You can find its implementation in [GPSLogger.java](https://github.com/fossasia/pslab-app/blob/development/app/src/main/java/io/pslab/others/GPSLogger.java).
-3. Write_External_Storage : It is required for storing log files from instruments that can be transferred out for future analysis.
-4. Read_External_Storage : While writing logs in the storage, [CSVLogger.java](https://github.com/fossasia/pslab-app/blob/development/app/src/main/java/io/pslab/others/CSVLogger.java) first checks whether there is any CSVLogger directory exist or not and that require this read permission.  
+The currently supported Flutter, Dart, and platform versions are defined in the project configuration files (for example `pubspec.yaml`, Android Gradle files, and iOS project settings).
+
+### Permission manifests
+
+Permissions are declared in the platform manifests:
+- Android: android/app/src/main/AndroidManifest.xml
+- iOS: ios/Runner/Info.plist
+
+The app may request permissions at runtime depending on the instrument/features being used (e.g., location, microphone, storage, USB). 
 
 ## Setup to use PSLab with Android App
 To use PSLab device with Android, you simply need an OTG cable, an Android Device with USB Host feature enabled ( most modern phones have OTG support ) and PSLab Android App. Connect PSLab device to Android Phone via OTG cable. Rest is handled by App itself.
+
+## Translations
+
+We use [Weblate](https://hosted.weblate.org/projects/fossasia/pslab-app/) for managing translations.
+
+If you want to help translate the app into your language, please visit the [PSLab App project on Weblate](https://hosted.weblate.org/projects/fossasia/pslab-app/).
+
+### Technical Details
+The app uses the standard Flutter `flutter_localizations` package.
+* **Location:** Translation files are stored in `lib/l10n/` in `.arb` (Application Resource Bundle) format.
+* **Template:** The source of truth is `lib/l10n/app_en.arb`.
+* **Contribution:** While we prefer translations submitted via Weblate to avoid merge conflicts, you can also manually edit the `.arb` files and submit a Pull Request.
+
 
 ## Contributions Best Practices
 
