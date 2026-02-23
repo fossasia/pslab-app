@@ -75,7 +75,7 @@ import 'app_localizations_zh.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -98,11 +98,11 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
@@ -121,7 +121,7 @@ abstract class AppLocalizations {
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
-    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant')
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
   ];
 
   /// No description provided for @oscilloscope.
@@ -661,32 +661,20 @@ abstract class AppLocalizations {
   /// No description provided for @step4ConnectWireless.
   ///
   /// In en, this message translates to:
-  /// **'4. PSLab can also be connected wirelessly (Bluetooth or Wi-Fi) if the option is present.'**
+  /// **'4. PSLab can also be connected wirelessly via Wi-Fi if the option is present.'**
   String get step4ConnectWireless;
 
-  /// No description provided for @bluetoothWifiConnection.
+  /// No description provided for @wifiConnection.
   ///
   /// In en, this message translates to:
-  /// **'Connect using Bluetooth or Wi-Fi'**
-  String get bluetoothWifiConnection;
-
-  /// No description provided for @bluetooth.
-  ///
-  /// In en, this message translates to:
-  /// **'Bluetooth'**
-  String get bluetooth;
+  /// **'Connect using Wi-Fi'**
+  String get wifiConnection;
 
   /// No description provided for @wifi.
   ///
   /// In en, this message translates to:
   /// **'Wi-Fi'**
   String get wifi;
-
-  /// No description provided for @bluetoothComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Bluetooth connection coming soon'**
-  String get bluetoothComingSoon;
 
   /// No description provided for @connectingToWifi.
   ///
@@ -1471,7 +1459,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqHowToConnectAnswer.
   ///
   /// In en, this message translates to:
-  /// **'To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip or a Bluetooth chip and communicate through these gateways using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.'**
+  /// **'To connect to the device you need an OTG USB cable (OTG = On the go) which is a USB cable that allows connected devices to switch back and forth between the roles of host and device. USB cables that are not OTG compatible will NOT work. It is also possible to extend the PSLab with an ESP WiFi chip and communicate through this gateway using the Android app. You can refer to the hardware developer documentation and code on GitHub for more details here.'**
   String get faqHowToConnectAnswer;
 
   /// No description provided for @faqReportBugAnswer.
@@ -3519,6 +3507,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Compare timestamps between channels to calculate time intervals.'**
   String get logicAnalyzerMeasurementBulletPoint3;
+
+  /// No description provided for @sht21Config.
+  ///
+  /// In en, this message translates to:
+  /// **'SHT21 Configurations'**
+  String get sht21Config;
+
+  /// No description provided for @sht21.
+  ///
+  /// In en, this message translates to:
+  /// **'SHT21'**
+  String get sht21;
+
+  /// No description provided for @humidity.
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity'**
+  String get humidity;
+
+  /// No description provided for @humidityUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'%'**
+  String get humidityUnitLabel;
+
+  /// No description provided for @ccs811AirQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'CCS811 Air Quality'**
+  String get ccs811AirQuality;
 }
 
 class _AppLocalizationsDelegate
@@ -3532,21 +3550,21 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) => <String>[
-        'de',
-        'en',
-        'es',
-        'fr',
-        'he',
-        'hi',
-        'id',
-        'ja',
-        'nb',
-        'pt',
-        'ru',
-        'uk',
-        'vi',
-        'zh'
-      ].contains(locale.languageCode);
+    'de',
+    'en',
+    'es',
+    'fr',
+    'he',
+    'hi',
+    'id',
+    'ja',
+    'nb',
+    'pt',
+    'ru',
+    'uk',
+    'vi',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -3610,8 +3628,9 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }
