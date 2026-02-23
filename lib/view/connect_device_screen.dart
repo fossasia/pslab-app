@@ -22,6 +22,16 @@ class ConnectDeviceScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeScreenState();
 }
 
+Widget _stepText(String text) {
+  return Text(
+    text,
+    style: const TextStyle(
+      fontSize: 14,
+      height: 1.35,
+    ),
+  );
+}
+
 class _HomeScreenState extends State<ConnectDeviceScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool _isConnectingWifi = false;
@@ -104,7 +114,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     Center(
                       child: Container(
                         margin: const EdgeInsets.only(
-                            top: 20, bottom: 60, left: 40, right: 40),
+                            top: 20, bottom: 24, left: 40, right: 40),
                         child: Text(
                           provider.pslabIsConnected
                               ? '${appLocalizations.deviceConnected}\n\n${provider.pslabVersionID}'
@@ -120,53 +130,40 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     ),
                     Visibility(
                       visible: !provider.pslabIsConnected,
-                      child: Container(
-                        margin: const EdgeInsets.only(
-                            left: 40, right: 40, bottom: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: Text(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Theme.of(context)
+                                  .dividerColor
+                                  .withOpacity(0.6),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
                                 appLocalizations.stepsToConnectTitle,
-                                textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              appLocalizations.step1ConnectMicroUsb,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              appLocalizations.step2ConnectOtg,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              appLocalizations.step3ConnectPhone,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              appLocalizations.step4ConnectWireless,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
+                              const SizedBox(height: 12),
+                              _stepText(appLocalizations.step1ConnectMicroUsb),
+                              const SizedBox(height: 8),
+                              _stepText(appLocalizations.step2ConnectOtg),
+                              const SizedBox(height: 8),
+                              _stepText(appLocalizations.step3ConnectPhone),
+                              const SizedBox(height: 8),
+                              _stepText(appLocalizations.step4ConnectWireless),
+                            ],
+                          ),
                         ),
                       ),
                     ),
