@@ -139,9 +139,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                             color: Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Theme.of(context)
-                                  .dividerColor
-                                  .withOpacity(0.6),
+                              color: Theme.of(context).dividerColor.withValues(alpha: 0.6),
                             ),
                           ),
                           child: Column(
