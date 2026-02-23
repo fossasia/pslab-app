@@ -2,9 +2,9 @@
 
 Repository for the PSLab Android App for performing experiments with the [Pocket Science Lab](https://pslab.io) open-hardware platform.
 
-[![Build](https://github.com/fossasia/pslab-android/actions/workflows/pull-request.yml/badge.svg)](https://github.com/fossasia/pslab-android/actions/workflows/pull-request.yml)
+[![Build](https://github.com/fossasia/pslab-app/actions/workflows/pull-request.yml/badge.svg)](https://github.com/fossasia/pslab-app/actions/workflows/pull-request.yml)
 [![Mailing List](https://img.shields.io/badge/Mailing%20List-FOSSASIA-blue.svg)](https://groups.google.com/forum/#!forum/pslab-fossasia)
-![GitHub repo size](https://img.shields.io/github/repo-size/fossasia/pslab-android)
+![GitHub repo size](https://img.shields.io/github/repo-size/fossasia/pslab-app)
 [![Gitter](https://badges.gitter.im/fossasia/pslab.svg)](https://gitter.im/fossasia/pslab?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Twitter Follow](https://img.shields.io/twitter/follow/pslabio.svg?style=social&label=Follow&maxAge=2592000?style=flat-square)](https://twitter.com/pslabio)
 
@@ -482,14 +482,14 @@ You can't debug the usual way as PSLab device is connected to micro-USB port thr
 To debug over Wi-Fi follow the steps given in this [Blog](http://blog.fossasia.org/android-app-debugging-over-wifi-for-pslab/). 
 
 * **Note :**
-If you built your own hardware, change VendorID and/or ProductID in [CommunicationHandler.java](https://github.com/fossasia/pslab-android/blob/master/app/src/main/java/io/pslab/communication/CommunicationHandler.java).
+If you built your own hardware, change VendorID and/or ProductID in [CommunicationHandler.java](https://github.com/fossasia/pslab-app/blob/master/app/src/main/java/io/pslab/communication/CommunicationHandler.java).
 
 ### Permissions Required
 
-1. Record_Audio : It is required for oscilloscope to accept inputs from the phone inbuilt microphone. You can find its implementation in [AudioJack.java](https://github.com/fossasia/pslab-android/blob/development/app/src/main/java/io/pslab/others/AudioJack.java).
-2. Access_Fine_Location and Internet : It is required for use in lux meter and compass to get the coordinates for tagging the data on the map. You can find its implementation in [GPSLogger.java](https://github.com/fossasia/pslab-android/blob/development/app/src/main/java/io/pslab/others/GPSLogger.java).
+1. Record_Audio : It is required for oscilloscope to accept inputs from the phone inbuilt microphone. You can find its implementation in [AudioJack.java](https://github.com/fossasia/pslab-app/blob/development/app/src/main/java/io/pslab/others/AudioJack.java).
+2. Access_Fine_Location and Internet : It is required for use in lux meter and compass to get the coordinates for tagging the data on the map. You can find its implementation in [GPSLogger.java](https://github.com/fossasia/pslab-app/blob/development/app/src/main/java/io/pslab/others/GPSLogger.java).
 3. Write_External_Storage : It is required for storing log files from instruments that can be transferred out for future analysis.
-4. Read_External_Storage : While writing logs in the storage, [CSVLogger.java](https://github.com/fossasia/pslab-android/blob/development/app/src/main/java/io/pslab/others/CSVLogger.java) first checks whether there is any CSVLogger directory exist or not and that require this read permission.  
+4. Read_External_Storage : While writing logs in the storage, [CSVLogger.java](https://github.com/fossasia/pslab-app/blob/development/app/src/main/java/io/pslab/others/CSVLogger.java) first checks whether there is any CSVLogger directory exist or not and that require this read permission.  
 
 ## Setup to use PSLab with Android App
 To use PSLab device with Android, you simply need an OTG cable, an Android Device with USB Host feature enabled ( most modern phones have OTG support ) and PSLab Android App. Connect PSLab device to Android Phone via OTG cable. Rest is handled by App itself.
@@ -517,7 +517,7 @@ Despite any reason, follow the steps given below to squash all commits into one 
 
   * Setup remote to upstream branch if not set before
 
-`$ git remote add upstream https://github.com/fossasia/pslab-android.git`
+`$ git remote add upstream https://github.com/fossasia/pslab-app.git`
 
   * Check into the branch related to the pull request
 

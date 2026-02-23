@@ -36,7 +36,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   late LuxMeterConfigProvider _configProvider;
   final CsvService _csvService = CsvService();
   bool _showGuide = false;
-  static const imagePath = 'assets/images/bh1750_schematic.png';
+  static const imagePath = 'assets/images/bh1750_schematic_.png';
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   void _showInstrumentGuide() {

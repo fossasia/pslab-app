@@ -10,10 +10,13 @@ import '../theme/colors.dart';
 
 class ConnectDeviceScreen extends StatefulWidget {
   const ConnectDeviceScreen({super.key});
-  final String iconUsbDisconnected =
+
+  static const String iconUsbDisconnected =
       'assets/icons/icons_usb_disconnected_100.png';
-  final String iconUsbConnected = 'assets/icons/icons8_usb_connected_100.png';
-  final String iconWifiConnected = 'assets/icons/icons8_wifi_connected_100.png';
+  static const String iconUsbConnected =
+      'assets/icons/icons8_usb_connected_100.png';
+  static const String iconWifiConnected =
+      'assets/icons/icons8_wifi_connected_100.png';
 
   @override
   State<StatefulWidget> createState() => _HomeScreenState();
@@ -21,6 +24,56 @@ class ConnectDeviceScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<ConnectDeviceScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  bool _isConnectingWifi = false;
+
+  void _showSnackBar(String message, {Color? backgroundColor}) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
+  }
+
+  Future<void> _connectWifi(BoardStateProvider provider) async {
+    setState(() {
+      _isConnectingWifi = true;
+    });
+
+    _showSnackBar(appLocalizations.connectingToWifi);
+
+    try {
+      await provider.initializeWiFi();
+
+      if (!mounted) return;
+
+      if (provider.pslabIsConnected) {
+        _showSnackBar(
+          appLocalizations.wifiConnectionSuccess,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        );
+      } else {
+        _showSnackBar(
+          appLocalizations.wifiConnectionFailed,
+          backgroundColor: Theme.of(context).colorScheme.error,
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      _showSnackBar(
+        appLocalizations.wifiConnectionFailed,
+        backgroundColor: Theme.of(context).colorScheme.error,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isConnectingWifi = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
@@ -41,9 +94,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       child: Image.asset(
                         provider.pslabIsConnected
                             ? (provider.scienceLabCommon.isWiFiConnected()
-                                ? widget.iconWifiConnected
-                                : widget.iconUsbConnected)
-                            : widget.iconUsbDisconnected,
+                                ? ConnectDeviceScreen.iconWifiConnected
+                                : ConnectDeviceScreen.iconUsbConnected)
+                            : ConnectDeviceScreen.iconUsbDisconnected,
                         width: 80,
                         height: 80,
                       ),
@@ -66,7 +119,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       ),
                     ),
                     Visibility(
-                      visible: provider.pslabIsConnected ? false : true,
+                      visible: !provider.pslabIsConnected,
                       child: Container(
                         margin: const EdgeInsets.only(
                             left: 40, right: 40, bottom: 20),
@@ -118,10 +171,10 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       ),
                     ),
                     Visibility(
-                      visible: provider.pslabIsConnected ? false : true,
+                      visible: !provider.pslabIsConnected,
                       child: Center(
                         child: Text(
-                          appLocalizations.bluetoothWifiConnection,
+                          appLocalizations.wifiConnection,
                           style: const TextStyle(
                             fontSize: 14,
                           ),
@@ -129,51 +182,36 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       ),
                     ),
                     Visibility(
-                      visible: provider.pslabIsConnected ? false : true,
+                      visible: !provider.pslabIsConnected,
                       child: Container(
                         margin: const EdgeInsets.only(top: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
-                                ),
-                                backgroundColor: primaryRed,
-                                foregroundColor: buttonForegroundColor,
-                              ),
-                              onPressed: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Text(
-                                  appLocalizations.bluetooth.toUpperCase(),
-                                  style: TextStyle(color: buttonTextColor),
-                                ),
-                              ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
                             ),
-                            const SizedBox(width: 20),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
-                                ),
-                                backgroundColor: primaryRed,
-                                foregroundColor: buttonForegroundColor,
-                              ),
-                              onPressed: () async {
-                                await provider.initializeWiFi();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Text(
-                                  appLocalizations.wifi.toUpperCase(),
-                                  style: TextStyle(color: buttonTextColor),
-                                ),
-                              ),
-                            ),
-                          ],
+                            backgroundColor: primaryRed,
+                            foregroundColor: buttonForegroundColor,
+                          ),
+                          onPressed: _isConnectingWifi
+                              ? null
+                              : () => _connectWifi(provider),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: _isConnectingWifi
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Text(
+                                    appLocalizations.wifi.toUpperCase(),
+                                    style: TextStyle(color: buttonTextColor),
+                                  ),
+                          ),
                         ),
                       ),
                     ),

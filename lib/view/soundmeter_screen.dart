@@ -29,7 +29,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
   late SoundMeterStateProvider _provider;
   late SoundMeterConfigProvider _configProvider;
   bool _showGuide = false;
-  static const imagePath = 'assets/images/bh1750_schematic.png';
+  static const imagePath = 'assets/images/bh1750_schematic_.png';
 
   void _showInstrumentGuide() {
     setState(() {
