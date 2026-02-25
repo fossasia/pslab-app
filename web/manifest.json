@@ -1,13 +1,15 @@
 {
-    "name": "pslab",
-    "short_name": "pslab",
-    "start_url": ".",
+    "name": "PSLab",
+    "short_name": "PSLab",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "PSLab - Pocket Science Lab web application for controlling and analyzing experiments.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "lang": "en",
     "icons": [
         {
             "src": "icons/Icon-192.png",
