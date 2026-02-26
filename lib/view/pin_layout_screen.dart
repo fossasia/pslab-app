@@ -40,6 +40,7 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
     super.didChangeDependencies();
     _pinDetails = PinDetails.getAllPins(context);
   }
+
   Future<void> _loadColorMap() async {
     String path = isFrontSide
         ? 'assets/images/pslab_v6_top_colormap.png'
@@ -64,7 +65,8 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
   void _handleTap(TapUpDetails details) {
     if (_colorMapImage == null) return;
 
-    final RenderBox renderBox = _imageKey.currentContext!.findRenderObject() as RenderBox;
+    final RenderBox renderBox =
+        _imageKey.currentContext!.findRenderObject() as RenderBox;
     final Size renderedSize = renderBox.size;
     final Offset localPosition = details.localPosition;
 
@@ -74,16 +76,16 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
     int pixelX = (localPosition.dx * scaleX).toInt();
     int pixelY = (localPosition.dy * scaleY).toInt();
 
-    if (pixelX >= 0 && pixelX < _colorMapImage!.width &&
-        pixelY >= 0 && pixelY < _colorMapImage!.height) {
-
+    if (pixelX >= 0 &&
+        pixelX < _colorMapImage!.width &&
+        pixelY >= 0 &&
+        pixelY < _colorMapImage!.height) {
       final img.Pixel pixel = _colorMapImage!.getPixel(pixelX, pixelY);
 
       if (pixel.a == 0) return;
 
       Color tappedColor = Color.fromARGB(
-          255, pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt()
-      );
+          255, pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt());
 
       _findAndDisplayPin(tappedColor);
     }
@@ -127,7 +129,6 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
                   ),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -138,7 +139,6 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
                       color: pin.pinColor,
                       margin: const EdgeInsets.only(right: 16.0),
                     ),
-
                     Expanded(
                       child: Text(
                         pin.description,
@@ -152,7 +152,6 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
                   ],
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: SizedBox(
@@ -192,38 +191,38 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
         child: _colorMapImage == null
             ? CircularProgressIndicator(color: primaryRed)
             : InteractiveViewer(
-          minScale: 1.0,
-          maxScale: 6.0,
-          child: GestureDetector(
-            onTapUp: _handleTap,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Image.asset(
-                  isFrontSide
-                      ? 'assets/images/PSLab_v6_top.png'
-                      : 'assets/images/PSLab_v6_bottom.png',
-                  key: _imageKey,
-                  fit: BoxFit.contain,
-                ),
-                Opacity(
-                  opacity: 0.5,
-                  child: Image.asset(
-                    isFrontSide
-                        ? 'assets/images/pslab_v6_top_colormap.png'
-                        : 'assets/images/pslab_v6_bottom_colormap.png',
-                    fit: BoxFit.contain,
+                minScale: 1.0,
+                maxScale: 6.0,
+                child: GestureDetector(
+                  onTapUp: _handleTap,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        isFrontSide
+                            ? 'assets/images/PSLab_v6_top.png'
+                            : 'assets/images/PSLab_v6_bottom.png',
+                        key: _imageKey,
+                        fit: BoxFit.contain,
+                      ),
+                      Opacity(
+                        opacity: 0.5,
+                        child: Image.asset(
+                          isFrontSide
+                              ? 'assets/images/pslab_v6_top_colormap.png'
+                              : 'assets/images/pslab_v6_bottom_colormap.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }
-
 }
+
 img.Image? decodeImageInBackground(Uint8List bytes) {
   return img.decodeImage(bytes);
 }
