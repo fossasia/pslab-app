@@ -56,8 +56,7 @@ class PinDetails {
       PinDetails(l10n.pin_mic_name, l10n.pin_mic_desc, const Color(0xFF7F2AFF)),
       PinDetails(l10n.pin_frq_name, l10n.pin_frq_desc, const Color(0xFF9955FF)),
       PinDetails(l10n.pin_vol_name, l10n.pin_vol_desc, const Color(0xFFE5D5FF)),
-      PinDetails(
-          l10n.pin_cap_name, l10n.pin_cap_desc, const Color(0xFFB380FFB380FF)),
+      PinDetails(l10n.pin_cap_name, l10n.pin_cap_desc, const Color(0xFFB380FF)),
       PinDetails(l10n.pin_res_name, l10n.pin_res_desc, const Color(0xFFCCAAFF)),
     ];
   }
