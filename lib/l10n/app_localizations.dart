@@ -14,9 +14,12 @@ import 'app_localizations_hi.dart';
 import 'app_localizations_id.dart';
 import 'app_localizations_it.dart';
 import 'app_localizations_ja.dart';
+import 'app_localizations_ml.dart';
+import 'app_localizations_my.dart';
 import 'app_localizations_nb.dart';
 import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
+import 'app_localizations_te.dart';
 import 'app_localizations_uk.dart';
 import 'app_localizations_vi.dart';
 import 'app_localizations_zh.dart';
@@ -116,10 +119,13 @@ abstract class AppLocalizations {
     Locale('id'),
     Locale('it'),
     Locale('ja'),
+    Locale('ml'),
+    Locale('my'),
     Locale('nb'),
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ru'),
+    Locale('te'),
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
@@ -1637,6 +1643,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show Guide'**
   String get showGuide;
+
+  /// No description provided for @compassGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get compassGuideTitle;
+
+  /// No description provided for @compassGuideBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass instrument is used to navigate and to find magnetic field along axis. Compass instrument in PSLab app can be used with built-in mobile sensors or with sensor HMC5883L.'**
+  String get compassGuideBody;
+
+  /// No description provided for @compassGuideImageCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Three axes magnetometer pointing to magnetic north'**
+  String get compassGuideImageCaption;
 
   /// No description provided for @showLoggedData.
   ///
@@ -4101,9 +4125,12 @@ class _AppLocalizationsDelegate
         'id',
         'it',
         'ja',
+        'ml',
+        'my',
         'nb',
         'pt',
         'ru',
+        'te',
         'uk',
         'vi',
         'zh'
@@ -4158,12 +4185,18 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsIt();
     case 'ja':
       return AppLocalizationsJa();
+    case 'ml':
+      return AppLocalizationsMl();
+    case 'my':
+      return AppLocalizationsMy();
     case 'nb':
       return AppLocalizationsNb();
     case 'pt':
       return AppLocalizationsPt();
     case 'ru':
       return AppLocalizationsRu();
+    case 'te':
+      return AppLocalizationsTe();
     case 'uk':
       return AppLocalizationsUk();
     case 'vi':

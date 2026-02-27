@@ -4,9 +4,9 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
-class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+/// The translations for Malayalam (`ml`).
+class AppLocalizationsMl extends AppLocalizations {
+  AppLocalizationsMl([String locale = 'ml']) : super(locale);
 
   @override
   String get oscilloscope => 'Oscilloscope';

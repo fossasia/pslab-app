@@ -4,9 +4,9 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for English (`en`).
-class AppLocalizationsEn extends AppLocalizations {
-  AppLocalizationsEn([String locale = 'en']) : super(locale);
+/// The translations for Burmese (`my`).
+class AppLocalizationsMy extends AppLocalizations {
+  AppLocalizationsMy([String locale = 'my']) : super(locale);
 
   @override
   String get oscilloscope => 'Oscilloscope';

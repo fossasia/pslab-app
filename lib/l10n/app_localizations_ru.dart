@@ -835,6 +835,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get showGuide => 'Show Guide';
 
   @override
+  String get compassGuideTitle => 'Compass';
+
+  @override
+  String get compassGuideBody =>
+      'Compass instrument is used to navigate and to find magnetic field along axis. Compass instrument in PSLab app can be used with built-in mobile sensors or with sensor HMC5883L.';
+
+  @override
+  String get compassGuideImageCaption =>
+      'Three axes magnetometer pointing to magnetic north';
+
+  @override
   String get showLoggedData => 'Show Logged Data';
 
   @override
