@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:get_it/get_it.dart';
 import 'package:pslab/communication/handler/desktop_comms_handler.dart';
@@ -6,6 +7,7 @@ import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/communication/handler/android_comms_handler.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/handler/ios_comms_handler.dart';
+import 'package:pslab/communication/handler/wifi_comms_handler.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/science_lab_common.dart';
@@ -16,15 +18,23 @@ final GetIt getIt = GetIt.instance;
 
 void setupLocator() {
   getIt.registerLazySingleton<CommunicationHandler>(() {
+    if (kIsWeb) {
+      return WifiCommunicationHandler();
+    }
     if (Platform.isAndroid) {
       return AndroidUSBCommunicationHandler();
     } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       return DesktopUSBCommunicationHandler();
+    } else if (Platform.isIOS) {
+      // iOS can't do native USB; use WiFi handler to enable ESP01 connectivity
+      return WifiCommunicationHandler();
     } else {
       return IosNoOpCommunicationHandler();
     }
   });
   getIt.registerLazySingleton<SocketClient>(() => SocketClient());
+  getIt.registerLazySingleton<WifiCommunicationHandler>(
+      () => WifiCommunicationHandler());
   getIt.registerLazySingleton<ScienceLabCommon>(
       () => ScienceLabCommon(getIt.get<CommunicationHandler>()));
   getIt.registerLazySingleton<ScienceLab>(
