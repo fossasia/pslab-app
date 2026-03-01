@@ -13,25 +13,28 @@ inputs:
 runs:
   using: "composite"
   steps:
-      - name: Install dependencies from Apt
-        run: |
-          sudo apt-get update -y && sudo apt-get upgrade -y;
-          sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev yq
+    - name: Install dependencies from Apt
+      shell: bash
+      run: |
+        sudo apt-get update -y && sudo apt-get upgrade -y;
+        sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev yq
 
-      - name: Clone Flutter
-        run: |
-          # get Flutter version from pubspec.yaml
-          FLUTTER_VERSION = yq '.environment.flutter' pubspec.yaml
+    - name: Clone Flutter
+      shell: bash
+      run: |
+        # get Flutter version from pubspec.yaml
+        FLUTTER_VERSION = yq '.environment.flutter' pubspec.yaml
 
-          # Shallow-clone Flutter to reduce download size
-          git clone --depth 1 --branch $FLUTTER_VERSION https://github.com/flutter/flutter.git $RUNNER_TEMP/flutter
+        # Shallow-clone Flutter to reduce download size
+        git clone --depth 1 --branch $FLUTTER_VERSION https://github.com/flutter/flutter.git $RUNNER_TEMP/flutter
 
-          # Add Flutter to PATH
-          echo "$RUNNER_TEMP/flutter/bin" >> $GITHUB_PATH
+        # Add Flutter to PATH
+        echo "$RUNNER_TEMP/flutter/bin" >> $GITHUB_PATH
 
-      - name: Install Flutter
-        # Running "flutter doctor" will download Flutter's dependencies
-        run: flutter doctor
+    - name: Install Flutter
+      shell: bash
+      # Running "flutter doctor" will download Flutter's dependencies
+      run: flutter doctor
     
     - name: Build Linux App
       shell: bash
