@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: |
         # get Flutter version from pubspec.yaml
-        FLUTTER_VERSION=yq -r '.environment.flutter' pubspec.yaml
+        FLUTTER_VERSION=yq --raw-output '.environment.flutter' pubspec.yaml
 
         # Shallow-clone Flutter to reduce download size
         git clone --depth 1 --branch $FLUTTER_VERSION https://github.com/flutter/flutter.git $RUNNER_TEMP/flutter
