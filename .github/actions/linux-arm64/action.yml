@@ -13,14 +13,41 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version-file: pubspec.yaml
-        cache: true
-
-    - name: Verify Flutter installation
+    - name: Install dependencies from Apt
       shell: bash
+      run: |
+        sudo apt-get update -y;
+        sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev yq
+
+    - name: Clone Flutter
+      shell: bash
+      run: |
+        # get Flutter version from pubspec.yaml
+        FLUTTER_VERSION="$(yq -r '.environment.flutter' pubspec.yaml)"
+
+        # Shallow-clone Flutter to reduce download size
+        git clone --depth 1 --branch $FLUTTER_VERSION https://github.com/flutter/flutter.git $RUNNER_TEMP/flutter
+
+        # Add Flutter to PATH
+        echo "$RUNNER_TEMP/flutter/bin" >> $GITHUB_PATH
+
+    - name: Install Flutter
+      shell: bash
+      # Running "flutter doctor" will download Flutter's dependencies
+      run: flutter doctor
+    
+    - name: Build Linux App
+      shell: bash
+      run: |
+        flutter config --enable-linux-desktop
+        source linux/prep.sh
+        flutter build linux --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
+
+    - name: Install fpm
+      shell: bash
+      run: |
+        sudo apt-get install -y ruby ruby-dev build-essential
+        sudo gem install --no-document fpm
     
     - name: Build .deb package
       shell: bash
