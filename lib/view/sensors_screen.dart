@@ -10,6 +10,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import '../theme/colors.dart';
 import 'apds9960_screen.dart';
+import 'mlx90614_screen.dart';
 
 class SensorsScreen extends StatefulWidget {
   const SensorsScreen({super.key});
@@ -236,6 +237,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'SHT21':
         targetScreen = const SHT21Screen();
+        break;
+      case 'MLX90614':
+        targetScreen = const MLX90614Screen();
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(

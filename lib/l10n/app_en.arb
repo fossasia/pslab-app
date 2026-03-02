@@ -663,5 +663,8 @@
     "pin_cap_name": "CAP",
     "pin_cap_desc": "Capacitance Measurement Pin",
     "pin_res_name": "RES",
-    "pin_res_desc": "Resistance Measurement Pin"
+    "pin_res_desc": "Resistance Measurement Pin",
+    "mlx90614" : "MLX90614",
+    "objectTemperature" : "Object Temp",
+    "ambientTemperature" : "Ambient Temp"
 }
