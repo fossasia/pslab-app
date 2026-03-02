@@ -12,10 +12,14 @@ import 'app_localizations_fr.dart';
 import 'app_localizations_he.dart';
 import 'app_localizations_hi.dart';
 import 'app_localizations_id.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_ja.dart';
+import 'app_localizations_ml.dart';
+import 'app_localizations_my.dart';
 import 'app_localizations_nb.dart';
 import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
+import 'app_localizations_te.dart';
 import 'app_localizations_uk.dart';
 import 'app_localizations_vi.dart';
 import 'app_localizations_zh.dart';
@@ -113,11 +117,15 @@ abstract class AppLocalizations {
     Locale('he'),
     Locale('hi'),
     Locale('id'),
+    Locale('it'),
     Locale('ja'),
+    Locale('ml'),
+    Locale('my'),
     Locale('nb'),
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ru'),
+    Locale('te'),
     Locale('uk'),
     Locale('vi'),
     Locale('zh'),
@@ -1635,6 +1643,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show Guide'**
   String get showGuide;
+
+  /// No description provided for @compassGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get compassGuideTitle;
+
+  /// No description provided for @compassGuideBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass instrument is used to navigate and to find magnetic field along axis. Compass instrument in PSLab app can be used with built-in mobile sensors or with sensor HMC5883L.'**
+  String get compassGuideBody;
+
+  /// No description provided for @compassGuideImageCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Three axes magnetometer pointing to magnetic north'**
+  String get compassGuideImageCaption;
 
   /// No description provided for @showLoggedData.
   ///
@@ -3537,6 +3563,546 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'m/s²'**
   String get meterPerSecondSquared;
+
+  /// No description provided for @pin_gnd_name.
+  ///
+  /// In en, this message translates to:
+  /// **'GND'**
+  String get pin_gnd_name;
+
+  /// No description provided for @pin_gnd_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ground Pin (0 V)'**
+  String get pin_gnd_desc;
+
+  /// No description provided for @pin_vdd_name.
+  ///
+  /// In en, this message translates to:
+  /// **'VDD'**
+  String get pin_vdd_name;
+
+  /// No description provided for @pin_vdd_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Voltage Supply Pin (+3.3V)'**
+  String get pin_vdd_desc;
+
+  /// No description provided for @pin_vcc_name.
+  ///
+  /// In en, this message translates to:
+  /// **'VCC'**
+  String get pin_vcc_name;
+
+  /// No description provided for @pin_vcc_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Voltage Supply Pin (+5 V)'**
+  String get pin_vcc_desc;
+
+  /// No description provided for @pin_vin_name.
+  ///
+  /// In en, this message translates to:
+  /// **'VIN'**
+  String get pin_vin_name;
+
+  /// No description provided for @pin_vin_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'External Power input Pin (<15 V)'**
+  String get pin_vin_desc;
+
+  /// No description provided for @pin_up_name.
+  ///
+  /// In en, this message translates to:
+  /// **'UP'**
+  String get pin_up_name;
+
+  /// No description provided for @pin_up_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Power from USB port'**
+  String get pin_up_desc;
+
+  /// No description provided for @pin_down_name.
+  ///
+  /// In en, this message translates to:
+  /// **'DOWN'**
+  String get pin_down_name;
+
+  /// No description provided for @pin_down_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'External power from VIN pin'**
+  String get pin_down_desc;
+
+  /// No description provided for @pin_bat_name.
+  ///
+  /// In en, this message translates to:
+  /// **'BAT'**
+  String get pin_bat_name;
+
+  /// No description provided for @pin_bat_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'CR1225 Coin cell battery'**
+  String get pin_bat_desc;
+
+  /// No description provided for @pin_rxd_name.
+  ///
+  /// In en, this message translates to:
+  /// **'RXD'**
+  String get pin_rxd_name;
+
+  /// No description provided for @pin_rxd_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'UART Rx Pin for ESP / External / Bluetooth'**
+  String get pin_rxd_desc;
+
+  /// No description provided for @pin_txd_name.
+  ///
+  /// In en, this message translates to:
+  /// **'TXD'**
+  String get pin_txd_name;
+
+  /// No description provided for @pin_txd_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'UART Tx Pin for ESP / External / Bluetooth'**
+  String get pin_txd_desc;
+
+  /// No description provided for @pin_enp_name.
+  ///
+  /// In en, this message translates to:
+  /// **'ENP'**
+  String get pin_enp_name;
+
+  /// No description provided for @pin_enp_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'ESP Enable Pin/CH PD'**
+  String get pin_enp_desc;
+
+  /// No description provided for @pin_mcl_name.
+  ///
+  /// In en, this message translates to:
+  /// **'MCL'**
+  String get pin_mcl_name;
+
+  /// No description provided for @pin_mcl_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Master Clear Pin'**
+  String get pin_mcl_desc;
+
+  /// No description provided for @pin_pgd_name.
+  ///
+  /// In en, this message translates to:
+  /// **'PGD'**
+  String get pin_pgd_name;
+
+  /// No description provided for @pin_pgd_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Programmer Data Pin'**
+  String get pin_pgd_desc;
+
+  /// No description provided for @pin_pgc_name.
+  ///
+  /// In en, this message translates to:
+  /// **'PGC'**
+  String get pin_pgc_name;
+
+  /// No description provided for @pin_pgc_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Programmer Clock Pin'**
+  String get pin_pgc_desc;
+
+  /// No description provided for @pin_ena_name.
+  ///
+  /// In en, this message translates to:
+  /// **'ENA'**
+  String get pin_ena_name;
+
+  /// No description provided for @pin_ena_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth Module Enable Pin'**
+  String get pin_ena_desc;
+
+  /// No description provided for @pin_sta_name.
+  ///
+  /// In en, this message translates to:
+  /// **'STA'**
+  String get pin_sta_name;
+
+  /// No description provided for @pin_sta_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bluetooth Status Pin (Not Connected)'**
+  String get pin_sta_desc;
+
+  /// No description provided for @pin_cs1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'CS1'**
+  String get pin_cs1_name;
+
+  /// No description provided for @pin_cs1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel Select Pin for SPI'**
+  String get pin_cs1_desc;
+
+  /// No description provided for @pin_sdi_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SDI'**
+  String get pin_sdi_name;
+
+  /// No description provided for @pin_sdi_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'SPI Data In'**
+  String get pin_sdi_desc;
+
+  /// No description provided for @pin_sdo_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SDO'**
+  String get pin_sdo_name;
+
+  /// No description provided for @pin_sdo_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'SPI Data Out'**
+  String get pin_sdo_desc;
+
+  /// No description provided for @pin_sck_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SCK'**
+  String get pin_sck_name;
+
+  /// No description provided for @pin_sck_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'SPI Clock Pin'**
+  String get pin_sck_desc;
+
+  /// No description provided for @pin_sda_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SDA'**
+  String get pin_sda_name;
+
+  /// No description provided for @pin_sda_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'I2C Serial Data Pin'**
+  String get pin_sda_desc;
+
+  /// No description provided for @pin_scl_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SCL'**
+  String get pin_scl_name;
+
+  /// No description provided for @pin_scl_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'I2C Serial Clock Pin'**
+  String get pin_scl_desc;
+
+  /// No description provided for @pin_pcs_name.
+  ///
+  /// In en, this message translates to:
+  /// **'PCS'**
+  String get pin_pcs_name;
+
+  /// No description provided for @pin_pcs_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Programmable Current Source (3.3 mA)'**
+  String get pin_pcs_desc;
+
+  /// No description provided for @pin_pv3_name.
+  ///
+  /// In en, this message translates to:
+  /// **'PV3'**
+  String get pin_pv3_name;
+
+  /// No description provided for @pin_pv3_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Programmable Voltage Source (0-3 V)'**
+  String get pin_pv3_desc;
+
+  /// No description provided for @pin_pv2_name.
+  ///
+  /// In en, this message translates to:
+  /// **'PV2'**
+  String get pin_pv2_name;
+
+  /// No description provided for @pin_pv2_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Programmable Voltage Source (+3.3V)'**
+  String get pin_pv2_desc;
+
+  /// No description provided for @pin_pv1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'PV1'**
+  String get pin_pv1_name;
+
+  /// No description provided for @pin_pv1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Programmable Voltage Source (± 5.0 V)'**
+  String get pin_pv1_desc;
+
+  /// No description provided for @pin_si1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SI1'**
+  String get pin_si1_name;
+
+  /// No description provided for @pin_si1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave Generator Pin 1 (5 Hz~5 kHz)'**
+  String get pin_si1_desc;
+
+  /// No description provided for @pin_si2_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SI2'**
+  String get pin_si2_name;
+
+  /// No description provided for @pin_si2_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Wave Generator Pin 2 (5Hz-5kHz)'**
+  String get pin_si2_desc;
+
+  /// No description provided for @pin_sq1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SQ1'**
+  String get pin_sq1_name;
+
+  /// No description provided for @pin_sq1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'PWM Generator Pin 1 (32 MHz)'**
+  String get pin_sq1_desc;
+
+  /// No description provided for @pin_sq2_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SQ2'**
+  String get pin_sq2_name;
+
+  /// No description provided for @pin_sq2_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'PWM Generator Pin 2 (32 MHz)'**
+  String get pin_sq2_desc;
+
+  /// No description provided for @pin_sq3_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SQ3'**
+  String get pin_sq3_name;
+
+  /// No description provided for @pin_sq3_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'PWM Generator Pin 3 (32 MHz)'**
+  String get pin_sq3_desc;
+
+  /// No description provided for @pin_sq4_name.
+  ///
+  /// In en, this message translates to:
+  /// **'SQ4'**
+  String get pin_sq4_name;
+
+  /// No description provided for @pin_sq4_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'PWM Generator Pin 4 (32 MHz)'**
+  String get pin_sq4_desc;
+
+  /// No description provided for @pin_la1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'LA1'**
+  String get pin_la1_name;
+
+  /// No description provided for @pin_la1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic Analyzer Pin 1'**
+  String get pin_la1_desc;
+
+  /// No description provided for @pin_la2_name.
+  ///
+  /// In en, this message translates to:
+  /// **'LA2'**
+  String get pin_la2_name;
+
+  /// No description provided for @pin_la2_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic Analyzer Pin 2'**
+  String get pin_la2_desc;
+
+  /// No description provided for @pin_la3_name.
+  ///
+  /// In en, this message translates to:
+  /// **'LA3'**
+  String get pin_la3_name;
+
+  /// No description provided for @pin_la3_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic Analyzer Pin 3'**
+  String get pin_la3_desc;
+
+  /// No description provided for @pin_la4_name.
+  ///
+  /// In en, this message translates to:
+  /// **'LA4'**
+  String get pin_la4_name;
+
+  /// No description provided for @pin_la4_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Logic Analyzer Pin 4'**
+  String get pin_la4_desc;
+
+  /// No description provided for @pin_ch1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'CH1'**
+  String get pin_ch1_name;
+
+  /// No description provided for @pin_ch1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel 1 (Oscilloscope)'**
+  String get pin_ch1_desc;
+
+  /// No description provided for @pin_ch2_name.
+  ///
+  /// In en, this message translates to:
+  /// **'CH2'**
+  String get pin_ch2_name;
+
+  /// No description provided for @pin_ch2_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel 2 (Oscilloscope)'**
+  String get pin_ch2_desc;
+
+  /// No description provided for @pin_ch3_name.
+  ///
+  /// In en, this message translates to:
+  /// **'CH3'**
+  String get pin_ch3_name;
+
+  /// No description provided for @pin_ch3_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel 3 (Oscilloscope)'**
+  String get pin_ch3_desc;
+
+  /// No description provided for @pin_ac1_name.
+  ///
+  /// In en, this message translates to:
+  /// **'AC1'**
+  String get pin_ac1_name;
+
+  /// No description provided for @pin_ac1_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel for AC Waves (Oscilloscope)'**
+  String get pin_ac1_desc;
+
+  /// No description provided for @pin_chg_name.
+  ///
+  /// In en, this message translates to:
+  /// **'CHG'**
+  String get pin_chg_name;
+
+  /// No description provided for @pin_chg_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel 3 Gain Control Pin'**
+  String get pin_chg_desc;
+
+  /// No description provided for @pin_mic_name.
+  ///
+  /// In en, this message translates to:
+  /// **'MIC'**
+  String get pin_mic_name;
+
+  /// No description provided for @pin_mic_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone (+) Pin'**
+  String get pin_mic_desc;
+
+  /// No description provided for @pin_frq_name.
+  ///
+  /// In en, this message translates to:
+  /// **'FRQ'**
+  String get pin_frq_name;
+
+  /// No description provided for @pin_frq_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency Counter Pin'**
+  String get pin_frq_desc;
+
+  /// No description provided for @pin_vol_name.
+  ///
+  /// In en, this message translates to:
+  /// **'VOL'**
+  String get pin_vol_name;
+
+  /// No description provided for @pin_vol_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Voltmeter Pin'**
+  String get pin_vol_desc;
+
+  /// No description provided for @pin_cap_name.
+  ///
+  /// In en, this message translates to:
+  /// **'CAP'**
+  String get pin_cap_name;
+
+  /// No description provided for @pin_cap_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacitance Measurement Pin'**
+  String get pin_cap_desc;
+
+  /// No description provided for @pin_res_name.
+  ///
+  /// In en, this message translates to:
+  /// **'RES'**
+  String get pin_res_name;
+
+  /// No description provided for @pin_res_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Resistance Measurement Pin'**
+  String get pin_res_desc;
 }
 
 class _AppLocalizationsDelegate
@@ -3557,10 +4123,14 @@ class _AppLocalizationsDelegate
         'he',
         'hi',
         'id',
+        'it',
         'ja',
+        'ml',
+        'my',
         'nb',
         'pt',
         'ru',
+        'te',
         'uk',
         'vi',
         'zh'
@@ -3611,14 +4181,22 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsHi();
     case 'id':
       return AppLocalizationsId();
+    case 'it':
+      return AppLocalizationsIt();
     case 'ja':
       return AppLocalizationsJa();
+    case 'ml':
+      return AppLocalizationsMl();
+    case 'my':
+      return AppLocalizationsMy();
     case 'nb':
       return AppLocalizationsNb();
     case 'pt':
       return AppLocalizationsPt();
     case 'ru':
       return AppLocalizationsRu();
+    case 'te':
+      return AppLocalizationsTe();
     case 'uk':
       return AppLocalizationsUk();
     case 'vi':
