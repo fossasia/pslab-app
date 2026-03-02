@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:web/web.dart' as web;
@@ -31,7 +32,10 @@ class WebCommsHandler implements CommunicationHandler {
 
   @override
   Future<void> initialize() async {
-    deviceFound = true;
+    final navigator = web.window.navigator as JSObject;
+    final hasSerial = navigator.hasProperty('serial'.toJS).toDart;
+
+    deviceFound = web.window.isSecureContext && hasSerial;
   }
 
   @override
@@ -92,9 +96,9 @@ class WebCommsHandler implements CommunicationHandler {
   @override
   void close() {
     _isReading = false;
-    _reader?.cancel().toDart;
-    _writer?.close().toDart;
-    _port?.close().toDart;
+    _reader?.cancel().toDart.catchError((_) => null);
+    _writer?.close().toDart.catchError((_) => null);
+    _port?.close().toDart.catchError((_) => null);
     connected = false;
   }
 
