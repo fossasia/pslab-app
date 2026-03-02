@@ -21,20 +21,6 @@ runs:
 
     - name: Verify Flutter installation
       shell: bash
-      run: flutter doctor
-    
-    - name: Build Linux App
-      shell: bash
-      run: |
-        flutter config --enable-linux-desktop
-        source linux/prep.sh
-        flutter build linux --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
-
-    - name: Install fpm
-      shell: bash
-      run: |
-        sudo apt-get install -y ruby ruby-dev build-essential
-        sudo gem install --no-document fpm
     
     - name: Build .deb package
       shell: bash
