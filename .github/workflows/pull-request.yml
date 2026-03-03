@@ -126,6 +126,16 @@ jobs:
       - name: Linux Workflow
         uses: ./.github/actions/linux
 
+  linux-arm64:
+    name: Linux ARM64 Flutter Build
+    needs: common
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux ARM64 Workflow
+        uses: ./.github/actions/linux-arm64
+
   macos:
     name: macOS Flutter Build
     needs: common
