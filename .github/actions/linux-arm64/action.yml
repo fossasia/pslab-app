@@ -71,7 +71,7 @@ runs:
           -n pslab \
           -v ${{ inputs.VERSION_NAME }} \
           --prefix=/ \
-          --depends libusb-1.0-0 \
+          --depends libusb1 \
           build/linux/arm64/release/bundle/bin/=/usr/bin \
           build/linux/arm64/release/bundle/lib/pslab/=/usr/lib/pslab \
           build/linux/arm64/release/bundle/share/pslab/=/usr/share/pslab \
