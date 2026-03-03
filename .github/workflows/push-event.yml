@@ -336,7 +336,8 @@ jobs:
 
           echo "Removing previous files from branch"
 
-          rm -rf !(*arm64*).deb !(*aarch64*).rpm
+          find . -maxdepth 1 -type f -name '*.deb' ! -name '*arm64*' -delete
+          find . -maxdepth 1 -type f -name '*.rpm' ! -name '*aarch64*' -delete
 
           echo "Copying new build files"
 
