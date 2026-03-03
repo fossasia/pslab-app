@@ -352,6 +352,48 @@ jobs:
           git branch -m apk
           git push --force origin apk
 
+  linux-arm64:
+    name: Linux ARM64 Flutter Build
+    needs: common
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux ARM64 Workflow
+        uses: ./.github/actions/linux-arm64
+        with:
+          VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
+          VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
+      
+      - name: Upload packages to apk branch
+        if: ${{ github.repository == 'fossasia/pslab-app' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
+          cd apk
+          
+          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+
+          echo "Removing previous files from branch"
+
+          rm -rf *.deb *.rpm
+
+          echo "Copying new build files"
+
+          cp -v ../*.deb .
+          cp -v ../*.rpm .
+
+          echo "Pushing to apk branch"
+
+          git checkout --orphan temporary
+          git add --all .
+          git commit -am "[Auto] Update Linux ARM64 Packages from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
+          git branch -D apk
+          git branch -m apk
+          git push --force origin apk
+
   macos:
     name: macOS Flutter Build
     needs: common
