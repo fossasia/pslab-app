@@ -336,7 +336,7 @@ jobs:
 
           echo "Removing previous files from branch"
 
-          rm -rf *.deb *.rpm
+          rm -rf !(*arm64*).deb !(*aarch64*).rpm
 
           echo "Copying new build files"
 
@@ -378,7 +378,7 @@ jobs:
 
           echo "Removing previous files from branch"
 
-          rm -rf *.deb *.rpm
+          rm -rf *arm64*.deb *aarch64*.rpm
 
           echo "Copying new build files"
 
