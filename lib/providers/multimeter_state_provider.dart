@@ -115,8 +115,8 @@ class MultimeterStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleSwitch(bool value) {
-    isSwitchChecked = value;
+  void setSwitch(bool checked) {
+    isSwitchChecked = checked;
     notifyListeners();
   }
 

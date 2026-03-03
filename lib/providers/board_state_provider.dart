@@ -1,7 +1,6 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
@@ -42,8 +41,9 @@ class BoardStateProvider extends ChangeNotifier {
       await fetchFirmwareVersion();
     }
     _isProcessing = false;
+
     if (configProvider.config.autoStart) {
-      if (Platform.isAndroid) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         UsbSerial.usbEventStream?.listen(
           (UsbEvent usbEvent) async {
             if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
@@ -67,6 +67,7 @@ class BoardStateProvider extends ChangeNotifier {
         );
       }
     }
+
     Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> results) {

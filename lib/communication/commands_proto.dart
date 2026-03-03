@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class CommandsProto {
   int acknowledge = 254;
@@ -204,7 +204,10 @@ class CommandsProto {
   int stopStreaming = 253;
 
   CommandsProto() {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.macOS)) {
       dataSplitting = 30;
     } else {
       dataSplitting = 60;
