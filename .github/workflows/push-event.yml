@@ -211,7 +211,7 @@ jobs:
 
   update-release:
     name: Update Draft Release
-    needs: [ common, android, ios, windows, linux, macos ]
+    needs: [ common, android, ios, windows, linux, linux-arm64, macos ]
     runs-on: ubuntu-latest
     steps:
       - name: Run Release Drafter
