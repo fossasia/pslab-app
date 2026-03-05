@@ -75,7 +75,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late AnalyticsClass _analyticsClass;
   late bool _monitor;
   late double _maxAmp;
-  late double _maxFreq;
   late bool isRunning;
 
   bool _isPlayingBack = false;
