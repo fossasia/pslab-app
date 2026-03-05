@@ -470,7 +470,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         }
 
         final double factor = samples * timeGap * 1e-3; // ms
-        _maxFreq = (n / 2 - 1) / factor; // kHz
         double mA = 0;
 
         int startIndex = 0;
