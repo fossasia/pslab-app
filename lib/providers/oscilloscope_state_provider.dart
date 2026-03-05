@@ -192,7 +192,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     monitor();
   }
 
-  void setConfigProvider(OscilloscopeConfigProvider oscilloscopeConfigProvider) {
+  void setConfigProvider(
+      OscilloscopeConfigProvider oscilloscopeConfigProvider) {
     _configProvider = oscilloscopeConfigProvider;
   }
 
@@ -233,7 +234,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   Future<void> monitor() async {
     _timer = Timer.periodic(
       const Duration(milliseconds: 10),
-          (timer) async {
+      (timer) async {
         if (!_monitor) {
           timer.cancel();
           return;
@@ -386,7 +387,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       }
 
       final List<Map<String, List<double>>> allChannelData =
-      <Map<String, List<double>>>[];
+          <Map<String, List<double>>>[];
 
       double? masterTriggerTime;
 
@@ -394,7 +395,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         final String channel = hwChannels[i];
 
         final Map<String, List<double>> data =
-        await _scienceLab.fetchTrace(_channelIndexMap[channel]!);
+            await _scienceLab.fetchTrace(_channelIndexMap[channel]!);
 
         final List<double> xRaw = data['x']!;
         for (int k = 0; k < xRaw.length; k++) {
@@ -462,7 +463,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         List<Complex> fftOut = <Complex>[];
         if (isFourierTransformSelected) {
           final List<Complex> yComplex =
-          List.filled(yData.length, const Complex(0));
+              List.filled(yData.length, const Complex(0));
           for (int j = 0; j < yData.length; j++) {
             yComplex[j] = Complex(yData[j]);
           }
@@ -477,15 +478,16 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         if (!isFourierTransformSelected &&
             isTriggerSelected &&
             masterTriggerTime != null) {
-          final int foundIndex = xData.indexWhere((t) => t >= masterTriggerTime!);
+          final int foundIndex =
+              xData.indexWhere((t) => t >= masterTriggerTime!);
           if (foundIndex != -1) startIndex = foundIndex;
         }
 
         for (int j = startIndex; j < n; j++) {
           final double timeShift =
-          (isTriggerSelected && masterTriggerTime != null)
-              ? masterTriggerTime
-              : xData[startIndex];
+              (isTriggerSelected && masterTriggerTime != null)
+                  ? masterTriggerTime
+                  : xData[startIndex];
 
           final double relativeTime = xData[j] - timeShift;
 
@@ -726,9 +728,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
         final currentTimestamp =
-        int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
+            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
         final nextTimestamp =
-        int.tryParse(_playbackData![_playbackIndex][0].toString());
+            int.tryParse(_playbackData![_playbackIndex][0].toString());
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -961,7 +963,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     plots.addAll(
       List<LineChartBarData>.generate(
         dataEntries.length,
-            (index) {
+        (index) {
           return LineChartBarData(
             spots: dataEntries[index],
             isCurved: true,
@@ -976,7 +978,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     plots.addAll(
       List<LineChartBarData>.generate(
         dataEntriesCurveFit.length,
-            (index) {
+        (index) {
           return LineChartBarData(
             spots: dataEntriesCurveFit[index],
             isCurved: true,
@@ -995,7 +997,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     List<Color> colors = [Colors.red];
     return List<LineChartBarData>.generate(
       dataEntriesXYPlot.length,
-          (index) {
+      (index) {
         return LineChartBarData(
           spots: dataEntriesXYPlot[index],
           isCurved: true,

@@ -8,7 +8,6 @@ import 'package:pslab/others/logger_service.dart';
 class AudioJack {
   static const int samplingRate = 44100;
 
-
   static const int _maxBufferSamples = 44100;
 
   bool _isListening = false;
@@ -20,9 +19,7 @@ class AudioJack {
 
   AudioJack();
 
-  Future<void> initialize() async {
-
-  }
+  Future<void> initialize() async {}
 
   Future<void> start() async {
     if (_isListening) return;
