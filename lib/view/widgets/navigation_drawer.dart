@@ -32,7 +32,7 @@ class _NavDrawerState extends State<NavDrawer> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.zero,
       ),
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.white,
       child: ScrollConfiguration(
         behavior: const ScrollBehavior(),
         child: ListView(
@@ -77,7 +77,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 0
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -103,7 +103,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 13
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -135,7 +135,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 1
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -168,7 +168,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 2
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -200,7 +200,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 3
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -222,7 +222,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 4
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -254,7 +254,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 5
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -285,7 +285,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 6
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -314,7 +314,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 7
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -352,7 +352,7 @@ class _NavDrawerState extends State<NavDrawer> {
                   style: TextStyle(
                     color: widget.selectedIndex == 8
                         ? selectedMenuColor
-                        : Theme.of(context).colorScheme.onSurface,
+                        : Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
@@ -379,7 +379,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 9
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -410,7 +410,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 10
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -434,7 +434,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 11
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -463,7 +463,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 12
                       ? selectedMenuColor
-                      : Theme.of(context).colorScheme.onSurface,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),

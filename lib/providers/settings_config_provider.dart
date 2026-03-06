@@ -61,17 +61,6 @@ class SettingsConfigProvider extends ChangeNotifier {
     _saveConfigToPrefs();
   }
 
-  void updateTheme(String theme) {
-    if (theme != "Light" &&
-        theme != "Dark (Experimental)" &&
-        theme != "System") {
-      theme = "Light";
-    }
-    _config = _config.copyWith(theme: theme);
-    notifyListeners();
-    _saveConfigToPrefs();
-  }
-
   void resetToDefaults() {
     _config = const SettingsConfig();
     notifyListeners();

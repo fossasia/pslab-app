@@ -83,7 +83,7 @@ class _MainScaffoldState extends State<MainScaffold>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
