@@ -44,10 +44,7 @@ dependencies:
   provider: ^6.1.5
   usb_serial: ^0.5.0
   get_it: ^9.2.1
-  flutter_audio_capture:
-    git:
-      url: https://github.com/AsCress/flutter_audio_capture.git
-      ref: master
+  record: ^6.2.0
   data: ^0.15.1
   permission_handler: ^12.0.1
   logger: ^2.6.1
