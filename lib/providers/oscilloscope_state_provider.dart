@@ -1069,7 +1069,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (_wakelockEnabled) {
       WakelockPlus.disable();
     }
-    _audioJack.close();
+    _audioJack.disposeHardware();
     super.dispose();
   }
 }
