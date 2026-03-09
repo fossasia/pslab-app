@@ -227,7 +227,7 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   @override
   void dispose() {
     _stopAudioStream();
-
+    isPlayingSound = false;
     super.dispose();
   }
 
