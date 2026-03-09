@@ -52,6 +52,7 @@ class BarometerStateProvider extends ChangeNotifier {
   ScienceLab? _scienceLab;
 
   final BarometerConfigProvider _configProvider;
+  double? get _currentLimit => _configProvider.config.highLimit.toDouble();
   String _currentSensorType = 'In-built Sensor';
 
   Function(String)? onSensorError;
@@ -418,15 +419,25 @@ class BarometerStateProvider extends ChangeNotifier {
   void _updateData() {
     if (!_sensorAvailable && !_isPlayingBack) return;
 
-    final pressure = _currentPressure;
+    final limit = _currentLimit;
+
+    final bool shouldClip = !_isPlayingBack && limit != null;
+
+    final double rawPressure = _currentPressure;
+
+    final double clippedPressure =
+        shouldClip && rawPressure > limit ? limit : rawPressure;
+
+    _currentPressure = clippedPressure;
     final time = _currentTime;
+
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
       _recordedData.add([
         now.millisecondsSinceEpoch.toString(),
         dateFormat.format(now),
-        pressure.toStringAsFixed(2),
+        clippedPressure.toStringAsFixed(2),
         getCurrentAltitude().toStringAsFixed(2),
         _configProvider.config.includeLocationData
             ? currentPosition?.latitude.toString() ?? 0
@@ -436,9 +447,10 @@ class BarometerStateProvider extends ChangeNotifier {
             : 0
       ]);
     }
-    _pressureData.add(pressure);
+
+    _pressureData.add(clippedPressure);
     _timeData.add(time);
-    _pressureSum += pressure;
+    _pressureSum += clippedPressure;
     _dataCount++;
 
     if (_pressureData.length > _chartMaxLength) {
@@ -457,6 +469,7 @@ class BarometerStateProvider extends ChangeNotifier {
     for (int i = 0; i < _pressureData.length; i++) {
       pressureChartData.add(FlSpot(_timeData[i], _pressureData[i]));
     }
+
     notifyListeners();
   }
 

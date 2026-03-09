@@ -31,7 +31,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         iconTheme: IconThemeData(color: appBarContentColor),
@@ -75,24 +75,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ],
                       onChanged: (value) {
                         provider.updateExportFormat(value);
-                      },
-                    ),
-                    ConfigDropdownItem(
-                      title: appLocalizations.theme,
-                      selectedValue: provider.config.theme,
-                      options: [
-                        ConfigOption(
-                            value: 'Light',
-                            displayName: appLocalizations.light),
-                        ConfigOption(
-                            value: 'Dark (Experimental)',
-                            displayName: appLocalizations.darkExperimental),
-                        ConfigOption(
-                            value: 'System',
-                            displayName: appLocalizations.system),
-                      ],
-                      onChanged: (value) {
-                        provider.updateTheme(value);
                       },
                     ),
                   ],

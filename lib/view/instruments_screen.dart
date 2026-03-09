@@ -160,29 +160,20 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                     Icon(
                       Icons.search_off,
                       size: 64,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withAlpha(128),
+                      color: Colors.black.withAlpha(128),
                     ),
                     const SizedBox(height: 16),
                     Text(
                       appLocalizations.noInstrumentsFoundMessage,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(179),
+                            color: Colors.black.withAlpha(179),
                           ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       appLocalizations.tryDifferentSearchSuggestion,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(128),
+                            color: Colors.black.withAlpha(128),
                           ),
                     ),
                   ],

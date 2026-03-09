@@ -19,22 +19,4 @@ class AppTheme {
       }),
     ),
   );
-
-  static final darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    useMaterial3: true,
-    scaffoldBackgroundColor: Colors.black,
-    colorSchemeSeed: Colors.black,
-    checkboxTheme: const CheckboxThemeData(
-      side: BorderSide(color: Colors.black, width: 2),
-    ),
-    radioTheme: RadioThemeData(
-      fillColor: WidgetStateProperty.resolveWith<Color>((states) {
-        if (states.contains(WidgetState.selected)) {
-          return radioButtonActiveColor;
-        }
-        return Colors.black;
-      }),
-    ),
-  );
 }

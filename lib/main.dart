@@ -24,7 +24,6 @@ import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
 import 'package:pslab/view/software_licenses_screen.dart';
 import 'package:pslab/view/compass_screen.dart';
-import 'package:pslab/theme/app_theme.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/thermometer_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
@@ -72,17 +71,10 @@ class MyApp extends StatelessWidget {
                 appLocalizations = getIt.get<AppLocalizations>();
                 return child!;
               },
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: () {
-                if (provider.config.theme == "Light") {
-                  return ThemeMode.light;
-                } else if (provider.config.theme == "Dark (Experimental)") {
-                  return ThemeMode.dark;
-                } else {
-                  return ThemeMode.system;
-                }
-              }(),
+              theme: ThemeData(
+                colorSchemeSeed: Colors.white,
+                useMaterial3: true,
+              ),
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               initialRoute: '/',

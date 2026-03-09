@@ -50,8 +50,8 @@ class GyroscopeProvider extends ChangeNotifier {
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
 
-  late GyroscopeConfigProvider _configProvider;
-
+  GyroscopeConfigProvider? _configProvider;
+  double? get _currentLimit => _configProvider?.config.highLimit.toDouble();
   Position? currentPosition;
   StreamSubscription? _locationStream;
 
@@ -229,10 +229,20 @@ class GyroscopeProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final x = _gyroscopeEvent.x;
-    final y = _gyroscopeEvent.y;
-    final z = _gyroscopeEvent.z;
+    final limit = _currentLimit;
 
+    final bool shouldClip = !_isPlayingBack && limit != null;
+
+    final double x =
+        (shouldClip && _gyroscopeEvent.x > limit) ? limit : _gyroscopeEvent.x;
+
+    final double y =
+        (shouldClip && _gyroscopeEvent.y > limit) ? limit : _gyroscopeEvent.y;
+
+    final double z =
+        (shouldClip && _gyroscopeEvent.z > limit) ? limit : _gyroscopeEvent.z;
+
+    _gyroscopeEvent = GyroscopeEvent(x, y, z, DateTime.now());
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
@@ -242,10 +252,10 @@ class GyroscopeProvider extends ChangeNotifier {
         x.toStringAsFixed(6),
         y.toStringAsFixed(6),
         z.toStringAsFixed(6),
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.latitude.toString() ?? 0
             : 0,
-        _configProvider.config.includeLocationData
+        _configProvider!.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
             : 0
       ]);
@@ -281,11 +291,12 @@ class GyroscopeProvider extends ChangeNotifier {
       yData.add(FlSpot(i.toDouble(), _yData[i]));
       zData.add(FlSpot(i.toDouble(), _zData[i]));
     }
+
     notifyListeners();
   }
 
   Future<void> startRecording() async {
-    if (_configProvider.config.includeLocationData) {
+    if (_configProvider!.config.includeLocationData) {
       await _startGeoLocationUpdates();
     }
     _isRecording = true;

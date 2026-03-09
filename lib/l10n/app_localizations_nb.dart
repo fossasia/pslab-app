@@ -835,6 +835,17 @@ class AppLocalizationsNb extends AppLocalizations {
   String get showGuide => 'Show Guide';
 
   @override
+  String get compassGuideTitle => 'Compass';
+
+  @override
+  String get compassGuideBody =>
+      'Compass instrument is used to navigate and to find magnetic field along axis. Compass instrument in PSLab app can be used with built-in mobile sensors or with sensor HMC5883L.';
+
+  @override
+  String get compassGuideImageCaption =>
+      'Three axes magnetometer pointing to magnetic north';
+
+  @override
   String get showLoggedData => 'Show Logged Data';
 
   @override
@@ -1874,4 +1885,274 @@ class AppLocalizationsNb extends AppLocalizations {
 
   @override
   String get meterPerSecondSquared => 'm/s²';
+
+  @override
+  String get pin_gnd_name => 'GND';
+
+  @override
+  String get pin_gnd_desc => 'Ground Pin (0 V)';
+
+  @override
+  String get pin_vdd_name => 'VDD';
+
+  @override
+  String get pin_vdd_desc => 'Voltage Supply Pin (+3.3V)';
+
+  @override
+  String get pin_vcc_name => 'VCC';
+
+  @override
+  String get pin_vcc_desc => 'Voltage Supply Pin (+5 V)';
+
+  @override
+  String get pin_vin_name => 'VIN';
+
+  @override
+  String get pin_vin_desc => 'External Power input Pin (<15 V)';
+
+  @override
+  String get pin_up_name => 'UP';
+
+  @override
+  String get pin_up_desc => 'Power from USB port';
+
+  @override
+  String get pin_down_name => 'DOWN';
+
+  @override
+  String get pin_down_desc => 'External power from VIN pin';
+
+  @override
+  String get pin_bat_name => 'BAT';
+
+  @override
+  String get pin_bat_desc => 'CR1225 Coin cell battery';
+
+  @override
+  String get pin_rxd_name => 'RXD';
+
+  @override
+  String get pin_rxd_desc => 'UART Rx Pin for ESP / External / Bluetooth';
+
+  @override
+  String get pin_txd_name => 'TXD';
+
+  @override
+  String get pin_txd_desc => 'UART Tx Pin for ESP / External / Bluetooth';
+
+  @override
+  String get pin_enp_name => 'ENP';
+
+  @override
+  String get pin_enp_desc => 'ESP Enable Pin/CH PD';
+
+  @override
+  String get pin_mcl_name => 'MCL';
+
+  @override
+  String get pin_mcl_desc => 'Master Clear Pin';
+
+  @override
+  String get pin_pgd_name => 'PGD';
+
+  @override
+  String get pin_pgd_desc => 'Programmer Data Pin';
+
+  @override
+  String get pin_pgc_name => 'PGC';
+
+  @override
+  String get pin_pgc_desc => 'Programmer Clock Pin';
+
+  @override
+  String get pin_ena_name => 'ENA';
+
+  @override
+  String get pin_ena_desc => 'Bluetooth Module Enable Pin';
+
+  @override
+  String get pin_sta_name => 'STA';
+
+  @override
+  String get pin_sta_desc => 'Bluetooth Status Pin (Not Connected)';
+
+  @override
+  String get pin_cs1_name => 'CS1';
+
+  @override
+  String get pin_cs1_desc => 'Channel Select Pin for SPI';
+
+  @override
+  String get pin_sdi_name => 'SDI';
+
+  @override
+  String get pin_sdi_desc => 'SPI Data In';
+
+  @override
+  String get pin_sdo_name => 'SDO';
+
+  @override
+  String get pin_sdo_desc => 'SPI Data Out';
+
+  @override
+  String get pin_sck_name => 'SCK';
+
+  @override
+  String get pin_sck_desc => 'SPI Clock Pin';
+
+  @override
+  String get pin_sda_name => 'SDA';
+
+  @override
+  String get pin_sda_desc => 'I2C Serial Data Pin';
+
+  @override
+  String get pin_scl_name => 'SCL';
+
+  @override
+  String get pin_scl_desc => 'I2C Serial Clock Pin';
+
+  @override
+  String get pin_pcs_name => 'PCS';
+
+  @override
+  String get pin_pcs_desc => 'Programmable Current Source (3.3 mA)';
+
+  @override
+  String get pin_pv3_name => 'PV3';
+
+  @override
+  String get pin_pv3_desc => 'Programmable Voltage Source (0-3 V)';
+
+  @override
+  String get pin_pv2_name => 'PV2';
+
+  @override
+  String get pin_pv2_desc => 'Programmable Voltage Source (+3.3V)';
+
+  @override
+  String get pin_pv1_name => 'PV1';
+
+  @override
+  String get pin_pv1_desc => 'Programmable Voltage Source (± 5.0 V)';
+
+  @override
+  String get pin_si1_name => 'SI1';
+
+  @override
+  String get pin_si1_desc => 'Wave Generator Pin 1 (5 Hz~5 kHz)';
+
+  @override
+  String get pin_si2_name => 'SI2';
+
+  @override
+  String get pin_si2_desc => 'Wave Generator Pin 2 (5Hz-5kHz)';
+
+  @override
+  String get pin_sq1_name => 'SQ1';
+
+  @override
+  String get pin_sq1_desc => 'PWM Generator Pin 1 (32 MHz)';
+
+  @override
+  String get pin_sq2_name => 'SQ2';
+
+  @override
+  String get pin_sq2_desc => 'PWM Generator Pin 2 (32 MHz)';
+
+  @override
+  String get pin_sq3_name => 'SQ3';
+
+  @override
+  String get pin_sq3_desc => 'PWM Generator Pin 3 (32 MHz)';
+
+  @override
+  String get pin_sq4_name => 'SQ4';
+
+  @override
+  String get pin_sq4_desc => 'PWM Generator Pin 4 (32 MHz)';
+
+  @override
+  String get pin_la1_name => 'LA1';
+
+  @override
+  String get pin_la1_desc => 'Logic Analyzer Pin 1';
+
+  @override
+  String get pin_la2_name => 'LA2';
+
+  @override
+  String get pin_la2_desc => 'Logic Analyzer Pin 2';
+
+  @override
+  String get pin_la3_name => 'LA3';
+
+  @override
+  String get pin_la3_desc => 'Logic Analyzer Pin 3';
+
+  @override
+  String get pin_la4_name => 'LA4';
+
+  @override
+  String get pin_la4_desc => 'Logic Analyzer Pin 4';
+
+  @override
+  String get pin_ch1_name => 'CH1';
+
+  @override
+  String get pin_ch1_desc => 'Channel 1 (Oscilloscope)';
+
+  @override
+  String get pin_ch2_name => 'CH2';
+
+  @override
+  String get pin_ch2_desc => 'Channel 2 (Oscilloscope)';
+
+  @override
+  String get pin_ch3_name => 'CH3';
+
+  @override
+  String get pin_ch3_desc => 'Channel 3 (Oscilloscope)';
+
+  @override
+  String get pin_ac1_name => 'AC1';
+
+  @override
+  String get pin_ac1_desc => 'Channel for AC Waves (Oscilloscope)';
+
+  @override
+  String get pin_chg_name => 'CHG';
+
+  @override
+  String get pin_chg_desc => 'Channel 3 Gain Control Pin';
+
+  @override
+  String get pin_mic_name => 'MIC';
+
+  @override
+  String get pin_mic_desc => 'Microphone (+) Pin';
+
+  @override
+  String get pin_frq_name => 'FRQ';
+
+  @override
+  String get pin_frq_desc => 'Frequency Counter Pin';
+
+  @override
+  String get pin_vol_name => 'VOL';
+
+  @override
+  String get pin_vol_desc => 'Voltmeter Pin';
+
+  @override
+  String get pin_cap_name => 'CAP';
+
+  @override
+  String get pin_cap_desc => 'Capacitance Measurement Pin';
+
+  @override
+  String get pin_res_name => 'RES';
+
+  @override
+  String get pin_res_desc => 'Resistance Measurement Pin';
 }

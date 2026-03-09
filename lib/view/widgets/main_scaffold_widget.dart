@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 
 import '../../theme/colors.dart';
+import '../pin_layout_screen.dart';
 import 'navigation_drawer.dart';
 
 class MainScaffold extends StatefulWidget {
@@ -82,7 +83,7 @@ class _MainScaffoldState extends State<MainScaffold>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
@@ -197,6 +198,33 @@ class _MainScaffoldState extends State<MainScaffold>
                       },
                     );
                   },
+                ),
+                PopupMenuButton<bool>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: appBarContentColor,
+                  ),
+                  tooltip: 'Pin Layout',
+                  onSelected: (bool isFront) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PSLabPinLayoutScreen(
+                          initialIsFrontSide: isFront,
+                        ),
+                      ),
+                    );
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<bool>>[
+                    const PopupMenuItem<bool>(
+                      value: true,
+                      child: Text('Front Layout'),
+                    ),
+                    const PopupMenuItem<bool>(
+                      value: false,
+                      child: Text('Back Layout'),
+                    ),
+                  ],
                 ),
                 ...(widget.actions ?? const []),
               ],
