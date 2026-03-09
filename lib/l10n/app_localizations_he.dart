@@ -2155,4 +2155,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get pin_res_desc => 'Resistance Measurement Pin';
+
+  @override
+  String get stopSound => 'Stop Sound';
 }

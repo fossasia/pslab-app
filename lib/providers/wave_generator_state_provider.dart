@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:mp_audio_stream/mp_audio_stream.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/wave_generator_constants.dart';
@@ -65,6 +67,12 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
   Position? currentPosition;
 
+  AudioStream? _audioStream;
+
+  bool isPlayingSound = false;
+
+  double _audioAngle = 0.0;
+
   WaveGeneratorStateProvider() {
     selectedAnalogWave = WaveConst.wave1;
 
@@ -81,6 +89,146 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
   void setConfigProvider(WaveGeneratorConfigProvider configProvider) {
     _configProvider = configProvider;
+  }
+
+  void toggleSound() {
+    if (isPlayingSound) {
+      isPlayingSound = false;
+
+      _stopAudioStream();
+    } else {
+      isPlayingSound = true;
+
+      _startAudioStream();
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> _startAudioStream() async {
+    _audioStream = getAudioStream();
+
+    _audioStream!.init(bufferMilliSec: 1000, channels: 1, sampleRate: 44100);
+
+    _audioStream!.resume();
+
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    _audioAngle = 0.0;
+
+    final int bufferSize = 4096;
+
+    final double bufferDurationMs = (bufferSize / 44100.0) * 1000.0;
+
+    final List<Float32List> bufferPool =
+        List.generate(5, (_) => Float32List(bufferSize));
+
+    int poolIndex = 0;
+
+    double generatedAudioMs = 0.0;
+
+    Stopwatch stopwatch = Stopwatch()..start();
+
+    for (int i = 0; i < 3; i++) {
+      final buffer = bufferPool[poolIndex];
+
+      poolIndex = (poolIndex + 1) % bufferPool.length;
+
+      _fillAudioBuffer(buffer, bufferSize);
+
+      _audioStream!.push(buffer);
+
+      generatedAudioMs += bufferDurationMs;
+    }
+
+    while (isPlayingSound) {
+      double elapsedRealTimeMs = stopwatch.elapsedMilliseconds.toDouble();
+
+      if (generatedAudioMs - elapsedRealTimeMs < 300.0) {
+        final buffer = bufferPool[poolIndex];
+
+        poolIndex = (poolIndex + 1) % bufferPool.length;
+
+        _fillAudioBuffer(buffer, bufferSize);
+
+        _audioStream!.push(buffer);
+
+        generatedAudioMs += bufferDurationMs;
+      } else {
+        await Future.delayed(const Duration(milliseconds: 20));
+      }
+
+      if (elapsedRealTimeMs > generatedAudioMs) {
+        generatedAudioMs = elapsedRealTimeMs;
+      }
+    }
+  }
+
+  void _fillAudioBuffer(Float32List buffer, int bufferSize) {
+    double frequency;
+
+    double duty = 0.5;
+
+    if (waveGeneratorConstants.modeSelected == WaveConst.square) {
+      frequency = waveGeneratorConstants
+          .wave[selectedAnalogWave]![WaveConst.frequency]!
+          .toDouble();
+    } else {
+      frequency = waveGeneratorConstants
+          .wave[WaveConst.sqr1]![WaveConst.frequency]!
+          .toDouble();
+
+      int currentDuty =
+          waveGeneratorConstants.wave[selectedDigitalWave]![WaveConst.duty] ??
+              50;
+
+      duty = currentDuty / 100.0;
+    }
+
+    if (frequency <= 0) frequency = 1;
+
+    double increment = (2 * math.pi * frequency) / 44100.0;
+
+    const double volume = 0.15;
+
+    for (int i = 0; i < bufferSize; i++) {
+      if (waveGeneratorConstants.modeSelected == WaveConst.pwm) {
+        buffer[i] = (_audioAngle < (2 * math.pi * duty)) ? volume : -volume;
+      } else {
+        double safeSin = math.sin(_audioAngle).clamp(-1.0, 1.0);
+
+        double sample = safeSin;
+
+        if (waveGeneratorConstants
+                .wave[selectedAnalogWave]![WaveConst.waveType] ==
+            triangular) {
+          sample = (2 / math.pi) * math.asin(safeSin);
+        }
+
+        buffer[i] = sample * volume;
+      }
+
+      _audioAngle += increment;
+
+      if (_audioAngle >= 2 * math.pi) {
+        _audioAngle -= 2 * math.pi;
+      }
+    }
+  }
+
+  void _stopAudioStream() {
+    if (_audioStream != null) {
+      _audioStream!.uninit();
+
+      _audioStream = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _stopAudioStream();
+
+    super.dispose();
   }
 
   Future<void> _getCurrentLocation() async {

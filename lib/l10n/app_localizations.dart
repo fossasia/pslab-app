@@ -4103,6 +4103,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Resistance Measurement Pin'**
   String get pin_res_desc;
+
+  /// No description provided for @stopSound.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Sound'**
+  String get stopSound;
 }
 
 class _AppLocalizationsDelegate

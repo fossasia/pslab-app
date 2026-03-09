@@ -2155,6 +2155,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get pin_res_desc => 'Resistance Measurement Pin';
+
+  @override
+  String get stopSound => 'Stop Sound';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

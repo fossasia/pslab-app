@@ -269,21 +269,30 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                   Expanded(
                                     child: TextButton(
                                       style: TextButton.styleFrom(
-                                        backgroundColor: primaryRed,
+                                        backgroundColor: provider.isPlayingSound
+                                            ? Colors.grey[800]
+                                            : primaryRed,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(6),
                                         ),
                                       ),
                                       child: Text(
-                                        appLocalizations.produceSound,
+                                        provider.isPlayingSound
+                                            ? appLocalizations.stopSound
+                                            : appLocalizations.produceSound,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 14,
+                                          fontWeight: provider.isPlayingSound
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
                                         ),
                                       ),
-                                      onPressed: () => {},
+                                      onPressed: () {
+                                        provider.toggleSound();
+                                      },
                                     ),
                                   ),
                                   const SizedBox(width: 4),

@@ -2155,6 +2155,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pin_res_desc => 'Resistance Measurement Pin';
+
+  @override
+  String get stopSound => 'Stop Sound';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
