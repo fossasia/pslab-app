@@ -1,4 +1,3 @@
-
 # Project Overview
 
 **PSLab App** is a Flutter cross-platform application for performing
