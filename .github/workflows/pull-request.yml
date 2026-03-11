@@ -3,7 +3,8 @@ name: Build
 on:
   pull_request:
     branches: ["flutter"]
-
+    paths-ignore:
+      - '**.md'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

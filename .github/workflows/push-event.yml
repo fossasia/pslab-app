@@ -2,7 +2,9 @@ name: Push
 
 on:
   push:
-    branches: [ "flutter" ]
+    branches: ["flutter"]
+    paths-ignore:
+      - '**.md'
 
 env:
   ANDROID_EMULATOR_API: 34
