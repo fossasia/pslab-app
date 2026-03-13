@@ -8,8 +8,8 @@ updates:
                         reviewers:
                               - "mariobehling"
                                     - "cloudypadmal"
-                                  - package-ecosystem: "gradle"
-                                      target-branch: "development"
-                                          directory: "/"
-                                              schedule:
-                                                    interval: "weekly"
+                                      - package-ecosystem: "gradle"
+                                          target-branch: "development"
+                                              directory: "/"
+                                                  schedule:
+                                                        interval: "weekly"
