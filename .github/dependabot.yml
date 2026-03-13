@@ -1,17 +1,15 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "mariobehling"
-      - "cloudypadmal"
-
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    reviewers:
-      - "mariobehling"
-      - "cloudypadmal"
+      target-branch: "development"
+          directory: "/"
+              schedule:
+                    interval: "weekly"
+                        reviewers:
+                              - "mariobehling"
+                                    - "cloudypadmal"
+                                      - package-ecosystem: "gradle"
+                                          target-branch: "development"
+                                              directory: "/"
+                                                  schedule:
+                                                        interval: "weekly"
