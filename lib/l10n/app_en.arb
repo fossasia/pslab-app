@@ -178,7 +178,7 @@
     "cancel": "Cancel",
     "currentFormat": "Current format is ",
     "aboutUs": "About Us",
-    "pslabDescription": "The goal of PSLab is to create an Open Source hardware device (open on all layers) that can be used for experiments by teachers, students and citizen scientists. Our tiny pocket lab provides an array of sensors for doing science and engineering experiments. It provides functions of numerous measurement devices including an oscilloscope, a waveform generator, a frequency generator, a frequency counter, a programmable voltage, current source and as a data logger.",
+    "pslabDescription": "The goal of PSLab is to create an Open Source hardware device (open on all layers) that can be used for experiments by teachers, students and citizen scientists. Our tiny pocket lab provides an array of sensors for doing science & engineering experiments. It provides functions of numerous measurement devices including an oscilloscope, a waveform generator, a frequency generator, a frequency counter, a programmable voltage, current source and as a data logger.",
     "feedbackNBugs": "Feedback & Bugs",
     "feedbackForm": "https://goo.gl/forms/sHlmRAPFmzcGQ27u2",
     "website": "https://pslab.io/",
