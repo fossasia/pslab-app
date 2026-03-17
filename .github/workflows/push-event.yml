@@ -5,6 +5,15 @@ on:
     branches: ["flutter"]
     paths-ignore:
       - '**.md'
+      - 'docs/**'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '**.gif'
+      - '**.svg'
+      - '**.webp'
+      - '**.txt'
+      - '**.arb'
 
 env:
   ANDROID_EMULATOR_API: 34
