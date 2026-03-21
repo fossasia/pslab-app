@@ -326,15 +326,19 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                     flex: 75,
                                     child: Container(
                                       padding: const EdgeInsets.only(
-                                          right: 10, bottom: 10),
+                                          right: 10, bottom: 10, left: 10),
                                       alignment: Alignment.centerRight,
-                                      child: Text(
-                                        provider.value,
-                                        style: TextStyle(
-                                          fontSize: 50,
-                                          fontStyle: FontStyle.italic,
-                                          fontFamily: 'Digital-7',
-                                          color: multimeterBorderBlack,
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          provider.value,
+                                          style: TextStyle(
+                                            fontSize: 50,
+                                            fontStyle: FontStyle.italic,
+                                            fontFamily: 'Digital-7',
+                                            color: multimeterBorderBlack,
+                                          ),
                                         ),
                                       ),
                                     ),

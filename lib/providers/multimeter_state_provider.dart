@@ -33,7 +33,7 @@ class MultimeterStateProvider extends ChangeNotifier {
   late bool _isRecording;
   bool get isRecording => _isRecording;
   List<List<dynamic>> _recordedData = [];
-
+  int _currentPulseCount = 0;
   Position? currentPosition;
   StreamSubscription? _locationStream;
 
@@ -112,11 +112,15 @@ class MultimeterStateProvider extends ChangeNotifier {
 
   void setSelectedIndex(int index) {
     _selectedIndex = index;
+    _currentPulseCount = 0;
     notifyListeners();
   }
 
   void setSwitch(bool checked) {
     isSwitchChecked = checked;
+    if (isSwitchChecked) {
+      _currentPulseCount = 0;
+    }
     notifyListeners();
   }
 
@@ -242,16 +246,23 @@ class MultimeterStateProvider extends ChangeNotifier {
 
   Future<void> getIDData() async {
     try {
+      String channel = knobMarker[_selectedIndex];
+      double frequency = await _scienceLab.getFrequency(channel);
+
       if (!isSwitchChecked) {
-        double frequency =
-            await _scienceLab.getFrequency(knobMarker[_selectedIndex]);
         value = frequency.toStringAsFixed(2);
         unit = appLocalizations.unitHz;
       } else {
-        await _scienceLab.countPulses(knobMarker[_selectedIndex]);
-        int pulseCount = await _scienceLab.readPulseCount();
-        value = pulseCount.toString();
-        unit = "";
+        double elapsedSeconds = _configProvider!.config.updatePeriod / 1000.0;
+
+        int newPulses = (frequency * elapsedSeconds).round();
+
+        _currentPulseCount += newPulses;
+
+        final formatter = NumberFormat('#,##0');
+        value = formatter.format(_currentPulseCount);
+
+        unit = "Pulses";
       }
     } catch (e) {
       value = "Cannot measure!";
