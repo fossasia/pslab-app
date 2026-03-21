@@ -160,7 +160,7 @@ class MultimeterStateProvider extends ChangeNotifier {
                 resistanceValue = avgResistance.toStringAsFixed(2);
                 resistanceUnit = "\u2126";
               } else {
-                resistanceValue = "Cannot measure!";
+                resistanceValue = appLocalizations.cannotMeasure;
                 resistanceUnit = "\u2126";
               }
             }
@@ -172,7 +172,7 @@ class MultimeterStateProvider extends ChangeNotifier {
             String capacitanceValue;
             String capacitanceUnit;
             if (capacitance == null) {
-              capacitanceValue = "Cannot measure!";
+              capacitanceValue = appLocalizations.cannotMeasure;
               capacitanceUnit = "pF";
             } else {
               if (capacitance < 1e-9) {
@@ -245,8 +245,13 @@ class MultimeterStateProvider extends ChangeNotifier {
       if (!isSwitchChecked) {
         double frequency =
             await _scienceLab.getFrequency(knobMarker[_selectedIndex]);
-        value = frequency.toStringAsFixed(2);
-        unit = appLocalizations.unitHz;
+        if (frequency == ScienceLab.frequencyError) {
+          value = appLocalizations.cannotMeasure;
+          unit = "";
+        } else {
+          value = frequency.toStringAsFixed(2);
+          unit = appLocalizations.unitHz;
+        }
       } else {
         await _scienceLab.countPulses(knobMarker[_selectedIndex]);
         int pulseCount = await _scienceLab.readPulseCount();
@@ -254,8 +259,8 @@ class MultimeterStateProvider extends ChangeNotifier {
         unit = "";
       }
     } catch (e) {
-      value = "Cannot measure!";
-      unit = "null";
+      value = appLocalizations.cannotMeasure;
+      unit = "";
     }
   }
 

@@ -275,6 +275,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get unitHz => 'Hz';
 
   @override
+  String get cannotMeasure => 'Cannot measure!';
+
+  @override
   String get countPulse => 'Count Pulse';
 
   @override
