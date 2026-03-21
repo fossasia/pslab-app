@@ -842,30 +842,6 @@ class ScienceLab {
     return null;
   }
 
-  Future<void> countPulses(String? channel) async {
-    channel ??= 'RES';
-    try {
-      mPacketHandler.sendByte(mCommandsProto.common);
-      mPacketHandler.sendByte(mCommandsProto.startCounting);
-      mPacketHandler.sendByte(calculateDigitalChannel(channel)!);
-      await mPacketHandler.getAcknowledgement();
-    } catch (e) {
-      logger.e("Error in countPulses: $e");
-    }
-  }
-
-  Future<int> readPulseCount() async {
-    try {
-      mPacketHandler.sendByte(mCommandsProto.common);
-      mPacketHandler.sendByte(mCommandsProto.fetchCount);
-      int count = await mPacketHandler.getVoltageSummation();
-      return 10 * count;
-    } catch (e) {
-      logger.e("Error in readPulseCount: $e");
-    }
-    return -1;
-  }
-
   int calcCHOSA(String channelName) {
     channelName = channelName.toUpperCase();
     AnalogInputSource? source = analogInputSources[channelName];
