@@ -858,8 +858,9 @@ class ScienceLab {
     try {
       mPacketHandler.sendByte(mCommandsProto.common);
       mPacketHandler.sendByte(mCommandsProto.fetchCount);
-      int count = await mPacketHandler.getVoltageSummation();
-      return 10 * count;
+
+      int count = await mPacketHandler.getInt();
+      return count;
     } catch (e) {
       logger.e("Error in readPulseCount: $e");
     }
