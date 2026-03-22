@@ -5,12 +5,15 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   flusbserial
+  geolocator_windows
   permission_handler_windows
+  record_windows
   share_plus
   url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  mp_audio_stream
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
