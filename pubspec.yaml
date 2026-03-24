@@ -92,13 +92,24 @@ inno_bundle:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  web: true
-  windows: true
-  macos: true
   remove_alpha_ios: true
-
   image_path: "assets/icons/icon.png"
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/icons/icon.png"
   adaptive_icon_monochrome: "assets/icons/icon.png"
   adaptive_icon_foreground_inset: 22
+
+  web:
+    generate: true
+    image_path: "assets/icons/icon.png"
+    background_color: "#FFFFFF"
+    theme_color: "#0175C2"
+
+  windows:
+    generate: true
+    image_path: "assets/icons/icon.png"
+    icon_size: 48
+
+  macos:
+    generate: true
+    image_path: "assets/icons/icon.png"
