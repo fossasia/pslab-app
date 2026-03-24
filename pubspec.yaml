@@ -92,6 +92,9 @@ inno_bundle:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+  web: true
+  windows: true
+  macos: true
   remove_alpha_ios: true
 
   image_path: "assets/icons/icon.png"
