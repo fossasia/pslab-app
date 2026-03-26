@@ -310,15 +310,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_audio_capture:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: master
-      resolved-ref: "6be37d6e10a628223a75b7ef14a0c61feab498a8"
-      url: "https://github.com/AsCress/flutter_audio_capture.git"
-    source: git
-    version: "1.1.8"
   flutter_driver:
     dependency: transitive
     description: flutter
@@ -561,7 +552,7 @@ packages:
     source: hosted
     version: "4.1.2"
   image:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image
       sha256: f9881ff4998044947ec38d098bc7c8316ae1186fa786eddffdb867b9bc94dfce
@@ -697,10 +688,10 @@ packages:
     dependency: transitive
     description:
       name: matcher
-      sha256: "12956d0ad8390bbcc63ca2e1469c0619946ccb52809807067a7020d57e647aa6"
+      sha256: dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.18"
+    version: "0.12.19"
   material_color_utilities:
     dependency: transitive
     description:
@@ -741,6 +732,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.7.0"
+  mp_audio_stream:
+    dependency: "direct main"
+    description:
+      name: mp_audio_stream
+      sha256: "078f9b9118056618707617bb6e853ac457389b9b90a7b5a75b90686aefdf2343"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
   native_toolchain_c:
     dependency: transitive
     description:
@@ -1005,6 +1004,70 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  record:
+    dependency: "direct main"
+    description:
+      name: record
+      sha256: d5b6b334f3ab02460db6544e08583c942dbf23e3504bf1e14fd4cbe3d9409277
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.0"
+  record_android:
+    dependency: transitive
+    description:
+      name: record_android
+      sha256: "94783f08403aed33ffb68797bf0715b0812eb852f3c7985644c945faea462ba1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.1"
+  record_ios:
+    dependency: transitive
+    description:
+      name: record_ios
+      sha256: "8df7c136131bd05efc19256af29b2ba6ccc000ccc2c80d4b6b6d7a8d21a3b5a9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
+  record_linux:
+    dependency: transitive
+    description:
+      name: record_linux
+      sha256: c31a35cc158cd666fc6395f7f56fc054f31685571684be6b97670a27649ce5c7
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
+  record_macos:
+    dependency: transitive
+    description:
+      name: record_macos
+      sha256: "084902e63fc9c0c224c29203d6c75f0bdf9b6a40536c9d916393c8f4c4256488"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1"
+  record_platform_interface:
+    dependency: transitive
+    description:
+      name: record_platform_interface
+      sha256: "8a81dbc4e14e1272a285bbfef6c9136d070a47d9b0d1f40aa6193516253ee2f6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.0"
+  record_web:
+    dependency: transitive
+    description:
+      name: record_web
+      sha256: "7e9846981c1f2d111d86f0ae3309071f5bba8b624d1c977316706f08fc31d16d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
+  record_windows:
+    dependency: transitive
+    description:
+      name: record_windows
+      sha256: "223258060a1d25c62bae18282c16783f28581ec19401d17e56b5205b9f039d78"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.7"
   retry:
     dependency: transitive
     description:
@@ -1037,6 +1100,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  serial:
+    dependency: "direct main"
+    description:
+      name: serial
+      sha256: "264e85ac2af4cdb3b16879992429ba8fb47b4ded1a06b8249b6f4357df855e2b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.7+1"
   share_plus:
     dependency: "direct main"
     description:
@@ -1230,26 +1301,26 @@ packages:
     dependency: transitive
     description:
       name: test
-      sha256: "54c516bbb7cee2754d327ad4fca637f78abfc3cbcc5ace83b3eda117e42cd71a"
+      sha256: "280d6d890011ca966ad08df7e8a4ddfab0fb3aa49f96ed6de56e3521347a9ae7"
       url: "https://pub.dev"
     source: hosted
-    version: "1.29.0"
+    version: "1.30.0"
   test_api:
     dependency: transitive
     description:
       name: test_api
-      sha256: "93167629bfc610f71560ab9312acdda4959de4df6fac7492c89ff0d3886f6636"
+      sha256: "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.9"
+    version: "0.7.10"
   test_core:
     dependency: transitive
     description:
       name: test_core
-      sha256: "394f07d21f0f2255ec9e3989f21e54d3c7dc0e6e9dbce160e5a9c1a6be0e2943"
+      sha256: "0381bd1585d1a924763c308100f2138205252fb90c9d4eeaf28489ee65ccde51"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.15"
+    version: "0.6.16"
   typed_data:
     dependency: transitive
     description:
@@ -1333,11 +1404,12 @@ packages:
   usb_serial:
     dependency: "direct main"
     description:
-      name: usb_serial
-      sha256: a605a600e34e7f28d4e80851ca3999ef747e42e406138887b8a88b8c382a8b07
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.2"
+      path: "."
+      ref: master
+      resolved-ref: "2b32da1b189de1488520bcc01c511c2c37954454"
+      url: "https://github.com/marcnause/usbserial.git"
+    source: git
+    version: "0.5.1"
   uuid:
     dependency: transitive
     description:
@@ -1427,7 +1499,7 @@ packages:
     source: hosted
     version: "1.2.1"
   web:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: web
       sha256: "868d88a33d8a87b18ffc05f9f030ba328ffefba92d6c127917a2ba740f9cfe4a"
@@ -1516,4 +1588,4 @@ packages:
     version: "3.1.3"
 sdks:
   dart: ">=3.10.3 <4.0.0"
-  flutter: ">=3.41.1"
+  flutter: ">=3.41.5"
