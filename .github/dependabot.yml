@@ -1,21 +1,15 @@
 version: 2
 
-enable-beta-ecosystems: true
 updates:
   - package-ecosystem: "pub"
     directory: "/"
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "/android/"
+    directory: "/android"
     schedule:
       interval: "daily"
   - package-ecosystem: "github-actions"
-    directories:
-      - "/.github/workflows"
-      - "/.github/actions/android"
-      - "/.github/actions/common"
-      - "/.github/actions/ios"
-      - "/.github/actions/screenshot-android"
+    directory: "/"
     schedule:
       interval: "daily"
