@@ -28,6 +28,8 @@ import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/thermometer_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
 import 'package:pslab/view/experiments_screen.dart';
+import 'package:pslab/view/gas_sensor_screen.dart';
+import 'package:pslab/view/dust_sensor_screen.dart';
 import 'constants.dart';
 
 void main() {
@@ -99,6 +101,8 @@ class MyApp extends StatelessWidget {
                 '/soundmeter': (context) => const SoundMeterScreen(),
                 '/thermometer': (context) => const ThermometerScreen(),
                 '/sensors': (context) => const SensorsScreen(),
+                '/gasSensor': (context) => const GasSensorScreen(),
+                '/dustSensor': (context) => const DustSensorScreen(),
                 '/experiments': (context) => const ExperimentsScreen(),
                 '/loggedData': (context) => LoggedDataScreen(
                       instrumentNames: instrumentNames,
