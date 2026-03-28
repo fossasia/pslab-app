@@ -22,7 +22,7 @@ class BoardStateProvider extends ChangeNotifier {
   String pslabVersionIDV5 = 'PSLab V5';
   int pslabVersion = 0;
   int pslabFirmwareVersion = 0;
-  bool _isProcessing = false;
+  bool isProcessing = false;
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
@@ -32,29 +32,45 @@ class BoardStateProvider extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
-    if (_isProcessing) return;
-    _isProcessing = true;
-    if (!scienceLabCommon.isConnected()) {
-      await scienceLabCommon.initialize();
-      pslabIsConnected = await scienceLabCommon.openDevice();
-      await setPSLabVersionIDs();
-      await fetchFirmwareVersion();
+    if (isProcessing) return;
+    isProcessing = true;
+    notifyListeners();
+    try {
+      if (!scienceLabCommon.isConnected()) {
+        await scienceLabCommon.initialize();
+        if (!kIsWeb) {
+          pslabIsConnected = await scienceLabCommon.openDevice();
+          await setPSLabVersionIDs();
+          await fetchFirmwareVersion();
+        }
+      }
+    } catch (e) {
+      logger.e(e);
+    } finally {
+      isProcessing = false;
+      notifyListeners();
     }
-    _isProcessing = false;
 
     if (configProvider.config.autoStart) {
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         UsbSerial.usbEventStream?.listen(
           (UsbEvent usbEvent) async {
             if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
-              if (_isProcessing) return;
-              _isProcessing = true;
-              if (!scienceLabCommon.isConnected() &&
-                  await attemptToConnectPSLab()) {
-                pslabIsConnected = await scienceLabCommon.openDevice();
-                await setPSLabVersionIDs();
-                await fetchFirmwareVersion();
-                _isProcessing = false;
+              if (isProcessing) return;
+              isProcessing = true;
+              notifyListeners();
+              try {
+                if (!scienceLabCommon.isConnected() &&
+                    await attemptToConnectPSLab()) {
+                  pslabIsConnected = await scienceLabCommon.openDevice();
+                  await setPSLabVersionIDs();
+                  await fetchFirmwareVersion();
+                }
+              } catch (e) {
+                logger.e(e);
+              } finally {
+                isProcessing = false;
+                notifyListeners();
               }
             } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
                 !scienceLabCommon.isWiFiConnected()) {
@@ -78,6 +94,28 @@ class BoardStateProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  Future<bool> connectUSB() async {
+    if (isProcessing) return false;
+    isProcessing = true;
+    notifyListeners();
+    try {
+      if (!scienceLabCommon.isConnected()) {
+        pslabIsConnected = await scienceLabCommon.openDevice();
+        if (pslabIsConnected) {
+          await setPSLabVersionIDs();
+          await fetchFirmwareVersion();
+        }
+      }
+      return pslabIsConnected;
+    } catch (e) {
+      logger.e(e);
+      return false;
+    } finally {
+      isProcessing = false;
+      notifyListeners();
+    }
   }
 
   Future<void> initializeWiFi() async {

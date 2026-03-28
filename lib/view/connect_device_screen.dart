@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -81,6 +82,26 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
           _isConnectingWifi = false;
         });
       }
+    }
+  }
+
+  Future<void> _connectUSB(BoardStateProvider provider) async {
+    try {
+      final success = await provider.connectUSB();
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Device connected successfully")),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to connect device")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
     }
   }
 
@@ -208,6 +229,41 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                     appLocalizations.wifi.toUpperCase(),
                                     style: TextStyle(color: buttonTextColor),
                                   ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (kIsWeb)
+                      Visibility(
+                        visible: !provider.pslabIsConnected,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                              ),
+                              backgroundColor: primaryRed,
+                              foregroundColor: buttonForegroundColor,
+                            ),
+                            onPressed: provider.isProcessing
+                                ? null
+                                : () => _connectUSB(provider),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: provider.isProcessing
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      'CONNECT USB',
+                                      style: TextStyle(color: buttonTextColor),
+                                    ),
                           ),
                         ),
                       ),

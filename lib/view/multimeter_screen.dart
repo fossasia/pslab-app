@@ -287,8 +287,18 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                     ? '${appLocalizations.multimeterTitle} - ${appLocalizations.playback}'
                     : appLocalizations.multimeterTitle,
                 key: const Key(multimeterScreenTitleKey),
-                onOptionsPressed:
-                    provider.isPlayingBack ? null : _showOptionsMenu,
+                onOptionsPressed: () {
+                  if (provider.isPlayingBack) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Stop playback to use multimeter options"),
+                      ),
+                    );
+                    return;
+                  }
+
+                  _showOptionsMenu();
+                },
                 onGuidePressed: _showInstrumentGuide,
                 onRecordPressed:
                     provider.isPlayingBack ? null : _toggleRecording,
