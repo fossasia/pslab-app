@@ -10,6 +10,17 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/.github/actions/android"
+      - "/.github/actions/common"
+      - "/.github/actions/ios"
+      - "/.github/actions/linux-arm64"
+      - "/.github/actions/linux"
+      - "/.github/actions/macos"
+      - "/.github/actions/screenshot-android"
+      - "/.github/actions/screenshot-ipad"
+      - "/.github/actions/screenshot-iphone"
+      - "/.github/actions/windows"
+      - "/.github/workflows"
     schedule:
       interval: "daily"
