@@ -111,47 +111,6 @@ jobs:
           name: AAB Generated
           path: build/app/outputs/bundle
 
-      - name: Upload APK/AAB to apk branch
-        if: ${{ github.repository == 'fossasia/pslab-app' }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
-          cd apk
-          
-          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-
-          echo "Removing previous files from branch"
-
-          rm -rf pslab-$branch*
-
-          ls
-
-          echo "Copying new build files"
-
-          find ../build/app/outputs/flutter-apk -type f \( -name '*release.apk' -o -name '*release.aab' \) -exec cp -v {} . \;
-          find ../build/app/outputs/bundle -type f \( -name '*release.apk' -o -name '*release.aab' \) -exec cp -v {} . \;
-
-          ls
-
-          echo "Renaming new build files"
-
-          for file in app*; do
-            mv $file pslab-$branch-${file#*-}
-          done
-
-          ls
-
-          echo "Pushing to apk branch"
-
-          git checkout --orphan temporary
-          git add --all .
-          git commit -am "[Auto] Update APK/AABs from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
-          git branch -D apk
-          git branch -m apk
-          git push --force origin apk
-
       - name: Update app in Open Testing track
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
@@ -285,30 +244,16 @@ jobs:
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         shell: bash
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
-          cd apk
+          # Upload Windows installer as artifact instead of pushing to apk branch
+          # This will be collected by the publish-apk job
+          mkdir -p artifacts/windows
+          cp -v build/windows/x64/installer/Release/*.exe artifacts/windows/
           
-          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-
-          echo "Removing previous files from branch"
-
-          rm -rf *.exe
-
-          echo "Copying new build files"
-
-          cp -v ../build/windows/x64/installer/Release/*.exe .
-
-          echo "Pushing to apk branch"
-
-          git checkout --orphan temporary
-          git add --all .
-          git commit -am "[Auto] Update Windows Installer from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
-          git branch -D apk
-          git branch -m apk
-          git push --force origin apk
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows Installer
+          path: artifacts/windows
   
   linux:
     name: Linux Flutter Build
@@ -326,32 +271,17 @@ jobs:
       - name: Upload packages to apk branch
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
-          cd apk
+          # Upload Linux packages as artifact instead of pushing to apk branch
+          # This will be collected by the publish-apk job
+          mkdir -p artifacts/linux
+          cp -v *.deb artifacts/linux/
+          cp -v *.rpm artifacts/linux/
           
-          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-
-          echo "Removing previous files from branch"
-
-          find . -maxdepth 1 -type f -name '*.deb' ! -name '*arm64*' -delete
-          find . -maxdepth 1 -type f -name '*.rpm' ! -name '*aarch64*' -delete
-
-          echo "Copying new build files"
-
-          cp -v ../*.deb .
-          cp -v ../*.rpm .
-
-          echo "Pushing to apk branch"
-
-          git checkout --orphan temporary
-          git add --all .
-          git commit -am "[Auto] Update Linux Packages from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
-          git branch -D apk
-          git branch -m apk
-          git push --force origin apk
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linux Packages
+          path: artifacts/linux
 
   linux-arm64:
     name: Linux ARM64 Flutter Build
@@ -369,31 +299,17 @@ jobs:
       - name: Upload packages to apk branch
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
-          cd apk
+          # Upload Linux ARM64 packages as artifact instead of pushing to apk branch
+          # This will be collected by the publish-apk job
+          mkdir -p artifacts/linux-arm64
+          cp -v *.deb artifacts/linux-arm64/
+          cp -v *.rpm artifacts/linux-arm64/
           
-          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-
-          echo "Removing previous files from branch"
-
-          rm -rf *arm64*.deb *aarch64*.rpm
-
-          echo "Copying new build files"
-
-          cp -v ../*.deb .
-          cp -v ../*.rpm .
-
-          echo "Pushing to apk branch"
-
-          git checkout --orphan temporary
-          git add --all .
-          git commit -am "[Auto] Update Linux ARM64 Packages from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
-          git branch -D apk
-          git branch -m apk
-          git push --force origin apk
+      - name: Upload Linux ARM64 Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linux ARM64 Packages
+          path: artifacts/linux-arm64
 
   macos:
     name: macOS Flutter Build
@@ -411,27 +327,107 @@ jobs:
       - name: Upload dmg to apk branch
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
+          # Upload macOS DMG as artifact instead of pushing to apk branch
+          # This will be collected by the publish-apk job
+          mkdir -p artifacts/macos
+          cp -v ../*.dmg artifacts/macos/
+          
+      - name: Upload macOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS DMG
+          path: artifacts/macos
+
+  publish-apk:
+    name: Publish to APK Branch
+    needs: [android, windows, linux, linux-arm64, macos]
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'fossasia/pslab-app' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: downloaded-artifacts
+          pattern: '*'
+          merge-multiple: false
+
+      - name: Checkout apk branch
+        run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin apk
+          git checkout apk
 
-          git clone --branch=apk https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} apk
-          cd apk
-          
+      - name: Prepare apk branch contents
+        run: |
           branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          echo "Branch: $branch"
+          
+          # Remove old files for this branch
+          echo "Removing previous builds from branch: $branch"
+          rm -rf pslab-$branch* || true
+          rm -rf windows/* || true
+          rm -rf linux/* || true
+          rm -rf linux-arm64/* || true
+          rm -rf macos/* || true
+          
+          # Create directories
+          mkdir -p windows linux linux-arm64 macos
+          
+          # Copy Android APK/AAB files
+          if [ -d "downloaded-artifacts/APK Generated" ]; then
+            echo "Copying Android APK files..."
+            find downloaded-artifacts/APK Generated -type f -name '*release.apk' -exec cp -v {} . \;
+          fi
+          if [ -d "downloaded-artifacts/AAB Generated" ]; then
+            echo "Copying Android AAB files..."
+            find downloaded-artifacts/AAB Generated -type f -name '*release.aab' -exec cp -v {} . \;
+          fi
+          
+          # Rename Android files
+          for file in app*.apk app*.aab; do
+            if [ -f "$file" ]; then
+              mv "$file" "pslab-$branch-${file#*-}"
+            fi
+          done
+          
+          # Copy Windows installer
+          if [ -d "downloaded-artifacts/Windows Installer" ]; then
+            echo "Copying Windows installer..."
+            cp -v downloaded-artifacts/Windows Installer/*.exe windows/
+          fi
+          
+          # Copy Linux packages
+          if [ -d "downloaded-artifacts/Linux Packages" ]; then
+            echo "Copying Linux packages..."
+            cp -v downloaded-artifacts/Linux Packages/*.deb linux/
+            cp -v downloaded-artifacts/Linux Packages/*.rpm linux/
+          fi
+          
+          # Copy Linux ARM64 packages
+          if [ -d "downloaded-artifacts/Linux ARM64 Packages" ]; then
+            echo "Copying Linux ARM64 packages..."
+            cp -v downloaded-artifacts/Linux ARM64 Packages/*.deb linux-arm64/
+            cp -v downloaded-artifacts/Linux ARM64 Packages/*.rpm linux-arm64/
+          fi
+          
+          # Copy macOS DMG
+          if [ -d "downloaded-artifacts/macOS DMG" ]; then
+            echo "Copying macOS DMG..."
+            cp -v downloaded-artifacts/macOS DMG/*.dmg macos/
+          fi
+          
+          # Show what we're committing
+          echo "Final apk branch contents:"
+          ls -la
+          find . -type f -name "*" | head -20
 
-          echo "Removing previous files from branch"
-
-          rm -rf *.dmg
-
-          echo "Copying new build files"
-
-          cp -v ../*.dmg .
-
-          echo "Pushing to apk branch"
-
-          git checkout --orphan temporary
+      - name: Commit and push apk branch
+        run: |
+          branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           git add --all .
-          git commit -am "[Auto] Update macOS DMG from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
-          git branch -D apk
-          git branch -m apk
-          git push --force origin apk
+          git commit -am "[Auto] Update all builds from $branch ($(date +%Y-%m-%d.%H:%M:%S))"
+          git push origin apk
