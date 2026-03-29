@@ -99,7 +99,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_back),
-                label: Text(appLocalizations.back),
+                label: Text(appLocalizations.close),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
