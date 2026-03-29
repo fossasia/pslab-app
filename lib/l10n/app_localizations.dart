@@ -4109,6 +4109,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stop Sound'**
   String get stopSound;
+
+  /// No description provided for @saw.
+  ///
+  /// In en, this message translates to:
+  /// **'Saw'**
+  String get saw;
 }
 
 class _AppLocalizationsDelegate
