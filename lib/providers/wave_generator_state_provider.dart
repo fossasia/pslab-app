@@ -28,7 +28,8 @@ enum WaveConst {
   sine,
   triangular,
   square,
-  pwm
+  pwm,
+  sawtooth
 }
 
 enum WaveData {
@@ -50,6 +51,7 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   static final int sin = 1;
   static final int triangular = 2;
   static final int pwm = 3;
+  static final int sawtooth = 4;
 
   late WaveConst? selectedAnalogWave;
 
@@ -196,13 +198,14 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         buffer[i] = (_audioAngle < (2 * math.pi * duty)) ? volume : -volume;
       } else {
         double safeSin = math.sin(_audioAngle).clamp(-1.0, 1.0);
-
         double sample = safeSin;
+        int currentWaveType = waveGeneratorConstants
+            .wave[selectedAnalogWave]![WaveConst.waveType]!;
 
-        if (waveGeneratorConstants
-                .wave[selectedAnalogWave]![WaveConst.waveType] ==
-            triangular) {
+        if (currentWaveType == triangular) {
           sample = (2 / math.pi) * math.asin(safeSin);
+        } else if (currentWaveType == sawtooth) {
+          sample = (_audioAngle / math.pi) - 1.0;
         }
 
         buffer[i] = sample * volume;
@@ -318,16 +321,15 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         .wave[WaveConst.wave2]![WaveConst.phase]!
         .toDouble();
 
+    int shape1 =
+        waveGeneratorConstants.wave[WaveConst.wave1]![WaveConst.waveType]!;
+    int shape2 =
+        waveGeneratorConstants.wave[WaveConst.wave2]![WaveConst.waveType]!;
+
     String waveType1 =
-        waveGeneratorConstants.wave[WaveConst.wave1]![WaveConst.waveType]! ==
-                sin
-            ? "sine"
-            : "tria";
+        shape1 == sin ? "sine" : (shape1 == triangular ? "tria" : "sawtooth");
     String waveType2 =
-        waveGeneratorConstants.wave[WaveConst.wave2]![WaveConst.waveType]! ==
-                sin
-            ? "sine"
-            : "tria";
+        shape2 == sin ? "sine" : (shape2 == triangular ? "tria" : "sawtooth");
 
     if (_scienceLab.isConnected()) {
       if (waveGeneratorConstants.modeSelected == WaveConst.square) {
@@ -486,16 +488,23 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         phase = waveGeneratorConstants.wave[WaveConst.wave2]![WaveConst.phase]!
             .toDouble();
       }
-      if (shape == 1) {
+
+      if (shape == sin) {
         for (int i = 0; i < 5000; i++) {
           double y = 5 * math.sin(2 * pi * (freq / 1e6) * i + phase * pi / 180);
           entries.add(FlSpot(i.toDouble(), y));
         }
-      } else {
+      } else if (shape == triangular) {
         for (int i = 0; i < 5000; i++) {
           double y = (10 / pi) *
               (math.asin(
                   math.sin(2 * pi * (freq / 1e6) * i + phase * pi / 180)));
+          entries.add(FlSpot(i.toDouble(), y));
+        }
+      } else if (shape == sawtooth) {
+        for (int i = 0; i < 5000; i++) {
+          double t = 2 * pi * (freq / 1e6) * i + phase * pi / 180;
+          double y = 5 * (((t % (2 * pi)) / pi) - 1.0);
           entries.add(FlSpot(i.toDouble(), y));
         }
       }
@@ -548,6 +557,16 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         return WaveConst.phase;
       case 'duty':
         return WaveConst.duty;
+      case 'sine':
+        return WaveConst.sine;
+      case 'triangular':
+        return WaveConst.triangular;
+      case 'square':
+        return WaveConst.square;
+      case 'pwm':
+        return WaveConst.pwm;
+      case 'sawtooth':
+        return WaveConst.sawtooth;
       default:
         return WaveConst.wave1;
     }

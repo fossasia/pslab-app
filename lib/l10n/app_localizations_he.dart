@@ -2158,4 +2158,7 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get stopSound => 'Stop Sound';
+
+  @override
+  String get saw => 'Saw';
 }
