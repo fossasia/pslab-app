@@ -102,6 +102,18 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   }
 
   Future<void> _deleteAllFiles() async {
+    if (_files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            appLocalizations.noLoggedData,
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+      return;
+   }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
