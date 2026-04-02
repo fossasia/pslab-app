@@ -113,7 +113,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         ),
       );
       return;
-  }
+    }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
