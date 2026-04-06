@@ -57,7 +57,7 @@ runs:
         git push --force origin fastlane-ios
 
     - name: Upload Screenshots
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: iPhone Screenshots
         path: screenshots/*
