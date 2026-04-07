@@ -24,7 +24,7 @@ runs:
 
     - name: Create iPhone Simulator
       id: iphone_sim
-      uses: futureware-tech/simulator-action@v4
+      uses: futureware-tech/simulator-action@v5
       with:
         model: ${{ inputs.IPHONE_DEVICE_MODEL }}
         wait_for_boot: true
