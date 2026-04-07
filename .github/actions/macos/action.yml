@@ -44,7 +44,7 @@ runs:
         appdmg appdmg.json pslab-${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}.dmg
 
     - name: Store App file
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: macos-app
         path: pslab-${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}.dmg
