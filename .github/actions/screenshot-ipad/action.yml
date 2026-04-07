@@ -24,7 +24,7 @@ runs:
 
     - name: Create iPad Simulator
       id: ipad_sim
-      uses: futureware-tech/simulator-action@v4
+      uses: futureware-tech/simulator-action@v5
       with:
         model: ${{ inputs.IPAD_DEVICE_MODEL }}
         wait_for_boot: true
