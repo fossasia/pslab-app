@@ -29,7 +29,7 @@ jobs:
       VERSION_NAME: ${{ steps.flutter-version.outputs.VERSION_NAME }}
       VERSION_CODE: ${{ steps.flutter-version.outputs.VERSION_CODE }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Common Workflow
         uses: ./.github/actions/common
@@ -80,7 +80,7 @@ jobs:
     needs: common
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Prepare Build Keys
         if: ${{ github.repository == 'fossasia/pslab-app' }}
@@ -171,7 +171,7 @@ jobs:
         with:
           xcode-version: '16.4.0'
           
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Prepare Build Keys
         if: ${{ github.repository == 'fossasia/pslab-app' }}
@@ -226,7 +226,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Android Screenshot Workflow
         uses: ./.github/actions/screenshot-android
@@ -244,7 +244,7 @@ jobs:
         with:
           xcode-version: '16.4.0'
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: iPhone Screenshot Workflow
         uses: ./.github/actions/screenshot-iphone
@@ -261,7 +261,7 @@ jobs:
         with:
           xcode-version: '16.4.0'
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: iPad Screenshot Workflow
         uses: ./.github/actions/screenshot-ipad
@@ -273,7 +273,7 @@ jobs:
     needs: common
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Windows Workflow
         uses: ./.github/actions/windows
@@ -315,7 +315,7 @@ jobs:
     needs: common
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Linux Workflow
         uses: ./.github/actions/linux
@@ -358,7 +358,7 @@ jobs:
     needs: common
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Linux ARM64 Workflow
         uses: ./.github/actions/linux-arm64
@@ -400,7 +400,7 @@ jobs:
     needs: common
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: macOS Workflow
         uses: ./.github/actions/macos
