@@ -3,17 +3,7 @@ name: Build
 on:
   pull_request:
     branches: ["flutter"]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '**.png'
-      - '**.jpg'
-      - '**.jpeg'
-      - '**.gif'
-      - '**.svg'
-      - '**.webp'
-      - '**.txt'
-      - '**.arb'
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -25,138 +15,226 @@ env:
   IPAD_DEVICE_MODEL: iPad Pro 13-inch (M4)
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      is_code: ${{ steps.check.outputs.is_code }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - id: check
+        run: |
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -vE '\.(md|png|jpg|jpeg|gif|svg|webp|txt|arb)$' | grep -v '^docs/'; then
+            echo "is_code=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_code=false" >> $GITHUB_OUTPUT
+          fi
+
   common:
     name: Common Build
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: Common Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/common
 
       - name: Save PR number
+        if: needs.changes.outputs.is_code == 'true'
         run: |
           mkdir -p ./pr
           echo ${{ github.event.number }} > ./pr/NR
 
       - uses: actions/upload-artifact@v7
+        if: needs.changes.outputs.is_code == 'true'
         with:
           name: pr
           path: pr/
 
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
+
   android:
     name: Android Flutter Build
-    needs: common
+    needs: [changes, common]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: Android Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/android
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
 
   ios:
     name: iOS Flutter Build
-    needs: common
-    runs-on: macos-latest
+    needs: [changes, common]
+    runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     steps:
       - name: Set up Xcode
+        if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: '16.4.0'
-          
+
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: iOS Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/ios
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
 
   screenshots-android:
     name: Screenshots (Android)
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: Android Screenshot Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/screenshot-android
         with:
           ANDROID_EMULATOR_API: ${{ env.ANDROID_EMULATOR_API }}
           ANDROID_EMULATOR_ARCH: ${{ env.ANDROID_EMULATOR_ARCH }}
 
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
+
   screenshots-iphone:
     name: Screenshots (iPhone)
-    runs-on: macos-latest
+    needs: changes
+    runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
       - name: Set up Xcode
+        if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: '16.4.0'
 
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: iPhone Screenshot Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/screenshot-iphone
         with:
           IPHONE_DEVICE_MODEL: ${{ env.IPHONE_DEVICE_MODEL }}
-  
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
+
   screenshots-ipad:
     name: Screenshots (iPad)
-    runs-on: macos-latest
+    needs: changes
+    runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
       - name: Set up Xcode
+        if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: '16.4.0'
 
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: iPad Screenshot Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/screenshot-ipad
         with:
           IPAD_DEVICE_MODEL: ${{ env.IPAD_DEVICE_MODEL }}
-  
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
+
   windows:
     name: Windows Flutter Build
-    needs: common
-    runs-on: windows-latest
+    needs: [changes, common]
+    runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'windows-latest' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: Windows Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/windows
-  
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
+
   linux:
     name: Linux Flutter Build
-    needs: common
+    needs: [changes, common]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: Linux Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/linux
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
 
   linux-arm64:
     name: Linux ARM64 Flutter Build
-    needs: common
-    runs-on: ubuntu-24.04-arm
+    needs: [changes, common]
+    runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: Linux ARM64 Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/linux-arm64
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
 
   macos:
     name: macOS Flutter Build
-    needs: common
-    runs-on: macos-latest
+    needs: [changes, common]
+    runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     steps:
       - name: Set up Xcode
+        if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: '16.4.0'
 
       - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
 
       - name: macOS Workflow
+        if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/macos
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
