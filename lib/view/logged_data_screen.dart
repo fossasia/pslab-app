@@ -102,6 +102,10 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   }
 
   Future<void> _deleteAllFiles() async {
+    if (_isLoading) {
+      return; 
+    }
+    
     if (_files.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
