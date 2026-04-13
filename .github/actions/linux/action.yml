@@ -70,7 +70,7 @@ runs:
           linux/99-pslab.rules=/etc/udev/rules.d/99-pslab.rules
 
     - name: Store Packages
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: linux-packages
         path: "*.deb\n*.rpm"

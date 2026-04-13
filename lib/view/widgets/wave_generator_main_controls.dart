@@ -17,6 +17,7 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
   String iconSin = "assets/icons/ic_sin.png";
   String iconTriangular = "assets/icons/ic_triangular.png";
   String iconPwm = "assets/icons/ic_pwm_pic.png";
+  String iconSawtooth = "assets/icons/ic_sawtooth.png";
   var labelMap = {};
   var unitMap = {};
   final minValues = {
@@ -69,14 +70,19 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                                       provider.waveGeneratorConstants
                                                   .modeSelected ==
                                               WaveConst.square
-                                          ? (provider.waveGeneratorConstants
-                                                              .wave[
-                                                          provider
-                                                              .selectedAnalogWave]
+                                          ? (provider.waveGeneratorConstants.wave[
+                                                          provider.selectedAnalogWave]
                                                       ?[WaveConst.waveType] ==
                                                   WaveGeneratorStateProvider.sin
                                               ? iconSin
-                                              : iconTriangular)
+                                              : (provider.waveGeneratorConstants
+                                                              .wave[provider.selectedAnalogWave]
+                                                          ?[
+                                                          WaveConst.waveType] ==
+                                                      WaveGeneratorStateProvider
+                                                          .triangular
+                                                  ? iconTriangular
+                                                  : iconSawtooth))
                                           : iconPwm,
                                       height: 40,
                                       width: 40,
@@ -85,14 +91,19 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                                       provider.waveGeneratorConstants
                                                   .modeSelected ==
                                               WaveConst.square
-                                          ? (provider.waveGeneratorConstants
-                                                              .wave[
-                                                          provider
-                                                              .selectedAnalogWave]
+                                          ? (provider.waveGeneratorConstants.wave[
+                                                          provider.selectedAnalogWave]
                                                       ?[WaveConst.waveType] ==
                                                   WaveGeneratorStateProvider.sin
                                               ? appLocalizations.sine
-                                              : appLocalizations.tri)
+                                              : (provider.waveGeneratorConstants
+                                                              .wave[provider.selectedAnalogWave]
+                                                          ?[
+                                                          WaveConst.waveType] ==
+                                                      WaveGeneratorStateProvider
+                                                          .triangular
+                                                  ? appLocalizations.tri
+                                                  : appLocalizations.saw))
                                           : appLocalizations.pwm.toUpperCase(),
                                       style: TextStyle(
                                         color: Colors.white,

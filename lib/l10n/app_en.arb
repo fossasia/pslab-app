@@ -664,5 +664,6 @@
     "pin_cap_desc": "Capacitance Measurement Pin",
     "pin_res_name": "RES",
     "pin_res_desc": "Resistance Measurement Pin",
-    "stopSound" : "Stop Sound"
+    "stopSound" : "Stop Sound",
+    "saw" : "Saw"
 }

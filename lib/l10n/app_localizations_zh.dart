@@ -2158,6 +2158,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get stopSound => 'Stop Sound';
+
+  @override
+  String get saw => 'Saw';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).

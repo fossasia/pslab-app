@@ -530,6 +530,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         isTriggered = false;
         entries.add([]);
         List<double> buffer = _audioJack.read();
+
+        if (buffer.isEmpty) return;
+
         xDataString = List.filled(buffer.length, '');
         yDataString.add(List.filled(buffer.length, ''));
         int n = buffer.length;
@@ -541,7 +544,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
         List<Complex> fftOut = [];
         if (isFourierTransformSelected) {
-          List<Complex> yComplex = List.filled(buffer.length, const Complex(0));
+          List<Complex> yComplex =
+              List.filled(buffer.length, const Complex(0), growable: true);
           for (int j = 0; j < buffer.length; j++) {
             yComplex[j] = Complex(buffer[j] * 3);
           }
@@ -594,8 +598,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           }
         }
 
-        for (int i = micStartIndex; i < n; i++) {
-          double audioValue = buffer[i] * 3;
+        for (int i = micStartIndex; i < n; i += 4) {
+          double audioValue = buffer[i] * 20;
 
           if (!isFourierTransformSelected) {
             entries.last.add(FlSpot(
@@ -605,7 +609,11 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             if (i < n / 2) {
               double y = fftOut[i].abs() / samples;
               if (y > mA) mA = y;
-              entries.last.add(FlSpot((i / factor), y));
+
+              double frequency = i / factor;
+              entries.last.add(FlSpot(frequency, 0));
+              entries.last.add(FlSpot(frequency, y));
+              entries.last.add(FlSpot(frequency, 0));
             }
           }
           yDataString.last[i] = audioValue.toString();
@@ -683,11 +691,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       }
 
       if (isFourierTransformSelected) {
-        oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
+        oscilloscopeAxesScale.setYAxisScaleMax((_maxAmp > 0) ? _maxAmp : 1.0);
         oscilloscopeAxesScale.setYAxisScaleMin(0);
         oscilloscopeAxesScale.setXAxisScale(_maxFreq * 1000);
       }
-
       notifyListeners();
     } catch (e) {
       logger.e(e);

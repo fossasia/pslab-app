@@ -22,7 +22,7 @@ The layout of the oscilloscope graphical user interface contains three main part
 
 <table>
     <tr>
-        <td><img src="/docs/images/instrument_oscilloscope_channelparam.png"></td>
+        <td><img src="/docs/images/oscilloscope_channel_params.png"></td>
         <td><img src="/docs/images/instrument_oscilloscope_dataanalysis.png"></td>
     </tr>
 </table>

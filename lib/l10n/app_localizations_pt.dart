@@ -2158,6 +2158,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get stopSound => 'Stop Sound';
+
+  @override
+  String get saw => 'Saw';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

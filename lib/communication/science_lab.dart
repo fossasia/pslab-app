@@ -346,6 +346,7 @@ class ScienceLab {
 
   Future<void> loadEquation(String channel, String function) async {
     List<double> span = List.filled(2, 0);
+
     if (function == 'sine') {
       span[0] = 0;
       span[1] = 2 * pi;
@@ -354,20 +355,30 @@ class ScienceLab {
       span[0] = 0;
       span[1] = 4;
       waveType[channel] = 'tria';
+    } else if (function == 'sawtooth') {
+      span[0] = 0;
+      span[1] = 2 * pi;
+      waveType[channel] = 'sawtooth';
     } else {
       waveType[channel] = 'orbit';
     }
+
     double factor = (span[1] - span[0]) / 512;
     List<double> x = [];
     List<double> y = [];
+
     for (int i = 0; i < 512; i++) {
       x.add(span[0] + i * factor);
+
       switch (function) {
         case 'sine':
           y.add(sin(x[i]));
           break;
         case 'tria':
           y.add((x[i] % 4 - 2).abs());
+          break;
+        case 'sawtooth':
+          y.add((x[i] / pi) - 1.0);
           break;
         default:
           break;
@@ -1082,12 +1093,12 @@ class ScienceLab {
     }
 
     if (waveType != null) {
-      if (waveType == "sine" || waveType == "tria") {
+      if (waveType == "sine" || waveType == "tria" || waveType == "sawtooth") {
         if (this.waveType["SI1"] != waveType) {
           loadEquation("SI1", waveType);
         }
       } else {
-        logger.e("Not a valid waveform. try sine or tria");
+        logger.e("Not a valid waveform. try sine, tria, or sawtooth");
       }
     }
 
@@ -1139,12 +1150,12 @@ class ScienceLab {
     }
 
     if (waveType != null) {
-      if (waveType == "sine" || waveType == "tria") {
+      if (waveType == "sine" || waveType == "tria" || waveType == "sawtooth") {
         if (this.waveType["SI2"] != waveType) {
           loadEquation("SI2", waveType);
         }
       } else {
-        logger.e("Not a valid waveform. try sine or tria");
+        logger.e("Not a valid waveform. try sine, tria, or sawtooth");
       }
     }
 

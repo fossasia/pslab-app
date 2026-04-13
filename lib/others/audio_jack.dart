@@ -5,11 +5,13 @@ import 'package:pslab/others/logger_service.dart';
 
 class AudioJack {
   static const int samplingRate = 44100;
+  static const int maxBufferSize = 1024;
+
   bool _isListening = false;
 
   AudioRecorder? _recorder;
   StreamSubscription<Uint8List>? _streamSubscription;
-  List<double> _audioBuffer = [];
+  final List<double> _audioBuffer = [];
 
   AudioJack();
 
@@ -51,7 +53,10 @@ class AudioJack {
       final sample = byteData.getInt16(i, Endian.little);
       tempBuffer.add(sample / 32768.0);
     }
-    _audioBuffer = tempBuffer;
+    _audioBuffer.addAll(tempBuffer);
+    if (_audioBuffer.length > maxBufferSize) {
+      _audioBuffer.removeRange(0, _audioBuffer.length - maxBufferSize);
+    }
   }
 
   void _onError(Object e) {
@@ -60,7 +65,7 @@ class AudioJack {
   }
 
   List<double> read() {
-    return _audioBuffer;
+    return List.from(_audioBuffer);
   }
 
   Future<void> close() async {
@@ -73,6 +78,7 @@ class AudioJack {
       await _recorder!.dispose();
       _recorder = null;
     }
+    _audioBuffer.clear();
   }
 
   Future<void> disposeHardware() async {
