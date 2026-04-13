@@ -46,10 +46,14 @@ class CsvService {
       final directory = await getInstrumentDirectory(instrumentName);
 
       String finalFileName;
+      fileName = fileName.trim();
       if (fileName.isEmpty) {
         finalFileName =
             '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
       } else {
+        if (fileName.length > 200) {
+          fileName = fileName.substring(0, 200);
+        }
         finalFileName = fileName.endsWith('.csv') ? fileName : '$fileName.csv';
       }
 
