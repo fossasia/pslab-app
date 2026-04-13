@@ -51,8 +51,11 @@ class CsvService {
         finalFileName =
             '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
       } else {
-        if (fileName.length > 200) {
-          fileName = fileName.substring(0, 200);
+        if (fileName.endsWith('.csv')) {
+          fileName = fileName.substring(0, fileName.length - 4);
+        }
+        if (fileName.length > 196) {
+          fileName = fileName.substring(0, 196);
         }
         finalFileName = fileName.endsWith('.csv') ? fileName : '$fileName.csv';
       }
