@@ -147,6 +147,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
         return AlertDialog(
           title: Text(appLocalizations.saveRecording),
           content: TextField(
+            maxLength: 200,
             controller: filenameController,
             decoration: InputDecoration(
               hintText: appLocalizations.enterFileName,
@@ -160,14 +161,23 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, filenameController.text);
+                final text = filenameController.text.trim();
+                if (text.length > 200) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'File name must be less than 200 characters.',
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                Navigator.pop(context, text);
               },
               child: Text(appLocalizations.save),
             ),
           ],
         );
-      },
-    );
 
     if (fileName != null) {
       _csvService.writeMetaData(
