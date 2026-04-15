@@ -31,6 +31,6 @@
 	<key>NSLocationUsageDescription</key>
 	<string>This app needs access to location.</string>
 	<key>NSMicrophoneUsageDescription</key>
-    <string>Some message to describe why you need this permission</string>
+	<string>This app uses the microphone to capture and analyze audio for oscilloscope and recording features.</string>
 </dict>
 </plist>
