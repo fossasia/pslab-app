@@ -178,6 +178,8 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
             ),
           ],
         );
+      },
+    );
 
     if (fileName != null) {
       _csvService.writeMetaData(
