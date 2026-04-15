@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
+import 'package:flutter_macos_permissions/flutter_macos_permissions.dart';
 
 import '../../theme/colors.dart';
 
@@ -249,7 +252,11 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       groupValue:
                           oscilloscopeStateProvider.isInBuiltMICSelected,
                       onChanged: (bool? value) async {
-                        await Permission.microphone.request();
+                        if (Platform.isMacOS) {
+                          await FlutterMacosPermissions.requestMicrophone();
+                        }else{
+                          await Permission.microphone.request();
+                        }
                         setState(
                           () {
                             if (value == null) {

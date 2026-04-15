@@ -74,6 +74,7 @@ dependencies:
   serial: ^0.0.7+1
   web: ^1.1.1
   mp_audio_stream: ^0.2.2
+  flutter_macos_permissions: ^2.0.8
 dependency_overrides:
   ffi: ^2.1.3
 
