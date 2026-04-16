@@ -201,9 +201,9 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
                 final text = filenameController.text.trim();
                 if (text.length > 200) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
+                    SnackBar(
                       content: Text(
-                        'File name must be less than 200 characters.',
+                        appLocalizations.fileNameTooLong,
                       ),
                     ),
                   );
