@@ -166,7 +166,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text(
-                        'File name must be less than 200 characters.',
+                        appLocalizations.fileNameTooLong,
                       ),
                     ),
                   );
