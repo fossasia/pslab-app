@@ -251,7 +251,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       groupValue:
                           oscilloscopeStateProvider.isInBuiltMICSelected,
                       onChanged: (bool? value) async {
-                        if(!Platform.isMacOS) {
+                        if (!Platform.isMacOS) {
                           await Permission.microphone.request();
                         }
                         setState(
