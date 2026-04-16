@@ -164,7 +164,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
                 final text = filenameController.text.trim();
                 if (text.length > 200) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
+                    SnackBar(
                       content: Text(
                         appLocalizations.fileNameTooLong,
                       ),
