@@ -18,7 +18,7 @@ dependencies:
   cupertino_icons: ^1.0.9
   flutter_svg: ^2.2.0
   google_fonts: ^8.0.2
-  fl_chart: ^1.1.0
+  fl_chart: ^1.2.0
   provider: ^6.1.5
   usb_serial:
     git:
