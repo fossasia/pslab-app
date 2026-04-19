@@ -55,7 +55,7 @@ class CsvService {
 
       final file = File('${directory.path}/$finalFileName');
 
-      final codec = csv.CsvCodec();
+      final codec = csv.Csv();
       final csvData = codec.encode(data);
       await file.writeAsString(csvData);
       logger.i('${appLocalizations.csvFileSaved}: ${file.path}');
@@ -142,7 +142,7 @@ class CsvService {
 
       final List<List<dynamic>> rows = [];
 
-      final codec = csv.CsvCodec(dynamicTyping: true);
+      final codec = csv.Csv(dynamicTyping: true);
 
       await for (final line in lines) {
         final parsedRow = codec.decode(line);
