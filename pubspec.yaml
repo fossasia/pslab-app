@@ -16,7 +16,7 @@ dependencies:
   intl: any
 
   cupertino_icons: ^1.0.9
-  flutter_svg: ^2.2.0
+  flutter_svg: ^2.2.4
   google_fonts: ^8.0.2
   fl_chart: ^1.2.0
   provider: ^6.1.5
