@@ -50,7 +50,7 @@ dependencies:
   flutter_map: ^8.2.1
   latlong2: ^0.9.1
   geolocator: ^14.0.2
-  wakelock_plus: ^1.3.3
+  wakelock_plus: ^1.5.2
   image: ^4.1.3
   serial: ^0.0.7+1
   web: ^1.1.1
