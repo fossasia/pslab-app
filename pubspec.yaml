@@ -47,7 +47,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flusbserial: ^0.4.0
   inno_bundle: ^0.11.2
-  flutter_map: ^8.2.1
+  flutter_map: ^8.3.0
   latlong2: ^0.9.1
   geolocator: ^14.0.2
   wakelock_plus: ^1.5.2
