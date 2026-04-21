@@ -43,7 +43,7 @@ dependencies:
   csv: ^8.0.0
   share_plus: ^12.0.0
   path_provider: ^2.1.5
-  file_picker: ^10.3.2
+  file_picker: ^11.0.2
   flutter_screenutil: ^5.9.3
   flusbserial: ^0.4.0
   inno_bundle: ^0.11.2
