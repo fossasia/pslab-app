@@ -309,10 +309,10 @@ packages:
     dependency: "direct main"
     description:
       name: flusbserial
-      sha256: a2ce3994f0def89b2621081ba13ce83fa085f329884515adbc45a577769b9a57
+      sha256: f8d5d893ccc0581e56a90b44c777bc88f6c0e7caf3f4f9dd4569ce0e3fa5e9dd
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.0"
+    version: "0.5.0"
   flutter:
     dependency: "direct main"
     description: flutter
