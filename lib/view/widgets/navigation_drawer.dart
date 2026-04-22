@@ -201,15 +201,15 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 3
                       ? selectedMenuColor
-                      : Colors.black,
+                      : optionDisabledColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
               ),
-              trailing: const Text(
-                '(Coming soon)',
+              trailing: Text(
+                appLocalizations.comingSoon,
                 style: TextStyle(
-                  color: Colors.black54,
+                  color: optionDisabledColor,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
