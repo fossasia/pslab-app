@@ -190,7 +190,6 @@ class _NavDrawerState extends State<NavDrawer> {
             ListTile(
               focusColor: listTileFocusColor,
               dense: true,
-              enabled: false,
               leading: Icon(
                 Icons.create_new_folder,
                 color:
@@ -204,14 +203,6 @@ class _NavDrawerState extends State<NavDrawer> {
                       : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
-                ),
-              ),
-              trailing: const Text(
-                '(Coming soon)',
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
               onTap: () {
