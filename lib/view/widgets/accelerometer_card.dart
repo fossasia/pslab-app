@@ -24,10 +24,10 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
   final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   Widget sideTitleWidgets(
-      double value,
-      TitleMeta meta, {
-        required bool compact,
-      }) {
+    double value,
+    TitleMeta meta, {
+    required bool compact,
+  }) {
     return SideTitleWidget(
       meta: meta,
       child: Text(
@@ -52,7 +52,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     required bool centered,
   }) {
     final double imageSize =
-    (constraints.maxWidth * 0.15).clamp(30.0, 50.0).toDouble();
+        (constraints.maxWidth * 0.15).clamp(30.0, 50.0).toDouble();
 
     return KeyedSubtree(
       key: ValueKey('accelerometer-info-${widget.axis}-$centered'),
@@ -62,7 +62,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment:
-          centered ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+              centered ? CrossAxisAlignment.center : CrossAxisAlignment.start,
           children: [
             Center(
               child: Image.asset(
@@ -126,10 +126,9 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     required bool isNarrow,
   }) {
     final double safeMaxX =
-    dataLength <= 1 ? 50 : (dataLength > 50 ? 50 : dataLength.toDouble());
+        dataLength <= 1 ? 50 : (dataLength > 50 ? 50 : dataLength.toDouble());
 
-    final List<FlSpot> safeSpots =
-    spots.isEmpty ? [const FlSpot(0, 0)] : spots;
+    final List<FlSpot> safeSpots = spots.isEmpty ? [const FlSpot(0, 0)] : spots;
 
     return KeyedSubtree(
       key: ValueKey('accelerometer-chart-${widget.axis}-$isNarrow'),
@@ -229,7 +228,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
   @override
   Widget build(BuildContext context) {
     final AccelerometerStateProvider provider =
-    Provider.of<AccelerometerStateProvider>(context);
+        Provider.of<AccelerometerStateProvider>(context);
 
     final List<FlSpot> spots = provider.getAxisData(widget.axis);
     final double currVal = provider.getCurrent(widget.axis);
@@ -272,31 +271,31 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
 
             final Widget content = useVerticalLayout
                 ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                infoSection,
-                SizedBox(
-                  height: 200,
-                  child: chartSection,
-                ),
-              ],
-            )
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      infoSection,
+                      SizedBox(
+                        height: 200,
+                        child: chartSection,
+                      ),
+                    ],
+                  )
                 : SizedBox(
-              height: 220,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    flex: 30,
-                    child: infoSection,
-                  ),
-                  Expanded(
-                    flex: 70,
-                    child: chartSection,
-                  ),
-                ],
-              ),
-            );
+                    height: 220,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 30,
+                          child: infoSection,
+                        ),
+                        Expanded(
+                          flex: 70,
+                          child: chartSection,
+                        ),
+                      ],
+                    ),
+                  );
 
             return SingleChildScrollView(
               child: ConstrainedBox(
