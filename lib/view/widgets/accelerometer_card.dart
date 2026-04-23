@@ -24,10 +24,10 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
   final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
   Widget sideTitleWidgets(
-      double value,
-      TitleMeta meta, {
-        required bool compact,
-      }) {
+    double value,
+    TitleMeta meta, {
+    required bool compact,
+  }) {
     return SideTitleWidget(
       meta: meta,
       child: Text(
@@ -52,7 +52,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     required bool centered,
   }) {
     final double imageSize =
-    (constraints.maxWidth * 0.15).clamp(30.0, 50.0).toDouble();
+        (constraints.maxWidth * 0.15).clamp(30.0, 50.0).toDouble();
 
     final double labelWidth = isNarrow ? 110 : 130;
 
@@ -93,8 +93,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                 width: centered ? null : labelWidth,
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
-                  alignment:
-                  centered ? Alignment.center : Alignment.centerLeft,
+                  alignment: centered ? Alignment.center : Alignment.centerLeft,
                   child: Text(
                     "${appLocalizations.minValue} ${minVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
                     textAlign: centered ? TextAlign.center : TextAlign.left,
@@ -113,8 +112,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                 width: centered ? null : labelWidth,
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
-                  alignment:
-                  centered ? Alignment.center : Alignment.centerLeft,
+                  alignment: centered ? Alignment.center : Alignment.centerLeft,
                   child: Text(
                     "${appLocalizations.maxValue} ${maxVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
                     textAlign: centered ? TextAlign.center : TextAlign.left,
@@ -138,10 +136,9 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     required bool isNarrow,
   }) {
     final double safeMaxX =
-    dataLength <= 1 ? 50 : (dataLength > 50 ? 50 : dataLength.toDouble());
+        dataLength <= 1 ? 50 : (dataLength > 50 ? 50 : dataLength.toDouble());
 
-    final List<FlSpot> safeSpots =
-    spots.isEmpty ? [const FlSpot(0, 0)] : spots;
+    final List<FlSpot> safeSpots = spots.isEmpty ? [const FlSpot(0, 0)] : spots;
 
     return KeyedSubtree(
       key: ValueKey('accelerometer-chart-${widget.axis}-$isNarrow'),
@@ -240,7 +237,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
   @override
   Widget build(BuildContext context) {
     final AccelerometerStateProvider provider =
-    Provider.of<AccelerometerStateProvider>(context);
+        Provider.of<AccelerometerStateProvider>(context);
 
     final List<FlSpot> spots = provider.getAxisData(widget.axis);
     final double currVal = provider.getCurrent(widget.axis);
@@ -287,33 +284,33 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
 
             final Widget content = useVerticalLayout
                 ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  height: 165,
-                  child: infoSection,
-                ),
-                SizedBox(
-                  height: 180,
-                  child: chartSection,
-                ),
-              ],
-            )
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        height: 165,
+                        child: infoSection,
+                      ),
+                      SizedBox(
+                        height: 180,
+                        child: chartSection,
+                      ),
+                    ],
+                  )
                 : SizedBox(
-              height: 220,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(
-                    width: 170,
-                    child: infoSection,
-                  ),
-                  Expanded(
-                    child: chartSection,
-                  ),
-                ],
-              ),
-            );
+                    height: 220,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(
+                          width: 170,
+                          child: infoSection,
+                        ),
+                        Expanded(
+                          child: chartSection,
+                        ),
+                      ],
+                    ),
+                  );
 
             if (useFallbackScroll) {
               return SingleChildScrollView(
