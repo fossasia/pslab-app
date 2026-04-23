@@ -283,18 +283,20 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
             );
 
             final Widget content = useVerticalLayout
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(
-                        height: 165,
-                        child: infoSection,
-                      ),
-                      SizedBox(
-                        height: 180,
-                        child: chartSection,
-                      ),
-                    ],
+                ? SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(
+                          height: 165,
+                          child: infoSection,
+                        ),
+                        SizedBox(
+                          height: 180,
+                          child: chartSection,
+                        ),
+                      ],
+                    ),
                   )
                 : SizedBox(
                     height: 220,
