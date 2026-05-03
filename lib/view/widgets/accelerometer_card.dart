@@ -23,10 +23,10 @@ class AccelerometerCard extends StatefulWidget {
 class _AccelerometerCardState extends State<AccelerometerCard> {
   final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
-  Widget sideTitleWidgets(
+  Widget _sideTitleWidget(
     double value,
     TitleMeta meta, {
-    required bool compact,
+    required double fontSize,
   }) {
     return SideTitleWidget(
       meta: meta,
@@ -36,96 +36,74 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
           color: chartTextColor,
-          fontSize: compact ? 8 : 9,
+          fontSize: fontSize,
+        ),
+      ),
+    );
+  }
+
+  Widget _scalingText(String text, double fontSize) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        maxLines: 1,
+        softWrap: false,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: cardContentColor,
+          fontSize: fontSize,
         ),
       ),
     );
   }
 
   Widget _buildInfoSection({
-    required BoxConstraints constraints,
     required String axisImage,
-    required double currVal,
-    required double minVal,
-    required double maxVal,
-    required bool isNarrow,
-    required bool centered,
+    required double currentValue,
+    required double minValue,
+    required double maxValue,
+    required double imageSize,
+    required double valueFontSize,
+    required double labelFontSize,
+    required double horizontalPadding,
+    required double verticalPadding,
+    required double spacing,
   }) {
-    final double imageSize =
-        (constraints.maxWidth * 0.15).clamp(30.0, 50.0).toDouble();
-
-    final double labelWidth = isNarrow ? 110 : 130;
-
-    return KeyedSubtree(
-      key: ValueKey('accelerometer-info-${widget.axis}-$centered'),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: isNarrow ? 10 : 12,
-          vertical: isNarrow ? 10 : 12,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              axisImage,
-              width: imageSize,
-              height: imageSize,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: isNarrow ? 6 : 8),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                "${currVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: cardContentColor,
-                  fontSize: isNarrow ? 12 : 14,
-                ),
-              ),
-            ),
-            SizedBox(height: isNarrow ? 6 : 8),
-            Align(
-              alignment: centered ? Alignment.center : Alignment.centerLeft,
-              child: SizedBox(
-                width: centered ? null : labelWidth,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: centered ? Alignment.center : Alignment.centerLeft,
-                  child: Text(
-                    "${appLocalizations.minValue} ${minVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
-                    textAlign: centered ? TextAlign.center : TextAlign.left,
-                    style: TextStyle(
-                      color: cardContentColor,
-                      fontSize: isNarrow ? 8 : 10,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Align(
-              alignment: centered ? Alignment.center : Alignment.centerLeft,
-              child: SizedBox(
-                width: centered ? null : labelWidth,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: centered ? Alignment.center : Alignment.centerLeft,
-                  child: Text(
-                    "${appLocalizations.maxValue} ${maxVal.toStringAsFixed(1)} ${appLocalizations.accelerationAxisLabel}",
-                    textAlign: centered ? TextAlign.center : TextAlign.left,
-                    style: TextStyle(
-                      color: cardContentColor,
-                      fontSize: isNarrow ? 8 : 10,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+    final String axisLabel = appLocalizations.accelerationAxisLabel;
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            axisImage,
+            width: imageSize,
+            height: imageSize,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(height: spacing),
+          _scalingText(
+            '${currentValue.toStringAsFixed(1)} $axisLabel',
+            valueFontSize,
+          ),
+          SizedBox(height: spacing * 0.5),
+          _scalingText(
+            '${appLocalizations.minValue} ${minValue.toStringAsFixed(1)} $axisLabel',
+            labelFontSize,
+          ),
+          SizedBox(height: spacing * 0.25),
+          _scalingText(
+            '${appLocalizations.maxValue} ${maxValue.toStringAsFixed(1)} $axisLabel',
+            labelFontSize,
+          ),
+        ],
       ),
     );
   }
@@ -133,95 +111,108 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
   Widget _buildChartSection({
     required List<FlSpot> spots,
     required int dataLength,
-    required bool isNarrow,
+    required double titleFontSize,
+    required double axisNameSize,
+    required double reservedSize,
+    required double leftPadding,
+    required double rightPadding,
+    required double topPadding,
+    required double bottomPadding,
+    required double lineBarWidth,
   }) {
     final double safeMaxX =
         dataLength <= 1 ? 50 : (dataLength > 50 ? 50 : dataLength.toDouble());
 
     final List<FlSpot> safeSpots = spots.isEmpty ? [const FlSpot(0, 0)] : spots;
 
-    return KeyedSubtree(
-      key: ValueKey('accelerometer-chart-${widget.axis}-$isNarrow'),
+    return ClipRect(
       child: Container(
-        padding: EdgeInsets.only(
-          left: isNarrow ? 8 : 0,
-          right: isNarrow ? 10 : 20,
-          top: isNarrow ? 8 : 10,
-          bottom: isNarrow ? 10 : 16,
-        ),
         color: chartBackgroundColor,
+        padding: EdgeInsets.only(
+          left: leftPadding,
+          right: rightPadding,
+          top: topPadding,
+          bottom: bottomPadding,
+        ),
         child: RepaintBoundary(
           child: LineChart(
             LineChartData(
               backgroundColor: chartBackgroundColor,
+              minX: 0,
+              maxX: safeMaxX,
+              minY: -20,
+              maxY: 20,
+              clipData: const FlClipData.all(),
+              gridData: const FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: true,
+                horizontalInterval: 10,
+                verticalInterval: 10,
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border(
+                  left: BorderSide(color: chartBorderColor),
+                  bottom: BorderSide(color: chartBorderColor),
+                  top: BorderSide(color: chartBorderColor),
+                  right: BorderSide(color: chartBorderColor),
+                ),
+              ),
               titlesData: FlTitlesData(
                 show: true,
                 topTitles: AxisTitles(
-                  axisNameWidget: Padding(
-                    padding: EdgeInsets.only(left: isNarrow ? 0 : 18),
+                  axisNameWidget: FittedBox(
+                    fit: BoxFit.scaleDown,
                     child: Text(
                       appLocalizations.timeAxisLabel,
                       style: TextStyle(
-                        fontSize: isNarrow ? 8 : 10,
+                        fontSize: titleFontSize,
                         color: chartTextColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  axisNameSize: isNarrow ? 16 : 20,
+                  axisNameSize: axisNameSize,
                   sideTitles: const SideTitles(showTitles: false),
                 ),
                 bottomTitles: const AxisTitles(
                   sideTitles: SideTitles(showTitles: false),
                 ),
                 leftTitles: AxisTitles(
-                  axisNameWidget: Text(
-                    appLocalizations.accelerationAxisLabel,
-                    style: TextStyle(
-                      fontSize: isNarrow ? 8 : 10,
-                      color: chartTextColor,
-                      fontWeight: FontWeight.bold,
+                  axisNameWidget: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      appLocalizations.accelerationAxisLabel,
+                      style: TextStyle(
+                        fontSize: titleFontSize,
+                        color: chartTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  axisNameSize: isNarrow ? 16 : 20,
+                  axisNameSize: axisNameSize,
                   sideTitles: SideTitles(
-                    reservedSize: isNarrow ? 22 : 30,
+                    reservedSize: reservedSize,
                     showTitles: true,
-                    getTitlesWidget: (value, meta) =>
-                        sideTitleWidgets(value, meta, compact: isNarrow),
                     interval: 10,
+                    getTitlesWidget: (value, meta) => _sideTitleWidget(
+                      value,
+                      meta,
+                      fontSize: titleFontSize,
+                    ),
                   ),
                 ),
                 rightTitles: const AxisTitles(
                   sideTitles: SideTitles(showTitles: false),
                 ),
               ),
-              gridData: const FlGridData(
-                show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: true,
-                horizontalInterval: 10,
-              ),
-              borderData: FlBorderData(
-                show: true,
-                border: Border(
-                  bottom: BorderSide(color: chartBorderColor),
-                  left: BorderSide(color: chartBorderColor),
-                  top: BorderSide(color: chartBorderColor),
-                  right: BorderSide(color: chartBorderColor),
-                ),
-              ),
-              minY: -20,
-              maxY: 20,
-              minX: 0,
-              maxX: safeMaxX,
-              clipData: const FlClipData.all(),
               lineBarsData: [
                 LineChartBarData(
                   spots: safeSpots,
                   isCurved: safeSpots.length > 2,
                   color: widget.color,
-                  barWidth: 2,
+                  barWidth: lineBarWidth,
                   isStrokeCapRound: true,
                   dotData: const FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
@@ -240,9 +231,9 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
         Provider.of<AccelerometerStateProvider>(context);
 
     final List<FlSpot> spots = provider.getAxisData(widget.axis);
-    final double currVal = provider.getCurrent(widget.axis);
-    final double minVal = provider.getMin(widget.axis);
-    final double maxVal = provider.getMax(widget.axis);
+    final double currentValue = provider.getCurrent(widget.axis);
+    final double minValue = provider.getMin(widget.axis);
+    final double maxValue = provider.getMax(widget.axis);
     final int dataLength = provider.getDataLength(widget.axis);
     final String axisImage = 'assets/images/phone_${widget.axis}_axis.png';
 
@@ -260,70 +251,78 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final double width = constraints.maxWidth;
-            final double height = constraints.maxHeight;
+            final double height = constraints.hasBoundedHeight
+                ? constraints.maxHeight
+                : (width * 0.42).clamp(90.0, 220.0);
 
-            final bool useVerticalLayout = width < 420;
-            final bool isNarrow = width < 400;
-            final bool useFallbackScroll = width < 320 || height < 180;
+            // Use the smaller of width and height (normalised) so the card
+            // scales proportionally on narrow or short layouts.
+            final double scaleBase =
+                width < height * 2.4 ? width : height * 2.4;
 
-            final Widget infoSection = _buildInfoSection(
-              constraints: constraints,
-              axisImage: axisImage,
-              currVal: currVal,
-              minVal: minVal,
-              maxVal: maxVal,
-              isNarrow: isNarrow,
-              centered: useVerticalLayout,
-            );
+            final double leftWidth = (width * 0.34).clamp(80.0, 220.0);
 
-            final Widget chartSection = _buildChartSection(
-              spots: spots,
-              dataLength: dataLength,
-              isNarrow: isNarrow,
-            );
+            final double imageSize = (scaleBase * 0.10)
+                .clamp(16.0, 48.0)
+                .clamp(0.0, height * 0.38);
 
-            final Widget content = useVerticalLayout
-                ? SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          height: 165,
-                          child: infoSection,
-                        ),
-                        SizedBox(
-                          height: 180,
-                          child: chartSection,
-                        ),
-                      ],
+            final double valueFontSize = (scaleBase * 0.028).clamp(9.0, 14.0);
+            final double labelFontSize = (scaleBase * 0.022).clamp(7.5, 11.5);
+            final double chartFontSize = (scaleBase * 0.020).clamp(7.0, 11.0);
+            final double axisNameSize = (scaleBase * 0.04).clamp(9.0, 20.0);
+            final double reservedSize = (scaleBase * 0.05).clamp(14.0, 30.0);
+            final double lineBarWidth = (scaleBase * 0.005).clamp(1.0, 2.0);
+
+            final double horizontalPadding =
+                (scaleBase * 0.015).clamp(2.0, 8.0);
+            final double verticalPadding = (scaleBase * 0.015).clamp(2.0, 8.0);
+            final double spacing = (scaleBase * 0.012).clamp(2.0, 6.0);
+
+            final double chartLeftPadding =
+                (scaleBase * 0.005).clamp(0.0, 2.0);
+            final double chartRightPadding =
+                (scaleBase * 0.015).clamp(2.0, 8.0);
+            final double chartTopPadding = (scaleBase * 0.012).clamp(2.0, 6.0);
+            final double chartBottomPadding =
+                (scaleBase * 0.015).clamp(2.0, 8.0);
+
+            return SizedBox(
+              height: height,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: leftWidth,
+                    child: _buildInfoSection(
+                      axisImage: axisImage,
+                      currentValue: currentValue,
+                      minValue: minValue,
+                      maxValue: maxValue,
+                      imageSize: imageSize,
+                      valueFontSize: valueFontSize,
+                      labelFontSize: labelFontSize,
+                      horizontalPadding: horizontalPadding,
+                      verticalPadding: verticalPadding,
+                      spacing: spacing,
                     ),
-                  )
-                : SizedBox(
-                    height: 220,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(
-                          width: 170,
-                          child: infoSection,
-                        ),
-                        Expanded(
-                          child: chartSection,
-                        ),
-                      ],
+                  ),
+                  Expanded(
+                    child: _buildChartSection(
+                      spots: spots,
+                      dataLength: dataLength,
+                      titleFontSize: chartFontSize,
+                      axisNameSize: axisNameSize,
+                      reservedSize: reservedSize,
+                      leftPadding: chartLeftPadding,
+                      rightPadding: chartRightPadding,
+                      topPadding: chartTopPadding,
+                      bottomPadding: chartBottomPadding,
+                      lineBarWidth: lineBarWidth,
                     ),
-                  );
-
-            if (useFallbackScroll) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minWidth: width),
-                  child: content,
-                ),
-              );
-            }
-
-            return content;
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ),

@@ -90,7 +90,9 @@ class _CommonScaffoldState extends State<CommonScaffold> {
               width: 24,
               height: 24,
             ),
-            tooltip: widget.isRecording ? 'Stop Recording' : 'Start Recording',
+            tooltip: widget.isRecording
+                ? appLocalizations.stopRecording
+                : appLocalizations.startRecording,
           ),
         );
       }
