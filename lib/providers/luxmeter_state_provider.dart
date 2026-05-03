@@ -468,6 +468,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
     _luxMin = 0;
     _luxMax = 0;
     _currentTime = 0;
+    _currentLux = 0;
     _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     notifyListeners();
   }

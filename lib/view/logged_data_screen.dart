@@ -17,6 +17,7 @@ import 'package:pslab/view/wave_generator_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import 'accelerometer_screen.dart';
+import 'compass_screen.dart';
 
 class LoggedDataScreen extends StatefulWidget {
   final List<String> instrumentNames;
@@ -286,6 +287,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'compass':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CompassScreen(playbackData: data),
+            ),
+          );
+          break;
       }
     }
   }
@@ -488,6 +497,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                           .toLowerCase() ||
                                   instrumentName ==
                                       appLocalizations.accelerometer
+                                          .toLowerCase() ||
+                                  instrumentName ==
+                                      appLocalizations.compassTitle
                                           .toLowerCase())
                                 PopupMenuItem<String>(
                                   value: appLocalizations.play,

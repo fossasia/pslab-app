@@ -86,7 +86,7 @@ jobs:
         if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '16.4.0'
+          xcode-version: '26.3.0'
 
       - uses: actions/checkout@v6
         if: needs.changes.outputs.is_code == 'true'
@@ -129,7 +129,7 @@ jobs:
         if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '16.4.0'
+          xcode-version: '26.3.0'
 
       - uses: actions/checkout@v6
         if: needs.changes.outputs.is_code == 'true'
@@ -154,7 +154,7 @@ jobs:
         if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '16.4.0'
+          xcode-version: '26.3.0'
 
       - uses: actions/checkout@v6
         if: needs.changes.outputs.is_code == 'true'
@@ -226,7 +226,7 @@ jobs:
         if: needs.changes.outputs.is_code == 'true'
         uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
-          xcode-version: '16.4.0'
+          xcode-version: '26.3.0'
 
       - uses: actions/checkout@v6
         if: needs.changes.outputs.is_code == 'true'

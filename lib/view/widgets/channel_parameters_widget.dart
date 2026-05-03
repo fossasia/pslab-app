@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -249,7 +252,12 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       groupValue:
                           oscilloscopeStateProvider.isInBuiltMICSelected,
                       onChanged: (bool? value) async {
-                        await Permission.microphone.request();
+                        if (!kIsWeb &&
+                            !Platform.isMacOS &&
+                            !Platform.isLinux &&
+                            !Platform.isWindows) {
+                          await Permission.microphone.request();
+                        }
                         setState(
                           () {
                             if (value == null) {

@@ -30,7 +30,10 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
   late PowerSourceConfigProvider? _configProvider;
   final CsvService _csvService = CsvService();
   bool _showGuide = false;
-
+  final TextEditingController _pv1Controller = TextEditingController();
+  final TextEditingController _pv2Controller = TextEditingController();
+  final TextEditingController _pv3Controller = TextEditingController();
+  final TextEditingController _pcsController = TextEditingController();
   @override
   void initState() {
     _provider = PowerSourceStateProvider();
@@ -134,6 +137,15 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _pv1Controller.dispose();
+    _pv2Controller.dispose();
+    _pv3Controller.dispose();
+    _pcsController.dispose();
+    super.dispose();
+  }
+
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
@@ -230,6 +242,120 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
     }
   }
 
+  Widget _buildPowerCard({
+    required String label,
+    required double value,
+    required String suffix,
+    required double maxValue,
+    required Pin pin,
+    required Future<void> Function(double) onValueChanged,
+    required PowerSourceStateProvider provider,
+    required TextEditingController controller,
+  }) {
+    final String expectedText = value.toStringAsFixed(2);
+    if (controller.text != expectedText) {
+      controller.text = expectedText;
+      controller.selection =
+          TextSelection.collapsed(offset: expectedText.length);
+    }
+    return Card(
+      color: scaffoldBackgroundColor,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 45,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    controller: controller,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 18),
+                    onSubmitted: (v) async =>
+                        await onValueChanged(double.tryParse(v) ?? 0),
+                    decoration: InputDecoration(
+                      suffixText: suffix,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: powerSourceBorderLightRed),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: powerSourceBorderLightRed),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          width: 55,
+                          child: IconButton.filled(
+                            icon: const Icon(Icons.arrow_drop_up),
+                            iconSize: 36,
+                            color: scaffoldBackgroundColor,
+                            onPressed: () async {
+                              await onValueChanged(value + provider.step);
+                            },
+                            style: IconButton.styleFrom(
+                              backgroundColor: primaryRed,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 50,
+                          width: 55,
+                          child: IconButton.filled(
+                            icon: const Icon(Icons.arrow_drop_down),
+                            iconSize: 36,
+                            color: scaffoldBackgroundColor,
+                            onPressed: () async {
+                              await onValueChanged(value - provider.step);
+                            },
+                            style: IconButton.styleFrom(
+                              backgroundColor: primaryRed,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 55,
+            child: PowerSourceKnob(
+              maxValue: maxValue,
+              pin: pin,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -239,447 +365,44 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
       child: Consumer<PowerSourceStateProvider>(
         builder: (context, provider, _) {
           final powerSourceCards = [
-            Card(
-              color: scaffoldBackgroundColor,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 45,
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            appLocalizations.pinPV1,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            controller: TextEditingController(
-                              text: provider.voltagePV1.toStringAsFixed(2),
-                            ),
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                            textAlign: TextAlign.center,
-                            onSubmitted: (value) async {
-                              double parsedValue =
-                                  double.tryParse(value) ?? 0.0;
-                              await provider.setPV1(parsedValue);
-                            },
-                            decoration: InputDecoration(
-                              suffixText: ' V',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_up),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPV1(
-                                          provider.voltagePV1 + provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_down),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPV1(
-                                          provider.voltagePV1 - provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 1000,
-                      pin: Pin.pv1,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Card(
-              color: scaffoldBackgroundColor,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 45,
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            appLocalizations.pinPV2,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            controller: TextEditingController(
-                              text: provider.voltagePV2.toStringAsFixed(2),
-                            ),
-                            textAlign: TextAlign.center,
-                            onSubmitted: (value) async {
-                              double parsedValue =
-                                  double.tryParse(value) ?? 0.0;
-                              await provider.setPV2(parsedValue);
-                            },
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                            decoration: InputDecoration(
-                              suffixText: ' V',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_up),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPV2(
-                                          provider.voltagePV2 + provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_down),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPV2(
-                                          provider.voltagePV2 - provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 660,
-                      pin: Pin.pv2,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Card(
-              color: scaffoldBackgroundColor,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 45,
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            appLocalizations.pinPV3,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            controller: TextEditingController(
-                              text: provider.voltagePV3.toStringAsFixed(2),
-                            ),
-                            textAlign: TextAlign.center,
-                            onSubmitted: (value) async {
-                              double parsedValue =
-                                  double.tryParse(value) ?? 0.0;
-                              await provider.setPV3(parsedValue);
-                            },
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                            decoration: InputDecoration(
-                              suffixText: ' V',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_up),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPV3(
-                                          provider.voltagePV3 + provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_down),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPV3(
-                                          provider.voltagePV3 - provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 330,
-                      pin: Pin.pv3,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Card(
-              color: scaffoldBackgroundColor,
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 45,
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            appLocalizations.pinPCS,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            controller: TextEditingController(
-                              text: provider.currentPCS.toStringAsFixed(2),
-                            ),
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
-                            textAlign: TextAlign.center,
-                            onSubmitted: (value) async {
-                              double parsedValue =
-                                  double.tryParse(value) ?? 0.0;
-                              await provider.setPCS(parsedValue);
-                            },
-                            decoration: InputDecoration(
-                              suffixText: ' mA',
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: powerSourceBorderLightRed,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_up),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPCS(
-                                          provider.currentPCS + provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 50,
-                                  width: 55,
-                                  child: IconButton.filled(
-                                    icon: Icon(Icons.arrow_drop_down),
-                                    iconSize: 36,
-                                    color: scaffoldBackgroundColor,
-                                    onPressed: () async {
-                                      await provider.setPCS(
-                                          provider.currentPCS - provider.step);
-                                    },
-                                    style: IconButton.styleFrom(
-                                      backgroundColor: primaryRed,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 55,
-                    child: PowerSourceKnob(
-                      maxValue: 330,
-                      pin: Pin.pcs,
-                    ),
-                  )
-                ],
-              ),
-            ),
+            _buildPowerCard(
+                label: appLocalizations.pinPV1,
+                value: provider.voltagePV1,
+                suffix: ' V',
+                onValueChanged: provider.setPV1,
+                provider: provider,
+                maxValue: 1000,
+                pin: Pin.pv1,
+                controller: _pv1Controller),
+            _buildPowerCard(
+                label: appLocalizations.pinPV2,
+                value: provider.voltagePV2,
+                suffix: ' V',
+                onValueChanged: provider.setPV2,
+                provider: provider,
+                maxValue: 660,
+                pin: Pin.pv2,
+                controller: _pv2Controller),
+            _buildPowerCard(
+                label: appLocalizations.pinPV3,
+                value: provider.voltagePV3,
+                suffix: ' V',
+                onValueChanged: provider.setPV3,
+                provider: provider,
+                maxValue: 330,
+                pin: Pin.pv3,
+                controller: _pv3Controller),
+            _buildPowerCard(
+                label: appLocalizations.pinPCS,
+                value: provider.currentPCS,
+                suffix: ' mA',
+                onValueChanged: provider.setPCS,
+                provider: provider,
+                maxValue: 330,
+                pin: Pin.pcs,
+                controller: _pcsController),
           ];
+
           return Stack(
             children: [
               CommonScaffold(
@@ -704,7 +427,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                       }
                     : null,
                 body: ScrollConfiguration(
-                  behavior: ScrollBehavior(),
+                  behavior: const ScrollBehavior(),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       return constraints.maxWidth < 600

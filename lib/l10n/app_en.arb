@@ -666,5 +666,6 @@
     "pin_res_desc": "Resistance Measurement Pin",
     "stopSound" : "Stop Sound",
     "saw" : "Saw",
-    "fileNameTooLong": "File name must be less than 200 characters"
+    "fileNameTooLong": "File name must be less than 200 characters",
+    "comingSoon": "Coming Soon"
 }
