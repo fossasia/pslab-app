@@ -331,7 +331,8 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                                     maxLines: 1,
                                     softWrap: false,
                                     style: TextStyle(
-                                      color: cardContentColor.withOpacity(0.8),
+                                      color: cardContentColor.withValues(
+                                          alpha: 0.8),
                                       fontSize: minMaxFontSize,
                                       height: 1.1,
                                     ),
@@ -343,7 +344,8 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                                     maxLines: 1,
                                     softWrap: false,
                                     style: TextStyle(
-                                      color: cardContentColor.withOpacity(0.8),
+                                      color: cardContentColor.withValues(
+                                          alpha: 0.8),
                                       fontSize: minMaxFontSize,
                                       height: 1.1,
                                     ),
