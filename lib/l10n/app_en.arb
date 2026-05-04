@@ -666,5 +666,7 @@
     "pin_res_desc": "Resistance Measurement Pin",
     "stopSound" : "Stop Sound",
     "saw" : "Saw",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "startRecording": "Start Recording",
+    "stopRecording": "Stop Recording"
 }
