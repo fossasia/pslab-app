@@ -250,40 +250,68 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
                   : appLocalizations.accelerometerTitle,
               onGuidePressed: _showInstrumentGuide,
               onOptionsPressed:
-                  provider.isPlayingBack ? null : _showOptionsMenu,
+              provider.isPlayingBack ? null : _showOptionsMenu,
               onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
               isRecording: provider.isRecording,
               isPlayingBack: provider.isPlayingBack,
               isPlaybackPaused: provider.isPlaybackPaused,
               onPlaybackPauseResume: provider.isPlayingBack
                   ? (provider.isPlaybackPaused
-                      ? _provider.resumePlayback
-                      : _provider.pausePlayback)
+                  ? _provider.resumePlayback
+                  : _provider.pausePlayback)
                   : null,
               onPlaybackStop: provider.isPlayingBack
                   ? () async {
-                      await _provider.stopPlayback();
-                    }
+                await _provider.stopPlayback();
+              }
                   : null,
               body: SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: AccelerometerCard(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Each card needs ~150dp minimum to render its compact
+                    // header + a usable chart. Three cards = ~450dp. If the
+                    // available height falls below that, switch to screen-
+                    // level vertical scrolling with a fixed per-card height
+                    // so nothing overflows. Above the threshold we keep the
+                    // current Expanded layout so cards fill the screen.
+                    const double kPerCardMin = 150.0;
+                    const double kPerCardScrollHeight = 220.0;
+                    final double available = constraints.maxHeight;
+                    final bool needsScroll = available < kPerCardMin * 3;
+
+                    final List<Widget> cards = [
+                      AccelerometerCard(
                           color: xOrientationChartLineColor,
                           axis: appLocalizations.xAxis),
-                    ),
-                    Expanded(
-                      child: AccelerometerCard(
+                      AccelerometerCard(
                           color: yOrientationChartLineColor,
                           axis: appLocalizations.yAxis),
-                    ),
-                    Expanded(
-                      child: AccelerometerCard(
+                      AccelerometerCard(
                           color: zOrientationChartLineColor,
                           axis: appLocalizations.zAxis),
-                    ),
-                  ],
+                    ];
+
+                    if (needsScroll) {
+                      return SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            for (final card in cards)
+                              SizedBox(
+                                height: kPerCardScrollHeight,
+                                child: card,
+                              ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return Column(
+                      children: [
+                        for (final card in cards) Expanded(child: card),
+                      ],
+                    );
+                  },
                 ),
               ),
             );
