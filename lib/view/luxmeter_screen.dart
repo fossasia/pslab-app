@@ -160,7 +160,6 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         return AlertDialog(
           title: Text(appLocalizations.saveRecording),
           content: TextField(
-            maxLength: 200,
             controller: filenameController,
             decoration: InputDecoration(
               hintText: appLocalizations.enterFileName,
@@ -175,16 +174,6 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             ElevatedButton(
               onPressed: () {
                 final text = filenameController.text.trim();
-                if (text.length > 200) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        appLocalizations.fileNameTooLong,
-                      ),
-                    ),
-                  );
-                  return;
-                }
                 Navigator.pop(context, text);
               },
               child: Text(appLocalizations.save),
