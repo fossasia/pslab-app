@@ -250,20 +250,20 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
                   : appLocalizations.accelerometerTitle,
               onGuidePressed: _showInstrumentGuide,
               onOptionsPressed:
-              provider.isPlayingBack ? null : _showOptionsMenu,
+                  provider.isPlayingBack ? null : _showOptionsMenu,
               onRecordPressed: provider.isPlayingBack ? null : _toggleRecording,
               isRecording: provider.isRecording,
               isPlayingBack: provider.isPlayingBack,
               isPlaybackPaused: provider.isPlaybackPaused,
               onPlaybackPauseResume: provider.isPlayingBack
                   ? (provider.isPlaybackPaused
-                  ? _provider.resumePlayback
-                  : _provider.pausePlayback)
+                      ? _provider.resumePlayback
+                      : _provider.pausePlayback)
                   : null,
               onPlaybackStop: provider.isPlayingBack
                   ? () async {
-                await _provider.stopPlayback();
-              }
+                      await _provider.stopPlayback();
+                    }
                   : null,
               body: SafeArea(
                 child: LayoutBuilder(
