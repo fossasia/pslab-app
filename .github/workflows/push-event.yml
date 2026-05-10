@@ -113,7 +113,7 @@ jobs:
 
       - name: Upload APK/AAB to apk branch
         if: ${{ github.repository == 'fossasia/pslab-app' }}
-        concurrency:  # make sure that we don't push in parallel
+        concurrency: # make sure that we don't push in parallel
           group: upload-to-apk-branch
           queue: single
         run: |
