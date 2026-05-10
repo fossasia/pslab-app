@@ -215,14 +215,13 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       return;
     }
 
-    _locationStream =
-        Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-          ),
-        ).listen((Position position) {
-          currentPosition = position;
-        });
+    _locationStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    ).listen((Position position) {
+      currentPosition = position;
+    });
   }
 
   Future<void> monitor() async {
