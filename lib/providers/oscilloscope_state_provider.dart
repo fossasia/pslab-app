@@ -717,7 +717,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       }
 
       if (isFourierTransformSelected) {
-        oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
+        oscilloscopeAxesScale.setYAxisScaleMax(max(_maxAmp, 1.0));
         oscilloscopeAxesScale.setYAxisScaleMin(0);
         oscilloscopeAxesScale.setXAxisScale(_maxFreq * 1000);
       }
