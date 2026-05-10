@@ -61,7 +61,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
       'url': appLocalizations.website,
     },
     {
-      'icon': const Icon(FontAwesomeIcons.github, size: 20),
+      'icon': const FaIcon(FontAwesomeIcons.github, size: 20),
       'title': appLocalizations.forkUsOnGithub,
       'url': appLocalizations.github,
     },
@@ -71,12 +71,12 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
       'url': appLocalizations.facebook,
     },
     {
-      'icon': const Icon(FontAwesomeIcons.xTwitter, size: 20),
+      'icon': const FaIcon(FontAwesomeIcons.xTwitter, size: 20),
       'title': appLocalizations.followUsOnX,
       'url': appLocalizations.x,
     },
     {
-      'icon': const Icon(FontAwesomeIcons.youtube, size: 20),
+      'icon': const FaIcon(FontAwesomeIcons.youtube, size: 20),
       'title': appLocalizations.watchUsOnYoutube,
       'url': appLocalizations.youtube,
     },

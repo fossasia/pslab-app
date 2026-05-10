@@ -64,3 +64,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Generated app localizations files
+/lib/l10n/app_localizations*

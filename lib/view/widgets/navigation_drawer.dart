@@ -190,6 +190,7 @@ class _NavDrawerState extends State<NavDrawer> {
             ListTile(
               focusColor: listTileFocusColor,
               dense: true,
+              enabled: false,
               leading: Icon(
                 Icons.create_new_folder,
                 color:
@@ -200,9 +201,17 @@ class _NavDrawerState extends State<NavDrawer> {
                 style: TextStyle(
                   color: widget.selectedIndex == 3
                       ? selectedMenuColor
-                      : Colors.black,
+                      : optionDisabledColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
+                ),
+              ),
+              trailing: Text(
+                appLocalizations.comingSoon,
+                style: TextStyle(
+                  color: optionDisabledColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               onTap: () {

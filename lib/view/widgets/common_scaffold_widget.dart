@@ -36,13 +36,99 @@ class CommonScaffold extends StatefulWidget {
     this.onPlaybackPauseResume,
     this.onPlaybackStop,
   });
+
   @override
   State<StatefulWidget> createState() => _CommonScaffoldState();
 }
 
 class _CommonScaffoldState extends State<CommonScaffold> {
+  List<Widget> _buildResponsiveActions(double width) {
+    final bool isVerySmall = width < 260;
+    final bool isSmall = width < 320;
+
+    final List<Widget> responsiveActions = [];
+
+    if (widget.actions != null) {
+      responsiveActions.addAll(widget.actions!);
+    }
+
+    if (widget.isPlayingBack) {
+      if (!isVerySmall && widget.onPlaybackPauseResume != null) {
+        responsiveActions.add(
+          IconButton(
+            onPressed: widget.onPlaybackPauseResume,
+            icon: Icon(
+              widget.isPlaybackPaused ? Icons.play_arrow : Icons.pause,
+              color: appBarContentColor,
+            ),
+            tooltip: widget.isPlaybackPaused
+                ? appLocalizations.resumePlayback
+                : appLocalizations.pausePlayback,
+          ),
+        );
+      }
+
+      if (!isSmall && widget.onPlaybackStop != null) {
+        responsiveActions.add(
+          IconButton(
+            onPressed: widget.onPlaybackStop,
+            icon: Icon(
+              Icons.stop,
+              color: appBarContentColor,
+            ),
+            tooltip: appLocalizations.stopPlayback,
+          ),
+        );
+      }
+    } else {
+      if (!isVerySmall && widget.onRecordPressed != null) {
+        responsiveActions.add(
+          IconButton(
+            onPressed: widget.onRecordPressed,
+            icon: Image.asset(
+              widget.isRecording ? widget.icStopRecord : widget.icRecord,
+              width: 24,
+              height: 24,
+            ),
+            tooltip: widget.isRecording
+                ? appLocalizations.stopRecording
+                : appLocalizations.startRecording,
+          ),
+        );
+      }
+    }
+
+    if (!isSmall && widget.onGuidePressed != null) {
+      responsiveActions.add(
+        IconButton(
+          onPressed: widget.onGuidePressed,
+          icon: Icon(
+            Icons.info,
+            color: appBarContentColor,
+          ),
+        ),
+      );
+    }
+
+    if (widget.onOptionsPressed != null) {
+      responsiveActions.add(
+        IconButton(
+          onPressed: widget.onOptionsPressed,
+          icon: Icon(
+            Icons.more_vert,
+            color: appBarContentColor,
+          ),
+        ),
+      );
+    }
+
+    return responsiveActions;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
@@ -52,77 +138,31 @@ class _CommonScaffoldState extends State<CommonScaffold> {
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () {
-              Navigator.maybePop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: appBarContentColor,
-            ),
-          );
-        }),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.maybePop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                color: appBarContentColor,
+              ),
+            );
+          },
+        ),
         backgroundColor: primaryRed,
         title: Text(
-          key: widget.scaffoldKey,
           widget.title,
+          key: widget.scaffoldKey,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: appBarContentColor,
             fontSize: 15,
           ),
         ),
-        actions: [
-          if (widget.actions != null) ...widget.actions!,
-          if (widget.isPlayingBack) ...[
-            if (widget.onPlaybackPauseResume != null)
-              IconButton(
-                onPressed: widget.onPlaybackPauseResume,
-                icon: Icon(
-                  widget.isPlaybackPaused ? Icons.play_arrow : Icons.pause,
-                  color: appBarContentColor,
-                ),
-                tooltip: widget.isPlaybackPaused
-                    ? appLocalizations.resumePlayback
-                    : appLocalizations.pausePlayback,
-              ),
-            if (widget.onPlaybackStop != null)
-              IconButton(
-                onPressed: widget.onPlaybackStop,
-                icon: Icon(
-                  Icons.stop,
-                  color: appBarContentColor,
-                ),
-                tooltip: appLocalizations.stopPlayback,
-              ),
-          ] else if (widget.onRecordPressed != null)
-            IconButton(
-              onPressed: widget.onRecordPressed,
-              icon: Image.asset(
-                widget.isRecording ? widget.icStopRecord : widget.icRecord,
-                width: 24,
-                height: 24,
-              ),
-              tooltip:
-                  widget.isRecording ? 'Stop Recording' : 'Start Recording',
-            ),
-          if (widget.onGuidePressed != null)
-            IconButton(
-              onPressed: widget.onGuidePressed,
-              icon: Icon(
-                Icons.info,
-                color: appBarContentColor,
-              ),
-            ),
-          if (widget.onOptionsPressed != null)
-            IconButton(
-              onPressed: widget.onOptionsPressed,
-              icon: Icon(
-                Icons.more_vert,
-                color: appBarContentColor,
-              ),
-            ),
-        ],
+        actions: _buildResponsiveActions(width),
       ),
       body: widget.body,
     );
