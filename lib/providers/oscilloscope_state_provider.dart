@@ -51,8 +51,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late int samples;
   late double timeGap;
   late double timebase;
-  static const double _minTimebaseUs = 875.0;
-  static const double _maxTimebaseUs = 102400.0;
   static const double _maxTimebaseMs = 102.4;
   late bool isCH1Selected;
   late bool isCH2Selected;
@@ -918,39 +916,24 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  static const List<double> _timebaseStepsUs = [
+    875.0,
+    1000.0,
+    2000.0,
+    4000.0,
+    8000.0,
+    25600.0,
+    38400.0,
+    51200.0,
+    102400.0,
+  ];
+
   void setTimebase(double value) {
-    switch (value) {
-      case 0:
-        timebase = 875.00;
-        break;
-      case 1:
-        timebase = 1000.00;
-        break;
-      case 2:
-        timebase = 2000.00;
-        break;
-      case 3:
-        timebase = 4000.00;
-        break;
-      case 4:
-        timebase = 8000.00;
-        break;
-      case 5:
-        timebase = 25600.00;
-        break;
-      case 6:
-        timebase = 38400.00;
-        break;
-      case 7:
-        timebase = 51200.00;
-        break;
-      case 8:
-        timebase = 102400.00;
-        break;
-      default:
-        timebase = 875.00;
-        break;
-    }
+    final int index = value.round().clamp(0, _timebaseStepsUs.length - 1);
+    timebase = _timebaseStepsUs[index];
+    timebaseSlider = index.toDouble();
+    samples = index >= 4 && index <= 7 ? 1024 : 512;
+    timeGap = (2 * timebase) / samples;
     oscilloscopeAxesScale.setXAxisScale(timebase);
     notifyListeners();
   }
@@ -963,16 +946,25 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   static const double _zoomInFactor = 0.9;
   static const double _zoomOutFactor = 1.1;
 
+  int _currentTimebaseStepIndex() {
+    int best = 0;
+    double bestDelta = (timebase - _timebaseStepsUs[0]).abs();
+    for (int i = 1; i < _timebaseStepsUs.length; i++) {
+      final double d = (timebase - _timebaseStepsUs[i]).abs();
+      if (d < bestDelta) {
+        bestDelta = d;
+        best = i;
+      }
+    }
+    return best;
+  }
+
   void zoomX({required bool zoomIn}) {
-    final factor = zoomIn ? _zoomInFactor : _zoomOutFactor;
-
-    timebase = (timebase * factor).clamp(_minTimebaseUs, _maxTimebaseUs);
-    oscilloscopeAxesScale.setXAxisScale(timebase);
-
-    samples = 512;
-    timeGap = (2 * timebase) / samples;
-
-    notifyListeners();
+    final int current = _currentTimebaseStepIndex();
+    final int next = (zoomIn ? current - 1 : current + 1)
+        .clamp(0, _timebaseStepsUs.length - 1);
+    if (next == current) return;
+    setTimebase(next.toDouble());
   }
 
   void zoomY({required bool zoomIn}) {
