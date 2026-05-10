@@ -215,14 +215,13 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       return;
     }
 
-    _locationStream =
-        Geolocator.getPositionStream(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-          ),
-        ).listen((Position position) {
-          currentPosition = position;
-        });
+    _locationStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    ).listen((Position position) {
+      currentPosition = position;
+    });
   }
 
   Future<void> monitor() async {
@@ -522,8 +521,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
             for (int k = 0; k < 500; k++) {
               double x = k * maxX / 500;
-              double y =
-                  offset +
+              double y = offset +
                   amp * sin(((freq * (2 * pi)).abs()) * x + phase * pi / 180);
               curveFitEntries.last.add(FlSpot(x, y));
             }
@@ -684,21 +682,16 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           double period = (frequency > 0) ? (1 / frequency) * 1000.0 : 0;
           double yRange = maxY - minY;
 
-          OscilloscopeMeasurements.channel[channel]![ChannelMeasurements
-                  .frequency] =
-              frequency;
-          OscilloscopeMeasurements.channel[channel]![ChannelMeasurements
-                  .period] =
-              period;
-          OscilloscopeMeasurements.channel[channel]![ChannelMeasurements
-                  .amplitude] =
-              yRange;
-          OscilloscopeMeasurements.channel[channel]![ChannelMeasurements
-                  .positivePeak] =
-              maxY;
-          OscilloscopeMeasurements.channel[channel]![ChannelMeasurements
-                  .negativePeak] =
-              minY;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.frequency] = frequency;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.period] = period;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.amplitude] = yRange;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.positivePeak] = maxY;
+          OscilloscopeMeasurements
+              .channel[channel]![ChannelMeasurements.negativePeak] = minY;
         }
       }
 
