@@ -51,7 +51,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late int samples;
   late double timeGap;
   late double timebase;
-  double maxTimebase = 102.4;
+  static const double _minTimebaseUs = 875.0;
+  static const double _maxTimebaseUs = 102400.0;
+  static const double _maxTimebaseMs = 102.4;
   late bool isCH1Selected;
   late bool isCH2Selected;
   late bool isCH3Selected;
@@ -530,9 +532,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         isTriggered = false;
         entries.add([]);
         List<double> buffer = _audioJack.read();
-
-        if (buffer.isEmpty) return;
-
         xDataString = List.filled(buffer.length, '');
         yDataString.add(List.filled(buffer.length, ''));
         int n = buffer.length;
@@ -544,8 +543,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
         List<Complex> fftOut = [];
         if (isFourierTransformSelected) {
-          List<Complex> yComplex =
-              List.filled(buffer.length, const Complex(0), growable: true);
+          List<Complex> yComplex = List.filled(buffer.length, const Complex(0));
           for (int j = 0; j < buffer.length; j++) {
             yComplex[j] = Complex(buffer[j] * 3);
           }
@@ -598,8 +596,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           }
         }
 
-        for (int i = micStartIndex; i < n; i += 4) {
-          double audioValue = buffer[i] * 20;
+        for (int i = micStartIndex; i < n; i++) {
+          double audioValue = buffer[i] * 3;
 
           if (!isFourierTransformSelected) {
             entries.last.add(FlSpot(
@@ -609,11 +607,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             if (i < n / 2) {
               double y = fftOut[i].abs() / samples;
               if (y > mA) mA = y;
-
-              double frequency = i / factor;
-              entries.last.add(FlSpot(frequency, 0));
-              entries.last.add(FlSpot(frequency, y));
-              entries.last.add(FlSpot(frequency, 0));
+              entries.last.add(FlSpot((i / factor), y));
             }
           }
           yDataString.last[i] = audioValue.toString();
@@ -691,10 +685,11 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       }
 
       if (isFourierTransformSelected) {
-        oscilloscopeAxesScale.setYAxisScaleMax((_maxAmp > 0) ? _maxAmp : 1.0);
+        oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
         oscilloscopeAxesScale.setYAxisScaleMin(0);
         oscilloscopeAxesScale.setXAxisScale(_maxFreq * 1000);
       }
+
       notifyListeners();
     } catch (e) {
       logger.e(e);
@@ -926,6 +921,36 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  static const double _zoomInFactor = 0.9;
+  static const double _zoomOutFactor = 1.1;
+
+  void zoomX({required bool zoomIn}) {
+    final factor = zoomIn ? _zoomInFactor : _zoomOutFactor;
+
+    timebase = (timebase * factor).clamp(_minTimebaseUs, _maxTimebaseUs);
+    oscilloscopeAxesScale.setXAxisScale(timebase);
+
+    samples = 512;
+
+
+    timeGap = (2 * timebase) / samples;
+
+    notifyListeners();
+  }
+
+  void zoomY({required bool zoomIn}) {
+    final factor = zoomIn ? _zoomInFactor : _zoomOutFactor;
+
+    final double current = oscilloscopeAxesScale.yAxisScale;
+    final double newScale = (current * factor).clamp(0.1, 50.0);
+
+    oscilloscopeAxesScale.setYAxisScale(newScale);
+    oscilloscopeAxesScale.setYAxisScaleMax(newScale);
+    oscilloscopeAxesScale.setYAxisScaleMin(-newScale);
+
+    notifyListeners();
+  }
+
   bool autoScale() {
     double minY = double.maxFinite;
     double maxY = double.minPositive;
@@ -965,7 +990,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     yRange = maxY - minY;
     yPadding = yRange * 0.1;
     if (maxPeriod > 0) {
-      double xAxisScale = min((maxPeriod * 5), maxTimebase);
+      double xAxisScale = min((maxPeriod * 5), _maxTimebaseMs);
       double yAxisScale;
       if (maxY.abs() > minY.abs()) {
         yAxisScale = maxY + yPadding;
