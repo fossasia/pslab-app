@@ -667,5 +667,7 @@
     "stopSound" : "Stop Sound",
     "saw" : "Saw",
     "fileNameTooLong": "File name must be less than 200 characters",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "startRecording": "Start Recording",
+    "stopRecording": "Stop Recording"
 }
