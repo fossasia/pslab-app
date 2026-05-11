@@ -2,7 +2,7 @@ name: Push
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["main"]
     paths-ignore:
       - '**.md'
       - 'docs/**'
