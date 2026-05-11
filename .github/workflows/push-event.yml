@@ -103,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: APK Generated
-          path: build/app/outputs/flutter-app
+          path: build/app/outputs/flutter-apk
 
       - name: Upload AAB Release
         uses: actions/upload-artifact@v7
@@ -130,8 +130,8 @@ jobs:
 
           echo "Copying new build files"
 
-          find ../build/app/outputs/flutter-app -type f \( -name '*release.app' -o -name '*release.aab' \) -exec cp -v {} . \;
-          find ../build/app/outputs/bundle -type f \( -name '*release.app' -o -name '*release.aab' \) -exec cp -v {} . \;
+          find ../build/app/outputs/flutter-apk -type f \( -name '*release.apk' -o -name '*release.aab' \) -exec cp -v {} . \;
+          find ../build/app/outputs/bundle -type f \( -name '*release.apk' -o -name '*release.aab' \) -exec cp -v {} . \;
 
           ls
 
