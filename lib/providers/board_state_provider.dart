@@ -7,12 +7,13 @@ import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/settings_config_provider.dart';
 import 'package:usb_serial/usb_serial.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:pslab/others/science_lab_common.dart';
 
 class BoardStateProvider extends ChangeNotifier {
   late SettingsConfigProvider configProvider;
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool initialisationStatus = false;
   bool pslabIsConnected = false;
   bool hasPermission = false;
@@ -23,6 +24,8 @@ class BoardStateProvider extends ChangeNotifier {
   int pslabVersion = 0;
   int pslabFirmwareVersion = 0;
   bool _isProcessing = false;
+  String _selectedHardware = "";
+  String get selectedHardware => _selectedHardware;
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
@@ -119,5 +122,18 @@ class BoardStateProvider extends ChangeNotifier {
       }
     }
     return false;
+  }
+
+  Future<void> loadSavedHardware() async {
+    final prefs = await SharedPreferences.getInstance();
+    _selectedHardware = prefs.getString('selected_hardware') ?? "";
+    notifyListeners();
+  }
+
+  Future<void> setHardware(String name) async {
+    _selectedHardware = name;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_hardware', name);
+    notifyListeners();
   }
 }

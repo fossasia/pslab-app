@@ -19,6 +19,7 @@ import 'package:pslab/view/multimeter_screen.dart';
 import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/robotic_arm_screen.dart';
+import 'package:pslab/view/select_hardware.dart';
 import 'package:pslab/view/sensors_screen.dart';
 import 'package:pslab/view/settings_screen.dart';
 import 'package:pslab/view/about_us_screen.dart';
@@ -30,9 +31,16 @@ import 'package:pslab/view/wave_generator_screen.dart';
 import 'package:pslab/view/experiments_screen.dart';
 import 'constants.dart';
 
-void main() {
+void main() async {
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
+  final boardProvider = getIt<BoardStateProvider>();
+  await boardProvider.loadSavedHardware();
+  String initialRoute = '/selectHardware';
+  if (boardProvider.selectedHardware.isNotEmpty) {
+    initialRoute = '/';
+  }
+
   runApp(
     MultiProvider(
       providers: [
@@ -46,13 +54,14 @@ void main() {
           create: (context) => getIt<SHT21Provider>(),
         ),
       ],
-      child: const MyApp(),
+      child: MyApp(initialRoute: initialRoute),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.initialRoute});
+  final String initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +86,9 @@ class MyApp extends StatelessWidget {
               ),
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
-              initialRoute: '/',
+              initialRoute: initialRoute,
               routes: {
+                '/selectHardware': (context) => const HardwareSelectionScreen(),
                 '/': (context) => const InstrumentsScreen(),
                 '/oscilloscope': (context) => const OscilloscopeScreen(),
                 '/multimeter': (context) => const MultimeterScreen(),

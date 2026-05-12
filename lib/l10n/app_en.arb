@@ -666,5 +666,11 @@
     "pin_res_desc": "Resistance Measurement Pin",
     "stopSound" : "Stop Sound",
     "saw" : "Saw",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "changeHardware": "Change Hardware",
+    "psLab": "PSLab",
+    "psLabBoard": "PSLab Board",
+    "internalSensors": "Internal sensors",
+    "selectHardware": "Select Hardware",
+    "selectHardwareQuestion": "What hardware do you want to use?"
 }

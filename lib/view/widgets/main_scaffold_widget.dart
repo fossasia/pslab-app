@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
-
+import 'package:pslab/l10n/app_localizations.dart';
+import '../../providers/locator.dart';
 import '../../theme/colors.dart';
 import '../pin_layout_screen.dart';
 import 'navigation_drawer.dart';
@@ -41,6 +42,7 @@ class _MainScaffoldState extends State<MainScaffold>
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _animationController;
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   void initState() {
@@ -196,6 +198,63 @@ class _MainScaffoldState extends State<MainScaffold>
                           );
                         }
                       },
+                    );
+                  },
+                ),
+                Consumer<BoardStateProvider>(
+                  builder: (context, provider, _) {
+                    return PopupMenuButton<String>(
+                      tooltip: appLocalizations.changeHardware,
+                      onSelected: (String value) {
+                        if (value == 'change') {
+                          Navigator.pushNamed(context, '/selectHardware');
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            Text(
+                              provider.selectedHardware == "pslab_board"
+                                  ? appLocalizations.psLab
+                                  : appLocalizations.internalSensors,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const Icon(Icons.arrow_drop_down,
+                                color: Colors.white),
+                          ],
+                        ),
+                      ),
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'status',
+                          enabled: false,
+                          child: Text(
+                            provider.selectedHardware == "pslab_board"
+                                ? appLocalizations.psLab
+                                : appLocalizations.internalSensors,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                        PopupMenuItem<String>(
+                          value: 'change',
+                          child: Row(
+                            children: [
+                              Icon(Icons.sync, color: Colors.black54),
+                              SizedBox(width: 8),
+                              Text(appLocalizations.changeHardware),
+                            ],
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
