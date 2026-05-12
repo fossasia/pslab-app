@@ -6,7 +6,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.4
-  flutter: '3.41.7'
+  flutter: '3.41.9'
 
 dependencies:
   flutter:
@@ -16,7 +16,7 @@ dependencies:
   intl: any
 
   cupertino_icons: ^1.0.9
-  flutter_svg: ^2.2.4
+  flutter_svg: ^2.3.0
   google_fonts: ^8.1.0
   fl_chart: ^1.2.0
   provider: ^6.1.5

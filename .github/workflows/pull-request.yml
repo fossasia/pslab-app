@@ -101,7 +101,7 @@ jobs:
 
   screenshots-android:
     name: Screenshots (Android)
-    needs: changes
+    needs: [changes, common]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -121,7 +121,7 @@ jobs:
 
   screenshots-iphone:
     name: Screenshots (iPhone)
-    needs: changes
+    needs: [changes, common]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
@@ -146,7 +146,7 @@ jobs:
 
   screenshots-ipad:
     name: Screenshots (iPad)
-    needs: changes
+    needs: [changes, common]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
