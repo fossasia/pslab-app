@@ -203,7 +203,8 @@ class _MainScaffoldState extends State<MainScaffold>
                 ),
                 Consumer<BoardStateProvider>(
                   builder: (context, provider, _) {
-                    return PopupMenuButton<String>(
+                    if(provider.selectedHardware != "") {
+                      return PopupMenuButton<String>(
                       tooltip: appLocalizations.changeHardware,
                       onSelected: (String value) {
                         if (value == 'change') {
@@ -256,6 +257,9 @@ class _MainScaffoldState extends State<MainScaffold>
                         ),
                       ],
                     );
+                    }else{
+                      return SizedBox.shrink();
+                    }
                   },
                 ),
                 PopupMenuButton<bool>(
