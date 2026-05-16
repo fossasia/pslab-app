@@ -50,7 +50,6 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
     return Consumer<OscilloscopeStateProvider>(
       builder: (context, provider, _) {
         if (provider.isXYPlotSelected) {
-          // IMPORTANT: XYPlotGraph will handle scroll itself now
           return const SizedBox(child: XYPlotGraph());
         }
 

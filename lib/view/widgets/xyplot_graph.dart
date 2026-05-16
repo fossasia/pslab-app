@@ -62,24 +62,17 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
 
   @override
   Widget build(BuildContext context) {
-    // Keep this read (listen:false) so axis labels don't rebuild too much
     final oscilloscopeStateProvider =
         Provider.of<OscilloscopeStateProvider>(context, listen: false);
 
     return Consumer<OscilloscopeStateProvider>(
       builder: (context, provider, _) {
         return Listener(
-          // KEY: without this, scroll events often get consumed inside the chart subtree
           behavior: HitTestBehavior.opaque,
           onPointerSignal: (pointerSignal) {
             if (pointerSignal is PointerScrollEvent) {
               final bool zoomIn = pointerSignal.scrollDelta.dy < 0;
-
-              // Use X zoom to keep behavior consistent with normal oscilloscope plot
               provider.zoomX(zoomIn: zoomIn);
-
-              // If you *prefer* zooming Y for XYPlot, use this instead:
-              // provider.zoomY(zoomIn: zoomIn);
             }
           },
           child: LineChart(
@@ -108,8 +101,6 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
                   ),
                 ),
                 leftTitles: AxisTitles(
-                  // NOTE: your original code used xyPlotAxis1 for left too
-                  // (keeping same so you don't change behavior)
                   axisNameWidget: Text(
                     '${oscilloscopeStateProvider.xyPlotAxis1} (V)',
                     style: TextStyle(
@@ -167,7 +158,7 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
               minX: -16,
               minY: -16,
               clipData: const FlClipData.all(),
-              lineBarsData: provider.createXYPlot(), // use provider (reactive)
+              lineBarsData: provider.createXYPlot(),
             ),
           ),
         );
