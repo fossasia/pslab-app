@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/view/widgets/xyplot_graph.dart';
@@ -16,55 +15,6 @@ class OscilloscopeGraph extends StatefulWidget {
 }
 
 class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
-  final FocusNode _focusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _focusNode.requestFocus();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  KeyEventResult _handleKeyEvent(
-    FocusNode node,
-    KeyEvent event,
-    OscilloscopeStateProvider provider,
-  ) {
-    if (event is! KeyDownEvent) {
-      return KeyEventResult.ignored;
-    }
-
-    if (!HardwareKeyboard.instance.isControlPressed) {
-      return KeyEventResult.ignored;
-    }
-
-    final LogicalKeyboardKey key = event.logicalKey;
-
-    if (key == LogicalKeyboardKey.equal ||
-        key == LogicalKeyboardKey.numpadAdd) {
-      provider.zoomX(zoomIn: true);
-      return KeyEventResult.handled;
-    }
-
-    if (key == LogicalKeyboardKey.minus ||
-        key == LogicalKeyboardKey.numpadSubtract) {
-      provider.zoomX(zoomIn: false);
-      return KeyEventResult.handled;
-    }
-
-    return KeyEventResult.ignored;
-  }
-
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,
@@ -105,27 +55,18 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
         }
 
         return SizedBox(
-          child: Focus(
-            autofocus: true,
-            focusNode: _focusNode,
-            onKeyEvent: (node, event) => _handleKeyEvent(node, event, provider),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                _focusNode.requestFocus();
-              },
-              child: Listener(
-                behavior: HitTestBehavior.opaque,
-                onPointerDown: (_) {
-                  _focusNode.requestFocus();
-                },
-                onPointerSignal: (pointerSignal) {
-                  if (pointerSignal is PointerScrollEvent) {
-                    final bool zoomIn = pointerSignal.scrollDelta.dy < 0;
-                    provider.zoomX(zoomIn: zoomIn);
-                  }
-                },
-                child: LineChart(
+          child: Listener(
+            behavior: HitTestBehavior.opaque,
+            onPointerSignal: (pointerSignal) {
+              if (pointerSignal is PointerScrollEvent) {
+                if (pointerSignal.scrollDelta.dy < 0) {
+                  provider.zoomIn();
+                } else {
+                  provider.zoomOut();
+                }
+              }
+            },
+            child: LineChart(
                   LineChartData(
                     backgroundColor: chartBackgroundColor,
                     titlesData: FlTitlesData(
@@ -225,8 +166,6 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                   ),
                 ),
               ),
-            ),
-          ),
         );
       },
     );

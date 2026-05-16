@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -31,7 +32,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
-        Provider.of<OscilloscopeStateProvider>(context, listen: false);
+        Provider.of<OscilloscopeStateProvider>(context);
     return Stack(
       children: [
         Container(
@@ -220,7 +221,18 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                 top: -2,
                 left: 16,
                 right: 16,
-                child: Row(
+                child: Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerSignal: (pointerSignal) {
+                    if (pointerSignal is PointerScrollEvent) {
+                      if (pointerSignal.scrollDelta.dy < 0) {
+                        oscilloscopeStateProvider.zoomIn();
+                      } else {
+                        oscilloscopeStateProvider.zoomOut();
+                      }
+                    }
+                  },
+                  child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -335,6 +347,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       ),
                     ),
                   ],
+                ),
                 ),
               ),
             ],

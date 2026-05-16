@@ -967,6 +967,12 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     setTimebase(next.toDouble());
   }
 
+  void zoomIn() => zoomX(zoomIn: true);
+
+  void zoomOut() => zoomX(zoomIn: false);
+
+  void resetZoom() => setTimebase(0);
+
   void zoomY({required bool zoomIn}) {
     final factor = zoomIn ? _zoomInFactor : _zoomOutFactor;
 
