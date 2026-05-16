@@ -72,9 +72,12 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                       show: true,
                       topTitles: AxisTitles(
                         axisNameWidget: Text(
-                          provider.oscilloscopeAxesScale.xAxisScale == 875
-                              ? 'Time (\u00b5s)'
-                              : 'Time (ms)',
+                          provider.isFourierTransformSelected
+                              ? 'Frequency (Hz)'
+                              : (provider.oscilloscopeAxesScale.xAxisScale ==
+                                      875
+                                  ? 'Time (\u00b5s)'
+                                  : 'Time (ms)'),
                           style: TextStyle(
                             fontSize: 10,
                             color: chartTextColor,
@@ -95,7 +98,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                       ),
                       leftTitles: AxisTitles(
                         axisNameWidget: Text(
-                          'CH1 (V)',
+                          provider.isFourierTransformSelected
+                              ? 'Magnitude (V)'
+                              : 'CH1 (V)',
                           style: TextStyle(
                             fontSize: 10,
                             color: chartTextColor,
@@ -112,7 +117,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
                       ),
                       rightTitles: AxisTitles(
                         axisNameWidget: Text(
-                          'CH2 (V)',
+                          provider.isFourierTransformSelected
+                              ? 'Magnitude (V)'
+                              : 'CH2 (V)',
                           style: TextStyle(
                             fontSize: 10,
                             color: chartTextColor,
