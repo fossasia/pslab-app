@@ -25,14 +25,14 @@ enum ChannelMeasurements {
   period,
   amplitude,
   positivePeak,
-  negativePeak,
+  negativePeak
 }
 
 List<Color> colors = [
   Colors.cyan,
   Colors.green,
   Colors.white,
-  Colors.purpleAccent,
+  Colors.purpleAccent
 ];
 
 class OscilloscopeStateProvider extends ChangeNotifier {
@@ -51,7 +51,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late int samples;
   late double timeGap;
   late double timebase;
-  static const double _maxTimebaseMs = 102.4;
+  double maxTimebase = 102.4;
   late bool isCH1Selected;
   late bool isCH2Selected;
   late bool isCH3Selected;
@@ -182,8 +182,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   void setConfigProvider(
-    OscilloscopeConfigProvider oscilloscopeConfigProvider,
-  ) {
+      OscilloscopeConfigProvider oscilloscopeConfigProvider) {
     _configProvider = oscilloscopeConfigProvider;
   }
 
@@ -208,8 +207,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       logger.w(
-        'Location permissions are permanently denied, we cannot request permissions.',
-      );
+          'Location permissions are permanently denied, we cannot request permissions.');
       return;
     }
 
@@ -223,68 +221,71 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   Future<void> monitor() async {
-    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) async {
-      if (!_monitor) {
-        timer.cancel();
-        return;
-      }
-
-      if (_isProcessing) {
-        return;
-      }
-      _isProcessing = true;
-
-      if (isRunning) {
-        if (isInBuiltMICSelected && !_audioJack.isListening()) {
-          await _audioJack.initialize();
-          await _audioJack.start();
+    _timer = Timer.periodic(
+      const Duration(milliseconds: 10),
+      (timer) async {
+        if (!_monitor) {
+          timer.cancel();
+          return;
         }
 
-        List<String> channels = [];
+        if (_isProcessing) {
+          return;
+        }
+        _isProcessing = true;
 
-        if (_scienceLab.isConnected() && isXYPlotSelected) {
-          await xyPlotTask(xyPlotAxis1, xyPlotAxis2);
-          if (!_wakelockEnabled) {
-            WakelockPlus.enable();
-            _wakelockEnabled = true;
+        if (isRunning) {
+          if (isInBuiltMICSelected && !_audioJack.isListening()) {
+            await _audioJack.initialize();
+            await _audioJack.start();
           }
-        } else {
-          if (_scienceLab.isConnected()) {
-            if (isCH1Selected) {
-              channels.add('CH1');
-            }
-            if (isCH2Selected) {
-              channels.add('CH2');
-            }
-            if (isCH3Selected) {
-              channels.add('CH3');
-            }
-          }
-          if (isAudioInputSelected && isInBuiltMICSelected ||
-              (_scienceLab.isConnected() && isMICSelected)) {
-            channels.add('MIC');
-          }
-          if (channels.isNotEmpty) {
+
+          List<String> channels = [];
+
+          if (_scienceLab.isConnected() && isXYPlotSelected) {
+            await xyPlotTask(xyPlotAxis1, xyPlotAxis2);
             if (!_wakelockEnabled) {
               WakelockPlus.enable();
               _wakelockEnabled = true;
             }
-            await captureTask(channels);
           } else {
-            if (_wakelockEnabled) {
-              WakelockPlus.disable();
-              _wakelockEnabled = false;
+            if (_scienceLab.isConnected()) {
+              if (isCH1Selected) {
+                channels.add('CH1');
+              }
+              if (isCH2Selected) {
+                channels.add('CH2');
+              }
+              if (isCH3Selected) {
+                channels.add('CH3');
+              }
             }
-            resetGraph();
-            dataEntries = [];
+            if (isAudioInputSelected && isInBuiltMICSelected ||
+                (_scienceLab.isConnected() && isMICSelected)) {
+              channels.add('MIC');
+            }
+            if (channels.isNotEmpty) {
+              if (!_wakelockEnabled) {
+                WakelockPlus.enable();
+                _wakelockEnabled = true;
+              }
+              await captureTask(channels);
+            } else {
+              if (_wakelockEnabled) {
+                WakelockPlus.disable();
+                _wakelockEnabled = false;
+              }
+              resetGraph();
+              dataEntries = [];
+            }
+          }
+          if (!isInBuiltMICSelected && _audioJack.isListening()) {
+            await _audioJack.close();
           }
         }
-        if (!isInBuiltMICSelected && _audioJack.isListening()) {
-          await _audioJack.close();
-        }
-      }
-      _isProcessing = false;
-    });
+        _isProcessing = false;
+      },
+    );
   }
 
   Future<void> xyPlotTask(String xyPlotAxis1, String xyPlotAxis2) async {
@@ -296,13 +297,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     entries.add([]);
     if (analogInput1 == analogInput2) {
       await _scienceLab.captureTraces(
-        1,
-        samples,
-        timeGap,
-        analogInput1,
-        isTriggerSelected,
-        null,
-      );
+          1, samples, timeGap, analogInput1, isTriggerSelected, null);
       data = await _scienceLab.fetchTrace(1);
       List<double>? yData = data['y'];
       int n = yData!.length;
@@ -315,13 +310,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           (analogInput1 == 'CH2' && analogInput2 == 'CH1')) {
         noOfChannels = 2;
         await _scienceLab.captureTraces(
-          noOfChannels,
-          175,
-          timeGap,
-          'CH1',
-          isTriggerSelected,
-          null,
-        );
+            noOfChannels, 175, timeGap, 'CH1', isTriggerSelected, null);
         data = await _scienceLab.fetchTrace(1);
         List<double>? yData1 = data['y'];
         data = await _scienceLab.fetchTrace(2);
@@ -333,13 +322,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       } else {
         noOfChannels = 4;
         await _scienceLab.captureTraces(
-          noOfChannels,
-          175,
-          timeGap,
-          'CH1',
-          isTriggerSelected,
-          null,
-        );
+            noOfChannels, 175, timeGap, 'CH1', isTriggerSelected, null);
         data = await _scienceLab.fetchTrace(_channelIndexMap[analogInput1]!);
         List<double>? yData1 = data['y'];
         data = await _scienceLab.fetchTrace(_channelIndexMap[analogInput2]!);
@@ -372,18 +355,11 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
       if (noOfChannels > 0) {
         await _scienceLab.captureTraces(
-          4,
-          samples,
-          timeGap,
-          channel,
-          false,
-          null,
-        );
+            4, samples, timeGap, channel, false, null);
       }
 
       await Future.delayed(
-        Duration(milliseconds: (samples * timeGap * 1e-3).toInt()),
-      );
+          Duration(milliseconds: (samples * timeGap * 1e-3).toInt()));
 
       List<Map<String, List<double>>> allChannelData = [];
 
@@ -391,9 +367,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
       for (int i = 0; i < noOfChannels; i++) {
         channel = channels[i];
-        Map<String, List<double>> data = await _scienceLab.fetchTrace(
-          _channelIndexMap[channel]!,
-        );
+        Map<String, List<double>> data =
+            await _scienceLab.fetchTrace(_channelIndexMap[channel]!);
 
         List<double> xRaw = data['x']!;
         for (int k = 0; k < xRaw.length; k++) {
@@ -487,12 +462,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           double relativeTime = xData[j] - timeShift;
 
           if (!isFourierTransformSelected) {
-            entries[i].add(
-              FlSpot(
-                relativeTime + xOffsets[channels[i]]!,
-                yData[j] + yOffsets[channels[i]]!,
-              ),
-            );
+            entries[i].add(FlSpot(relativeTime + xOffsets[channels[i]]!,
+                yData[j] + yOffsets[channels[i]]!));
           } else {
             if (j < n / 2) {
               double y = fftOut[j].abs() / samples;
@@ -627,12 +598,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           double audioValue = buffer[i] * 3;
 
           if (!isFourierTransformSelected) {
-            entries.last.add(
-              FlSpot(
+            entries.last.add(FlSpot(
                 micXData[i] - micTimeShift - xOffsets['MIC']!,
-                audioValue + yOffsets['MIC']!,
-              ),
-            );
+                audioValue + yOffsets['MIC']!));
           } else {
             if (i < n / 2) {
               double y = fftOut[i].abs() / samples;
@@ -667,14 +635,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           final double frequency;
           if (paramsChannels[i] == 'MIC') {
             frequency = _analyticsClass.findFrequency(
-              voltage,
-              (1 / AudioJack.samplingRate).toDouble(),
-            );
+                voltage, (1 / AudioJack.samplingRate).toDouble());
           } else {
-            frequency = _analyticsClass.findFrequency(
-              voltage,
-              timeGap / 1000000.0,
-            );
+            frequency =
+                _analyticsClass.findFrequency(voltage, timeGap / 1000000.0);
           }
 
           double period = (frequency > 0) ? (1 / frequency) * 1000.0 : 0;
@@ -700,24 +664,26 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       if (_isRecording) {
         final now = DateTime.now();
         final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
-        _recordedData.add([
-          now.millisecondsSinceEpoch.toString(),
-          dateFormat.format(now),
-          dataEntries,
-          dataParamsChannels,
-          oscilloscopeAxesScale.xAxisScale,
-          oscilloscopeAxesScale.yAxisScale,
-          _configProvider.config.includeLocationData
-              ? currentPosition?.latitude.toString() ?? 0
-              : 0,
-          _configProvider.config.includeLocationData
-              ? currentPosition?.longitude.toString() ?? 0
-              : 0,
-        ]);
+        _recordedData.add(
+          [
+            now.millisecondsSinceEpoch.toString(),
+            dateFormat.format(now),
+            dataEntries,
+            dataParamsChannels,
+            oscilloscopeAxesScale.xAxisScale,
+            oscilloscopeAxesScale.yAxisScale,
+            _configProvider.config.includeLocationData
+                ? currentPosition?.latitude.toString() ?? 0
+                : 0,
+            _configProvider.config.includeLocationData
+                ? currentPosition?.longitude.toString() ?? 0
+                : 0
+          ],
+        );
       }
 
       if (isFourierTransformSelected) {
-        oscilloscopeAxesScale.setYAxisScaleMax(max(_maxAmp, 1.0));
+        oscilloscopeAxesScale.setYAxisScaleMax(_maxAmp);
         oscilloscopeAxesScale.setYAxisScaleMin(0);
         oscilloscopeAxesScale.setXAxisScale(_maxFreq * 1000);
       }
@@ -771,18 +737,15 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (currentRow.length > 2) {
       dataEntries = parseFlSpotList(currentRow[2]);
       dataParamsChannels = parseChannelsList(currentRow[3]);
-      oscilloscopeAxesScale.setXAxisScale(
-        double.tryParse(currentRow[4].toString()) ?? 875.0,
-      );
-      oscilloscopeAxesScale.setYAxisScale(
-        double.tryParse(currentRow[5].toString()) ?? 16.0,
-      );
+      oscilloscopeAxesScale
+          .setXAxisScale(double.tryParse(currentRow[4].toString()) ?? 875.0);
+      oscilloscopeAxesScale
+          .setYAxisScale(double.tryParse(currentRow[5].toString()) ?? 16.0);
       _playbackIndex++;
       notifyListeners();
     } else {
       logger.e(
-        'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3',
-      );
+          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
       _playbackIndex++;
       notifyListeners();
     }
@@ -791,12 +754,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
-        final currentTimestamp = int.tryParse(
-          _playbackData![_playbackIndex - 1][0].toString(),
-        );
-        final nextTimestamp = int.tryParse(
-          _playbackData![_playbackIndex][0].toString(),
-        );
+        final currentTimestamp =
+            int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
+        final nextTimestamp =
+            int.tryParse(_playbackData![_playbackIndex][0].toString());
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
@@ -895,8 +856,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         'XAxisScale',
         'YAxisScale',
         'Latitude',
-        'Longitude',
-      ],
+        'Longitude'
+      ]
     ];
     notifyListeners();
     return true;
@@ -916,73 +877,45 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  static const List<double> _timebaseStepsUs = [
-    875.0,
-    1000.0,
-    2000.0,
-    4000.0,
-    8000.0,
-    25600.0,
-    38400.0,
-    51200.0,
-    102400.0,
-  ];
-
   void setTimebase(double value) {
-    final int index = value.round().clamp(0, _timebaseStepsUs.length - 1);
-    timebase = _timebaseStepsUs[index];
-    timebaseSlider = index.toDouble();
-    samples = index >= 4 && index <= 7 ? 1024 : 512;
-    timeGap = (2 * timebase) / samples;
+    switch (value) {
+      case 0:
+        timebase = 875.00;
+        break;
+      case 1:
+        timebase = 1000.00;
+        break;
+      case 2:
+        timebase = 2000.00;
+        break;
+      case 3:
+        timebase = 4000.00;
+        break;
+      case 4:
+        timebase = 8000.00;
+        break;
+      case 5:
+        timebase = 25600.00;
+        break;
+      case 6:
+        timebase = 38400.00;
+        break;
+      case 7:
+        timebase = 51200.00;
+        break;
+      case 8:
+        timebase = 102400.00;
+        break;
+      default:
+        timebase = 875.00;
+        break;
+    }
     oscilloscopeAxesScale.setXAxisScale(timebase);
     notifyListeners();
   }
 
   void setYAxisScale(double value) {
     oscilloscopeAxesScale.setYAxisScale(value);
-    notifyListeners();
-  }
-
-  static const double _zoomInFactor = 0.9;
-  static const double _zoomOutFactor = 1.1;
-
-  int _currentTimebaseStepIndex() {
-    int best = 0;
-    double bestDelta = (timebase - _timebaseStepsUs[0]).abs();
-    for (int i = 1; i < _timebaseStepsUs.length; i++) {
-      final double d = (timebase - _timebaseStepsUs[i]).abs();
-      if (d < bestDelta) {
-        bestDelta = d;
-        best = i;
-      }
-    }
-    return best;
-  }
-
-  void zoomX({required bool zoomIn}) {
-    final int current = _currentTimebaseStepIndex();
-    final int next = (zoomIn ? current - 1 : current + 1)
-        .clamp(0, _timebaseStepsUs.length - 1);
-    if (next == current) return;
-    setTimebase(next.toDouble());
-  }
-
-  void zoomIn() => zoomX(zoomIn: true);
-
-  void zoomOut() => zoomX(zoomIn: false);
-
-  void resetZoom() => setTimebase(0);
-
-  void zoomY({required bool zoomIn}) {
-    final factor = zoomIn ? _zoomInFactor : _zoomOutFactor;
-
-    final double current = oscilloscopeAxesScale.yAxisScale;
-    final double newScale = (current * factor).clamp(0.1, 50.0);
-
-    oscilloscopeAxesScale.setYAxisScale(newScale);
-    oscilloscopeAxesScale.setYAxisScaleMax(newScale);
-    oscilloscopeAxesScale.setYAxisScaleMin(-newScale);
-
     notifyListeners();
   }
 
@@ -1011,14 +944,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         final double frequency;
         if (dataParamsChannels[i] == 'MIC') {
           frequency = _analyticsClass.findSignalFrequency(
-            voltage,
-            (1 / AudioJack.samplingRate).toDouble(),
-          );
+              voltage, (1 / AudioJack.samplingRate).toDouble());
         } else {
-          frequency = _analyticsClass.findSignalFrequency(
-            voltage,
-            timeGap / 1000000.0,
-          );
+          frequency =
+              _analyticsClass.findSignalFrequency(voltage, timeGap / 1000000.0);
         }
         double period = (1 / frequency) * 1000.0;
         if (period > maxPeriod) {
@@ -1029,7 +958,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     yRange = maxY - minY;
     yPadding = yRange * 0.1;
     if (maxPeriod > 0) {
-      double xAxisScale = min((maxPeriod * 5), _maxTimebaseMs);
+      double xAxisScale = min((maxPeriod * 5), maxTimebase);
       double yAxisScale;
       if (maxY.abs() > minY.abs()) {
         yAxisScale = maxY + yPadding;
@@ -1052,41 +981,56 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     List<Color> curveFitColors = [Colors.yellow];
     List<LineChartBarData> plots = [];
     plots.addAll(
-      List<LineChartBarData>.generate(dataEntries.length, (index) {
-        return LineChartBarData(
-          spots: dataEntries[index],
-          isCurved: true,
-          color: colors[index % colors.length],
-          barWidth: 1,
-          dotData: const FlDotData(show: false),
-        );
-      }),
+      List<LineChartBarData>.generate(
+        dataEntries.length,
+        (index) {
+          return LineChartBarData(
+            spots: dataEntries[index],
+            isCurved: true,
+            color: colors[index % colors.length],
+            barWidth: 1,
+            dotData: const FlDotData(
+              show: false,
+            ),
+          );
+        },
+      ),
     );
     plots.addAll(
-      List<LineChartBarData>.generate(dataEntriesCurveFit.length, (index) {
-        return LineChartBarData(
-          spots: dataEntriesCurveFit[index],
-          isCurved: true,
-          color: curveFitColors[index % colors.length],
-          barWidth: 1,
-          dotData: const FlDotData(show: false),
-        );
-      }),
+      List<LineChartBarData>.generate(
+        dataEntriesCurveFit.length,
+        (index) {
+          return LineChartBarData(
+            spots: dataEntriesCurveFit[index],
+            isCurved: true,
+            color: curveFitColors[index % colors.length],
+            barWidth: 1,
+            dotData: const FlDotData(
+              show: false,
+            ),
+          );
+        },
+      ),
     );
     return plots;
   }
 
   List<LineChartBarData> createXYPlot() {
     List<Color> colors = [Colors.red];
-    return List<LineChartBarData>.generate(dataEntriesXYPlot.length, (index) {
-      return LineChartBarData(
-        spots: dataEntriesXYPlot[index],
-        isCurved: true,
-        color: colors[index % colors.length],
-        barWidth: 1,
-        dotData: const FlDotData(show: false),
-      );
-    });
+    return List<LineChartBarData>.generate(
+      dataEntriesXYPlot.length,
+      (index) {
+        return LineChartBarData(
+          spots: dataEntriesXYPlot[index],
+          isCurved: true,
+          color: colors[index % colors.length],
+          barWidth: 1,
+          dotData: const FlDotData(
+            show: false,
+          ),
+        );
+      },
+    );
   }
 
   void resetGraph() {
@@ -1125,7 +1069,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (_wakelockEnabled) {
       WakelockPlus.disable();
     }
-    _audioJack.disposeHardware();
+    _audioJack.close();
     super.dispose();
   }
 }

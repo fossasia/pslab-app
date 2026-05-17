@@ -42,7 +42,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   late OscilloscopeStateProvider _provider;
   late OscilloscopeConfigProvider? _configProvider;
   final CsvService _csvService = CsvService();
-  final FocusNode _shortcutFocusNode = FocusNode(debugLabel: 'OscilloscopeShortcuts');
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   bool _showGuide = false;
   @override
@@ -63,39 +62,8 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       if (widget.playbackData != null) {
         _provider.startPlayback(widget.playbackData!);
       }
-      if (mounted) {
-        _shortcutFocusNode.requestFocus();
-      }
     });
     super.initState();
-  }
-
-  KeyEventResult _handleShortcutKey(FocusNode node, KeyEvent event) {
-    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
-      return KeyEventResult.ignored;
-    }
-    if (!HardwareKeyboard.instance.isControlPressed) {
-      return KeyEventResult.ignored;
-    }
-
-    final LogicalKeyboardKey key = event.logicalKey;
-    if (key == LogicalKeyboardKey.equal ||
-        key == LogicalKeyboardKey.numpadAdd ||
-        key == LogicalKeyboardKey.add) {
-      _provider.zoomIn();
-      return KeyEventResult.handled;
-    }
-    if (key == LogicalKeyboardKey.minus ||
-        key == LogicalKeyboardKey.numpadSubtract) {
-      _provider.zoomOut();
-      return KeyEventResult.handled;
-    }
-    if (key == LogicalKeyboardKey.digit0 ||
-        key == LogicalKeyboardKey.numpad0) {
-      _provider.resetZoom();
-      return KeyEventResult.handled;
-    }
-    return KeyEventResult.ignored;
   }
 
   @override
@@ -263,7 +231,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   void dispose() {
     _setPortraitOrientation();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    _shortcutFocusNode.dispose();
     super.dispose();
   }
 
@@ -342,11 +309,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       ],
       child: Consumer<OscilloscopeStateProvider>(
         builder: (context, provider, _) {
-          return Focus(
-            focusNode: _shortcutFocusNode,
-            autofocus: true,
-            onKeyEvent: _handleShortcutKey,
-            child: Stack(
+          return Stack(
             children: [
               CommonScaffold(
                 title: appLocalizations.oscilloscope,
@@ -518,7 +481,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                   onHide: _hideInstrumentGuide,
                 ),
             ],
-          ),
           );
         },
       ),
