@@ -1,0 +1,19 @@
+# Features and Enhancements
+- feat: feature to see altitude from pressure added in Barometer
+- feat: logging added to mq135
+- feat: MQ135 Gas sensor added
+- feat: interface for ESP wifi module added
+- feat: logic analyzer logging/ playback added
+
+# Bug Fixes
+- fix: unstable oscilloscope bug fixed
+- fix: logic analyzer bug fixed
+
+# Maintenance
+- chore: updated release-draft
+- chore: automatic release drafting
+
+# Documentation
+- docs: update readme
+- docs: updated fastlane metadata files
+- docs: read me updated

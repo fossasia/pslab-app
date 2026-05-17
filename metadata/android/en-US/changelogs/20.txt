@@ -1,0 +1,27 @@
+# Release notes for PSLab Android app version 2.0.19
+
+## :rocket: Features and Enhancements
+
+- fix: osc main screen ui changes
+- fix: Wave generator UI changes
+- feat: bluetooth wifi connection option moved to Connect device menu
+- feat: new FAQs added
+- feat: new Wave Generator UI
+- fix: Actionbar added to Oscilloscope and Robotic Arm
+- fix: scroll added to create config layout
+- feat: add Httphandler class
+
+## :bug: Bug Fixes
+
+- fix: action bar added to logic analyzer
+- fix: Wave generator active even without pressing view button
+- fix: side navbar rearranged
+- fix: multimeter action bar fixed
+
+## :page_facing_up: Documentation
+
+- docs: readme images changed
+
+## :wrench: Maintenance
+
+- chore: upgrade app version

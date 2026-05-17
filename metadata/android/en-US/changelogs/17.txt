@@ -1,0 +1,9 @@
+This version includes:
+- Save wave generator configurations
+- Updated icons for instruments
+- Simultaneous views in oscilloscope
+- Logging in oscilloscope
+- Fourier transform in oscilloscope
+- Guides for robot arm
+- Multiple PWM
+and minor bug fixes
