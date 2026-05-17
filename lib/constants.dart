@@ -10,6 +10,8 @@ const multimeterScreenTitleKey = 'multimeter_screen_title';
 const waveGeneratorScreenTitleKey = 'wave_generator_screen_title';
 const oscilloscopeScreenTitleKey = 'oscilloscope_screen_title';
 
+const int kMaxFileNameLength = 200;
+
 AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
 
 List<String> instrumentIcons = [

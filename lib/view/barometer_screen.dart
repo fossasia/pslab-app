@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:intl/intl.dart';
 import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/barometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
+import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 
@@ -208,38 +208,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
   }
 
   Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final TextEditingController filenameController = TextEditingController();
-    final String defaultFilename =
-        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
-    filenameController.text = defaultFilename;
-
-    final String? fileName = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(appLocalizations.saveRecording),
-          content: TextField(
-            controller: filenameController,
-            decoration: InputDecoration(
-              hintText: appLocalizations.enterFileName,
-              labelText: appLocalizations.fileName,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(appLocalizations.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, filenameController.text);
-              },
-              child: Text(appLocalizations.save),
-            ),
-          ],
-        );
-      },
-    );
+    final String? fileName = await showSaveFileNameDialog(context);
 
     if (fileName != null) {
       _csvService.writeMetaData(appLocalizations.barometer.toLowerCase(), data);
