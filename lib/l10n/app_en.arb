@@ -671,4 +671,12 @@
     "comingSoon": "Coming Soon",
     "startRecording": "Start Recording",
     "stopRecording": "Stop Recording"
+    "tsl2561" : "TSL2561",
+    "full": "Full Spectrum",
+    "infrared": "Infrared",
+    "infraredRaw" : "Infrared (raw)",
+    "visibleLight": "Visible Light",
+    "visibleLightRaw" : "Visible Light (raw)",
+    "luxRaw" : "Luminosity (lux/raw)",
+    "raw" : "raw"
 }
