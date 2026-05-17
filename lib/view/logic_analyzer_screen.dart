@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
@@ -14,6 +13,7 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/logic_analyzer_channel_selection.dart';
 import 'package:pslab/view/widgets/logic_analyzer_graph.dart';
+import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 
@@ -167,38 +167,7 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
   }
 
   Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final TextEditingController filenameController = TextEditingController();
-    final String defaultFilename =
-        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
-    filenameController.text = defaultFilename;
-
-    final String? fileName = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(appLocalizations.saveRecording),
-          content: TextField(
-            controller: filenameController,
-            decoration: InputDecoration(
-              hintText: appLocalizations.enterFileName,
-              labelText: appLocalizations.fileName,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(appLocalizations.cancel.toUpperCase()),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, filenameController.text);
-              },
-              child: Text(appLocalizations.save),
-            ),
-          ],
-        );
-      },
-    );
+    final String? fileName = await showSaveFileNameDialog(context);
 
     if (fileName != null) {
       _csvService.writeMetaData(
