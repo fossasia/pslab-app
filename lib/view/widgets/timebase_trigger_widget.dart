@@ -109,19 +109,37 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           selector: (context, provider) =>
                               provider.oscilloscopeAxesScale.yAxisScale,
                           builder: (context, yAxisScale, _) {
-                            return Slider(
-                              activeColor: sliderActiveColor,
-                              min: -yAxisScale,
-                              max: yAxisScale,
-                              value: oscilloscopeStateProvider.trigger
-                                  .clamp(-yAxisScale, yAxisScale),
-                              onChanged: (double value) {
-                                setState(
-                                  () {
-                                    oscilloscopeStateProvider.trigger = value;
-                                  },
-                                );
+                            return Listener(
+                              onPointerSignal: (pointerSignal) {
+                                if (pointerSignal is PointerScrollEvent) {
+                                  final double step = (yAxisScale * 2) / 20;
+                                  final double current = oscilloscopeStateProvider
+                                      .trigger
+                                      .clamp(-yAxisScale, yAxisScale);
+                                  final double next = (current +
+                                          (pointerSignal.scrollDelta.dy > 0
+                                              ? step
+                                              : -step))
+                                      .clamp(-yAxisScale, yAxisScale);
+                                  setState(() {
+                                    oscilloscopeStateProvider.trigger = next;
+                                  });
+                                }
                               },
+                              child: Slider(
+                                activeColor: sliderActiveColor,
+                                min: -yAxisScale,
+                                max: yAxisScale,
+                                value: oscilloscopeStateProvider.trigger
+                                    .clamp(-yAxisScale, yAxisScale),
+                                onChanged: (double value) {
+                                  setState(
+                                    () {
+                                      oscilloscopeStateProvider.trigger = value;
+                                    },
+                                  );
+                                },
+                              ),
                             );
                           },
                         ),
@@ -221,18 +239,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                 top: -2,
                 left: 16,
                 right: 16,
-                child: Listener(
-                  behavior: HitTestBehavior.translucent,
-                  onPointerSignal: (pointerSignal) {
-                    if (pointerSignal is PointerScrollEvent) {
-                      if (pointerSignal.scrollDelta.dy < 0) {
-                        oscilloscopeStateProvider.zoomIn();
-                      } else {
-                        oscilloscopeStateProvider.zoomOut();
-                      }
-                    }
-                  },
-                  child: Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -253,7 +260,17 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                           thumbShape: const RoundSliderThumbShape(
                               enabledThumbRadius: 6),
                         ),
-                        child: Slider(
+                        child: Listener(
+                          onPointerSignal: (pointerSignal) {
+                            if (pointerSignal is PointerScrollEvent) {
+                              if (pointerSignal.scrollDelta.dy < 0) {
+                                oscilloscopeStateProvider.zoomIn();
+                              } else {
+                                oscilloscopeStateProvider.zoomOut();
+                              }
+                            }
+                          },
+                          child: Slider(
                           activeColor: sliderActiveColor,
                           min: 0,
                           max: oscilloscopeStateProvider.timebaseDivisions
@@ -330,6 +347,7 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                             }
                           },
                         ),
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -347,7 +365,6 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                       ),
                     ),
                   ],
-                ),
                 ),
               ),
             ],
