@@ -263,10 +263,23 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                         child: Listener(
                           onPointerSignal: (pointerSignal) {
                             if (pointerSignal is PointerScrollEvent) {
+                              final double maxSlider = oscilloscopeStateProvider
+                                  .timebaseDivisions
+                                  .toDouble();
+                              final double current =
+                                  oscilloscopeStateProvider.timebaseSlider;
+                              double? next;
                               if (pointerSignal.scrollDelta.dy < 0) {
-                                oscilloscopeStateProvider.zoomIn();
-                              } else {
-                                oscilloscopeStateProvider.zoomOut();
+                                next = (current - 1).clamp(0.0, maxSlider);
+                              } else if (pointerSignal.scrollDelta.dy > 0) {
+                                next = (current + 1).clamp(0.0, maxSlider);
+                              }
+                              if (next != null && next != current) {
+                                setState(() {
+                                  oscilloscopeStateProvider.timebaseSlider =
+                                      next!;
+                                  oscilloscopeStateProvider.setTimebase(next);
+                                });
                               }
                             }
                           },
