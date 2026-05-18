@@ -97,13 +97,13 @@ jobs:
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: APK Generated
           path: build/app/outputs/flutter-apk
 
       - name: Upload AAB Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AAB Generated
           path: build/app/outputs/bundle
@@ -179,7 +179,7 @@ jobs:
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
 
       - name: Upload Windows Installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Windows Installer
           path: build/windows/x64/installer/Release/*.exe
@@ -198,7 +198,7 @@ jobs:
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
 
       - name: Upload Linux Packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Linux Packages
           path: |
@@ -219,7 +219,7 @@ jobs:
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
 
       - name: Upload Linux ARM64 Packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Linux ARM64 Packages
           path: |
@@ -240,7 +240,7 @@ jobs:
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
 
       - name: Upload macOS DMG
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macOS DMG
           path: '*.dmg'
