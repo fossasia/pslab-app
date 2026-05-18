@@ -2,7 +2,7 @@ name: Build
 
 on:
   pull_request:
-    branches: ["flutter"]
+    branches: [ "main" ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -63,7 +63,7 @@ jobs:
 
   android:
     name: Android Flutter Build
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -79,7 +79,7 @@ jobs:
 
   ios:
     name: iOS Flutter Build
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     steps:
       - name: Set up Xcode
@@ -101,7 +101,7 @@ jobs:
 
   screenshots-android:
     name: Screenshots (Android)
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -121,7 +121,7 @@ jobs:
 
   screenshots-iphone:
     name: Screenshots (iPhone)
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
@@ -146,7 +146,7 @@ jobs:
 
   screenshots-ipad:
     name: Screenshots (iPad)
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 30
     steps:
@@ -171,7 +171,7 @@ jobs:
 
   windows:
     name: Windows Flutter Build
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'windows-latest' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v6
@@ -187,7 +187,7 @@ jobs:
 
   linux:
     name: Linux Flutter Build
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -203,7 +203,7 @@ jobs:
 
   linux-arm64:
     name: Linux ARM64 Flutter Build
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v6
@@ -219,7 +219,7 @@ jobs:
 
   macos:
     name: macOS Flutter Build
-    needs: [changes, common]
+    needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'macos-latest' || 'ubuntu-latest' }}
     steps:
       - name: Set up Xcode
