@@ -288,9 +288,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                             .oscilloscopeAxesScale.yAxisScale;
                                     final double step = (yAxisScale * 2) / 20;
                                     final double current =
-                                        oscilloscopeStateProvider.yOffsets[
-                                                oscilloscopeStateProvider
-                                                    .selectedChannelOffset]!
+                                        oscilloscopeStateProvider
+                                            .yOffsets[oscilloscopeStateProvider
+                                                .selectedChannelOffset]!
                                             .clamp(-yAxisScale, yAxisScale);
                                     final double next = (current +
                                             (pointerSignal.scrollDelta.dy > 0
@@ -317,7 +317,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                           -oscilloscopeStateProvider
                                               .oscilloscopeAxesScale.yAxisScale,
                                           oscilloscopeStateProvider
-                                              .oscilloscopeAxesScale.yAxisScale),
+                                              .oscilloscopeAxesScale
+                                              .yAxisScale),
                                   onChanged: (double value) {
                                     setState(
                                       () {
@@ -391,9 +392,9 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                               child: Listener(
                                 onPointerSignal: (pointerSignal) {
                                   if (pointerSignal is PointerScrollEvent) {
-                                    final double maxX = oscilloscopeStateProvider
-                                            .timebase /
-                                        1000;
+                                    final double maxX =
+                                        oscilloscopeStateProvider.timebase /
+                                            1000;
                                     final bool isMicroseconds =
                                         oscilloscopeStateProvider
                                                 .oscilloscopeAxesScale
@@ -423,9 +424,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                             next * 1000;
                                       } else {
                                         oscilloscopeStateProvider.xOffsets[
-                                                oscilloscopeStateProvider
-                                                    .selectedChannelOffset] =
-                                            next;
+                                            oscilloscopeStateProvider
+                                                .selectedChannelOffset] = next;
                                       }
                                     });
                                   }
@@ -433,7 +433,8 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                 child: Slider(
                                   activeColor: sliderActiveColor,
                                   min: 0,
-                                  max: oscilloscopeStateProvider.timebase / 1000,
+                                  max:
+                                      oscilloscopeStateProvider.timebase / 1000,
                                   value: oscilloscopeStateProvider
                                               .oscilloscopeAxesScale
                                               .xAxisScale ==

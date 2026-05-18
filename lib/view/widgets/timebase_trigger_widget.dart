@@ -113,9 +113,9 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                               onPointerSignal: (pointerSignal) {
                                 if (pointerSignal is PointerScrollEvent) {
                                   final double step = (yAxisScale * 2) / 20;
-                                  final double current = oscilloscopeStateProvider
-                                      .trigger
-                                      .clamp(-yAxisScale, yAxisScale);
+                                  final double current =
+                                      oscilloscopeStateProvider.trigger
+                                          .clamp(-yAxisScale, yAxisScale);
                                   final double next = (current +
                                           (pointerSignal.scrollDelta.dy > 0
                                               ? step
@@ -284,82 +284,83 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                             }
                           },
                           child: Slider(
-                          activeColor: sliderActiveColor,
-                          min: 0,
-                          max: oscilloscopeStateProvider.timebaseDivisions
-                              .toDouble(),
-                          divisions:
-                              oscilloscopeStateProvider.timebaseDivisions,
-                          value: oscilloscopeStateProvider.timebaseSlider.clamp(
-                              0,
-                              oscilloscopeStateProvider.timebaseDivisions
-                                  .toDouble()),
-                          onChanged: (double value) {
-                            setState(
-                              () {
-                                oscilloscopeStateProvider.timebaseSlider =
-                                    value;
-                                oscilloscopeStateProvider.setTimebase(value);
-                              },
-                            );
-                            switch (value) {
-                              case 0:
-                                oscilloscopeStateProvider.samples = 512;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              case 1:
-                                oscilloscopeStateProvider.samples = 512;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              case 2:
-                                oscilloscopeStateProvider.samples = 512;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              case 3:
-                                oscilloscopeStateProvider.samples = 512;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              case 4:
-                                oscilloscopeStateProvider.samples = 1024;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              case 5:
-                                oscilloscopeStateProvider.samples = 1024;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              case 6:
-                                oscilloscopeStateProvider.samples = 1024;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              case 7:
-                                oscilloscopeStateProvider.samples = 1024;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                              default:
-                                oscilloscopeStateProvider.samples = 512;
-                                oscilloscopeStateProvider.timeGap =
-                                    (2 * oscilloscopeStateProvider.timebase) /
-                                        oscilloscopeStateProvider.samples;
-                                break;
-                            }
-                          },
-                        ),
+                            activeColor: sliderActiveColor,
+                            min: 0,
+                            max: oscilloscopeStateProvider.timebaseDivisions
+                                .toDouble(),
+                            divisions:
+                                oscilloscopeStateProvider.timebaseDivisions,
+                            value: oscilloscopeStateProvider.timebaseSlider
+                                .clamp(
+                                    0,
+                                    oscilloscopeStateProvider.timebaseDivisions
+                                        .toDouble()),
+                            onChanged: (double value) {
+                              setState(
+                                () {
+                                  oscilloscopeStateProvider.timebaseSlider =
+                                      value;
+                                  oscilloscopeStateProvider.setTimebase(value);
+                                },
+                              );
+                              switch (value) {
+                                case 0:
+                                  oscilloscopeStateProvider.samples = 512;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                case 1:
+                                  oscilloscopeStateProvider.samples = 512;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                case 2:
+                                  oscilloscopeStateProvider.samples = 512;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                case 3:
+                                  oscilloscopeStateProvider.samples = 512;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                case 4:
+                                  oscilloscopeStateProvider.samples = 1024;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                case 5:
+                                  oscilloscopeStateProvider.samples = 1024;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                case 6:
+                                  oscilloscopeStateProvider.samples = 1024;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                case 7:
+                                  oscilloscopeStateProvider.samples = 1024;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                                default:
+                                  oscilloscopeStateProvider.samples = 512;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
+                                  break;
+                              }
+                            },
+                          ),
                         ),
                       ),
                     ),
