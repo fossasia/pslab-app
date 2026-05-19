@@ -17,14 +17,16 @@ class _InstrumentData {
   final String heading;
   final String description;
   final String name;
+  final List<String> supportedHardware;
 
-  _InstrumentData(this.heading, this.description, this.name);
+  _InstrumentData(
+      this.heading, this.description, this.name, this.supportedHardware);
 }
 
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
   List<int> _filteredIndices = <int>[];
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  late List<_InstrumentData> _instrumentDatas;
+  List<_InstrumentData> _instrumentDatas = [];
 
   void _onItemTapped(int index) {
     _InstrumentData instrument = _instrumentDatas[index];
@@ -54,6 +56,18 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                 .contains(query.toLowerCase()))
             .toList();
       }
+    });
+  }
+
+  void _updateVisibleInstruments() {
+    final currentHardware = getIt.get<BoardStateProvider>().selectedHardware;
+
+    setState(() {
+      _filteredIndices =
+          List.generate(_instrumentDatas.length, (i) => i).where((i) {
+        final instrument = _instrumentDatas[i];
+        return instrument.supportedHardware.contains(currentHardware);
+      }).toList();
     });
   }
 
@@ -87,37 +101,61 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     });
 
     _instrumentDatas = [
-      _InstrumentData(appLocalizations.oscilloscope,
-          appLocalizations.oscilloscopeDesc, '/oscilloscope'),
+      _InstrumentData(
+          appLocalizations.oscilloscope,
+          appLocalizations.oscilloscopeDesc,
+          '/oscilloscope',
+          ['pslab_board', 'internal_sensors']),
       _InstrumentData(appLocalizations.multimeter,
-          appLocalizations.multimeterDesc, '/multimeter'),
-      _InstrumentData(appLocalizations.logicAnalyzer,
-          appLocalizations.logicAnalyzerDesc, '/logicAnalyzer'),
+          appLocalizations.multimeterDesc, '/multimeter', ['pslab_board']),
       _InstrumentData(
-          appLocalizations.sensors, appLocalizations.sensorsDesc, '/sensors'),
-      _InstrumentData(appLocalizations.waveGenerator,
-          appLocalizations.waveGeneratorDesc, '/waveGenerator'),
+          appLocalizations.logicAnalyzer,
+          appLocalizations.logicAnalyzerDesc,
+          '/logicAnalyzer',
+          ['pslab_board']),
+      _InstrumentData(appLocalizations.sensors, appLocalizations.sensorsDesc,
+          '/sensors', ['pslab_board']),
+      _InstrumentData(
+          appLocalizations.waveGenerator,
+          appLocalizations.waveGeneratorDesc,
+          '/waveGenerator',
+          ['pslab_board', 'internal_sensors']),
       _InstrumentData(appLocalizations.powerSource,
-          appLocalizations.powerSourceDesc, '/powerSource'),
+          appLocalizations.powerSourceDesc, '/powerSource', ['pslab_board']),
       _InstrumentData(appLocalizations.luxMeter, appLocalizations.luxMeterDesc,
-          '/luxmeter'),
-      _InstrumentData(appLocalizations.accelerometer,
-          appLocalizations.accelerometerDesc, '/accelerometer'),
-      _InstrumentData(appLocalizations.barometer,
-          appLocalizations.barometerDesc, '/barometer'),
+          '/luxmeter', ['pslab_board', 'internal_sensors']),
       _InstrumentData(
-          appLocalizations.compass, appLocalizations.compassDesc, '/compass'),
-      _InstrumentData(appLocalizations.gyroscope,
-          appLocalizations.gyroscopeDesc, '/gyroscope'),
-      _InstrumentData(appLocalizations.thermometer,
-          appLocalizations.thermometerDesc, '/thermometer'),
+          appLocalizations.accelerometer,
+          appLocalizations.accelerometerDesc,
+          '/accelerometer',
+          ['pslab_board', 'internal_sensors']),
+      _InstrumentData(
+          appLocalizations.barometer,
+          appLocalizations.barometerDesc,
+          '/barometer',
+          ['pslab_board', 'internal_sensors']),
+      _InstrumentData(appLocalizations.compass, appLocalizations.compassDesc,
+          '/compass', ['pslab_board', 'internal_sensors']),
+      _InstrumentData(
+          appLocalizations.gyroscope,
+          appLocalizations.gyroscopeDesc,
+          '/gyroscope',
+          ['pslab_board', 'internal_sensors']),
+      _InstrumentData(
+          appLocalizations.thermometer,
+          appLocalizations.thermometerDesc,
+          '/thermometer',
+          ['pslab_board', 'internal_sensors']),
       _InstrumentData(appLocalizations.roboticArm,
-          appLocalizations.roboticArmDesc, '/roboticArm'),
+          appLocalizations.roboticArmDesc, '/roboticArm', ['pslab_board']),
       // Instruments below are not yet implemented.
       //_InstrumentData(appLocalizations.gasSensor, appLocalizations.gasSensorDesc, '/gassensor'),
       //_InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensorDesc, '/dustsensor'),
-      _InstrumentData(appLocalizations.soundMeter,
-          appLocalizations.soundMeterDesc, '/soundmeter'),
+      _InstrumentData(
+          appLocalizations.soundMeter,
+          appLocalizations.soundMeterDesc,
+          '/soundmeter',
+          ['pslab_board', 'internal_sensors']),
     ];
 
     _filteredIndices =
@@ -126,6 +164,8 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
       _setPortraitOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     });
+
+    _updateVisibleInstruments();
   }
 
   void _setPortraitOrientation() {

@@ -668,5 +668,11 @@
     "saw" : "Saw",
     "comingSoon": "Coming Soon",
     "startRecording": "Start Recording",
-    "stopRecording": "Stop Recording"
+    "stopRecording": "Stop Recording",
+    "changeHardware": "Change Hardware",
+    "psLab": "PSLab",
+    "psLabBoard": "PSLab Board",
+    "internalSensors": "Internal sensors",
+    "selectHardware": "Select Hardware",
+    "selectHardwareQuestion": "What hardware do you want to use?"
 }
