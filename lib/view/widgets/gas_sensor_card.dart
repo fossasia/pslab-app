@@ -115,8 +115,8 @@ class _GasSensorCardState extends State<GasSensorCard> {
                           color: Colors.grey.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text(
-                          "PPM CO₂",
+                        child: Text(
+                          appLocalizations.ppmCO2,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,

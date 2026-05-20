@@ -106,7 +106,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
               !_snackbarShown &&
               provider.isInitialized()) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              _showSensorErrorSnackbar("Gas Sensor Unavailable");
+              _showSensorErrorSnackbar(appLocalizations.noGasSensor);
               _snackbarShown = true;
             });
           }
@@ -224,7 +224,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
               ),
             ),
             leftTitles: AxisTitles(
-              axisNameWidget: Text("CO₂ (PPM)",
+              axisNameWidget: Text(appLocalizations.ppmCO2,
                   style: TextStyle(
                       fontSize: axisNameFontSize,
                       color: chartTextColor,
