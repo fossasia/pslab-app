@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 
+import '../communication/science_lab.dart';
 import '../l10n/app_localizations.dart';
 import '../others/logger_service.dart';
 import 'dust_sensor_config_provider.dart';
@@ -90,6 +91,8 @@ class DustSensorStateProvider extends ChangeNotifier {
     onSensorError = onError;
 
     try {
+      ScienceLab scienceLab = getIt.get<ScienceLab>();
+
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
 
       _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -100,10 +103,11 @@ class DustSensorStateProvider extends ChangeNotifier {
       });
 
       int interval = _configProvider?.config.updatePeriod ?? 1000;
-      _dustTimer = Timer.periodic(Duration(milliseconds: interval), (timer) {
+      _dustTimer =
+          Timer.periodic(Duration(milliseconds: interval), (timer) async {
+        double voltageReading = await scienceLab.getVoltage("CH1", 1);
 
-        /// TO DO
-
+        _currentDust = voltageReading;
         notifyListeners();
       });
     } catch (e) {
