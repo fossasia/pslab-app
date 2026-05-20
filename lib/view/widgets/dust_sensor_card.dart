@@ -3,7 +3,6 @@ import 'package:pslab/view/widgets/gauge_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/providers/dust_sensor_state_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/view/widgets/instruments_stats.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 
@@ -21,7 +20,6 @@ class _DustSensorCardState extends State<DustSensorCard> {
     final isLargeScreen = screenWidth > 900;
     DustSensorStateProvider provider =
         Provider.of<DustSensorStateProvider>(context);
-    double currentDust = provider.getCurrentDust();
     double ppm = provider.getPPM();
     String airQuality = provider.getAirQuality();
     final cardMargin = screenWidth < 400 ? 8.0 : 12.0;

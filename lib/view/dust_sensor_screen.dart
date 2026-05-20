@@ -362,7 +362,6 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
     final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
     final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
     final reservedSizeLeft = screenWidth < 400 ? 25.0 : 30.0;
-    final reservedSizeRight = screenWidth < 400 ? 25.0 : 30.0;
     double yInterval = maxPPM > 50 ? (maxPPM / 5).roundToDouble() : 10;
 
     return Padding(
