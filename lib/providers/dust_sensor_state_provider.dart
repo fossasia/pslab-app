@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
 import '../others/logger_service.dart';
+import 'dust_sensor_config_provider.dart';
 import 'locator.dart';
 
 class DustSensorStateProvider extends ChangeNotifier {
@@ -37,11 +38,19 @@ class DustSensorStateProvider extends ChangeNotifier {
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
 
+  DustSensorConfigProvider? _configProvider;
+
   Function(String)? onSensorError;
   Function? onPlaybackEnd;
 
   Position? currentPosition;
   StreamSubscription? _locationStream;
+
+  void setConfigProvider(DustSensorConfigProvider configProvider) {
+    _configProvider = configProvider;
+  }
+
+  DustSensorConfigProvider? get configProvider => _configProvider;
 
   Future<void> _startGeoLocationUpdates() async {
     bool serviceEnabled;
@@ -90,8 +99,11 @@ class DustSensorStateProvider extends ChangeNotifier {
         notifyListeners();
       });
 
-      _dustTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        // Placeholder for dust sensor reading logic
+      int interval = _configProvider?.config.updatePeriod ?? 1000;
+      _dustTimer = Timer.periodic(Duration(milliseconds: interval), (timer) {
+
+        /// TO DO
+
         notifyListeners();
       });
     } catch (e) {
@@ -123,6 +135,7 @@ class DustSensorStateProvider extends ChangeNotifier {
 
     _dustData.clear();
     dustChartData.clear();
+    ppmChartData.clear();
     _timeData.clear();
     _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     _currentTime = 0;
@@ -192,6 +205,7 @@ class DustSensorStateProvider extends ChangeNotifier {
 
     _dustData.clear();
     dustChartData.clear();
+    ppmChartData.clear();
     _timeData.clear();
     _dustSum = 0;
     _dataCount = 0;
@@ -237,8 +251,12 @@ class DustSensorStateProvider extends ChangeNotifier {
         now.millisecondsSinceEpoch.toString(),
         dateFormat.format(now),
         dust.toStringAsFixed(2),
-        currentPosition?.latitude.toString() ?? 0,
-        currentPosition?.longitude.toString() ?? 0
+        _configProvider!.config.includeLocationData
+            ? currentPosition?.latitude.toString() ?? 0
+            : 0,
+        _configProvider!.config.includeLocationData
+            ? currentPosition?.longitude.toString() ?? 0
+            : 0
       ]);
     }
     _dustData.add(dust);
@@ -256,6 +274,7 @@ class DustSensorStateProvider extends ChangeNotifier {
       _dustMax = _dustData.reduce(max);
     }
     dustChartData.clear();
+    ppmChartData.clear();
     for (int i = 0; i < _dustData.length; i++) {
       dustChartData.add(FlSpot(_timeData[i], _dustData[i]));
       ppmChartData.add(FlSpot(_timeData[i], _dustData[i] * 0.1));
@@ -264,7 +283,9 @@ class DustSensorStateProvider extends ChangeNotifier {
   }
 
   Future<void> startRecording() async {
-    await _startGeoLocationUpdates();
+    if (_configProvider!.config.includeLocationData) {
+      await _startGeoLocationUpdates();
+    }
     _isRecording = true;
     _recordedData = [
       ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']

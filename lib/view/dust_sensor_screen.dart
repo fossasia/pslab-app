@@ -14,6 +14,8 @@ import 'package:pslab/view/widgets/dust_sensor_card.dart';
 
 import '../constants.dart';
 import '../others/csv_service.dart';
+import '../providers/dust_sensor_config_provider.dart';
+import 'dust_sensor_config_screen.dart';
 import 'logged_data_screen.dart';
 
 class DustSensorScreen extends StatefulWidget {
@@ -28,6 +30,7 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
   late DustSensorStateProvider _provider;
+  late DustSensorConfigProvider _configProvider;
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic_.png';
 
@@ -46,13 +49,13 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
   List<Widget> _getDustSensorContent() {
     return [
       InstrumentIntroText(
-        text: appLocalizations.dustSensor,
+        text: appLocalizations.dustSensorDesc,
       ),
       const InstrumentImage(
         imagePath: imagePath,
       ),
       InstrumentIntroText(
-        text: appLocalizations.dustSensorDesc,
+        text: appLocalizations.dustSensorIntro,
       ),
     ];
   }
@@ -73,7 +76,7 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
         ),
         PopupMenuItem(
           value: 'dust_sensor_config',
-          child: Text(appLocalizations.dustSensor),
+          child: Text(appLocalizations.dustSensorConfig),
         ),
       ],
       elevation: 8,
@@ -84,11 +87,23 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
             _navigateToLoggedData();
             break;
           case 'dust_sensor_config':
-            //_navigateToConfig();
+            _navigateToConfig();
             break;
         }
       }
     });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider.value(
+          value: _configProvider,
+          child: const DustSensorConfigScreen(),
+        ),
+      ),
+    );
   }
 
   Future<void> _navigateToLoggedData() async {
@@ -161,6 +176,7 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
   void initState() {
     super.initState();
     _provider = DustSensorStateProvider();
+    _configProvider = DustSensorConfigProvider();
     _provider.onPlaybackEnd = () {
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
@@ -171,6 +187,7 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
         if (widget.playbackData != null) {
           _provider.startPlayback(widget.playbackData!);
         } else {
+          _provider.setConfigProvider(_configProvider);
           _provider.initializeSensors(onError: _showSensorErrorSnackbar);
         }
       }
