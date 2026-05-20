@@ -94,7 +94,7 @@ class GasSensorStateProvider extends ChangeNotifier {
     List<double> rsReadings = [];
 
     for (int i = 0; i < 10; i++) {
-      double volt = await _scienceLab!.getVoltage("CH1", 1);
+      double volt = await _scienceLab!.getVoltage(appLocalizations.ch1, 1);
       if (volt > 4.99) volt = 4.99;
 
       double rs = _calculateRs(volt);
