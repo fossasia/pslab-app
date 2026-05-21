@@ -27,9 +27,13 @@ void main() {
       }
     });
 
-    final executablePath = '${tempDir.path}${Platform.pathSeparator}bin${Platform.pathSeparator}pslab';
+    final executablePath =
+        '${tempDir.path}${Platform.pathSeparator}bin${Platform.pathSeparator}'
+        'pslab';
     final versionFile = File(
-      '${tempDir.path}${Platform.pathSeparator}bin${Platform.pathSeparator}data${Platform.pathSeparator}flutter_assets${Platform.pathSeparator}version.json',
+      '${tempDir.path}${Platform.pathSeparator}bin${Platform.pathSeparator}'
+      'data${Platform.pathSeparator}flutter_assets${Platform.pathSeparator}'
+      'version.json',
     );
     await versionFile.create(recursive: true);
     await versionFile.writeAsString('{"version":"9.8.7"}');
