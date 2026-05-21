@@ -13,6 +13,17 @@ class MeasurementsList extends StatefulWidget {
   State<StatefulWidget> createState() => _MeasurementsListState();
 }
 
+double _responsiveFont(BuildContext context, double baseFont) {
+  const referenceWidth = 1440.0;
+  const minFontSize = 8.0;
+  const maxFontSize = 32.0;
+
+  final width = MediaQuery.sizeOf(context).width;
+  final scaled = (width / referenceWidth) * baseFont;
+
+  return scaled.clamp(minFontSize, maxFontSize).toDouble();
+}
+
 class _MeasurementsListState extends State<MeasurementsList> {
   String formatFrequency(double? freq) {
     return freq! >= 1000
@@ -27,6 +38,10 @@ class _MeasurementsListState extends State<MeasurementsList> {
       itemCount: widget.dataParamsChannels.length,
       physics: const ClampingScrollPhysics(),
       itemBuilder: (context, index) {
+        final textStyle = TextStyle(
+          color: colors[index],
+          fontSize: _responsiveFont(context, 16),
+        );
         final channel = widget.dataParamsChannels[index];
         return Card(
           elevation: 8,
@@ -36,16 +51,46 @@ class _MeasurementsListState extends State<MeasurementsList> {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-            child: Text(
-              'Vpp: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.amplitude]?.toStringAsFixed(2)} V\n'
-              'Vp+: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.positivePeak]?.toStringAsFixed(2)} V  '
-              'Vp-: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.negativePeak]?.toStringAsFixed(2)} V\n'
-              'f: ${formatFrequency(OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.frequency])}  '
-              'P: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.period]?.toStringAsFixed(2)} ms',
-              style: TextStyle(
-                color: colors[index],
-                fontSize: 8,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Vpp: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.amplitude]?.toStringAsFixed(2)} V',
+                        style: textStyle,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Vp+: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.positivePeak]?.toStringAsFixed(2)} V',
+                        style: textStyle,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Vp-: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.negativePeak]?.toStringAsFixed(2)} V',
+                        style: textStyle,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'f: ${formatFrequency(OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.frequency] ?? 0.0)}',
+                        style: textStyle,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  'P: ${OscilloscopeMeasurements.channel[channel]?[ChannelMeasurements.period]?.toStringAsFixed(2)} ms',
+                  style: textStyle,
+                ),
+              ],
             ),
           ),
         );
