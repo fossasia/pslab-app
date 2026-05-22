@@ -11,8 +11,7 @@ Future<String> resolveAboutUsVersion({
   String? resolvedExecutable,
 }) async {
   try {
-    final packageInfo =
-        await (packageInfoLoader ?? PackageInfo.fromPlatform)();
+    final packageInfo = await (packageInfoLoader ?? PackageInfo.fromPlatform)();
 
     if (packageInfo.version.isNotEmpty) {
       return packageInfo.version;
@@ -58,8 +57,8 @@ Future<String> _loadLinuxBundleVersion({
     }
 
     try {
-      final jsonContent = jsonDecode(await versionFile.readAsString())
-          as Map<String, dynamic>;
+      final jsonContent =
+          jsonDecode(await versionFile.readAsString()) as Map<String, dynamic>;
       final version = jsonContent['version'];
       if (version is String && version.isNotEmpty) {
         return version;
