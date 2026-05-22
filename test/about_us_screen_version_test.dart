@@ -55,5 +55,5 @@ void main() {
 
       expect(version, '9.8.7');
     },
-  },
+  );
 }
