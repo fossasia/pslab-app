@@ -11,7 +11,8 @@ Future<String> resolveAboutUsVersion({
   String? resolvedExecutable,
 }) async {
   try {
-    final packageInfo = await (packageInfoLoader ?? PackageInfo.fromPlatform)();
+    final packageInfo =
+        await (packageInfoLoader ?? PackageInfo.fromPlatform)();
 
     if (packageInfo.version.isNotEmpty) {
       return packageInfo.version;
@@ -46,9 +47,8 @@ Future<String> _loadLinuxBundleVersion({
   final executablePath = resolvedExecutable ?? Platform.resolvedExecutable;
   final executableParent = Directory(executablePath).parent;
   final candidatePaths = <String>[
-    '${executableParent.path}/data/flutter_assets/' 'version.json',
-    '${executableParent.parent.path}/share/pslab/flutter_assets/'
-        'version.json',
+    '${executableParent.path}/data/flutter_assets/version.json',
+    '${executableParent.parent.path}/share/pslab/flutter_assets/version.json',
   ];
 
   for (final candidatePath in candidatePaths) {
