@@ -19,36 +19,41 @@ void main() {
     expect(version, '1.2.3');
   });
 
-  test('falls back to linux bundle version json when package version is empty', () async {
-    final tempDir = await Directory.systemTemp.createTemp('pslab-about-version-');
-    addTearDown(() async {
-      if (await tempDir.exists()) {
-        await tempDir.delete(recursive: true);
-      }
-    });
+  test(
+    'falls back to linux bundle version json when package version is empty',
+    () async {
+      final tempDir = await Directory.systemTemp.createTemp(
+        'pslab-about-version-',
+      );
+      addTearDown(() async {
+        if (await tempDir.exists()) {
+          await tempDir.delete(recursive: true);
+        }
+      });
 
-    final executablePath =
+      final executablePath =
+          '${tempDir.path}${Platform.pathSeparator}bin${Platform.pathSeparator}'
+          'pslab';
+      final versionFile = File(
         '${tempDir.path}${Platform.pathSeparator}bin${Platform.pathSeparator}'
-        'pslab';
-    final versionFile = File(
-      '${tempDir.path}${Platform.pathSeparator}bin${Platform.pathSeparator}'
-      'data${Platform.pathSeparator}flutter_assets${Platform.pathSeparator}'
-      'version.json',
-    );
-    await versionFile.create(recursive: true);
-    await versionFile.writeAsString('{"version":"9.8.7"}');
+        'data${Platform.pathSeparator}flutter_assets${Platform.pathSeparator}'
+        'version.json',
+      );
+      await versionFile.create(recursive: true);
+      await versionFile.writeAsString('{"version":"9.8.7"}');
 
-    final version = await resolveAboutUsVersion(
-      packageInfoLoader: () async => PackageInfo(
-        appName: 'pslab',
-        packageName: 'io.pslab',
-        version: '',
-        buildNumber: '45',
-      ),
-      isLinux: true,
-      resolvedExecutable: executablePath,
-    );
+      final version = await resolveAboutUsVersion(
+        packageInfoLoader: () async => PackageInfo(
+          appName: 'pslab',
+          packageName: 'io.pslab',
+          version: '',
+          buildNumber: '45',
+        ),
+        isLinux: true,
+        resolvedExecutable: executablePath,
+      );
 
-    expect(version, '9.8.7');
-  });
+      expect(version, '9.8.7');
+    },
+  },
 }
