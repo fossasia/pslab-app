@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 
 import '../../theme/colors.dart';
@@ -82,6 +83,7 @@ class _MainScaffoldState extends State<MainScaffold>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -204,7 +206,7 @@ class _MainScaffoldState extends State<MainScaffold>
                     Icons.more_vert,
                     color: appBarContentColor,
                   ),
-                  tooltip: 'Pin Layout',
+                  tooltip: l10n.pinLayout,
                   onSelected: (bool isFront) {
                     Navigator.push(
                       context,
@@ -216,13 +218,13 @@ class _MainScaffoldState extends State<MainScaffold>
                     );
                   },
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<bool>>[
-                    const PopupMenuItem<bool>(
+                    PopupMenuItem<bool>(
                       value: true,
-                      child: Text('Front Layout'),
+                      child: Text(l10n.frontLayout),
                     ),
-                    const PopupMenuItem<bool>(
+                    PopupMenuItem<bool>(
                       value: false,
-                      child: Text('Back Layout'),
+                      child: Text(l10n.backLayout),
                     ),
                   ],
                 ),

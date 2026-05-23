@@ -15,7 +15,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:flutter/foundation.dart';
 
 class BarometerStateProvider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   double _currentPressure = 0.0;
   double _currentTemperature = 0.0;

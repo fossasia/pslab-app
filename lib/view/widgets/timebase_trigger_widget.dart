@@ -14,7 +14,7 @@ class TimebaseTriggerWidget extends StatefulWidget {
 }
 
 class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<String> channelEntries;
 
   @override

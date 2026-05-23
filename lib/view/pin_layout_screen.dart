@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 
 import '../models/pin_details.dart';
@@ -184,8 +185,9 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return MainScaffold(
-      title: isFrontSide ? "Front Layout" : "Back Layout",
+      title: isFrontSide ? l10n.frontLayout : l10n.backLayout,
       index: -1,
       body: Center(
         child: _colorMapImage == null

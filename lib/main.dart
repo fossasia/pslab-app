@@ -51,6 +51,8 @@ void main() {
   );
 }
 
+bool _boardInitialized = false;
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -65,9 +67,13 @@ class MyApp extends StatelessWidget {
           builder: (context, provider, child) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
+              locale: Locale(provider.config.languageCode),
               builder: (context, child) {
                 registerAppLocalizations(AppLocalizations.of(context)!);
-                getIt<BoardStateProvider>().initialize();
+                if (!_boardInitialized) {
+                  _boardInitialized = true;
+                  getIt<BoardStateProvider>().initialize();
+                }
                 appLocalizations = getIt.get<AppLocalizations>();
                 return child!;
               },
@@ -79,37 +85,74 @@ class MyApp extends StatelessWidget {
               supportedLocales: AppLocalizations.supportedLocales,
               initialRoute: '/',
               routes: {
-                '/': (context) => const InstrumentsScreen(),
-                '/oscilloscope': (context) => const OscilloscopeScreen(),
-                '/multimeter': (context) => const MultimeterScreen(),
-                '/waveGenerator': (context) => const WaveGeneratorScreen(),
-                '/logicAnalyzer': (context) => const LogicAnalyzerScreen(),
-                '/powerSource': (context) => const PowerSourceScreen(),
-                '/compass': (context) => const CompassScreen(),
-                '/connectDevice': (context) => const ConnectDeviceScreen(),
-                '/faq': (context) => FAQScreen(),
-                '/settings': (context) => const SettingsScreen(),
-                '/aboutUs': (context) => const AboutUsScreen(),
-                '/softwareLicenses': (context) => SoftwareLicensesScreen(),
-                '/accelerometer': (context) => const AccelerometerScreen(),
-                '/gyroscope': (context) => const GyroscopeScreen(),
-                '/roboticArm': (context) => const RoboticArmScreen(),
-                '/luxmeter': (context) => const LuxMeterScreen(),
-                '/barometer': (context) => const BarometerScreen(),
-                '/soundmeter': (context) => const SoundMeterScreen(),
-                '/thermometer': (context) => const ThermometerScreen(),
-                '/sensors': (context) => const SensorsScreen(),
-                '/experiments': (context) => const ExperimentsScreen(),
-                '/loggedData': (context) => LoggedDataScreen(
-                      instrumentNames: instrumentNames,
-                      appBarName: appLocalizations!.loggedData,
-                      instrumentIcons: instrumentIcons,
+                '/': (context) =>
+                    const _LocaleAware(child: InstrumentsScreen()),
+                '/oscilloscope': (context) =>
+                    const _LocaleAware(child: OscilloscopeScreen()),
+                '/multimeter': (context) =>
+                    const _LocaleAware(child: MultimeterScreen()),
+                '/waveGenerator': (context) =>
+                    const _LocaleAware(child: WaveGeneratorScreen()),
+                '/logicAnalyzer': (context) =>
+                    const _LocaleAware(child: LogicAnalyzerScreen()),
+                '/powerSource': (context) =>
+                    const _LocaleAware(child: PowerSourceScreen()),
+                '/compass': (context) =>
+                    const _LocaleAware(child: CompassScreen()),
+                '/connectDevice': (context) =>
+                    const _LocaleAware(child: ConnectDeviceScreen()),
+                '/faq': (context) => _LocaleAware(child: FAQScreen()),
+                '/settings': (context) =>
+                    const _LocaleAware(child: SettingsScreen()),
+                '/aboutUs': (context) =>
+                    const _LocaleAware(child: AboutUsScreen()),
+                '/softwareLicenses': (context) =>
+                    _LocaleAware(child: SoftwareLicensesScreen()),
+                '/accelerometer': (context) =>
+                    const _LocaleAware(child: AccelerometerScreen()),
+                '/gyroscope': (context) =>
+                    const _LocaleAware(child: GyroscopeScreen()),
+                '/roboticArm': (context) =>
+                    const _LocaleAware(child: RoboticArmScreen()),
+                '/luxmeter': (context) =>
+                    const _LocaleAware(child: LuxMeterScreen()),
+                '/barometer': (context) =>
+                    const _LocaleAware(child: BarometerScreen()),
+                '/soundmeter': (context) =>
+                    const _LocaleAware(child: SoundMeterScreen()),
+                '/thermometer': (context) =>
+                    const _LocaleAware(child: ThermometerScreen()),
+                '/sensors': (context) =>
+                    const _LocaleAware(child: SensorsScreen()),
+                '/experiments': (context) =>
+                    const _LocaleAware(child: ExperimentsScreen()),
+                '/loggedData': (context) => _LocaleAware(
+                      child: LoggedDataScreen(
+                        instrumentNames: instrumentNames,
+                        appBarName: appLocalizations!.loggedData,
+                        instrumentIcons: instrumentIcons,
+                      ),
                     ),
               },
             );
           },
         );
       },
+    );
+  }
+}
+
+class _LocaleAware extends StatelessWidget {
+  final Widget child;
+  const _LocaleAware({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SettingsConfigProvider>(
+      builder: (_, provider, __) => KeyedSubtree(
+        key: ValueKey(provider.config.languageCode),
+        child: child,
+      ),
     );
   }
 }

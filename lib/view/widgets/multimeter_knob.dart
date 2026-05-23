@@ -180,7 +180,7 @@ class MultimeterKnob extends StatefulWidget {
 class _MultimeterKnobState extends State<MultimeterKnob> {
   final double maxValue = 11.0;
   bool isDragging = true;
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<String> knobMarker;
   @override
   void initState() {

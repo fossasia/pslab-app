@@ -25,7 +25,7 @@ class PowerSourceScreen extends StatefulWidget {
 }
 
 class _PowerSourceScreenState extends State<PowerSourceScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late PowerSourceStateProvider _provider;
   late PowerSourceConfigProvider? _configProvider;
   final CsvService _csvService = CsvService();

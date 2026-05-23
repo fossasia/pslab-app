@@ -12,7 +12,7 @@ import 'package:pslab/others/science_lab_common.dart';
 
 class BoardStateProvider extends ChangeNotifier {
   late SettingsConfigProvider configProvider;
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool initialisationStatus = false;
   bool pslabIsConnected = false;
   bool hasPermission = false;

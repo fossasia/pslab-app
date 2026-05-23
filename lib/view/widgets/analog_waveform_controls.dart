@@ -13,7 +13,7 @@ class AnalogWaveformControls extends StatefulWidget {
 }
 
 class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   String iconSin = "assets/icons/ic_sin.png";
   String iconTriangular = "assets/icons/ic_triangular.png";
   String iconSawtooth = "assets/icons/ic_sawtooth.png";

@@ -23,7 +23,7 @@ class GyroscopeScreen extends StatefulWidget {
 }
 
 class _GyroscopeScreenState extends State<GyroscopeScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _showGuide = false;
   static const imagePath = 'assets/images/gyroscope_axes_orientation.png';
   final CsvService _csvService = CsvService();

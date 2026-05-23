@@ -17,7 +17,7 @@ class OscilloscopeConfigScreen extends StatefulWidget {
 }
 
 class _OscilloscopeConfigScreenState extends State<OscilloscopeConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   void initState() {

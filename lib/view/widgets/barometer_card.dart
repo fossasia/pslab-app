@@ -15,7 +15,7 @@ class BarometerCard extends StatefulWidget {
 }
 
 class _BarometerCardState extends State<BarometerCard> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;

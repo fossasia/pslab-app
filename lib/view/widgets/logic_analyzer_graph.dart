@@ -14,7 +14,7 @@ class LogicAnalyzerGraph extends StatefulWidget {
 }
 
 class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,

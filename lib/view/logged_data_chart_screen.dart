@@ -31,7 +31,7 @@ class LoggedDataChartScreen extends StatefulWidget {
 }
 
 class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   String selectedAxis = 'x';
   bool get _shouldShowAxisSelector {
     return widget.instrumentName?.toLowerCase() == 'gyroscope' ||

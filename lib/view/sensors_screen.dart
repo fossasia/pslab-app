@@ -19,7 +19,7 @@ class SensorsScreen extends StatefulWidget {
 }
 
 class _SensorsScreenState extends State<SensorsScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _hasScanned = false;
   List<String> _detectedSensors = [];
   Map<String, String> _sensorAddresses = {};

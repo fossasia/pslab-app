@@ -37,7 +37,7 @@ class BarometerScreen extends StatefulWidget {
 }
 
 class _BarometerScreenState extends State<BarometerScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
   late BarometerStateProvider _provider;
   bool _showGuide = false;

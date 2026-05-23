@@ -19,7 +19,7 @@ class SHT21Screen extends StatefulWidget {
 }
 
 class _SHT21ScreenState extends State<SHT21Screen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   String sensorImage = 'assets/images/sht21.jpg';
   I2C? _i2c;
   ScienceLab? _scienceLab;

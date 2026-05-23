@@ -11,7 +11,7 @@ import 'package:pslab/providers/multimeter_config_provider.dart';
 
 class MultimeterStateProvider extends ChangeNotifier {
   MultimeterConfigProvider? _configProvider;
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<String> knobMarker;
   late int _selectedIndex = 0;
   late ScienceLab _scienceLab;

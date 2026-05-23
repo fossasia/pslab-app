@@ -10,7 +10,7 @@ import '../l10n/app_localizations.dart';
 import 'locator.dart';
 
 class VL53L0XProvider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   static const int maxDataPoints = 1000;
   VL53L0X? _sensor;
   Timer? _timer;

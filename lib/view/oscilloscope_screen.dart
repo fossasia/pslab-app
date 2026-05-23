@@ -42,7 +42,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   late OscilloscopeStateProvider _provider;
   late OscilloscopeConfigProvider? _configProvider;
   final CsvService _csvService = CsvService();
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _showGuide = false;
   @override
   void initState() {

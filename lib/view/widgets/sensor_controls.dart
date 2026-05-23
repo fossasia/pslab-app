@@ -4,7 +4,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/locator.dart';
 import '../../theme/colors.dart';
 
-AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
 class SensorControlsWidget extends StatefulWidget {
   final bool isPlaying;

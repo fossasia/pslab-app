@@ -4,7 +4,7 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class ConfigInputItem extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final String title;
   final String value;
   final TextEditingController controller;
@@ -109,7 +109,7 @@ class ConfigInputItem extends StatelessWidget {
 }
 
 class ConfigDropdownItem extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final String title;
   final String selectedValue;
   final List<ConfigOption> options;
@@ -135,7 +135,13 @@ class ConfigDropdownItem extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        selectedValue,
+        options
+            .firstWhere(
+              (o) => o.value == selectedValue,
+              orElse: () => ConfigOption(
+                  value: selectedValue, displayName: selectedValue),
+            )
+            .displayName,
         style: TextStyle(
           fontSize: 14,
           color: hintTextColor,
@@ -187,7 +193,7 @@ class ConfigDropdownItem extends StatelessWidget {
 }
 
 class ConfigCheckboxItem extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final String title;
   final String subtitle;
   final bool value;

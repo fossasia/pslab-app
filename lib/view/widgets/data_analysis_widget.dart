@@ -14,7 +14,7 @@ class DataAnalysisWidget extends StatefulWidget {
 }
 
 class _DataAnalysisState extends State<DataAnalysisWidget> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =

@@ -13,7 +13,7 @@ class ExperimentsScreen extends StatefulWidget {
 }
 
 class _ExperimentsScreenState extends State<ExperimentsScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   late final List<Map<String, dynamic>> experiments = [
     {

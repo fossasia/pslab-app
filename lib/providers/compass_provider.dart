@@ -11,7 +11,7 @@ import 'locator.dart';
 import 'compass_config_provider.dart';
 
 class CompassProvider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   MagnetometerEvent _magnetometerEvent =
       MagnetometerEvent(0, 0, 0, DateTime.now());
   AccelerometerEvent _accelerometerEvent =

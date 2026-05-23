@@ -17,7 +17,7 @@ class WaveGeneratorConfigScreen extends StatefulWidget {
 }
 
 class _WaveGeneratorConfigScreenState extends State<WaveGeneratorConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   void initState() {

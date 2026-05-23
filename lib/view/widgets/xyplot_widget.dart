@@ -14,7 +14,7 @@ class XYPlotWidget extends StatefulWidget {
 }
 
 class _XYPlotState extends State<XYPlotWidget> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<String> channelEntries;
 
   @override

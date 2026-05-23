@@ -33,7 +33,7 @@ Widget _stepText(String text) {
 }
 
 class _HomeScreenState extends State<ConnectDeviceScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _isConnectingWifi = false;
 
   void _showSnackBar(String message, {Color? backgroundColor}) {

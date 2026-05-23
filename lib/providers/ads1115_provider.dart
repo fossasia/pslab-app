@@ -9,7 +9,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'locator.dart';
 
 class ADS1115Provider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   ADS1115? _ads1115;
   Timer? _dataTimer;

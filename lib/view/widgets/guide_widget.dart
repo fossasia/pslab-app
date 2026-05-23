@@ -20,7 +20,7 @@ class InstrumentOverviewDrawer extends StatefulWidget {
 
 class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
     with SingleTickerProviderStateMixin {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 

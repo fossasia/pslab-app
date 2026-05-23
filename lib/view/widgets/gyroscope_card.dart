@@ -18,7 +18,7 @@ class GyroscopeCard extends StatefulWidget {
 }
 
 class _GyroscopeCardState extends State<GyroscopeCard> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,

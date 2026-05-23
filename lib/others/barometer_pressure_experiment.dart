@@ -4,7 +4,7 @@ import '../models/experiment_step.dart';
 import '../models/experiment_config.dart';
 import '../providers/locator.dart';
 
-AppLocalizations appLocalizations = getIt.get();
+AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
 class StabilizePressureReadingStep extends ExperimentStep {
   StabilizePressureReadingStep()
