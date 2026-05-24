@@ -271,6 +271,8 @@
     "dataAnalysis": "Data Analysis",
     "fourierAnalysis": "Fourier Analysis",
     "channels": "Channels",
+    "previousTab": "Previous tab",
+    "nextTab": "Next tab",
     "pslabMic": "PSLab MIC",
     "inBuiltMic": "In-Built MIC",
     "ch3Range": "CH3 (+/- 3.3V)",

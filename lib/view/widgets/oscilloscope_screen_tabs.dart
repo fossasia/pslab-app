@@ -36,6 +36,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
   }
 
   bool _handleKey(KeyEvent event) {
+    if (!mounted) return false;
     final BuildContext? focusContext =
         FocusManager.instance.primaryFocus?.context;
     if (focusContext != null && focusContext.widget is EditableText) {
@@ -80,15 +81,11 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
 
   void _cycleTab(OscilloscopeStateProvider provider, int delta) {
     final int next = (provider.selectedIndex + delta + _tabCount) % _tabCount;
-    setState(() {
-      provider.updateSelectedIndex(next);
-    });
+    provider.updateSelectedIndex(next);
   }
 
   void _selectTab(OscilloscopeStateProvider provider, int index) {
-    setState(() {
-      provider.updateSelectedIndex(index);
-    });
+    provider.updateSelectedIndex(index);
   }
 
   Border _tabBorder(OscilloscopeStateProvider provider, int index) {
@@ -135,7 +132,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
         children: [
           _arrowButton(
             icon: Icons.keyboard_arrow_up,
-            tooltip: 'Previous tab',
+            tooltip: appLocalizations.previousTab,
             onPressed: () => _cycleTab(oscilloscopeStateProvider, -1),
           ),
           Expanded(
@@ -334,7 +331,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
           ),
           _arrowButton(
             icon: Icons.keyboard_arrow_down,
-            tooltip: 'Next tab',
+            tooltip: appLocalizations.nextTab,
             onPressed: () => _cycleTab(oscilloscopeStateProvider, 1),
           ),
         ],
