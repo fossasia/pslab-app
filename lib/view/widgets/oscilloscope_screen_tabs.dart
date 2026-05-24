@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
@@ -70,7 +71,9 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
           provider.pausePlayback();
         }
       } else {
-        provider.toggleRunning();
+        setState(() {
+          provider.isRunning = !provider.isRunning;
+        });
       }
       return true;
     }
@@ -82,39 +85,6 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
     setState(() {
       provider.updateSelectedIndex(next);
     });
-  }
-
-  void _selectTab(OscilloscopeStateProvider provider, int index) {
-    setState(() {
-      provider.updateSelectedIndex(index);
-    });
-  }
-
-  Border _tabBorder(OscilloscopeStateProvider provider, int index) {
-    return Border.all(
-      width: 1,
-      color: provider.selectedIndex == index
-          ? oscilloscopeOptionTitleColor
-          : Colors.transparent,
-    );
-  }
-
-  Widget _arrowButton({
-    required IconData icon,
-    required String tooltip,
-    required VoidCallback onPressed,
-  }) {
-    return SizedBox(
-      height: 24,
-      child: IconButton(
-        padding: EdgeInsets.zero,
-        iconSize: 18,
-        visualDensity: VisualDensity.compact,
-        tooltip: tooltip,
-        icon: Icon(icon, color: oscilloscopeOptionLabelColor),
-        onPressed: onPressed,
-      ),
-    );
   }
 
   @override
