@@ -13,7 +13,7 @@ class Instrumentstats extends StatelessWidget {
   final double avgValue;
   final double? currentAltitude;
 
-  Instrumentstats({
+  const Instrumentstats({
     super.key,
     required this.unit,
     required this.titleFontSize,

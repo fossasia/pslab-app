@@ -15,7 +15,7 @@ class GaugeWidget extends StatelessWidget {
   final double maxValue;
   final String unit;
 
-  GaugeWidget({
+  const GaugeWidget({
     super.key,
     required this.gaugeSize,
     required this.currentValue,

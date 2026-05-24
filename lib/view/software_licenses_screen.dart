@@ -6,7 +6,7 @@ import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SoftwareLicensesScreen extends StatelessWidget {
-  SoftwareLicensesScreen({super.key});
+  const SoftwareLicensesScreen({super.key});
   static Future<List<Package>> loadLicenses() async {
     final lm = <String, List<String>>{};
     await for (var l in LicenseRegistry.licenses) {

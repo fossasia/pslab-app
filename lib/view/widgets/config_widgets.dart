@@ -11,7 +11,7 @@ class ConfigInputItem extends StatelessWidget {
   final Function(String) onChanged;
   final String? hint;
 
-  ConfigInputItem({
+  const ConfigInputItem({
     super.key,
     required this.title,
     required this.value,
@@ -115,7 +115,7 @@ class ConfigDropdownItem extends StatelessWidget {
   final List<ConfigOption> options;
   final Function(String) onChanged;
 
-  ConfigDropdownItem({
+  const ConfigDropdownItem({
     super.key,
     required this.title,
     required this.selectedValue,
@@ -199,7 +199,7 @@ class ConfigCheckboxItem extends StatelessWidget {
   final bool value;
   final Function(bool) onChanged;
 
-  ConfigCheckboxItem({
+  const ConfigCheckboxItem({
     super.key,
     required this.title,
     required this.subtitle,
