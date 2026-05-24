@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
@@ -279,29 +280,55 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                 thumbShape: const RoundSliderThumbShape(
                                     enabledThumbRadius: 6),
                               ),
-                              child: Slider(
-                                activeColor: sliderActiveColor,
-                                min: -oscilloscopeStateProvider
-                                    .oscilloscopeAxesScale.yAxisScale,
-                                max: oscilloscopeStateProvider
-                                    .oscilloscopeAxesScale.yAxisScale,
-                                value: oscilloscopeStateProvider.yOffsets[
+                              child: Listener(
+                                onPointerSignal: (pointerSignal) {
+                                  if (pointerSignal is PointerScrollEvent) {
+                                    final double yAxisScale =
                                         oscilloscopeStateProvider
-                                            .selectedChannelOffset]!
-                                    .clamp(
-                                        -oscilloscopeStateProvider
-                                            .oscilloscopeAxesScale.yAxisScale,
+                                            .oscilloscopeAxesScale.yAxisScale;
+                                    final double step = (yAxisScale * 2) / 20;
+                                    final double current =
                                         oscilloscopeStateProvider
-                                            .oscilloscopeAxesScale.yAxisScale),
-                                onChanged: (double value) {
-                                  setState(
-                                    () {
+                                            .yOffsets[oscilloscopeStateProvider
+                                                .selectedChannelOffset]!
+                                            .clamp(-yAxisScale, yAxisScale);
+                                    final double next = (current +
+                                            (pointerSignal.scrollDelta.dy > 0
+                                                ? step
+                                                : -step))
+                                        .clamp(-yAxisScale, yAxisScale);
+                                    setState(() {
                                       oscilloscopeStateProvider.yOffsets[
                                           oscilloscopeStateProvider
-                                              .selectedChannelOffset] = value;
-                                    },
-                                  );
+                                              .selectedChannelOffset] = next;
+                                    });
+                                  }
                                 },
+                                child: Slider(
+                                  activeColor: sliderActiveColor,
+                                  min: -oscilloscopeStateProvider
+                                      .oscilloscopeAxesScale.yAxisScale,
+                                  max: oscilloscopeStateProvider
+                                      .oscilloscopeAxesScale.yAxisScale,
+                                  value: oscilloscopeStateProvider.yOffsets[
+                                          oscilloscopeStateProvider
+                                              .selectedChannelOffset]!
+                                      .clamp(
+                                          -oscilloscopeStateProvider
+                                              .oscilloscopeAxesScale.yAxisScale,
+                                          oscilloscopeStateProvider
+                                              .oscilloscopeAxesScale
+                                              .yAxisScale),
+                                  onChanged: (double value) {
+                                    setState(
+                                      () {
+                                        oscilloscopeStateProvider.yOffsets[
+                                            oscilloscopeStateProvider
+                                                .selectedChannelOffset] = value;
+                                      },
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -362,47 +389,94 @@ class _DataAnalysisState extends State<DataAnalysisWidget> {
                                 thumbShape: const RoundSliderThumbShape(
                                     enabledThumbRadius: 6),
                               ),
-                              child: Slider(
-                                activeColor: sliderActiveColor,
-                                min: 0,
-                                max: oscilloscopeStateProvider.timebase / 1000,
-                                value: oscilloscopeStateProvider
-                                            .oscilloscopeAxesScale.xAxisScale ==
-                                        875
-                                    ? (oscilloscopeStateProvider.xOffsets[
-                                                oscilloscopeStateProvider
-                                                    .selectedChannelOffset]! /
-                                            1000)
-                                        .clamp(
-                                            0,
-                                            oscilloscopeStateProvider.timebase /
+                              child: Listener(
+                                onPointerSignal: (pointerSignal) {
+                                  if (pointerSignal is PointerScrollEvent) {
+                                    final double maxX =
+                                        oscilloscopeStateProvider.timebase /
+                                            1000;
+                                    final bool isMicroseconds =
+                                        oscilloscopeStateProvider
+                                                .oscilloscopeAxesScale
+                                                .xAxisScale ==
+                                            875;
+                                    final double current = isMicroseconds
+                                        ? (oscilloscopeStateProvider.xOffsets[
+                                                    oscilloscopeStateProvider
+                                                        .selectedChannelOffset]! /
                                                 1000)
-                                    : oscilloscopeStateProvider.xOffsets[
-                                            oscilloscopeStateProvider
-                                                .selectedChannelOffset]!
-                                        .clamp(
-                                            0,
-                                            oscilloscopeStateProvider.timebase /
-                                                1000),
-                                onChanged: (double value) {
-                                  setState(
-                                    () {
-                                      if (oscilloscopeStateProvider
-                                              .oscilloscopeAxesScale
-                                              .xAxisScale ==
-                                          875) {
+                                            .clamp(0.0, maxX)
+                                        : oscilloscopeStateProvider.xOffsets[
+                                                oscilloscopeStateProvider
+                                                    .selectedChannelOffset]!
+                                            .clamp(0.0, maxX);
+                                    final double step = maxX / 20;
+                                    final double next = (current +
+                                            (pointerSignal.scrollDelta.dy > 0
+                                                ? step
+                                                : -step))
+                                        .clamp(0.0, maxX);
+                                    setState(() {
+                                      if (isMicroseconds) {
                                         oscilloscopeStateProvider.xOffsets[
                                                 oscilloscopeStateProvider
                                                     .selectedChannelOffset] =
-                                            value * 1000;
+                                            next * 1000;
                                       } else {
                                         oscilloscopeStateProvider.xOffsets[
                                             oscilloscopeStateProvider
-                                                .selectedChannelOffset] = value;
+                                                .selectedChannelOffset] = next;
                                       }
-                                    },
-                                  );
+                                    });
+                                  }
                                 },
+                                child: Slider(
+                                  activeColor: sliderActiveColor,
+                                  min: 0,
+                                  max:
+                                      oscilloscopeStateProvider.timebase / 1000,
+                                  value: oscilloscopeStateProvider
+                                              .oscilloscopeAxesScale
+                                              .xAxisScale ==
+                                          875
+                                      ? (oscilloscopeStateProvider.xOffsets[
+                                                  oscilloscopeStateProvider
+                                                      .selectedChannelOffset]! /
+                                              1000)
+                                          .clamp(
+                                              0,
+                                              oscilloscopeStateProvider
+                                                      .timebase /
+                                                  1000)
+                                      : oscilloscopeStateProvider.xOffsets[
+                                              oscilloscopeStateProvider
+                                                  .selectedChannelOffset]!
+                                          .clamp(
+                                              0,
+                                              oscilloscopeStateProvider
+                                                      .timebase /
+                                                  1000),
+                                  onChanged: (double value) {
+                                    setState(
+                                      () {
+                                        if (oscilloscopeStateProvider
+                                                .oscilloscopeAxesScale
+                                                .xAxisScale ==
+                                            875) {
+                                          oscilloscopeStateProvider.xOffsets[
+                                                  oscilloscopeStateProvider
+                                                      .selectedChannelOffset] =
+                                              value * 1000;
+                                        } else {
+                                          oscilloscopeStateProvider.xOffsets[
+                                                  oscilloscopeStateProvider
+                                                      .selectedChannelOffset] =
+                                              value;
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),

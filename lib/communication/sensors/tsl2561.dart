@@ -1,10 +1,11 @@
-import 'dart:async';
 import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/logger_service.dart';
 
 class TSL2561 {
   static const String tag = "TSL2561";
+
+  static const List<int> addresses = [0x39, 0x29, 0x49];
 
   static const int commandBit = 0x80;
   static const int wordBit = 0x20;
@@ -18,116 +19,118 @@ class TSL2561 {
   static const int registerChan0Low = 0x0C;
   static const int registerChan1Low = 0x0E;
 
-  static const int integrationTime13ms = 0x00;
-  static const int integrationTime101ms = 0x01;
-  static const int integrationTime402ms = 0x02;
+  static const int integrationTime13Ms = 0x00;
+  static const int integrationTime101Ms = 0x01;
+  static const int integrationTime402Ms = 0x02;
 
-  static const int gain0x = 0x00;
-  static const int gain16x = 0x10;
-
-  static const List<int> addresses = [0x39, 0x29, 0x49];
+  static const int gain0X = 0x00;
+  static const int gain16X = 0x10;
 
   final I2C i2c;
-  int address = 0x39;
-  int timing = integrationTime13ms;
-  int gain = gain16x;
+  int? _address;
+  int _timing = integrationTime13Ms;
+  int _gain = gain16X;
 
-  TSL2561(this.i2c, ScienceLab scienceLab) {
-    () async {
-      if (scienceLab.isConnected()) {
-        for (final addr in addresses) {
-          address = addr;
-          await disable();
-          logger.d("$tag: Checking address 0x${address.toRadixString(16)}");
-          try {
-            int id = await i2c.readByte(address, registerId);
-            if (id != 0xffffffff && (id & 0x0A) == 0x0A) {
-              logger.d("$tag: TSL2561 found!");
-              break;
-            } else {
-              logger.d("$tag: TSL2561 not found.");
-            }
-          } catch (e) {
-            logger.e("$tag: Error reading ID: $e");
-          }
-        }
-        await enable();
-        await _wait();
-        await i2c
-            .writeBulk(address, [commandBit | registerTiming, timing | gain]);
-      }
-    }();
+  double fullSpectrum = 0.0;
+  double infrared = 0.0;
+  double visible = 0.0;
+
+  TSL2561._(this.i2c);
+
+  static Future<TSL2561> create(I2C i2c, ScienceLab scienceLab) async {
+    final tsl2561 = TSL2561._(i2c);
+    await tsl2561._initializeSensor(scienceLab);
+    return tsl2561;
   }
 
-  Future<int> getID() async {
+  Future<void> _initializeSensor(ScienceLab scienceLab) async {
+    if (!scienceLab.isConnected()) {
+      throw Exception("ScienceLab not connected");
+    }
+
+    bool sensorFound = false;
+
     try {
-      List<int> idList = await i2c.readBulk(address, registerId, 1);
-      if (idList.isEmpty) return -1;
-      int id = int.parse(idList[0].toRadixString(16), radix: 16);
-      logger.d("$tag: ID: $id");
-      return id;
+      for (int addr in addresses) {
+        _address = addr;
+        await disable();
+
+        logger.d("$tag: Checking address 0x${addr.toRadixString(16)}");
+
+        List<int> idData = await i2c.readBulk(addr, registerId | commandBit, 1);
+
+        if (idData.isNotEmpty) {
+          int id = idData[0];
+          logger.d(
+              "$tag: RAW ID READ at 0x${addr.toRadixString(16)} is: 0x${id.toRadixString(16)} (Decimal: $id)");
+
+          if (id != 255) {
+            logger.d("$tag: Sensor accepted at 0x${addr.toRadixString(16)}!");
+            sensorFound = true;
+            break;
+          }
+        }
+      }
+
+      if (!sensorFound) {
+        throw Exception(
+            'TSL2561 sensor not found on I2C bus. Check SDA/SCL wiring.');
+      }
+
+      await enable();
+      await Future.delayed(const Duration(milliseconds: 15));
+      await setGainAndTiming(_gain, _timing);
     } catch (e) {
-      logger.e("$tag: Error getting ID: $e");
+      logger.e("Error initializing TSL2561: $e");
       rethrow;
     }
   }
 
-  Future<double?> getRaw() async {
-    try {
-      List<int> infraList = await i2c.readBulk(
-          address, commandBit | wordBit | registerChan1Low, 2);
-      List<int> fullList = await i2c.readBulk(
-          address, commandBit | wordBit | registerChan0Low, 2);
-
-      if (infraList.isNotEmpty && fullList.isNotEmpty) {
-        int full = ((fullList[1] & 0xff) << 8) | (fullList[0] & 0xff);
-        int infra = ((infraList[1] & 0xff) << 8) | (infraList[0] & 0xff);
-        return (full - infra).toDouble();
-      } else {
-        return 0.0;
-      }
-    } catch (e) {
-      logger.e("$tag: Error reading raw values: $e");
-      return 0.0;
-    }
-  }
-
-  Future<void> setGain(int gainValue) async {
-    switch (gainValue) {
-      case 1:
-        gain = gain0x;
-        break;
-      case 16:
-        gain = gain16x;
-        break;
-      default:
-        gain = gain16x;
-    }
-    await i2c.writeBulk(address, [commandBit | registerTiming, gain | timing]);
-  }
-
   Future<void> enable() async {
-    await i2c
-        .writeBulk(address, [commandBit | registerControl, controlPowerOn]);
+    if (_address == null) return;
+    await i2c.write(_address!, [controlPowerOn], commandBit | registerControl);
   }
 
   Future<void> disable() async {
-    await i2c
-        .writeBulk(address, [commandBit | registerControl, controlPowerOff]);
+    if (_address == null) return;
+    await i2c.write(_address!, [controlPowerOff], commandBit | registerControl);
   }
 
-  Future<void> _wait() async {
-    switch (timing) {
-      case integrationTime13ms:
-        await Future.delayed(const Duration(milliseconds: 14));
-        break;
-      case integrationTime101ms:
-        await Future.delayed(const Duration(milliseconds: 102));
-        break;
-      case integrationTime402ms:
-      default:
-        await Future.delayed(const Duration(milliseconds: 403));
-        break;
+  Future<void> setGainAndTiming(int gain, int timing) async {
+    if (_address == null) return;
+    _gain = gain;
+    _timing = timing;
+    await i2c.write(_address!, [_gain | _timing], commandBit | registerTiming);
+  }
+
+  Future<Map<String, double>> getRawData() async {
+    if (_address == null) throw Exception("Sensor not initialized");
+
+    try {
+      List<int> infraList = await i2c.readBulk(
+          _address!, commandBit | wordBit | registerChan1Low, 2);
+      List<int> fullList = await i2c.readBulk(
+          _address!, commandBit | wordBit | registerChan0Low, 2);
+
+      if (infraList.length >= 2 && fullList.length >= 2) {
+        int fullInt = ((fullList[1] & 0xFF) << 8) | (fullList[0] & 0xFF);
+        int infraInt = ((infraList[1] & 0xFF) << 8) | (infraList[0] & 0xFF);
+
+        fullSpectrum = fullInt.toDouble();
+        infrared = infraInt.toDouble();
+        visible = (fullInt - infraInt).toDouble();
+
+        return {
+          'full': fullSpectrum,
+          'infrared': infrared,
+          'visible': visible,
+        };
+      } else {
+        throw Exception("Incomplete data received from TSL2561");
+      }
+    } catch (e) {
+      logger.e("Error getting raw data: $e");
+      rethrow;
     }
   }
 }

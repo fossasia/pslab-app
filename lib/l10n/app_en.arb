@@ -271,6 +271,8 @@
     "dataAnalysis": "Data Analysis",
     "fourierAnalysis": "Fourier Analysis",
     "channels": "Channels",
+    "previousTab": "Previous tab",
+    "nextTab": "Next tab",
     "pslabMic": "PSLab MIC",
     "inBuiltMic": "In-Built MIC",
     "ch3Range": "CH3 (+/- 3.3V)",
@@ -678,5 +680,13 @@
     "hazardous": "Hazardous",
     "dustSensorConfig": "Dust Sensor Configurations",
     "dustUpdatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 1000 ms)",
-    "dustHighLimitHint": "Please provide the maximum limit of PPM value to be recorded (0.0 PPM to 5.0 PPM)"
+    "dustHighLimitHint": "Please provide the maximum limit of PPM value to be recorded (0.0 PPM to 5.0 PPM)",
+    "tsl2561" : "TSL2561",
+    "full": "Full Spectrum",
+    "infrared": "Infrared",
+    "infraredRaw" : "Infrared (raw)",
+    "visibleLight": "Visible Light",
+    "visibleLightRaw" : "Visible Light (raw)",
+    "luxRaw" : "Luminosity (lux/raw)",
+    "raw" : "raw"
 }
