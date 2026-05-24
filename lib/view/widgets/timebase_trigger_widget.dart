@@ -281,9 +281,9 @@ class _TimebaseTriggerState extends State<TimebaseTriggerWidget> {
                                   oscilloscopeStateProvider.setTimebase(next);
                                   oscilloscopeStateProvider.samples =
                                       (next >= 4) ? 1024 : 512;
-                                  oscilloscopeStateProvider.timeGap = (2 *
-                                          oscilloscopeStateProvider.timebase) /
-                                      oscilloscopeStateProvider.samples;
+                                  oscilloscopeStateProvider.timeGap =
+                                      (2 * oscilloscopeStateProvider.timebase) /
+                                          oscilloscopeStateProvider.samples;
                                 });
                               }
                             }
