@@ -54,7 +54,9 @@ class _NavDrawerState extends State<NavDrawer> {
                       return Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: Text(
-                          provider.pslabVersionID,
+                          provider.pslabVersionID == 'Not Connected'
+                              ? appLocalizations.notConnected
+                              : provider.pslabVersionID,
                           style: const TextStyle(
                               fontSize: 14, fontStyle: FontStyle.normal),
                         ),
