@@ -38,15 +38,9 @@ import 'constants.dart';
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Handle `-v` / `--version` CLI flags on desktop: print the version and exit
-  // without launching the UI. Mobile platforms don't pass CLI args, so this
-  // branch is effectively desktop-only.
   if (!kIsWeb &&
       (Platform.isWindows || Platform.isLinux || Platform.isMacOS) &&
       args.any((a) => a == '-v' || a == '--version')) {
-    // Flutter on Windows builds a GUI-subsystem binary that has no attached
-    // console, so stdout writes are dropped when launched from a terminal.
-    // Attach to the parent process's console (if any) before printing.
     if (Platform.isWindows) {
       _attachParentConsole();
     }
@@ -181,8 +175,6 @@ class _LocaleAware extends StatelessWidget {
   }
 }
 
-// Attach the current (GUI-subsystem) process to its parent console on Windows
-// so that stdout from CLI flags like `--version` is visible in the terminal.
 void _attachParentConsole() {
   const attachParentProcess = 0xFFFFFFFF;
   final kernel32 = ffi.DynamicLibrary.open('kernel32.dll');
