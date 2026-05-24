@@ -1,6 +1,11 @@
+import 'dart:ffi' as ffi;
+import 'dart:io';
+
 import 'package:pslab/providers/sht21_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
@@ -30,9 +35,28 @@ import 'package:pslab/view/wave_generator_screen.dart';
 import 'package:pslab/view/experiments_screen.dart';
 import 'constants.dart';
 
-void main() {
-  setupLocator();
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Handle `-v` / `--version` CLI flags on desktop: print the version and exit
+  // without launching the UI. Mobile platforms don't pass CLI args, so this
+  // branch is effectively desktop-only.
+  if (!kIsWeb &&
+      (Platform.isWindows || Platform.isLinux || Platform.isMacOS) &&
+      args.any((a) => a == '-v' || a == '--version')) {
+    // Flutter on Windows builds a GUI-subsystem binary that has no attached
+    // console, so stdout writes are dropped when launched from a terminal.
+    // Attach to the parent process's console (if any) before printing.
+    if (Platform.isWindows) {
+      _attachParentConsole();
+    }
+    final info = await PackageInfo.fromPlatform();
+    stdout.writeln('${info.appName} ${info.version}+${info.buildNumber}');
+    await stdout.flush();
+    exit(0);
+  }
+
+  setupLocator();
   runApp(
     MultiProvider(
       providers: [
@@ -155,6 +179,16 @@ class _LocaleAware extends StatelessWidget {
       ),
     );
   }
+}
+
+// Attach the current (GUI-subsystem) process to its parent console on Windows
+// so that stdout from CLI flags like `--version` is visible in the terminal.
+void _attachParentConsole() {
+  const attachParentProcess = 0xFFFFFFFF;
+  final kernel32 = ffi.DynamicLibrary.open('kernel32.dll');
+  final attachConsole = kernel32.lookupFunction<ffi.Int32 Function(ffi.Uint32),
+      int Function(int)>('AttachConsole');
+  attachConsole(attachParentProcess);
 }
 
 void _preCacheImages(BuildContext context) {
