@@ -48,6 +48,11 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleRunning() {
+    isRunning = !isRunning;
+    notifyListeners();
+  }
+
   late int samples;
   late double timeGap;
   late double timebase;

@@ -1,15 +1,18 @@
-import 'package:pslab/view/sht21_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'package:pslab/view/sht21_screen.dart';
 import 'package:pslab/view/bmp180_screen.dart';
 import 'package:pslab/view/ads1115_screen.dart';
 import 'package:pslab/view/vl53l0x_screen.dart';
+import 'package:pslab/view/apds9960_screen.dart';
+import 'package:pslab/view/tsl2561_screen.dart';
+
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import '../theme/colors.dart';
-import 'apds9960_screen.dart';
 
 class SensorsScreen extends StatefulWidget {
   const SensorsScreen({super.key});
@@ -237,6 +240,10 @@ class _SensorsScreenState extends State<SensorsScreen> {
       case 'SHT21':
         targetScreen = const SHT21Screen();
         break;
+      case 'TSL2561':
+        targetScreen = const TSL2561Screen();
+        break;
+
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

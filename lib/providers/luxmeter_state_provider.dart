@@ -226,36 +226,37 @@ class LuxMeterStateProvider extends ChangeNotifier {
       _scienceLab = getIt<ScienceLab>();
       if (_scienceLab == null || !_scienceLab!.isConnected()) {
         onSensorError?.call('ScienceLab not connected');
+        return;
       }
 
       _i2c = I2C(_scienceLab!.mPacketHandler);
-      _tsl2561 = TSL2561(_i2c!, _scienceLab!);
+
+      _tsl2561 = await TSL2561.create(_i2c!, _scienceLab!);
 
       int intervalMs = _configProvider?.config.updatePeriod ?? 1000;
 
-      int gain = _configProvider?.config.sensorGain ?? 16;
-      _tsl2561!.setGain(gain);
+      if (intervalMs < 100) intervalMs = 100;
+
+      int configGain = _configProvider?.config.sensorGain ?? 16;
+      int tslGain = (configGain == 1) ? TSL2561.gain0X : TSL2561.gain16X;
+
+      await _tsl2561!.setGainAndTiming(tslGain, TSL2561.integrationTime101Ms);
 
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
 
-      int lastUpdate = 0;
-
-      _luxTimer = Timer.periodic(Duration(milliseconds: 10), (timer) async {
+      _luxTimer =
+          Timer.periodic(Duration(milliseconds: intervalMs), (timer) async {
         try {
-          final lux = await _tsl2561?.getRaw();
-          if (lux != null) {
-            _currentLux = lux;
-            _sensorAvailable = true;
+          final rawData = await _tsl2561?.getRawData();
 
-            double currentTime =
+          if (rawData != null) {
+            _currentLux = rawData['visible'] ?? 0.0;
+            _sensorAvailable = true;
+            _currentTime =
                 (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
 
-            if ((currentTime * 1000 - lastUpdate) >= intervalMs) {
-              lastUpdate = (currentTime * 1000).toInt();
-              _currentTime = currentTime;
-              _updateData();
-              notifyListeners();
-            }
+            _updateData();
+            notifyListeners();
           }
         } catch (e) {
           logger.e("TSL2561 read error: $e");
@@ -263,8 +264,8 @@ class LuxMeterStateProvider extends ChangeNotifier {
         }
       });
 
-      logger
-          .d('TSL2561 initialized with gain $gain at interval $intervalMs ms');
+      logger.d(
+          'TSL2561 initialized with gain ${configGain}x at interval $intervalMs ms');
     } catch (e) {
       logger.e("Error initializing TSL2561: $e");
       _handleSensorError(e);

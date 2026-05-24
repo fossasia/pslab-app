@@ -309,178 +309,190 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       ],
       child: Consumer<OscilloscopeStateProvider>(
         builder: (context, provider, _) {
-          return Stack(
-            children: [
-              CommonScaffold(
-                title: appLocalizations.oscilloscope,
-                key: const Key(oscilloscopeScreenTitleKey),
-                onOptionsPressed:
-                    provider.isPlayingBack ? null : _showOptionsMenu,
-                onGuidePressed: _showInstrumentGuide,
-                onRecordPressed:
-                    provider.isPlayingBack ? null : _toggleRecording,
-                isRecording: provider.isRecording,
-                isPlayingBack: provider.isPlayingBack,
-                isPlaybackPaused: provider.isPlaybackPaused,
-                onPlaybackPauseResume: provider.isPlayingBack
-                    ? (provider.isPlaybackPaused
-                        ? _provider.resumePlayback
-                        : _provider.pausePlayback)
-                    : null,
-                onPlaybackStop: provider.isPlayingBack
-                    ? () async {
-                        await _provider.stopPlayback();
-                      }
-                    : null,
-                body: SafeArea(
-                  minimum: const EdgeInsets.only(right: 0, bottom: 0),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Container(
-                        margin: const EdgeInsets.only(left: 5, top: 5),
-                        child: widget.playbackData != null
-                            ? Container(
-                                margin:
-                                    const EdgeInsets.only(right: 5, bottom: 5),
-                                padding: const EdgeInsets.only(bottom: 20),
-                                color: Colors.black,
-                                child: OscilloscopeGraph(),
-                              )
-                            : Row(
-                                children: [
-                                  Expanded(
-                                    flex: 89,
-                                    child: Container(
-                                      margin: const EdgeInsets.only(right: 5),
-                                      child: Stack(
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Expanded(
-                                                flex:
-                                                    constraints.maxHeight < 600
-                                                        ? 68
-                                                        : 80,
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 20),
-                                                  color: Colors.black,
-                                                  child:
-                                                      const OscilloscopeGraph(),
+          return Shortcuts(
+            shortcuts: const <ShortcutActivator, Intent>{
+              SingleActivator(LogicalKeyboardKey.enter):
+                  DoNothingAndStopPropagationIntent(),
+              SingleActivator(LogicalKeyboardKey.numpadEnter):
+                  DoNothingAndStopPropagationIntent(),
+              SingleActivator(LogicalKeyboardKey.arrowUp):
+                  DoNothingAndStopPropagationIntent(),
+              SingleActivator(LogicalKeyboardKey.arrowDown):
+                  DoNothingAndStopPropagationIntent(),
+            },
+            child: Stack(
+              children: [
+                CommonScaffold(
+                  title: appLocalizations.oscilloscope,
+                  key: const Key(oscilloscopeScreenTitleKey),
+                  onOptionsPressed:
+                      provider.isPlayingBack ? null : _showOptionsMenu,
+                  onGuidePressed: _showInstrumentGuide,
+                  onRecordPressed:
+                      provider.isPlayingBack ? null : _toggleRecording,
+                  isRecording: provider.isRecording,
+                  isPlayingBack: provider.isPlayingBack,
+                  isPlaybackPaused: provider.isPlaybackPaused,
+                  onPlaybackPauseResume: provider.isPlayingBack
+                      ? (provider.isPlaybackPaused
+                          ? _provider.resumePlayback
+                          : _provider.pausePlayback)
+                      : null,
+                  onPlaybackStop: provider.isPlayingBack
+                      ? () async {
+                          await _provider.stopPlayback();
+                        }
+                      : null,
+                  body: SafeArea(
+                    minimum: const EdgeInsets.only(right: 0, bottom: 0),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Container(
+                          margin: const EdgeInsets.only(left: 5, top: 5),
+                          child: widget.playbackData != null
+                              ? Container(
+                                  margin: const EdgeInsets.only(
+                                      right: 5, bottom: 5),
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  color: Colors.black,
+                                  child: OscilloscopeGraph(),
+                                )
+                              : Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 89,
+                                      child: Container(
+                                        margin: const EdgeInsets.only(right: 5),
+                                        child: Stack(
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Expanded(
+                                                  flex: constraints.maxHeight <
+                                                          600
+                                                      ? 68
+                                                      : 80,
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            bottom: 20),
+                                                    color: Colors.black,
+                                                    child:
+                                                        const OscilloscopeGraph(),
+                                                  ),
                                                 ),
-                                              ),
-                                              Expanded(
-                                                flex:
-                                                    constraints.maxHeight < 600
-                                                        ? 32
-                                                        : 20,
-                                                child: Selector<
-                                                    OscilloscopeStateProvider,
-                                                    int>(
-                                                  selector: (context,
-                                                          provider) =>
-                                                      provider.selectedIndex,
-                                                  builder: (context,
-                                                      selectedIndex, _) {
-                                                    switch (selectedIndex) {
-                                                      case 0:
-                                                        return const ChannelParametersWidget();
-                                                      case 1:
-                                                        return const TimebaseTriggerWidget();
-                                                      case 2:
-                                                        return const DataAnalysisWidget();
-                                                      case 3:
-                                                        return const XYPlotWidget();
-                                                      default:
-                                                        return const ChannelParametersWidget();
-                                                    }
-                                                  },
+                                                Expanded(
+                                                  flex: constraints.maxHeight <
+                                                          600
+                                                      ? 32
+                                                      : 20,
+                                                  child: Selector<
+                                                      OscilloscopeStateProvider,
+                                                      int>(
+                                                    selector: (context,
+                                                            provider) =>
+                                                        provider.selectedIndex,
+                                                    builder: (context,
+                                                        selectedIndex, _) {
+                                                      switch (selectedIndex) {
+                                                        case 0:
+                                                          return const ChannelParametersWidget();
+                                                        case 1:
+                                                          return const TimebaseTriggerWidget();
+                                                        case 2:
+                                                          return const DataAnalysisWidget();
+                                                        case 3:
+                                                          return const XYPlotWidget();
+                                                        default:
+                                                          return const ChannelParametersWidget();
+                                                      }
+                                                    },
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          provider.isMeasurementsChecked
-                                              ? Positioned(
-                                                  right: 0,
-                                                  top: 0,
-                                                  child: SizedBox(
-                                                      width: 135,
-                                                      child: MeasurementsList(
-                                                          dataParamsChannels:
-                                                              provider
-                                                                  .dataParamsChannels)),
-                                                )
-                                              : const SizedBox.shrink(),
-                                        ],
+                                              ],
+                                            ),
+                                            provider.isMeasurementsChecked
+                                                ? Positioned(
+                                                    right: 0,
+                                                    top: 0,
+                                                    child: SizedBox(
+                                                        width: 135,
+                                                        child: MeasurementsList(
+                                                            dataParamsChannels:
+                                                                provider
+                                                                    .dataParamsChannels)),
+                                                  )
+                                                : const SizedBox.shrink(),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const Expanded(
-                                    flex: 11,
-                                    child: OscilloscopeScreenTabs(),
-                                  )
-                                ],
-                              ),
-                      );
-                    },
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      if ((((provider.isCH1Selected ||
-                                      provider.isCH2Selected ||
-                                      provider.isCH3Selected ||
-                                      provider.isMICSelected) &&
-                                  getIt<ScienceLab>().isConnected()) ||
-                              provider.isInBuiltMICSelected) &&
-                          !provider.autoScale()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(appLocalizations.noSignal),
-                          ),
-                        );
-                      }
-                    },
-                    child: Text(appLocalizations.autoScale,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  ),
-                  widget.playbackData == null
-                      ? IconButton(
-                          icon: provider.isRunning
-                              ? const Icon(
-                                  Icons.pause,
-                                  color: Colors.white,
-                                )
-                              : const Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
+                                    const Expanded(
+                                      flex: 11,
+                                      child: OscilloscopeScreenTabs(),
+                                    )
+                                  ],
                                 ),
-                          onPressed: () {
-                            if (provider.isRunning) {
-                              provider.isRunning = false;
-                            } else {
-                              provider.isRunning = true;
-                            }
-                            setState(
-                              () {},
-                            );
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              ),
-              if (_showGuide)
-                InstrumentOverviewDrawer(
-                  instrumentName: appLocalizations.oscilloscope,
-                  content: _getOscilloscopeContent(),
-                  onHide: _hideInstrumentGuide,
+                        );
+                      },
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        if ((((provider.isCH1Selected ||
+                                        provider.isCH2Selected ||
+                                        provider.isCH3Selected ||
+                                        provider.isMICSelected) &&
+                                    getIt<ScienceLab>().isConnected()) ||
+                                provider.isInBuiltMICSelected) &&
+                            !provider.autoScale()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(appLocalizations.noSignal),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(appLocalizations.autoScale,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    widget.playbackData == null
+                        ? IconButton(
+                            icon: provider.isRunning
+                                ? const Icon(
+                                    Icons.pause,
+                                    color: Colors.white,
+                                  )
+                                : const Icon(
+                                    Icons.play_arrow,
+                                    color: Colors.white,
+                                  ),
+                            onPressed: () {
+                              if (provider.isRunning) {
+                                provider.isRunning = false;
+                              } else {
+                                provider.isRunning = true;
+                              }
+                              setState(
+                                () {},
+                              );
+                            },
+                          )
+                        : const SizedBox.shrink(),
+                  ],
                 ),
-            ],
+                if (_showGuide)
+                  InstrumentOverviewDrawer(
+                    instrumentName: appLocalizations.oscilloscope,
+                    content: _getOscilloscopeContent(),
+                    onHide: _hideInstrumentGuide,
+                  ),
+              ],
+            ),
           );
         },
       ),
