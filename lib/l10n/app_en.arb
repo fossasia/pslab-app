@@ -271,6 +271,8 @@
     "dataAnalysis": "Data Analysis",
     "fourierAnalysis": "Fourier Analysis",
     "channels": "Channels",
+    "previousTab": "Previous tab",
+    "nextTab": "Next tab",
     "pslabMic": "PSLab MIC",
     "inBuiltMic": "In-Built MIC",
     "ch3Range": "CH3 (+/- 3.3V)",
@@ -677,5 +679,13 @@
     "gasSensorGuideConnectStep3": "3. Connect the PSLab CH1 pin to the sensor's Analog Out (A0) pin.",
     "gasSensorGuideWarning": "Note: Readings are estimated based on default load and baseline resistances and assume a fresh air environment during calibration.",
     "ppmCO2" : "PPM CO₂",
-    "noGasSensor" : "Gas Sensor Unavailable Please connect Gas Sensor"
+    "noGasSensor" : "Gas Sensor Unavailable Please connect Gas Sensor",
+    "tsl2561" : "TSL2561",
+    "full": "Full Spectrum",
+    "infrared": "Infrared",
+    "infraredRaw" : "Infrared (raw)",
+    "visibleLight": "Visible Light",
+    "visibleLightRaw" : "Visible Light (raw)",
+    "luxRaw" : "Luminosity (lux/raw)",
+    "raw" : "raw"
 }
