@@ -152,8 +152,7 @@ class MiscOssLicenseSingle extends StatelessWidget {
               child: Text(l10n.licenseText, style: headingStyle),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 4.0, left: 12.0, right: 12.0),
+              padding: const EdgeInsets.only(top: 4.0, left: 12.0, right: 12.0),
               child: Text(
                 _bodyText(),
                 style: Theme.of(context).textTheme.bodyMedium,

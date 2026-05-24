@@ -27,8 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AppLocalizations appLocalizations =
-        AppLocalizations.of(context)!;
+    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -81,11 +80,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       selectedValue: provider.config.languageCode,
                       options: [
                         ConfigOption(
-                            value: 'en',
-                            displayName: appLocalizations.english),
+                            value: 'en', displayName: appLocalizations.english),
                         ConfigOption(
-                            value: 'hi',
-                            displayName: appLocalizations.hindi),
+                            value: 'hi', displayName: appLocalizations.hindi),
                       ],
                       onChanged: (value) {
                         provider.updateLanguageCode(value);
