@@ -419,10 +419,10 @@ packages:
     dependency: "direct main"
     description:
       name: gauge_indicator
-      sha256: "483abfae360ddffdf7b89fbd25192f83d1a6513d5da18f2388131566ab0793fd"
+      sha256: da9bc5a0d3355f95afaee63db06bc4ccd96f192a494665b71c90d9badd275982
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.3"
+    version: "0.5.0"
   geoclue:
     dependency: transitive
     description:

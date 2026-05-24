@@ -92,11 +92,11 @@ class GaugeWidget extends StatelessWidget {
       axis: GaugeAxis(
         min: 0,
         max: 100,
-        degrees: 270,
+        sweepDegrees: 270,
         style: GaugeAxisStyle(
           thickness: (size * 0.05).clamp(3.0, 15.0),
           background: gaugeAxisColor,
-          segmentSpacing: 2,
+          zoneSpacing: 2,
         ),
         progressBar: GaugeProgressBar.basic(
           color: gaugeProgressColor,
