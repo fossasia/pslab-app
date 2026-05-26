@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:pslab/console_helper_dummy.dart'
-    if (dart.library.html) 'package:pslab/console_helper_dummy.dart'
     if (dart.library.io) 'package:pslab/console_helper.dart' as console_helper;
 
 import 'package:pslab/providers/sht21_provider.dart';
