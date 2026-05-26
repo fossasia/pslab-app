@@ -26,8 +26,9 @@ class SHT21 {
     List<int> data = await i2c.readBulk(address, tempHoldCmd, 3);
     logger.d("$_tag RAW TEMP: $data");
 
-    if (data.length < 3 || !_verifyChecksum(data))
+    if (data.length < 3 || !_verifyChecksum(data)) {
       throw Exception("Temp Checksum Failed");
+    }
 
     int rawValue = ((data[0] & 0xFF) << 8) | (data[1] & 0xFC);
     return -46.85 + 175.72 * (rawValue / 65536.0);
@@ -37,8 +38,9 @@ class SHT21 {
     List<int> data = await i2c.readBulk(address, humidityHoldCmd, 3);
     logger.w("$_tag RAW HUMIDITY: $data");
 
-    if (data.length < 3 || !_verifyChecksum(data))
+    if (data.length < 3 || !_verifyChecksum(data)) {
       throw Exception("Humidity Checksum Failed");
+    }
 
     int rawValue = ((data[0] & 0xFF) << 8) | (data[1] & 0xFC);
     return -6.0 + 125.0 * (rawValue / 65536.0);
