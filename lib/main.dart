@@ -178,6 +178,14 @@ class _LocaleAware extends StatelessWidget {
   }
 }
 
+void _attachParentConsole() {
+  const attachParentProcess = 0xFFFFFFFF;
+  final kernel32 = ffi.DynamicLibrary.open('kernel32.dll');
+  final attachConsole = kernel32.lookupFunction<ffi.Int32 Function(ffi.Uint32),
+      int Function(int)>('AttachConsole');
+  attachConsole(attachParentProcess);
+}
+
 void _preCacheImages(BuildContext context) {
   for (final path in instrumentIcons) {
     precacheImage(AssetImage(path), context);
