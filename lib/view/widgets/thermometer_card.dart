@@ -5,6 +5,8 @@ import 'package:pslab/providers/thermometer_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
 
+import 'package:pslab/providers/thermometer_config_provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../providers/locator.dart';
 
@@ -21,12 +23,26 @@ class _ThermometerCardState extends State<ThermometerCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
-    ThermometerStateProvider provider =
+
+    ThermometerStateProvider stateProvider =
         Provider.of<ThermometerStateProvider>(context);
-    double currentTemp = provider.getCurrentTemperature();
-    double minTemp = provider.getMinTemperature();
-    double maxTemp = provider.getMaxTemperature();
-    double avgTemp = provider.getAverageTemperature();
+    ThermometerConfigProvider configProvider =
+        Provider.of<ThermometerConfigProvider>(context);
+
+    double currentTemp = stateProvider.getCurrentTemperature();
+    double minTemp = stateProvider.getMinTemperature();
+    double maxTemp = stateProvider.getMaxTemperature();
+    double avgTemp = stateProvider.getAverageTemperature();
+
+    String activeUnit = configProvider.config.unit == 'Fahrenheit'
+        ? appLocalizations.fahrenheitUnit
+        : appLocalizations.celsius;
+
+    double gaugeMin =
+        configProvider.config.unit == 'Fahrenheit' ? -40.0 : -40.0;
+    double gaugeMax =
+        configProvider.config.unit == 'Fahrenheit' ? 257.0 : 125.0;
+
     final cardMargin = screenWidth < 400 ? 8.0 : 12.0;
     final cardPadding = screenWidth < 400 ? 12.0 : 20.0;
     final gaugeSize = isLargeScreen ? 240.0 : screenWidth * 0.45;
@@ -57,9 +73,9 @@ class _ThermometerCardState extends State<ThermometerCard> {
                       child: GaugeWidget(
                           gaugeSize: gaugeSize,
                           currentValue: currentTemp,
-                          minValue: -40,
-                          maxValue: 125,
-                          unit: appLocalizations.celsius,
+                          minValue: gaugeMin,
+                          maxValue: gaugeMax,
+                          unit: activeUnit,
                           currentValueFontSize: tempValueFontSize),
                     ),
                     Expanded(
@@ -70,7 +86,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
                         maxValue: maxTemp,
                         minValue: minTemp,
                         avgValue: avgTemp,
-                        unit: appLocalizations.celsius,
+                        unit: activeUnit,
                       ),
                     ),
                   ],
@@ -86,7 +102,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
                         maxValue: maxTemp,
                         minValue: minTemp,
                         avgValue: avgTemp,
-                        unit: appLocalizations.celsius,
+                        unit: activeUnit,
                       ),
                     ),
                     Expanded(
@@ -94,9 +110,9 @@ class _ThermometerCardState extends State<ThermometerCard> {
                       child: GaugeWidget(
                           gaugeSize: gaugeSize,
                           currentValue: currentTemp,
-                          minValue: -40,
-                          maxValue: 125,
-                          unit: appLocalizations.celsius,
+                          minValue: gaugeMin,
+                          maxValue: gaugeMax,
+                          unit: activeUnit,
                           currentValueFontSize: tempValueFontSize),
                     ),
                   ],
