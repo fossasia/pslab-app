@@ -1,3 +1,4 @@
 void attachParentConsole() {
-  throw Exception("Dummy method. This method should never be called.");
+  throw UnsupportedError(
+      'attachParentConsole is not supported on this platform');
 }
