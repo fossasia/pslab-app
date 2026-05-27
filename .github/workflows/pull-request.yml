@@ -169,6 +169,22 @@ jobs:
         if: needs.changes.outputs.is_code != 'true'
         run: echo "Non-code change detected."
 
+  web:
+    name: Web App Flutter Build
+    needs: [ changes, common ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        if: needs.changes.outputs.is_code == 'true'
+
+      - name: Web App Workflow
+        if: needs.changes.outputs.is_code == 'true'
+        uses: ./.github/actions/web
+
+      - name: Non-Code Change
+        if: needs.changes.outputs.is_code != 'true'
+        run: echo "Non-code change detected."
+
   windows:
     name: Windows Flutter Build
     needs: [ changes, common ]
