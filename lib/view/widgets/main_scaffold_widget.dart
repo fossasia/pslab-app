@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 
 import '../../theme/colors.dart';
@@ -83,7 +82,6 @@ class _MainScaffoldState extends State<MainScaffold>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -201,30 +199,39 @@ class _MainScaffoldState extends State<MainScaffold>
                     );
                   },
                 ),
-                PopupMenuButton<bool>(
+                PopupMenuButton<String>(
                   icon: Icon(
                     Icons.more_vert,
                     color: appBarContentColor,
                   ),
-                  tooltip: l10n.pinLayout,
-                  onSelected: (bool isFront) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PSLabPinLayoutScreen(
-                          initialIsFrontSide: isFront,
-                        ),
-                      ),
-                    );
+                  tooltip: 'Options',
+                  onSelected: (String value) {
+                    if (value == 'pin_layout') {
+                      if (ModalRoute.of(context)?.settings.name ==
+                          '/pinLayout') {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PSLabPinLayoutScreen(),
+                            settings: const RouteSettings(name: '/pinLayout'),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PSLabPinLayoutScreen(),
+                            settings: const RouteSettings(name: '/pinLayout'),
+                          ),
+                        );
+                      }
+                    }
                   },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<bool>>[
-                    PopupMenuItem<bool>(
-                      value: true,
-                      child: Text(l10n.frontLayout),
-                    ),
-                    PopupMenuItem<bool>(
-                      value: false,
-                      child: Text(l10n.backLayout),
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: 'pin_layout',
+                      child: Text('Pin Layout'),
                     ),
                   ],
                 ),
