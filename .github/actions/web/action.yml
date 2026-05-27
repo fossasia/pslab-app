@@ -1,0 +1,46 @@
+name: "Web App Workflow"
+
+inputs:
+  VERSION_NAME:
+    description: 'Version Name to be used for build'
+    required: false
+    default: '1.0.0'
+  VERSION_CODE:
+    description: 'Version Code to be used for build'
+    required: true
+    default: '1'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies from Apt
+      shell: bash
+      run: |
+        sudo apt-get update -y;
+        sudo apt-get install -y zip
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+        flutter-version-file: pubspec.yaml
+    
+    - name: Build Web App
+      shell: bash
+      run: |
+        flutter config --enable-web
+        flutter build web --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
+    
+    - name: Zip Web App
+      id: zip-app
+      shell: bash
+      run: |
+        cd ./build/web
+        zip ${{ steps.build-iss.outputs.APP_NAME_CAMEL_CASE }}-web-${{ steps.build-iss.outputs.APP_VERSION }}.zip -r ./
+        cd ../../
+
+    - name: Store Archive
+      uses: actions/upload-artifact@v7
+      with:
+        name: web-app
+        path: build/web/${{ steps.build-iss.outputs.APP_NAME_CAMEL_CASE }}-web-${{ steps.build-iss.outputs.APP_VERSION }}.zip

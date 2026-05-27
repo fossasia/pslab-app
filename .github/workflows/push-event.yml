@@ -165,6 +165,25 @@ jobs:
               exit 1
           fi
 
+  web:
+    name: Web App Flutter Build
+    needs: common
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Web App Workflow
+        uses: ./.github/actions/web
+        with:
+          VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
+          VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
+
+      - name: Upload Web App Archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: Web App Archive
+          path: build/web/*.zip
+
   windows:
     name: Windows Flutter Build
     needs: common
@@ -278,7 +297,7 @@ jobs:
 
           echo "Removing old artifacts"
 
-          find . -maxdepth 1 -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.exe' -o -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' \) -delete
+          find . -maxdepth 1 -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.exe' -o -name '*.deb' -o -name '*.rpm' -o -name '*.dmg'  -o -name '*.zip' \) -delete
 
           echo "Copying new artifacts"
 
@@ -288,7 +307,8 @@ jobs:
             -name '*.exe' -o \
             -name '*.deb' -o \
             -name '*.rpm' -o \
-            -name '*.dmg' \
+            -name '*.dmg' -o \
+            -name '*.zip' \
           \) -exec cp -v {} . \;
 
           echo "Renaming Android artifacts"
