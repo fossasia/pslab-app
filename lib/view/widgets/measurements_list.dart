@@ -15,7 +15,7 @@ class MeasurementsList extends StatefulWidget {
 
 double _responsiveFont(BuildContext context, double baseFont) {
   const referenceWidth = 1440.0;
-  const minFontSize = 8.0;
+  const minFontSize = 6.0;
   const maxFontSize = 32.0;
 
   final width = MediaQuery.sizeOf(context).width;
