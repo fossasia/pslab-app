@@ -538,7 +538,6 @@
     "multimeterConfigs": "Multimeter Configurations",
     "multimeterUpdatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 1000 ms)",
     "theme": "Theme",
-    "light": "Light",
     "darkExperimental": "Dark (Experimental)",
     "system": "System",
     "shareApp": "Share App",
