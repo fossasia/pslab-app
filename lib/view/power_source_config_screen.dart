@@ -17,7 +17,7 @@ class PowerSourceConfigScreen extends StatefulWidget {
 }
 
 class _PowerSourceConfigScreenState extends State<PowerSourceConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final TextEditingController _updatePeriodController = TextEditingController();
 
   @override

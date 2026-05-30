@@ -42,7 +42,7 @@ class LoggedDataFile {
 }
 
 class _LoggedDataScreenState extends State<LoggedDataScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
   List<LoggedDataFile> _files = [];
   bool _isLoading = true;

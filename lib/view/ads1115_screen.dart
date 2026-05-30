@@ -19,7 +19,7 @@ class ADS1115Screen extends StatefulWidget {
 }
 
 class _ADS1115ScreenState extends State<ADS1115Screen> {
-  AppLocalizations appLocalizations = getIt.get();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   String sensorImage = 'assets/images/ads1115.jpg';
 
   I2C? _i2c;

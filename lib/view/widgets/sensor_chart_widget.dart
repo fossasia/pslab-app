@@ -5,7 +5,7 @@ import '../../models/chart_data_points.dart';
 import '../../providers/locator.dart';
 import '../../theme/colors.dart';
 
-AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
 class SensorChartWidget extends StatelessWidget {
   final String title;

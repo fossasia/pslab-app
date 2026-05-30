@@ -25,7 +25,7 @@ class MultimeterScreen extends StatefulWidget {
 }
 
 class _MultimeterScreenState extends State<MultimeterScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late MultimeterStateProvider _provider;
   late MultimeterConfigProvider? _configProvider;
   final CsvService _csvService = CsvService();

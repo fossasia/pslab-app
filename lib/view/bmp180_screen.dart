@@ -19,7 +19,7 @@ class BMP180Screen extends StatefulWidget {
 }
 
 class _BMP180ScreenState extends State<BMP180Screen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   String sensorImage = 'assets/images/bmp180.jpg';
   I2C? _i2c;
   ScienceLab? _scienceLab;

@@ -19,7 +19,7 @@ class APDS9960Screen extends StatefulWidget {
 }
 
 class _APDS9960ScreenState extends State<APDS9960Screen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   I2C? _i2c;
   ScienceLab? _scienceLab;
   late APDS9960Provider _provider;

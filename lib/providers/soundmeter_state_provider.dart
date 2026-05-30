@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pslab/providers/soundmeter_config_provider.dart';
 
 class SoundMeterStateProvider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   double _currentDb = 0.0;
   Timer? _timeTimer;
   Timer? _audioTimer;

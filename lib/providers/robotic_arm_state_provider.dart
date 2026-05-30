@@ -13,7 +13,7 @@ import 'package:vibration/vibration.dart';
 import '../others/csv_service.dart';
 
 class RoboticArmStateProvider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
 
   final List<double> servoValues = [0, 0, 0, 0];

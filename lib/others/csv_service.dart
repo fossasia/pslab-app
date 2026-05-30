@@ -11,7 +11,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 
 class CsvService {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   Future<Directory> getInstrumentDirectory(String instrumentName) async {
     if (Platform.isAndroid) {

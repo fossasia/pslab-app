@@ -17,7 +17,7 @@ class LogicAnalyzerConfigScreen extends StatefulWidget {
 }
 
 class _LogicAnalyzerConfigScreenState extends State<LogicAnalyzerConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   void initState() {

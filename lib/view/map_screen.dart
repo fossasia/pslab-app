@@ -18,7 +18,7 @@ class MapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+    final appLocalizations = getIt.get<AppLocalizations>();
     return Scaffold(
       appBar: AppBar(
         title: Text(

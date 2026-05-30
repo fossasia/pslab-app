@@ -6,9 +6,9 @@ import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FAQScreen extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
-  FAQScreen({super.key});
+  const FAQScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

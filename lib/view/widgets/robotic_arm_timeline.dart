@@ -24,7 +24,7 @@ class TimelineScrollView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+    final appLocalizations = getIt.get<AppLocalizations>();
     final screenWidth = MediaQuery.of(context).size.width;
     final boxWidth = (screenWidth / 6) - 2;
     final timeLineHeight = (screenHeight - screenHeight / 2.5);

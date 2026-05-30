@@ -13,7 +13,7 @@ class WaveGeneratorMainControls extends StatefulWidget {
 }
 
 class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   String iconSin = "assets/icons/ic_sin.png";
   String iconTriangular = "assets/icons/ic_triangular.png";
   String iconPwm = "assets/icons/ic_pwm_pic.png";

@@ -40,7 +40,7 @@ class CompassScreenContent extends StatefulWidget {
 }
 
 class _CompassScreenContentState extends State<CompassScreenContent> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
 
   late CompassProvider _provider;

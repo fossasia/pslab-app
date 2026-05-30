@@ -31,7 +31,7 @@ class WaveGeneratorScreen extends StatefulWidget {
 }
 
 class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late WaveGeneratorStateProvider _provider;
   late WaveGeneratorConfigProvider? _configProvider;
   final CsvService _csvService = CsvService();

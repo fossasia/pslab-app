@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/settings_config_provider.dart';
 import 'package:pslab/view/widgets/config_widgets.dart';
 
@@ -16,8 +15,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-
   @override
   void initState() {
     super.initState();
@@ -30,6 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations appLocalizations = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -75,6 +73,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ],
                       onChanged: (value) {
                         provider.updateExportFormat(value);
+                      },
+                    ),
+                    ConfigDropdownItem(
+                      title: appLocalizations.language,
+                      selectedValue: provider.config.languageCode,
+                      options: [
+                        ConfigOption(
+                            value: 'en', displayName: appLocalizations.english),
+                        ConfigOption(
+                            value: 'hi', displayName: appLocalizations.hindi),
+                        ConfigOption(
+                            value: 'it', displayName: appLocalizations.italian),
+                      ],
+                      onChanged: (value) {
+                        provider.updateLanguageCode(value);
                       },
                     ),
                   ],

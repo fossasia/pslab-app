@@ -26,7 +26,7 @@ class ExperimentGuideScreen extends StatefulWidget {
 }
 
 class _ExperimentGuideScreenState extends State<ExperimentGuideScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   int currentStep = 0;
   List<Map<String, String>> guideSteps = [];
   late ExperimentProvider _experimentProvider;

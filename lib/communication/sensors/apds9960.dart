@@ -7,7 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/locator.dart';
 
 class APDS9960 {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   static const String tag = "APDS9960";
 

@@ -23,7 +23,7 @@ class _InstrumentData {
 
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
   List<int> _filteredIndices = <int>[];
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<_InstrumentData> _instrumentDatas;
 
   void _onItemTapped(int index) {

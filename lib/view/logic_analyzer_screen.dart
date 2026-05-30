@@ -27,7 +27,7 @@ class LogicAnalyzerScreen extends StatefulWidget {
 }
 
 class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late LogicAnalyzerStateProvider _provider;
   late LogicAnalyzerConfigProvider? _configProvider;
   final CsvService _csvService = CsvService();

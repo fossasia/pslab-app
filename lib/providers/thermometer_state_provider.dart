@@ -10,7 +10,7 @@ import '../l10n/app_localizations.dart';
 import 'locator.dart';
 
 class ThermometerStateProvider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   double _currentTemperature = 0.0;
   Timer? _timeTimer;
   StreamSubscription<double>? _temperatureSubscription;

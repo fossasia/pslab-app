@@ -19,7 +19,7 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
   final TextEditingController _updatePeriodController = TextEditingController();
   final TextEditingController _highLimitController = TextEditingController();
   final TextEditingController _sensorGainController = TextEditingController();
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   void initState() {

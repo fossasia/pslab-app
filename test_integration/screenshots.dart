@@ -19,7 +19,7 @@ void main() async {
 
   group('E2E Group', () {
     testWidgets('Take Screenshots', (tester) async {
-      app.main();
+      app.main([]);
       await tester.pumpAndSettle();
 
       final instrumentsScreenTitle =

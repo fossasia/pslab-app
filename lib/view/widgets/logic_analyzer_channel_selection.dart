@@ -15,7 +15,7 @@ class LogicAnalyzerChannelSelection extends StatefulWidget {
 
 class _LogicAnalyzerChannelSelectionState
     extends State<LogicAnalyzerChannelSelection> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<String> channelNames;
   late List<String> analysisOptions;
 

@@ -15,7 +15,7 @@ class ThermometerCard extends StatefulWidget {
 }
 
 class _ThermometerCardState extends State<ThermometerCard> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   Widget build(BuildContext context) {

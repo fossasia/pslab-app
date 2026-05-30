@@ -14,7 +14,7 @@ import 'package:pslab/theme/colors.dart';
 
 class LogicAnalyzerStateProvider extends ChangeNotifier {
   LogicAnalyzerConfigProvider? _configProvider;
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   static const singleChannelAxisMin = -0.1;
   static const singleChannelAxisMax = 1.1;
   static const double twoChannelAxisMin = -0.3;

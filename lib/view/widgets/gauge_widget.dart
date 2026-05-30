@@ -7,7 +7,7 @@ import 'package:pslab/providers/locator.dart';
 import '../../theme/colors.dart';
 
 class GaugeWidget extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final double gaugeSize;
   final double currentValue;
   final double currentValueFontSize;
@@ -15,7 +15,7 @@ class GaugeWidget extends StatelessWidget {
   final double maxValue;
   final String unit;
 
-  GaugeWidget({
+  const GaugeWidget({
     super.key,
     required this.gaugeSize,
     required this.currentValue,

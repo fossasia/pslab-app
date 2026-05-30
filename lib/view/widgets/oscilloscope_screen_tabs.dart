@@ -19,7 +19,7 @@ class OscilloscopeScreenTabs extends StatefulWidget {
 }
 
 class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   static const int _tabCount = 4;
 
