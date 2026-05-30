@@ -183,48 +183,56 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                 behavior: const ScrollBehavior(),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    return constraints.maxWidth < constraints.maxHeight
-                        ? ListView.builder(
-                            itemCount: _filteredIndices.length,
-                            itemBuilder: (context, index) {
-                              final int originalIndex = _filteredIndices[index];
-                              return GestureDetector(
-                                onTap: () => _onItemTapped(originalIndex),
-                                child: ApplicationsListItem(
-                                  heading: _instrumentDatas[originalIndex]
-                                      .heading
-                                      .toUpperCase(),
-                                  description: _instrumentDatas[originalIndex]
-                                      .description,
-                                  instrumentIcon:
-                                      instrumentIcons[originalIndex],
-                                ),
-                              );
-                            },
-                          )
-                        : GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 2.5,
-                            ),
-                            itemCount: _filteredIndices.length,
-                            itemBuilder: (context, index) {
-                              final int originalIndex = _filteredIndices[index];
-                              return GestureDetector(
-                                onTap: () => _onItemTapped(originalIndex),
-                                child: ApplicationsListItem(
-                                  heading: _instrumentDatas[originalIndex]
-                                      .heading
-                                      .toUpperCase(),
-                                  description: _instrumentDatas[originalIndex]
-                                      .description,
-                                  instrumentIcon:
-                                      instrumentIcons[originalIndex],
-                                ),
-                              );
-                            },
-                          );
+                    final double w = constraints.maxWidth;
+
+                    Widget buildTile(int index) {
+                      final int originalIndex = _filteredIndices[index];
+                      return GestureDetector(
+                        onTap: () => _onItemTapped(originalIndex),
+                        child: ApplicationsListItem(
+                          heading: _instrumentDatas[originalIndex]
+                              .heading
+                              .toUpperCase(),
+                          description:
+                              _instrumentDatas[originalIndex].description,
+                          instrumentIcon: instrumentIcons[originalIndex],
+                        ),
+                      );
+                    }
+
+                    if (w < 360) {
+                      return ListView.builder(
+                        itemCount: _filteredIndices.length,
+                        itemBuilder: (context, index) => buildTile(index),
+                      );
+                    }
+
+                    const double maxExtent = 450.0;
+                    final int cols = (w / maxExtent).ceil().clamp(1, 6);
+                    final double tileWidth = w / cols;
+                    final int rows =
+                        (_filteredIndices.length / cols).ceil().clamp(1, 100);
+
+                    final double availHeight = constraints.maxHeight.isFinite
+                        ? constraints.maxHeight
+                        : tileWidth * (rows / 2.5);
+                    final double targetTileHeight = availHeight / rows;
+                    final double minTileHeight = tileWidth / 2.5;
+                    final double maxTileHeight = tileWidth / 1.3;
+                    final double tileHeight = targetTileHeight.clamp(
+                      minTileHeight,
+                      maxTileHeight,
+                    );
+                    final double aspect = tileWidth / tileHeight;
+
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: maxExtent,
+                        childAspectRatio: aspect,
+                      ),
+                      itemCount: _filteredIndices.length,
+                      itemBuilder: (context, index) => buildTile(index),
+                    );
                   },
                 ),
               ),
