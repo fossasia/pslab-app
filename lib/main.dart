@@ -16,6 +16,7 @@ import 'package:pslab/providers/settings_config_provider.dart';
 import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
+import 'package:pslab/view/dust_sensor_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
@@ -117,6 +118,8 @@ class MyApp extends StatelessWidget {
                     const _LocaleAware(child: LogicAnalyzerScreen()),
                 '/powerSource': (context) =>
                     const _LocaleAware(child: PowerSourceScreen()),
+                '/dustsensor': (context) =>
+                    const _LocaleAware(child: DustSensorScreen()),
                 '/compass': (context) =>
                     const _LocaleAware(child: CompassScreen()),
                 '/connectDevice': (context) =>
