@@ -63,11 +63,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       value: oscilloscopeStateProvider.isCH1Selected,
                       activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isCH1Selected = value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.setChannelSelected(
+                              'CH1', value ?? false);
+                        });
                       },
                     ),
                     Text(
@@ -164,11 +163,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       value: oscilloscopeStateProvider.isCH2Selected,
                       activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isCH2Selected = value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.setChannelSelected(
+                              'CH2', value ?? false);
+                        });
                       },
                     ),
                     Text(
@@ -222,11 +220,10 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       value: oscilloscopeStateProvider.isCH3Selected,
                       activeColor: checkBoxActiveColor,
                       onChanged: (bool? value) {
-                        setState(
-                          () {
-                            oscilloscopeStateProvider.isCH3Selected = value!;
-                          },
-                        );
+                        setState(() {
+                          oscilloscopeStateProvider.setChannelSelected(
+                              'CH3', value ?? false);
+                        });
                       },
                     ),
                     Text(
@@ -266,6 +263,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                               oscilloscopeStateProvider.isAudioInputSelected =
                                   false;
                               oscilloscopeStateProvider.setTimebaseDivisions(8);
+                              oscilloscopeStateProvider
+                                  .removeChannelData('MIC');
                             } else {
                               if (value == true) {
                                 oscilloscopeStateProvider
@@ -308,6 +307,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                               oscilloscopeStateProvider.isMICSelected = false;
                               oscilloscopeStateProvider.isAudioInputSelected =
                                   false;
+                              oscilloscopeStateProvider
+                                  .removeChannelData('MIC');
                             } else {
                               oscilloscopeStateProvider.isAudioInputSelected =
                                   true;
