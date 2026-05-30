@@ -20,6 +20,7 @@ updates:
       - "/.github/actions/screenshot-android"
       - "/.github/actions/screenshot-ipad"
       - "/.github/actions/screenshot-iphone"
+      - "/.github/actions/web"
       - "/.github/actions/windows"
       - "/.github/workflows"
     schedule:
