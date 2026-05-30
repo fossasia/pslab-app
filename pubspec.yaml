@@ -56,7 +56,7 @@ dependencies:
   web: ^1.1.1
   mp_audio_stream: ^0.2.2
   ffi: ^2.2.0
-
+  girix_code_gauge: ^0.0.6
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_test:
