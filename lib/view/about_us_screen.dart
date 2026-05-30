@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/view/about_us_version_resolver.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
@@ -28,10 +28,7 @@ Widget buildContactList(List<Map<String, dynamic>> items) {
         contentPadding: EdgeInsets.zero,
         minLeadingWidth: 28,
         leading: item['icon'] as Icon,
-        title: Text(
-          item['title'],
-          style: const TextStyle(fontSize: 15),
-        ),
+        title: Text(item['title'], style: const TextStyle(fontSize: 15)),
         onTap: () async {
           final uri = Uri.parse(item['url']);
 
@@ -48,6 +45,8 @@ Widget buildContactList(List<Map<String, dynamic>> items) {
 
 class _AboutUsScreenState extends State<AboutUsScreen> {
   String get iconAboutUs => 'assets/images/logo.png';
+
+  late final Future<String> _appVersionFuture = resolveAboutUsVersion();
 
   final List<Map<String, dynamic>> contactItems = [
     {
@@ -92,10 +91,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
       padding: const EdgeInsets.only(top: 20, bottom: 8),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     );
   }
@@ -111,13 +107,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Image.asset(
-                  iconAboutUs,
-                  width: 130,
-                  height: 130,
-                ),
-              ),
+              Center(child: Image.asset(iconAboutUs, width: 130, height: 130)),
               const SizedBox(height: 20),
               Container(
                 width: double.infinity,
@@ -125,17 +115,12 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Text(
                   appLocalizations.pslabDescription,
                   textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.6,
-                  ),
+                  style: const TextStyle(fontSize: 15, height: 1.6),
                 ),
               ),
               const SizedBox(height: 24),
@@ -157,12 +142,21 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 contentPadding: EdgeInsets.zero,
                 minLeadingWidth: 28,
                 leading: const Icon(Icons.widgets),
-                title: FutureBuilder<PackageInfo>(
-                  future: PackageInfo.fromPlatform(),
+                title: FutureBuilder<String>(
+                  future: _appVersionFuture,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
+                      final version = snapshot.data!.trim();
+
+                      if (version.isNotEmpty) {
+                        return Text(
+                          version,
+                          style: const TextStyle(fontSize: 15),
+                        );
+                      }
+
                       return Text(
-                        snapshot.data!.version,
+                        'Unknown',
                         style: const TextStyle(fontSize: 15),
                       );
                     }
