@@ -143,6 +143,8 @@ class MyApp extends StatelessWidget {
                     const _LocaleAware(child: SoundMeterScreen()),
                 '/thermometer': (context) =>
                     const _LocaleAware(child: ThermometerScreen()),
+                '/gassensor': (context) =>
+                const _LocaleAware(child: GasSensorScreen()),
                 '/sensors': (context) =>
                     const _LocaleAware(child: SensorsScreen()),
                 '/experiments': (context) =>
