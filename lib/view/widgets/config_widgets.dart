@@ -4,14 +4,14 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class ConfigInputItem extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final String title;
   final String value;
   final TextEditingController controller;
   final Function(String) onChanged;
   final String? hint;
 
-  ConfigInputItem({
+  const ConfigInputItem({
     super.key,
     required this.title,
     required this.value,
@@ -109,13 +109,13 @@ class ConfigInputItem extends StatelessWidget {
 }
 
 class ConfigDropdownItem extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final String title;
   final String selectedValue;
   final List<ConfigOption> options;
   final Function(String) onChanged;
 
-  ConfigDropdownItem({
+  const ConfigDropdownItem({
     super.key,
     required this.title,
     required this.selectedValue,
@@ -135,7 +135,13 @@ class ConfigDropdownItem extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        selectedValue,
+        options
+            .firstWhere(
+              (o) => o.value == selectedValue,
+              orElse: () => ConfigOption(
+                  value: selectedValue, displayName: selectedValue),
+            )
+            .displayName,
         style: TextStyle(
           fontSize: 14,
           color: hintTextColor,
@@ -187,13 +193,13 @@ class ConfigDropdownItem extends StatelessWidget {
 }
 
 class ConfigCheckboxItem extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final String title;
   final String subtitle;
   final bool value;
   final Function(bool) onChanged;
 
-  ConfigCheckboxItem({
+  const ConfigCheckboxItem({
     super.key,
     required this.title,
     required this.subtitle,

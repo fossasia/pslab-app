@@ -14,7 +14,7 @@ class CompassConfigScreen extends StatefulWidget {
 }
 
 class _CompassConfigScreenState extends State<CompassConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   Widget build(BuildContext context) {

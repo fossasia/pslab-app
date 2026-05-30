@@ -7,7 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/locator.dart';
 
 class BMP180 {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   static const String tag = "BMP180";
 

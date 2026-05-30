@@ -16,7 +16,7 @@ class MultimeterConfigScreen extends StatefulWidget {
 }
 
 class _MultimeterConfigScreenState extends State<MultimeterConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final TextEditingController _updatePeriodController = TextEditingController();
 
   @override

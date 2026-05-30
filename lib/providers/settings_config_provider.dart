@@ -55,6 +55,12 @@ class SettingsConfigProvider extends ChangeNotifier {
     _saveConfigToPrefs();
   }
 
+  void updateLanguageCode(String languageCode) {
+    _config = _config.copyWith(languageCode: languageCode);
+    notifyListeners();
+    _saveConfigToPrefs();
+  }
+
   void updateAutoStart(bool autoStart) {
     _config = _config.copyWith(autoStart: autoStart);
     notifyListeners();

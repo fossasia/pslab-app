@@ -13,7 +13,7 @@ class DigitalWaveformControls extends StatefulWidget {
 }
 
 class _DigitalWaveformControlsState extends State<DigitalWaveformControls> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     WaveGeneratorStateProvider waveGeneratorStateProvider =

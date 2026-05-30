@@ -199,30 +199,39 @@ class _MainScaffoldState extends State<MainScaffold>
                     );
                   },
                 ),
-                PopupMenuButton<bool>(
+                PopupMenuButton<String>(
                   icon: Icon(
                     Icons.more_vert,
                     color: appBarContentColor,
                   ),
-                  tooltip: 'Pin Layout',
-                  onSelected: (bool isFront) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PSLabPinLayoutScreen(
-                          initialIsFrontSide: isFront,
-                        ),
-                      ),
-                    );
+                  tooltip: 'Options',
+                  onSelected: (String value) {
+                    if (value == 'pin_layout') {
+                      if (ModalRoute.of(context)?.settings.name ==
+                          '/pinLayout') {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PSLabPinLayoutScreen(),
+                            settings: const RouteSettings(name: '/pinLayout'),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PSLabPinLayoutScreen(),
+                            settings: const RouteSettings(name: '/pinLayout'),
+                          ),
+                        );
+                      }
+                    }
                   },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<bool>>[
-                    const PopupMenuItem<bool>(
-                      value: true,
-                      child: Text('Front Layout'),
-                    ),
-                    const PopupMenuItem<bool>(
-                      value: false,
-                      child: Text('Back Layout'),
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: 'pin_layout',
+                      child: Text('Pin Layout'),
                     ),
                   ],
                 ),

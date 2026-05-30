@@ -22,7 +22,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
   late double currentValue;
   late TextEditingController controller;
   late FocusNode _focusNode;
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   @override
   void initState() {
     super.initState();

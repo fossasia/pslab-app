@@ -24,7 +24,7 @@ class SoundMeterScreen extends StatefulWidget {
 }
 
 class _SoundMeterScreenState extends State<SoundMeterScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
   late SoundMeterStateProvider _provider;
   late SoundMeterConfigProvider _configProvider;

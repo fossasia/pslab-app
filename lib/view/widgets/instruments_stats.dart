@@ -4,7 +4,7 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class Instrumentstats extends StatelessWidget {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final String unit;
   final double titleFontSize;
   final double statFontSize;
@@ -13,7 +13,7 @@ class Instrumentstats extends StatelessWidget {
   final double avgValue;
   final double? currentAltitude;
 
-  Instrumentstats({
+  const Instrumentstats({
     super.key,
     required this.unit,
     required this.titleFontSize,

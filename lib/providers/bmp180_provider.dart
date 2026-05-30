@@ -9,7 +9,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'locator.dart';
 
 class BMP180Provider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   BMP180? _bmp180;
   Timer? _dataTimer;

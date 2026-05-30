@@ -18,7 +18,7 @@ class VL53L0XScreen extends StatefulWidget {
 }
 
 class _VL53L0XScreenState extends State<VL53L0XScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   String sensorImage = 'assets/images/vl53l0x.jpg';
   I2C? _i2c;
   ScienceLab? _scienceLab;

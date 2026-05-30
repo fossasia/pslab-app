@@ -18,7 +18,7 @@ class ChannelParametersWidget extends StatefulWidget {
 }
 
 class _ChannelParametersState extends State<ChannelParametersWidget> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<String> yAxisRanges;
 
   @override

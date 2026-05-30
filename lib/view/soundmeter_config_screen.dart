@@ -14,7 +14,7 @@ class SoundMeterConfigScreen extends StatefulWidget {
 }
 
 class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   @override
   void initState() {
     super.initState();

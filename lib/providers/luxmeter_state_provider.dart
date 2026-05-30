@@ -17,7 +17,7 @@ import 'package:pslab/communication/sensors/bh1750.dart';
 import 'package:pslab/communication/sensors/tsl2561.dart';
 
 class LuxMeterStateProvider extends ChangeNotifier {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   double _currentLux = 0.0;
   StreamSubscription? _lightSubscription;

@@ -12,7 +12,7 @@ const oscilloscopeScreenTitleKey = 'oscilloscope_screen_title';
 
 const int kMaxFileNameLength = 200;
 
-AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
 List<String> instrumentIcons = [
   'assets/icons/tile_icon_oscilloscope.png',

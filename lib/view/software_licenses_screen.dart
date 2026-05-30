@@ -1,14 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/providers/locator.dart';
 import 'package:pslab/oss_licenses.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SoftwareLicensesScreen extends StatelessWidget {
-  SoftwareLicensesScreen({super.key});
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  const SoftwareLicensesScreen({super.key});
   static Future<List<Package>> loadLicenses() async {
     final lm = <String, List<String>>{};
     await for (var l in LicenseRegistry.licenses) {
@@ -36,18 +34,32 @@ class SoftwareLicensesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return MainScaffold(
-      title: appLocalizations.softwareLicenses,
+      title: l10n.softwareLicenses,
       index: 12,
       body: FutureBuilder<List<Package>>(
         future: _licenses,
         initialData: const [],
         builder: (context, snapshot) {
+          final packages = snapshot.data ?? const <Package>[];
           return ListView.separated(
             padding: const EdgeInsets.all(0),
-            itemCount: snapshot.data?.length ?? 0,
+            itemCount: packages.length + 1,
             itemBuilder: (context, index) {
-              final package = snapshot.data![index];
+              if (index == 0) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 12.0),
+                  child: Text(
+                    l10n.licensesIntro,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.black54,
+                        ),
+                  ),
+                );
+              }
+              final package = packages[index - 1];
               return ListTile(
                 title: Text('${package.name} ${package.version}'),
                 subtitle: package.description.isNotEmpty
@@ -62,7 +74,7 @@ class SoftwareLicensesScreen extends StatelessWidget {
                 ),
               );
             },
-            separatorBuilder: (context, index) => const Divider(),
+            separatorBuilder: (context, index) => const Divider(height: 1),
           );
         },
       ),
@@ -84,16 +96,26 @@ class MiscOssLicenseSingle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final headingStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: Colors.black54,
+        );
     return Scaffold(
       appBar: AppBar(title: Text('${package.name} ${package.version}')),
       body: Container(
         color: Theme.of(context).canvasColor,
         child: ListView(
           children: [
-            if (package.description.isNotEmpty)
+            if (package.description.isNotEmpty) ...[
               Padding(
                 padding:
                     const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
+                child: Text(l10n.licenseDescription, style: headingStyle),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 4.0, left: 12.0, right: 12.0),
                 child: Text(
                   package.description,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -101,10 +123,16 @@ class MiscOssLicenseSingle extends StatelessWidget {
                       ),
                 ),
               ),
-            if (package.homepage != null)
+            ],
+            if (package.homepage != null) ...[
               Padding(
                 padding:
                     const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
+                child: Text(l10n.licenseHomepage, style: headingStyle),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 4.0, left: 12.0, right: 12.0),
                 child: InkWell(
                   child: Text(
                     package.homepage!,
@@ -115,11 +143,16 @@ class MiscOssLicenseSingle extends StatelessWidget {
                   onTap: () => launchUrlString(package.homepage!),
                 ),
               ),
+            ],
             if (package.description.isNotEmpty || package.homepage != null)
               const Divider(),
             Padding(
               padding:
                   const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
+              child: Text(l10n.licenseText, style: headingStyle),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0, left: 12.0, right: 12.0),
               child: Text(
                 _bodyText(),
                 style: Theme.of(context).textTheme.bodyMedium,

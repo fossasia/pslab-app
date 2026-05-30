@@ -21,7 +21,7 @@ class AccelerometerCard extends StatefulWidget {
 }
 
 class _AccelerometerCardState extends State<AccelerometerCard> {
-  final AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   static const double _kBaselineWidth = 360.0;
   static const double _kCompactWidth = 320.0;

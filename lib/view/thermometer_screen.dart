@@ -17,7 +17,7 @@ class ThermometerScreen extends StatefulWidget {
 }
 
 class _ThermometerScreenState extends State<ThermometerScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   ThermometerStateProvider? _temperatureProvider;
   bool _showGuide = false;
   bool _snackbarShown = false;

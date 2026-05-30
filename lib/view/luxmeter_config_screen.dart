@@ -16,7 +16,7 @@ class LuxMeterConfigScreen extends StatefulWidget {
 }
 
 class _LuxMeterConfigScreenState extends State<LuxMeterConfigScreen> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final TextEditingController _updatePeriodController = TextEditingController();
   final TextEditingController _highLimitController = TextEditingController();
   final TextEditingController _sensorGainController = TextEditingController();

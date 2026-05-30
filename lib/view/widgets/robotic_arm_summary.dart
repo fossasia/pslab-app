@@ -22,7 +22,7 @@ class PlaybackSummaryDialog extends StatefulWidget {
 
 class _PlaybackSummaryDialogState extends State<PlaybackSummaryDialog> {
   int selectedServo = 0;
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   @override
   Widget build(BuildContext context) {
     final data = widget.getSummary(selectedServo, widget.maxAngle);
