@@ -22,7 +22,7 @@ import CoreLocation
             binaryMessenger: controller.binaryMessenger
         )
 
-        permissionChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
+        permissionChannel.setMethodCallHandler { [weak self] call, result in
             guard let args = call.arguments as? [String: Any],
                   let permission = args["permission"] as? String else {
                 result(FlutterError(code: "INVALID_ARGS", message: "Missing permission argument", details: nil))
@@ -41,7 +41,6 @@ import CoreLocation
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
-
 
     private func handleCheckStatus(permission: String, result: @escaping FlutterResult) {
         if permission == "microphone" {

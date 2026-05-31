@@ -18,7 +18,7 @@ class MainFlutterWindow: NSWindow, CLLocationManagerDelegate {
             binaryMessenger: flutterViewController.engine.binaryMessenger
         )
 
-        permissionChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
+        permissionChannel.setMethodCallHandler { [weak self] call, result in
             guard let args = call.arguments as? [String: Any],
                   let permission = args["permission"] as? String else {
                 result(FlutterError(code: "INVALID_ARGS", message: "Missing permission argument", details: nil))
@@ -99,7 +99,6 @@ class MainFlutterWindow: NSWindow, CLLocationManagerDelegate {
         } else {
             status = CLLocationManager.authorizationStatus()
         }
-
 
         if status == .authorized || status == .authorizedAlways {
             result("granted")
