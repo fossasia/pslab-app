@@ -13,13 +13,16 @@ import CoreLocation
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+        guard let controller: FlutterViewController = window?.rootViewController as? FlutterViewController else {
+            return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        }
+
         let permissionChannel = FlutterMethodChannel(
             name: "io.pslab/permissions",
             binaryMessenger: controller.binaryMessenger
         )
 
-        permissionChannel.setMethodCallHandler({ [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+        permissionChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard let args = call.arguments as? [String: Any],
                   let permission = args["permission"] as? String else {
                 result(FlutterError(code: "INVALID_ARGS", message: "Missing permission argument", details: nil))
@@ -33,78 +36,90 @@ import CoreLocation
             } else {
                 result(FlutterMethodNotImplemented)
             }
-        })
+        }
 
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
+
     private func handleCheckStatus(permission: String, result: @escaping FlutterResult) {
         if permission == "microphone" {
-            switch AVCaptureDevice.authorizationStatus(for: .audio) {
-            case .authorized:
-                result("granted")
-            case .denied, .restricted:
-                result("permanentlyDenied")
-            case .notDetermined:
-                result("denied")
-            @unknown default:
-                result("denied")
-            }
+            checkMicrophoneStatus(result: result)
         } else if permission == "location" {
-            let status: CLAuthorizationStatus
-            if #available(iOS 14.0, *) {
-                status = locationManager?.authorizationStatus ?? CLLocationManager.authorizationStatus()
-            } else {
-                status = CLLocationManager.authorizationStatus()
-            }
-
-            switch status {
-            case .authorizedAlways, .authorizedWhenInUse:
-                result("granted")
-            case .denied, .restricted:
-                result("permanentlyDenied")
-            case .notDetermined:
-                result("denied")
-            @unknown default:
-                result("denied")
-            }
+            checkLocationStatus(result: result)
         } else {
-            result(FlutterError(code: "UNKNOWN_PERMISSION", message: "Unknown permission type", details: nil))
+            result(FlutterError(code: "UNKNOWN", message: "Unknown permission", details: nil))
+        }
+    }
+
+    private func checkMicrophoneStatus(result: @escaping FlutterResult) {
+        switch AVCaptureDevice.authorizationStatus(for: .audio) {
+        case .authorized: result("granted")
+        case .denied, .restricted: result("permanentlyDenied")
+        case .notDetermined: result("denied")
+        @unknown default: result("denied")
+        }
+    }
+
+    private func checkLocationStatus(result: @escaping FlutterResult) {
+        let status: CLAuthorizationStatus
+        if #available(iOS 14.0, *) {
+            status = locationManager?.authorizationStatus ?? CLLocationManager.authorizationStatus()
+        } else {
+            status = CLLocationManager.authorizationStatus()
+        }
+
+        switch status {
+        case .authorizedAlways, .authorizedWhenInUse: result("granted")
+        case .denied, .restricted: result("permanentlyDenied")
+        case .notDetermined: result("denied")
+        @unknown default: result("denied")
         }
     }
 
     private func handleRequest(permission: String, result: @escaping FlutterResult) {
         if permission == "microphone" {
-            AVCaptureDevice.requestAccess(for: .audio) { granted in
-                DispatchQueue.main.async {
-                    result(granted ? "granted" : "permanentlyDenied")
-                }
-            }
+            requestMicrophone(result: result)
         } else if permission == "location" {
-            let status: CLAuthorizationStatus
-            if #available(iOS 14.0, *) {
-                status = self.locationManager?.authorizationStatus ?? CLLocationManager.authorizationStatus()
-            } else {
-                status = CLLocationManager.authorizationStatus()
-            }
-
-            if status == .authorizedWhenInUse || status == .authorizedAlways {
-                result("granted")
-                return
-            } else if status == .denied || status == .restricted {
-                result("permanentlyDenied")
-                return
-            }
-
-            self.pendingPermissionResult = result
-            if self.locationManager == nil {
-                self.locationManager = CLLocationManager()
-                self.locationManager?.delegate = self
-            }
-            self.locationManager?.requestWhenInUseAuthorization()
+            requestLocation(result: result)
+        } else {
+            result(FlutterError(code: "UNKNOWN", message: "Unknown permission", details: nil))
         }
     }
+
+    private func requestMicrophone(result: @escaping FlutterResult) {
+        AVCaptureDevice.requestAccess(for: .audio) { granted in
+            DispatchQueue.main.async {
+                result(granted ? "granted" : "permanentlyDenied")
+            }
+        }
+    }
+
+    private func requestLocation(result: @escaping FlutterResult) {
+        let status: CLAuthorizationStatus
+        if #available(iOS 14.0, *) {
+            status = self.locationManager?.authorizationStatus ?? CLLocationManager.authorizationStatus()
+        } else {
+            status = CLLocationManager.authorizationStatus()
+        }
+
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            result("granted")
+            return
+        } else if status == .denied || status == .restricted {
+            result("permanentlyDenied")
+            return
+        }
+
+        self.pendingPermissionResult = result
+        if self.locationManager == nil {
+            self.locationManager = CLLocationManager()
+            self.locationManager?.delegate = self
+        }
+        self.locationManager?.requestWhenInUseAuthorization()
+    }
+
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         guard let result = pendingPermissionResult else { return }
 
