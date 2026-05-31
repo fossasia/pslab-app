@@ -217,8 +217,8 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                         ? constraints.maxHeight
                         : tileWidth * (rows / 2.5);
                     final double targetTileHeight = availHeight / rows;
-                    final double minTileHeight = tileWidth / 2.5;
-                    final double maxTileHeight = tileWidth / 1.3;
+                    const double minTileHeight = 120.0;
+                    const double maxTileHeight = 200.0;
                     final double tileHeight = targetTileHeight.clamp(
                       minTileHeight,
                       maxTileHeight,
