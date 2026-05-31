@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:pslab/others/logger_service.dart';
 
@@ -11,6 +12,10 @@ class PSLabPermissions {
 
   static Future<AppPermissionStatus> checkStatus(
       AppPermission permission) async {
+    if (kIsWeb) {
+      return AppPermissionStatus.granted;
+    }
+
     if (Platform.isWindows || Platform.isLinux) {
       return AppPermissionStatus.granted;
     }
@@ -20,13 +25,17 @@ class PSLabPermissions {
         'permission': permission.name,
       });
       return _parseStatus(result);
-    } on PlatformException catch (e) {
-      _logError('checkStatus', e);
+    } on PlatformException catch (exception) {
+      _logError('checkStatus', exception);
       return AppPermissionStatus.denied;
     }
   }
 
   static Future<AppPermissionStatus> request(AppPermission permission) async {
+    if (kIsWeb) {
+      return AppPermissionStatus.granted;
+    }
+
     if (Platform.isWindows || Platform.isLinux) {
       return AppPermissionStatus.granted;
     }
@@ -36,8 +45,8 @@ class PSLabPermissions {
         'permission': permission.name,
       });
       return _parseStatus(result);
-    } on PlatformException catch (e) {
-      _logError('request', e);
+    } on PlatformException catch (exception) {
+      _logError('request', exception);
       return AppPermissionStatus.denied;
     }
   }
