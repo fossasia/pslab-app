@@ -200,13 +200,6 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                       );
                     }
 
-                    if (w < 360) {
-                      return ListView.builder(
-                        itemCount: _filteredIndices.length,
-                        itemBuilder: (context, index) => buildTile(index),
-                      );
-                    }
-
                     const double maxExtent = 450.0;
                     final int cols = (w / maxExtent).ceil().clamp(1, 6);
                     final double tileWidth = w / cols;
