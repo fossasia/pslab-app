@@ -41,7 +41,7 @@ class _GasSensorCardState extends State<GasSensorCard> {
   }
 
   Widget _buildSensorUI(GasSensorStateProvider provider) {
-    double currentPpm = provider.getCurrentPpm();
+    double currentPpm = provider.getCurrentPpm().clamp(0.0, 5000.0);
 
     return Column(
       children: [
