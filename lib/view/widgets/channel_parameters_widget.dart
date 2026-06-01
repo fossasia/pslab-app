@@ -1,13 +1,10 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
-
+import 'package:pslab/others/logger_service.dart';
+import '../../others/permissions.dart';
 import '../../theme/colors.dart';
 
 class ChannelParametersWidget extends StatefulWidget {
@@ -252,11 +249,16 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                       groupValue:
                           oscilloscopeStateProvider.isInBuiltMICSelected,
                       onChanged: (bool? value) async {
-                        if (!kIsWeb &&
-                            !Platform.isMacOS &&
-                            !Platform.isLinux &&
-                            !Platform.isWindows) {
-                          await Permission.microphone.request();
+                        if (value == true) {
+                          final AppPermissionStatus status =
+                              await PSLabPermissions.request(
+                                  AppPermission.microphone);
+
+                          if (status != AppPermissionStatus.granted) {
+                            logger.e(
+                                "Microphone permission was denied or permanently blocked.");
+                            return;
+                          }
                         }
                         setState(
                           () {

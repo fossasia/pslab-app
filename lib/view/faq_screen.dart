@@ -57,7 +57,7 @@ class FAQScreen extends StatelessWidget {
     ];
     return MainScaffold(
       title: appLocalizations.faqTitle,
-      index: 6,
+      index: 9,
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: faqs.length,

@@ -1,0 +1,38 @@
+name: "Web App Workflow"
+
+inputs:
+  VERSION_NAME:
+    description: 'Version Name to be used for build'
+    required: false
+    default: '1.0.0'
+  VERSION_CODE:
+    description: 'Version Code to be used for build'
+    required: true
+    default: '1'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+        flutter-version-file: pubspec.yaml
+    
+    - name: Build Web App
+      shell: bash
+      run: |
+        flutter config --enable-web
+        flutter build web --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
+    
+    - name: Create Web Archive
+      shell: bash
+      run: |
+        cd build/web
+        zip -r ../pslab-web-app-${{ inputs.VERSION_NAME }}.zip .
+
+    - name: Store Archive
+      uses: actions/upload-artifact@v7
+      with:
+        name: pslab-web-app-${{ inputs.VERSION_NAME }}
+        path: build/pslab-web-app-${{ inputs.VERSION_NAME }}.zip
