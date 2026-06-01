@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../l10n/app_localizations.dart';
+import '../providers/locator.dart';
 
 class PinDetails {
   final String name;
@@ -8,10 +10,10 @@ class PinDetails {
 
   PinDetails(this.name, this.description, this.pinColor);
 
-  static List<PinDetails> getAllPins(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
+  static List<PinDetails> getV6Pins(BuildContext context) {
+    final l10n = getIt.get<AppLocalizations>();
     return [
+      PinDetails(l10n.pin_gnd_name, l10n.pin_gnd_desc, const Color(0xFF000000)),
       PinDetails(l10n.pin_gnd_name, l10n.pin_gnd_desc, const Color(0xFF00FFFF)),
       PinDetails(l10n.pin_vdd_name, l10n.pin_vdd_desc, const Color(0xFF800080)),
       PinDetails(l10n.pin_vcc_name, l10n.pin_vcc_desc, const Color(0xFF00FF00)),
@@ -58,6 +60,68 @@ class PinDetails {
       PinDetails(l10n.pin_vol_name, l10n.pin_vol_desc, const Color(0xFFE5D5FF)),
       PinDetails(l10n.pin_cap_name, l10n.pin_cap_desc, const Color(0xFFB380FF)),
       PinDetails(l10n.pin_res_name, l10n.pin_res_desc, const Color(0xFFCCAAFF)),
+    ];
+  }
+
+  static List<PinDetails> getV5Pins(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return [
+      PinDetails(l10n.pin_gnd_name, l10n.pin_gnd_desc, const Color(0xFF16DCDA)),
+      PinDetails(l10n.pin_vdd_name, l10n.pin_vdd_desc, const Color(0xFFD25C3C)),
+      PinDetails(l10n.pin_vcc_name, l10n.pin_vcc_desc, const Color(0xFF6B6500)),
+      PinDetails(l10n.pin_vin_name, l10n.pin_vin_desc, const Color(0xFF505050)),
+      PinDetails(l10n.pin_up_name, l10n.pin_up_desc, const Color(0xFF606060)),
+      PinDetails(
+          l10n.pin_down_name, l10n.pin_down_desc, const Color(0xFF707070)),
+      PinDetails(l10n.pin_bat_name, l10n.pin_bat_desc, const Color(0xFF808080)),
+      PinDetails(l10n.pin_rxd_name, l10n.pin_rxd_desc, const Color(0xFF1616DC)),
+      PinDetails(l10n.pin_txd_name, l10n.pin_txd_desc, const Color(0xFF37DC16)),
+      PinDetails(l10n.pin_enp_name, l10n.pin_enp_desc, const Color(0xFFFF9955)),
+      PinDetails(l10n.pin_mcl_name, l10n.pin_mcl_desc, const Color(0xFF143C14)),
+      PinDetails(l10n.pin_pgd_name, l10n.pin_pgd_desc, const Color(0xFF724FFF)),
+      PinDetails(l10n.pin_pgc_name, l10n.pin_pgc_desc, const Color(0xFFFFF724)),
+      PinDetails(l10n.pin_ena_name, l10n.pin_ena_desc, const Color(0xFF5C143C)),
+      PinDetails(l10n.pin_sta_name, l10n.pin_sta_desc, const Color(0xFF5C5C3C)),
+      PinDetails(l10n.pin_cs1_name, l10n.pin_cs1_desc, const Color(0xFF000080)),
+      PinDetails(l10n.pin_sdi_name, l10n.pin_sdi_desc, const Color(0xFFC8B7BE)),
+      PinDetails(l10n.pin_sdo_name, l10n.pin_sdo_desc, const Color(0xFF916F7C)),
+      PinDetails(l10n.pin_sck_name, l10n.pin_sck_desc, const Color(0xFFAC939D)),
+      PinDetails(l10n.pin_sda_name, l10n.pin_sda_desc, const Color(0xFF6E7244)),
+      PinDetails(l10n.pin_scl_name, l10n.pin_scl_desc, const Color(0xFF6E4472)),
+      PinDetails(l10n.pin_pcs_name, l10n.pin_pcs_desc, const Color(0xFF3FA96F)),
+      PinDetails(l10n.pin_pv3_name, l10n.pin_pv3_desc, const Color(0xFFA93F6F)),
+      PinDetails(l10n.pin_pv2_name, l10n.pin_pv2_desc, const Color(0xFFA96F3F)),
+      PinDetails(l10n.pin_pv1_name, l10n.pin_pv1_desc, const Color(0xFF446E72)),
+      PinDetails(l10n.pin_si1_name, l10n.pin_si1_desc, const Color(0xFF226A0C)),
+      PinDetails(l10n.pin_si2_name, l10n.pin_si2_desc, const Color(0xFF226ABA)),
+      PinDetails(l10n.pin_sq1_name, l10n.pin_sq1_desc, const Color(0xFFBAAA22)),
+      PinDetails(l10n.pin_sq2_name, l10n.pin_sq2_desc, const Color(0xFF22BA6D)),
+      PinDetails(l10n.pin_sq3_name, l10n.pin_sq3_desc, const Color(0xFFAA44AA)),
+      PinDetails(l10n.pin_sq4_name, l10n.pin_sq4_desc, const Color(0xFFD28080)),
+      PinDetails(l10n.pin_la1_name, l10n.pin_la1_desc, const Color(0xFF0053AD)),
+      PinDetails(l10n.pin_la2_name, l10n.pin_la2_desc, const Color(0xFFAD2D00)),
+      PinDetails(l10n.pin_la3_name, l10n.pin_la3_desc, const Color(0xFFE7A4FF)),
+      PinDetails(l10n.pin_la4_name, l10n.pin_la4_desc, const Color(0xFFE7A41A)),
+      PinDetails(l10n.pin_ch1_name, l10n.pin_ch1_desc, const Color(0xFF0B4189)),
+      PinDetails(l10n.pin_ch2_name, l10n.pin_ch2_desc, const Color(0xFF410B89)),
+      PinDetails(l10n.pin_ch3_name, l10n.pin_ch3_desc, const Color(0xFF41890B)),
+      PinDetails(l10n.pin_ac1_name, l10n.pin_ac1_desc, const Color(0xFFB01498)),
+      PinDetails(l10n.pin_chg_name, l10n.pin_chg_desc, const Color(0xFF89410B)),
+      PinDetails(l10n.pin_mic_name, l10n.pin_mic_desc, const Color(0xFF890B41)),
+      PinDetails(l10n.pin_frq_name, l10n.pin_frq_desc, const Color(0xFFFF0B41)),
+      PinDetails(l10n.pin_vol_name, l10n.pin_vol_desc, const Color(0xFF410BFF)),
+      PinDetails(l10n.pin_cap_name, l10n.pin_cap_desc, const Color(0xFFFF410B)),
+      PinDetails(l10n.pin_res_name, l10n.pin_res_desc, const Color(0xFF41FF0B)),
+      PinDetails(l10n.pin_esp_name, l10n.pin_esp_desc, const Color(0xFFDC1616)),
+      PinDetails(l10n.pin_vpl_name, l10n.pin_vpl_desc, const Color(0xFF5CD23C)),
+      PinDetails(l10n.pin_vmi_name, l10n.pin_vmi_desc, const Color(0xFF5C3C14)),
+      PinDetails(l10n.pin_pgm_name, l10n.pin_pgm_desc, const Color(0xFFB73CF1)),
+      PinDetails(l10n.pin_nrf_name, l10n.pin_nrf_desc, const Color(0xFFFFA64F)),
+      PinDetails(l10n.pin_usb_name, l10n.pin_usb_desc, const Color(0xFFFF2B4F)),
+      PinDetails(l10n.pin_pl5_name, l10n.pin_pl5_desc, const Color(0xFF765F40)),
+      PinDetails(l10n.pin_dpl_name, l10n.pin_dpl_desc, const Color(0xFF681654)),
+      PinDetails(l10n.pin_dmi_name, l10n.pin_dmi_desc, const Color(0xFFA68B47)),
     ];
   }
 }

@@ -1,5 +1,7 @@
-import 'dart:ffi' as ffi;
 import 'dart:io';
+
+import 'package:pslab/console_helper_dummy.dart'
+    if (dart.library.io) 'package:pslab/console_helper.dart' as console_helper;
 
 import 'package:pslab/providers/sht21_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -42,7 +44,7 @@ void main(List<String> args) async {
       (Platform.isWindows || Platform.isLinux || Platform.isMacOS) &&
       args.any((a) => a == '-v' || a == '--version')) {
     if (Platform.isWindows) {
-      _attachParentConsole();
+      console_helper.attachParentConsole();
     }
     final info = await PackageInfo.fromPlatform();
     stdout.writeln('${info.appName} ${info.version}+${info.buildNumber}');
@@ -173,14 +175,6 @@ class _LocaleAware extends StatelessWidget {
       ),
     );
   }
-}
-
-void _attachParentConsole() {
-  const attachParentProcess = 0xFFFFFFFF;
-  final kernel32 = ffi.DynamicLibrary.open('kernel32.dll');
-  final attachConsole = kernel32.lookupFunction<ffi.Int32 Function(ffi.Uint32),
-      int Function(int)>('AttachConsole');
-  attachConsole(attachParentProcess);
 }
 
 void _preCacheImages(BuildContext context) {
