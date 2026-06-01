@@ -104,7 +104,13 @@ class SHT21Provider extends ChangeNotifier {
     if (!_isSensorAvailable || _sensor == null) return;
 
     isRunning = true;
-    _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+    if (_timeData.isEmpty) {
+      _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+    } else {
+      double now = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      double timePaused = now - _startTime - _timeData.last;
+      _startTime += timePaused;
+    }
 
     _readTimer?.cancel();
     _readTimer =
@@ -116,7 +122,6 @@ class SHT21Provider extends ChangeNotifier {
 
       try {
         _currentHumidity = await _sensor!.getHumidity();
-
         await Future.delayed(const Duration(milliseconds: 250));
 
         _currentTemp = await _sensor!.getTemperature();
