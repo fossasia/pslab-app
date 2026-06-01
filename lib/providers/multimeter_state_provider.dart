@@ -116,6 +116,11 @@ class MultimeterStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void stepMode(int direction) {
+    final count = knobMarker.length;
+    setSelectedIndex((_selectedIndex + direction + count) % count);
+  }
+
   void setSwitch(bool checked) {
     isSwitchChecked = checked;
     if (isSwitchChecked) {

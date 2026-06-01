@@ -83,6 +83,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             value: 'en', displayName: appLocalizations.english),
                         ConfigOption(
                             value: 'hi', displayName: appLocalizations.hindi),
+                        ConfigOption(
+                            value: 'it', displayName: appLocalizations.italian),
                       ],
                       onChanged: (value) {
                         provider.updateLanguageCode(value);

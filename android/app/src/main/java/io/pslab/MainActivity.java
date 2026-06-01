@@ -1,6 +1,8 @@
 package io.pslab;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -19,10 +23,15 @@ import io.flutter.plugin.common.MethodChannel;
 public class MainActivity extends FlutterActivity implements SensorEventListener {
     private static final String TEMPERATURE_CHANNEL = "io.pslab/temperature";
     private static final String TEMPERATURE_STREAM = "io.pslab/temperature_stream";
+    private static final String PERMISSION_CHANNEL = "io.pslab/permissions";
     private static final String TAG = "MainActivity";
+    private static final int PERMISSION_REQ_CODE = 1001;
+
     private SensorManager sensorManager;
     private Sensor temperatureSensor;
     private EventChannel.EventSink temperatureEventSink;
+    private MethodChannel.Result pendingPermissionResult;
+
     private boolean isListening = false;
     private float currentTemperature = 0.0f;
 
@@ -52,6 +61,9 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
                 stopTemperatureUpdates();
             }
         });
+
+        MethodChannel permissionChannel = new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), PERMISSION_CHANNEL);
+        permissionChannel.setMethodCallHandler(this::handlePermissionMethodCall);
     }
 
     private void handleMethodCall(MethodCall call, MethodChannel.Result result) {
@@ -76,6 +88,68 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
             default:
                 result.notImplemented();
                 break;
+        }
+    }
+
+    private void handlePermissionMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
+        String permissionArg = call.argument("permission");
+        String manifestPermission = getManifestPermission(permissionArg);
+
+        if (manifestPermission == null) {
+            result.error("INVALID", "Unknown permission requested", null);
+            return;
+        }
+
+        if ("checkStatus".equals(call.method)) {
+            result.success(getPermissionStatusString(manifestPermission));
+        } else if ("request".equals(call.method)) {
+            if ("granted".equals(getPermissionStatusString(manifestPermission))) {
+                result.success("granted");
+            } else {
+                pendingPermissionResult = result;
+                ActivityCompat.requestPermissions(this, new String[]{manifestPermission}, PERMISSION_REQ_CODE);
+            }
+        } else {
+            result.notImplemented();
+        }
+    }
+
+    private String getManifestPermission(String dartName) {
+        if ("microphone".equals(dartName)) {
+            return Manifest.permission.RECORD_AUDIO;
+        } else if ("location".equals(dartName)) {
+            return Manifest.permission.ACCESS_FINE_LOCATION;
+        }
+        return null;
+    }
+
+    private String getPermissionStatusString(String permission) {
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            return "granted";
+        }
+        boolean shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
+        if (!shouldShowRationale) {
+            return "permanentlyDenied";
+        }
+        return "denied";
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQ_CODE && pendingPermissionResult != null) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                pendingPermissionResult.success("granted");
+            } else {
+                if (permissions.length > 0) {
+                    boolean shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0]);
+                    pendingPermissionResult.success(shouldShowRationale ? "denied" : "permanentlyDenied");
+                } else {
+                    pendingPermissionResult.success("denied");
+                }
+            }
+            pendingPermissionResult = null;
         }
     }
 

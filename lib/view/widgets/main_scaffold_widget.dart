@@ -82,6 +82,12 @@ class _MainScaffoldState extends State<MainScaffold>
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double iconGlyph = (screenWidth * 0.05).clamp(14.0, 24.0);
+    final double btnMin = (screenWidth * 0.075).clamp(24.0, 36.0);
+    final double titleSize = (screenWidth * 0.04).clamp(13.0, 18.0);
+    final double btnHPad = (screenWidth * 0.018).clamp(2.0, 10.0);
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -96,12 +102,20 @@ class _MainScaffoldState extends State<MainScaffold>
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
+            iconSize: iconGlyph,
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.symmetric(horizontal: btnHPad),
+            constraints: BoxConstraints(
+              minWidth: btnMin,
+              minHeight: btnMin,
+            ),
             icon: Icon(
               Icons.menu,
               color: appBarContentColor,
             ),
           );
         }),
+        titleSpacing: 0,
         backgroundColor: appBarColor,
         title: AnimatedSwitcher(
           duration: const Duration(milliseconds: 0),
@@ -119,13 +133,13 @@ class _MainScaffoldState extends State<MainScaffold>
                   autofocus: true,
                   style: TextStyle(
                     color: appBarContentColor,
-                    fontSize: 18,
+                    fontSize: titleSize,
                   ),
                   decoration: InputDecoration(
                     hintText: widget.searchHint,
                     hintStyle: TextStyle(
                       color: searchBarHintTextColor,
-                      fontSize: 18,
+                      fontSize: titleSize,
                     ),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
@@ -137,15 +151,24 @@ class _MainScaffoldState extends State<MainScaffold>
               : Text(
                   key: widget.scaffoldKey,
                   widget.title,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                   style: TextStyle(
                     color: appBarContentColor,
-                    fontSize: 18,
+                    fontSize: titleSize,
                   ),
                 ),
         ),
         actions: _isSearching
             ? [
                 IconButton(
+                  iconSize: iconGlyph,
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.symmetric(horizontal: btnHPad),
+                  constraints: BoxConstraints(
+                    minWidth: btnMin,
+                    minHeight: btnMin,
+                  ),
                   icon: Icon(
                     Icons.clear,
                     color: appBarContentColor,
@@ -167,6 +190,13 @@ class _MainScaffoldState extends State<MainScaffold>
                       Icons.search,
                       color: appBarContentColor,
                     ),
+                    iconSize: iconGlyph,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.symmetric(horizontal: btnHPad),
+                    constraints: BoxConstraints(
+                      minWidth: btnMin,
+                      minHeight: btnMin,
+                    ),
                     onPressed: _toggleSearch,
                   ),
                 Consumer<BoardStateProvider>(
@@ -178,8 +208,15 @@ class _MainScaffoldState extends State<MainScaffold>
                                 ? widget.icWiFiConnected
                                 : widget.icUsbConnected)
                             : widget.icUsbDisconnected,
-                        width: 24,
-                        height: 24,
+                        width: iconGlyph,
+                        height: iconGlyph,
+                      ),
+                      iconSize: iconGlyph,
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.symmetric(horizontal: btnHPad),
+                      constraints: BoxConstraints(
+                        minWidth: btnMin,
+                        minHeight: btnMin,
                       ),
                       onPressed: () {
                         provider.initialize();
@@ -203,6 +240,13 @@ class _MainScaffoldState extends State<MainScaffold>
                   icon: Icon(
                     Icons.more_vert,
                     color: appBarContentColor,
+                    size: iconGlyph,
+                  ),
+                  padding: EdgeInsets.zero,
+                  iconSize: iconGlyph,
+                  constraints: BoxConstraints(
+                    minWidth: btnMin,
+                    minHeight: btnMin,
                   ),
                   tooltip: 'Options',
                   onSelected: (String value) {

@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -23,9 +25,7 @@ class InnerDialPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class InnerDialFillPainter extends CustomPainter {
@@ -103,6 +103,7 @@ class RadialLabelPainter extends CustomPainter {
   final List<String> labels;
   final List<Color> labelColors;
   final double radius;
+  final int selectedIndex;
   final TextStyle baseTextStyle;
   final double arcRadiusOffset;
   final double arcLength;
@@ -112,6 +113,7 @@ class RadialLabelPainter extends CustomPainter {
     required this.labels,
     required this.labelColors,
     required this.radius,
+    this.selectedIndex = -1,
     this.baseTextStyle = const TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 16,
@@ -125,6 +127,7 @@ class RadialLabelPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final angleIncrement = 2 * pi / labels.length;
+    final baseFontSize = baseTextStyle.fontSize ?? 16;
 
     final textPainter = TextPainter(
       textAlign: TextAlign.center,
@@ -134,6 +137,7 @@ class RadialLabelPainter extends CustomPainter {
     for (int i = 0; i < labels.length; i++) {
       final angle = i * angleIncrement - pi / 2;
       final color = labelColors[i];
+      final isSelected = i == selectedIndex;
 
       final textOffset = Offset(
         center.dx + (radius + 20) * cos(angle),
@@ -142,7 +146,10 @@ class RadialLabelPainter extends CustomPainter {
 
       textPainter.text = TextSpan(
         text: labels[i],
-        style: baseTextStyle.copyWith(color: color),
+        style: baseTextStyle.copyWith(
+          color: color,
+          fontSize: isSelected ? baseFontSize * 1.1 : baseFontSize,
+        ),
       );
       textPainter.layout();
 
@@ -154,19 +161,27 @@ class RadialLabelPainter extends CustomPainter {
 
       final arcPaint = Paint()
         ..color = color
-        ..strokeWidth = arcStrokeWidth
+        ..strokeWidth = isSelected ? arcStrokeWidth * 1.4 : arcStrokeWidth
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;
 
+      final arcSpan = isSelected ? arcLength * 1.5 : arcLength;
       final arcRadius = radius + arcRadiusOffset;
-      final arcStartAngle = angle - arcLength / 2;
+      final arcStartAngle = angle - arcSpan / 2;
       final arcRect = Rect.fromCircle(center: center, radius: arcRadius);
-      canvas.drawArc(arcRect, arcStartAngle, arcLength, false, arcPaint);
+      canvas.drawArc(arcRect, arcStartAngle, arcSpan, false, arcPaint);
     }
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant RadialLabelPainter oldDelegate) =>
+      oldDelegate.selectedIndex != selectedIndex;
+}
+
+class _AdjustModeIntent extends Intent {
+  const _AdjustModeIntent(this.direction);
+
+  final int direction;
 }
 
 class MultimeterKnob extends StatefulWidget {
@@ -178,10 +193,24 @@ class MultimeterKnob extends StatefulWidget {
 }
 
 class _MultimeterKnobState extends State<MultimeterKnob> {
-  final double maxValue = 11.0;
-  bool isDragging = true;
+  static const int modeCount = 11;
+  final double maxValue = modeCount.toDouble();
+
+  static const double _plateDiameter = 300.0;
+
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<String> knobMarker;
+
+  final FocusNode _knobFocusNode = FocusNode();
+  bool _isDragging = false;
+  double _pointerTarget = 0.0;
+
+  bool get _isDesktopOrWeb =>
+      kIsWeb ||
+      defaultTargetPlatform == TargetPlatform.windows ||
+      defaultTargetPlatform == TargetPlatform.linux ||
+      defaultTargetPlatform == TargetPlatform.macOS;
+
   @override
   void initState() {
     super.initState();
@@ -201,104 +230,169 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    MultimeterStateProvider multimeterStateProvider =
-        Provider.of<MultimeterStateProvider>(context, listen: false);
+  void dispose() {
+    _knobFocusNode.dispose();
+    super.dispose();
+  }
 
-    void updateSelectedIndex(double angle) {
-      const startAngle = -pi / 2;
-      const totalAngle = 2 * pi;
+  void _changeMode(int direction) {
+    final provider = context.read<MultimeterStateProvider>();
+    final nextIndex =
+        (provider.getSelectedIndex() + direction + modeCount) % modeCount;
+    provider.setSelectedIndex(nextIndex);
+  }
 
-      final angleNormalized = (angle - startAngle + totalAngle) % totalAngle;
+  double _nearestEquivalent(double current, int index) {
+    final turns = ((current - index) / modeCount).roundToDouble();
+    return index + turns * modeCount;
+  }
 
-      final numSections = maxValue;
-      final anglePerSection = totalAngle / numSections;
+  void _selectFromGlobal(Offset globalPosition) {
+    final renderBox = context.findRenderObject() as RenderBox;
+    final localPosition = renderBox.globalToLocal(globalPosition);
+    _updateAngle(localPosition, renderBox.size);
+  }
 
-      final section = (angleNormalized / anglePerSection).round();
+  void _updateAngle(Offset position, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final dx = position.dx - center.dx;
+    final dy = position.dy - center.dy;
+    final distanceFromCenter = sqrt(dx * dx + dy * dy);
 
-      final clampedSection = section.clamp(0, numSections - 1);
+    if (distanceFromCenter > (_plateDiameter / 2).r) return;
 
-      setState(() {
-        multimeterStateProvider.setSelectedIndex(clampedSection.toInt());
-      });
+    var angle = atan2(dy, dx);
+    if (angle < 0) {
+      angle += 2 * pi;
     }
 
-    void updateAngle(Offset position, Size size) {
-      if (!isDragging) return;
+    const startAngle = -pi / 2;
+    const totalAngle = 2 * pi;
+    final angleNormalized = (angle - startAngle + totalAngle) % totalAngle;
+    final anglePerSection = totalAngle / modeCount;
+    final section =
+        (angleNormalized / anglePerSection).round().clamp(0, modeCount - 1);
 
-      final center = Offset(size.width / 2, size.height / 2);
-      final dx = position.dx - center.dx;
-      final dy = position.dy - center.dy;
-      final distanceFromCenter = sqrt(dx * dx + dy * dy);
+    context.read<MultimeterStateProvider>().setSelectedIndex(section);
+  }
 
-      if (distanceFromCenter > size.width / 2) return;
+  void _setDragging(bool value) {
+    if (_isDragging == value) return;
+    setState(() => _isDragging = value);
+  }
 
-      var angle = atan2(dy, dx);
-      if (angle < 0) {
-        angle += 2 * pi;
-      }
-
-      setState(() {
-        updateSelectedIndex(angle);
-      });
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            CustomPaint(
-              painter: InnerDialFillPainter(),
+  Widget _buildDial() {
+    return GestureDetector(
+      onTapDown: (details) {
+        _knobFocusNode.requestFocus();
+        _selectFromGlobal(details.globalPosition);
+      },
+      onPanStart: (_) => _setDragging(true),
+      onPanUpdate: (details) => _selectFromGlobal(details.globalPosition),
+      onPanEnd: (_) => _setDragging(false),
+      onPanCancel: () => _setDragging(false),
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          CustomPaint(
+            painter: InnerDialFillPainter(),
+            child: SizedBox(
+              width: 300.w,
+              height: 300.h,
+            ),
+          ),
+          Selector<MultimeterStateProvider, int>(
+            selector: (_, provider) => provider.getSelectedIndex(),
+            builder: (_, selectedIndex, __) {
+              _pointerTarget =
+                  _nearestEquivalent(_pointerTarget, selectedIndex);
+              return TweenAnimationBuilder<double>(
+                tween: Tween<double>(end: _pointerTarget),
+                duration: _isDragging
+                    ? Duration.zero
+                    : const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                builder: (_, value, __) => CustomPaint(
+                  painter: InnerPointerPainter(
+                    value: value,
+                    max: maxValue,
+                    color: pointerColor,
+                  ),
+                  child: SizedBox(
+                    width: 300.w,
+                    height: 300.h,
+                  ),
+                ),
+              );
+            },
+          ),
+          IgnorePointer(
+            ignoring: true,
+            child: CustomPaint(
+              painter: InnerDialPainter(),
               child: SizedBox(
-                width: 300.w,
                 height: 300.h,
+                width: 300.w,
               ),
             ),
-            GestureDetector(
-              onPanUpdate: (details) {
-                if (isDragging) {
-                  RenderBox renderBox = context.findRenderObject() as RenderBox;
-                  Offset localPosition =
-                      renderBox.globalToLocal(details.globalPosition);
-                  updateAngle(localPosition, renderBox.size);
-                }
-              },
-              child: CustomPaint(
-                painter: InnerPointerPainter(
-                  value: multimeterStateProvider.getSelectedIndex().toDouble(),
-                  max: maxValue,
-                  color: pointerColor,
-                ),
-                child: SizedBox(
-                  width: 300.w,
-                  height: 300.h,
-                ),
-              ),
-            ),
-            IgnorePointer(
-              ignoring: true,
-              child: CustomPaint(
-                painter: InnerDialPainter(),
-                child: SizedBox(
-                  height: 300.h,
-                  width: 300.w,
-                ),
-              ),
-            ),
-            IgnorePointer(
-              ignoring: true,
-              child: CustomPaint(
+          ),
+          IgnorePointer(
+            ignoring: true,
+            child: Selector<MultimeterStateProvider, int>(
+              selector: (_, provider) => provider.getSelectedIndex(),
+              builder: (_, selectedIndex, __) => CustomPaint(
                 painter: RadialLabelPainter(
                   labels: knobMarker,
                   labelColors: knobLabelColors,
                   radius: 112.r,
+                  selectedIndex: selectedIndex,
                 ),
               ),
-            )
-          ],
-        );
-      },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isDesktopOrWeb) return _buildDial();
+
+    return Selector<MultimeterStateProvider, int>(
+      selector: (_, provider) => provider.getSelectedIndex(),
+      builder: (context, selectedIndex, child) => Semantics(
+        container: true,
+        value: knobMarker[selectedIndex],
+        increasedValue: knobMarker[(selectedIndex + 1) % knobMarker.length],
+        decreasedValue: knobMarker[
+            (selectedIndex - 1 + knobMarker.length) % knobMarker.length],
+        onIncrease: () => _changeMode(1),
+        onDecrease: () => _changeMode(-1),
+        child: child,
+      ),
+      child: FocusableActionDetector(
+        mouseCursor:
+            _isDragging ? SystemMouseCursors.grabbing : SystemMouseCursors.grab,
+        shortcuts: const <ShortcutActivator, Intent>{
+          SingleActivator(LogicalKeyboardKey.arrowUp): _AdjustModeIntent(1),
+          SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustModeIntent(1),
+          SingleActivator(LogicalKeyboardKey.arrowDown): _AdjustModeIntent(-1),
+          SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustModeIntent(-1),
+        },
+        actions: <Type, Action<Intent>>{
+          _AdjustModeIntent: CallbackAction<_AdjustModeIntent>(
+            onInvoke: (intent) {
+              _changeMode(intent.direction);
+              return null;
+            },
+          ),
+        },
+        focusNode: _knobFocusNode,
+        autofocus: true,
+        child: _buildDial(),
+      ),
     );
   }
 }
