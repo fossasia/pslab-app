@@ -55,6 +55,7 @@ dependencies:
   web: ^1.1.1
   mp_audio_stream: ^0.2.2
   ffi: ^2.2.0
+  home_widget: ^0.9.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1

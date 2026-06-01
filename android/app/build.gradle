@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "org.jetbrains.kotlin.plugin.compose"
 }
 
 def localProperties = new Properties()
@@ -75,6 +76,14 @@ android {
                 signingConfig = signingConfigs.release
         }
     }
+    buildFeatures {
+        compose true
+    }
+}
+
+dependencies {
+    implementation "androidx.glance:glance-appwidget:1.1.1"
+    implementation "androidx.glance:glance-material3:1.1.1"
 }
 
 flutter {
