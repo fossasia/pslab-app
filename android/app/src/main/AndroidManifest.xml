@@ -48,7 +48,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <receiver android:name="io.widget.WidgetReceiver" android:exported="true">
+        <receiver android:name="io.pslab.widget.WidgetReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/theme/colors.dart';
@@ -64,6 +66,19 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         _files.add(LoggedDataFile(instrumentName: name, file: file));
       }
     }
+
+    final List<Map<String, String>> widgetListData = _files.map((f) {
+      final fileName = f.file.path.split('/').last;
+      return {
+        'fileName': fileName,
+        'instrument': f.instrumentName,
+      };
+    }).toList();
+
+    await HomeWidget.saveWidgetData<String>('logs_json_key', jsonEncode(widgetListData));
+
+    await HomeWidget.updateWidget(androidName: 'widget.WidgetReceiver');
+
     if (mounted) {
       setState(() {
         _isLoading = false;
