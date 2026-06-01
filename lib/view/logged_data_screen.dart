@@ -67,17 +67,20 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       }
     }
 
-    final List<Map<String, String>> widgetListData = _files.map((f) {
-      final fileName = f.file.path.split('/').last;
-      return {
-        'fileName': fileName,
-        'instrument': f.instrumentName,
-      };
-    }).toList();
+    if (Platform.isAndroid) {
+      final List<Map<String, String>> widgetListData = _files.map((f) {
+        final fileName = f.file.path.split('/').last;
+        return {
+          'fileName': fileName,
+          'instrument': f.instrumentName,
+        };
+      }).toList();
 
-    await HomeWidget.saveWidgetData<String>('logs_json_key', jsonEncode(widgetListData));
+      await HomeWidget.saveWidgetData<String>(
+          'logs_json_key', jsonEncode(widgetListData));
 
-    await HomeWidget.updateWidget(androidName: 'widget.WidgetReceiver');
+      await HomeWidget.updateWidget(androidName: 'widget.WidgetReceiver');
+    }
 
     if (mounted) {
       setState(() {

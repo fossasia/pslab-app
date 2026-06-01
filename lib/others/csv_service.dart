@@ -61,24 +61,28 @@ class CsvService {
       await file.writeAsString(csvData);
       logger.i('${appLocalizations.csvFileSaved}: ${file.path}');
 
-      try {
-        final allFiles = await getSavedFiles(instrumentName);
+      if (Platform.isAndroid) {
+        try {
+          final allFiles = await getSavedFiles(instrumentName);
 
-        final List<Map<String, String>> widgetListData = allFiles.map((f) {
-          final name = f.path.split('/').last;
-          return {
-            'fileName': name,
-            'instrument': instrumentName,
-          };
-        }).toList();
+          final List<Map<String, String>> widgetListData = allFiles.map((f) {
+            final name = f.path.split('/').last;
+            return {
+              'fileName': name,
+              'instrument': instrumentName,
+            };
+          }).toList();
 
-        await HomeWidget.saveWidgetData<String>('logs_json_key', jsonEncode(widgetListData));
-        await HomeWidget.updateWidget(
-          androidName: 'widget.WidgetReceiver',
-        );
-      } catch (widgetError) {
-        logger.w('Error during widget update: $widgetError');
+          await HomeWidget.saveWidgetData<String>(
+              'logs_json_key', jsonEncode(widgetListData));
+          await HomeWidget.updateWidget(
+            androidName: 'widget.WidgetReceiver',
+          );
+        } catch (widgetError) {
+          logger.w('Error during widget update: $widgetError');
+        }
       }
+
       return file;
     } catch (e) {
       logger.e('${appLocalizations.csvSavingError}: $e');
