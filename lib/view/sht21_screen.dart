@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/sensor_chart_widget.dart';
 import 'package:pslab/view/widgets/sensor_controls.dart';
 import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
@@ -8,27 +9,20 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/logger_service.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/colors.dart';
-import 'widgets/sensor_chart_widget.dart';
 import '../providers/sht21_provider.dart';
 
 class SHT21Screen extends StatefulWidget {
   const SHT21Screen({super.key});
-
   @override
   State<SHT21Screen> createState() => _SHT21ScreenState();
 }
 
 class _SHT21ScreenState extends State<SHT21Screen> {
-  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
-  String sensorImage = 'assets/images/sht21.jpg';
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  String sensorImage = 'assets/images/sht21.png';
   I2C? _i2c;
   ScienceLab? _scienceLab;
   late SHT21Provider _provider;
-
-  // Hardcoded strings for SHT21-specific labels (not in l10n yet)
-  static const String _sht21Title = 'SHT21';
-  static const String _humidityLabel = 'Humidity';
-  static const String _humidityUnit = '%';
 
   @override
   void initState() {
@@ -56,7 +50,7 @@ class _SHT21ScreenState extends State<SHT21Screen> {
             style: TextStyle(color: snackBarContentColor),
           ),
           backgroundColor: snackBarBackgroundColor,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 1500),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -83,20 +77,18 @@ class _SHT21ScreenState extends State<SHT21Screen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) {
-        _provider = SHT21Provider();
-        if (_i2c != null) {
-          _provider.init(_i2c!);
-        } else if (_scienceLab == null || !_scienceLab!.isConnected()) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _showSensorErrorSnackbar(appLocalizations.pslabNotConnected);
-          });
-        }
+        _provider = SHT21Provider()
+          ..initializeSensors(
+            onError: _showSensorErrorSnackbar,
+            i2c: _i2c,
+            scienceLab: _scienceLab,
+          );
         return _provider;
       },
       child: Consumer<SHT21Provider>(
         builder: (context, provider, child) {
           return CommonScaffold(
-            title: _sht21Title,
+            title: appLocalizations.sht21,
             body: Column(
               children: [
                 Expanded(
@@ -108,23 +100,21 @@ class _SHT21ScreenState extends State<SHT21Screen> {
                         _buildRawDataSection(provider),
                         const SizedBox(height: 24),
                         SensorChartWidget(
-                          title:
-                              '${appLocalizations.plot} - ${appLocalizations.temperature}',
-                          yAxisLabel:
-                              '${appLocalizations.temperature} (${appLocalizations.temperatureUnitLabel})',
-                          data: provider.temperatureData,
+                          title: '${appLocalizations.plot} - Temperature',
+                          yAxisLabel: 'Temperature (°C)',
                           lineColor: sht21ChartColors[0],
-                          unit: appLocalizations.temperatureUnitLabel,
+                          data: provider.tempChartData,
+                          unit: ' °C',
                           maxDataPoints: provider.numberOfReadings,
                           showDots: true,
                         ),
                         const SizedBox(height: 20),
                         SensorChartWidget(
-                          title: '${appLocalizations.plot} - $_humidityLabel',
-                          yAxisLabel: '$_humidityLabel ($_humidityUnit)',
-                          data: provider.humidityData,
+                          title: '${appLocalizations.plot} - Humidity',
+                          yAxisLabel: 'Humidity (%)',
                           lineColor: sht21ChartColors[1],
-                          unit: _humidityUnit,
+                          data: provider.humidityChartData,
+                          unit: ' %',
                           maxDataPoints: provider.numberOfReadings,
                           showDots: true,
                         ),
@@ -217,13 +207,13 @@ class _SHT21ScreenState extends State<SHT21Screen> {
                   child: Column(
                     children: [
                       _buildDataCard(
-                        appLocalizations.temperature,
-                        provider.temperature.toStringAsFixed(2),
+                        "Temperature",
+                        provider.currentTemp.toStringAsFixed(2),
                       ),
                       const SizedBox(height: 16),
                       _buildDataCard(
-                        _humidityLabel,
-                        provider.humidity.toStringAsFixed(2),
+                        "Humidity",
+                        provider.currentHumidity.toStringAsFixed(2),
                       ),
                     ],
                   ),
@@ -297,7 +287,6 @@ class _SHT21ScreenState extends State<SHT21Screen> {
 
   @override
   void dispose() {
-    _provider.dispose();
     super.dispose();
   }
 }

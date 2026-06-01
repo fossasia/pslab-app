@@ -91,3 +91,6 @@ Color buttonDisabledColor = Color.fromARGB(255, 240, 162, 162);
 Color optionDisabledColor = Colors.black38;
 Color waveGeneratorPropTextColor = Colors.deepOrange;
 List<Color> stepCompletedColor = [Colors.green.shade400, Colors.green.shade600];
+const Color gaugeGradientStart = Color(0xFF40C4FF);
+const Color gaugeGradientCenter = Color(0xFF00B0FF);
+const Color gaugeGradientEnd = Color(0xFF0091EA);

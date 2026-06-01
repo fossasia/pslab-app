@@ -113,10 +113,10 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           appLocalizations.thermometerDesc, '/thermometer'),
       _InstrumentData(appLocalizations.roboticArm,
           appLocalizations.roboticArmDesc, '/roboticArm'),
-      // Instruments below are not yet implemented.
-      //_InstrumentData(appLocalizations.gasSensor, appLocalizations.gasSensorDesc, '/gassensor'),
       _InstrumentData(appLocalizations.dustSensor,
           appLocalizations.dustSensorDesc, '/dustsensor'),
+      _InstrumentData(appLocalizations.gasSensor,
+          appLocalizations.gasSensorDesc, '/gassensor'),
       _InstrumentData(appLocalizations.soundMeter,
           appLocalizations.soundMeterDesc, '/soundmeter'),
     ];
@@ -205,7 +205,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
                           )
                         : GridView.builder(
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 2.5,
                             ),

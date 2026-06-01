@@ -1,166 +1,179 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
-import '../communication/peripherals/i2c.dart';
-import '../communication/sensors/sht21.dart';
-import '../models/chart_data_points.dart';
-import '../others/logger_service.dart';
+import 'package:flutter/material.dart';
+import 'package:pslab/communication/peripherals/i2c.dart';
+import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/communication/sensors/sht21.dart';
+import 'package:pslab/others/logger_service.dart';
+
+import 'package:pslab/models/chart_data_points.dart';
 
 class SHT21Provider extends ChangeNotifier {
+  static const String _tag = "SHT21Provider";
+
   SHT21? _sensor;
-  Timer? _dataTimer;
+  Timer? _readTimer;
 
-  double _temperature = 0.0;
-  double _humidity = 0.0;
+  bool _isSensorAvailable = false;
+  bool _isInitialized = false;
 
-  final List<ChartDataPoint> _temperatureData = [];
-  final List<ChartDataPoint> _humidityData = [];
+  bool isRunning = false;
+  bool isLooping = false;
+  int timegapMs = 500;
+  int numberOfReadings = 500;
 
-  bool _isRunning = false;
-  bool _isLooping = false;
-  int _timegapMs = 1000;
-  int _numberOfReadings = 100;
-  int _collectedReadings = 0;
+  double _currentTemp = 0.0;
+  double _currentHumidity = 0.0;
 
-  double _currentTime = 0.0;
-  static const int maxDataPoints = 1000;
+  final List<double> _timeData = [];
+  final List<double> _tempRawData = [];
+  final List<double> _humidityRawData = [];
+  bool _isFetching = false;
+  final List<ChartDataPoint> tempChartData = [];
+  final List<ChartDataPoint> humidityChartData = [];
+  double _startTime = 0;
 
-  double get temperature => _temperature;
-  double get humidity => _humidity;
+  double get currentTemp => _currentTemp;
+  double get currentHumidity => _currentHumidity;
+  bool get isSensorAvailable => _isSensorAvailable;
 
-  List<ChartDataPoint> get temperatureData =>
-      List.unmodifiable(_temperatureData);
-  List<ChartDataPoint> get humidityData => List.unmodifiable(_humidityData);
+  Future<void> initializeSensors({
+    required Function(String) onError,
+    I2C? i2c,
+    ScienceLab? scienceLab,
+  }) async {
+    if (_isInitialized) return;
 
-  bool get isRunning => _isRunning;
-  bool get isLooping => _isLooping;
-  int get timegapMs => _timegapMs;
-  int get numberOfReadings => _numberOfReadings;
-  int get collectedReadings => _collectedReadings;
+    if (scienceLab != null && scienceLab.isConnected() && i2c != null) {
+      _sensor = SHT21(i2c);
 
-  SHT21Provider();
+      bool connected = await _sensor!.checkConnection();
+      if (connected) {
+        _isSensorAvailable = true;
+        _isInitialized = true;
+        logger.d("$_tag: SHT21 initialized successfully!");
+        notifyListeners();
+        return;
+      }
+    }
 
-  void init(I2C i2c) {
-    _sensor = SHT21(i2c);
+    _isSensorAvailable = false;
+    _isInitialized = true;
+    onError("SHT21 Sensor not found.");
+    notifyListeners();
   }
 
   void toggleDataCollection() {
-    if (_isRunning) {
-      _stopDataCollection();
+    if (isRunning) {
+      _stopReading();
     } else {
-      _startDataCollection();
+      _startReading();
     }
   }
 
-  void _startDataCollection() {
-    if (_sensor == null) return;
+  void toggleLooping() {
+    isLooping = !isLooping;
+    notifyListeners();
+  }
 
-    _isRunning = true;
-    _collectedReadings = 0;
+  void setTimegap(int newTimegap) {
+    timegapMs = newTimegap;
+    if (isRunning) {
+      _stopReading();
+      _startReading();
+    }
+    notifyListeners();
+  }
 
-    _dataTimer =
-        Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+  void setNumberOfReadings(int readings) {
+    numberOfReadings = readings;
+    notifyListeners();
+  }
+
+  void clearData() {
+    _timeData.clear();
+    _tempRawData.clear();
+    _humidityRawData.clear();
+    tempChartData.clear();
+    humidityChartData.clear();
+    _currentTemp = 0.0;
+    _currentHumidity = 0.0;
+    notifyListeners();
+  }
+
+  void _startReading() {
+    if (!_isSensorAvailable || _sensor == null) return;
+
+    isRunning = true;
+    if (_timeData.isEmpty) {
+      _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+    } else {
+      double now = DateTime.now().millisecondsSinceEpoch / 1000.0;
+      double timePaused = now - _startTime - _timeData.last;
+      _startTime += timePaused;
+    }
+
+    _readTimer?.cancel();
+    _readTimer =
+        Timer.periodic(Duration(milliseconds: timegapMs), (timer) async {
+      if (!isRunning) return;
+
+      if (_isFetching) return;
+      _isFetching = true;
+
       try {
-        await _fetchSensorData();
-        _collectedReadings++;
+        _currentHumidity = await _sensor!.getHumidity();
+        await Future.delayed(const Duration(milliseconds: 250));
 
-        if (!_isLooping && _collectedReadings >= _numberOfReadings) {
-          _stopDataCollection();
-        }
+        _currentTemp = await _sensor!.getTemperature();
 
-        if (_isLooping && _temperatureData.length >= maxDataPoints) {
-          _removeOldestDataPoints();
+        _updateChartData();
+        notifyListeners();
+
+        if (!isLooping && tempChartData.length >= numberOfReadings) {
+          _stopReading();
         }
       } catch (e) {
-        logger.e('Error fetching SHT21 sensor data: $e');
+        logger.e("$_tag: Error reading sensor data: $e");
+      } finally {
+        _isFetching = false;
       }
     });
     notifyListeners();
   }
 
-  void _stopDataCollection() {
-    _isRunning = false;
-    _dataTimer?.cancel();
-    _dataTimer = null;
+  void _stopReading() {
+    isRunning = false;
+    _readTimer?.cancel();
     notifyListeners();
   }
 
-  Future<void> _fetchSensorData() async {
-    if (_sensor == null) return;
+  void _updateChartData() {
+    double currentTime =
+        (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
 
-    try {
-      double temp = await _sensor!.getTemperature();
-      double hum = await _sensor!.getHumidity();
+    _timeData.add(currentTime);
+    _tempRawData.add(_currentTemp);
+    _humidityRawData.add(_currentHumidity);
 
-      _temperature = temp;
-      _humidity = hum;
+    if (_timeData.length > numberOfReadings && !isLooping) return;
 
-      _currentTime += _timegapMs / 1000.0;
-
-      _addDataPoint(_temperatureData, _temperature);
-      _addDataPoint(_humidityData, _humidity);
-
-      notifyListeners();
-    } catch (e) {
-      logger.e('Error in _fetchSensorData: $e');
-      rethrow;
-    }
-  }
-
-  void _addDataPoint(List<ChartDataPoint> dataList, double value) {
-    dataList.add(ChartDataPoint(_currentTime, value));
-    if (dataList.length > 50) {
-      dataList.removeAt(0);
-    }
-  }
-
-  void _removeOldestDataPoints() {
-    const keepPoints = 800;
-
-    if (_temperatureData.length > keepPoints) {
-      final removeCount = _temperatureData.length - keepPoints;
-      _temperatureData.removeRange(0, removeCount);
-      _humidityData.removeRange(0, removeCount);
-    }
-  }
-
-  void toggleLooping() {
-    _isLooping = !_isLooping;
-    notifyListeners();
-  }
-
-  void setTimegap(int timegapMs) {
-    _timegapMs = timegapMs;
-
-    if (_isRunning) {
-      _stopDataCollection();
-      _startDataCollection();
+    if (isLooping && _timeData.length > numberOfReadings) {
+      _timeData.removeAt(0);
+      _tempRawData.removeAt(0);
+      _humidityRawData.removeAt(0);
     }
 
-    notifyListeners();
-  }
-
-  void setNumberOfReadings(int numberOfReadings) {
-    _numberOfReadings = numberOfReadings;
-    notifyListeners();
-  }
-
-  void clearData() {
-    _temperatureData.clear();
-    _humidityData.clear();
-    _temperature = 0;
-    _humidity = 0;
-    _currentTime = 0.0;
-    _collectedReadings = 0;
-    notifyListeners();
-  }
-
-  bool get isCollectionComplete {
-    return !_isLooping && _collectedReadings >= _numberOfReadings;
+    tempChartData.clear();
+    humidityChartData.clear();
+    for (int i = 0; i < _timeData.length; i++) {
+      tempChartData.add(ChartDataPoint(_timeData[i], _tempRawData[i]));
+      humidityChartData.add(ChartDataPoint(_timeData[i], _humidityRawData[i]));
+    }
   }
 
   @override
   void dispose() {
-    _stopDataCollection();
+    _stopReading();
     super.dispose();
   }
 }
