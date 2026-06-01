@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:csv/csv.dart' as csv;
 import 'package:file_picker/file_picker.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:share_plus/share_plus.dart';
@@ -59,6 +60,25 @@ class CsvService {
       final csvData = codec.encode(data);
       await file.writeAsString(csvData);
       logger.i('${appLocalizations.csvFileSaved}: ${file.path}');
+
+      try {
+        final allFiles = await getSavedFiles(instrumentName);
+
+        final List<Map<String, String>> widgetListData = allFiles.map((f) {
+          final name = f.path.split('/').last;
+          return {
+            'fileName': name,
+            'instrument': instrumentName,
+          };
+        }).toList();
+
+        await HomeWidget.saveWidgetData<String>('logs_json_key', jsonEncode(widgetListData));
+        await HomeWidget.updateWidget(
+          androidName: 'widget.WidgetReceiver',
+        );
+      } catch (widgetError) {
+        logger.w('Error during widget update: $widgetError');
+      }
       return file;
     } catch (e) {
       logger.e('${appLocalizations.csvSavingError}: $e');
