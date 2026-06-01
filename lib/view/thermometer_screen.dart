@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/providers/thermometer_state_provider.dart';
+import 'package:pslab/providers/thermometer_config_provider.dart';
+import 'package:pslab/view/thermometer_config_screen.dart';
+import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/thermometer_card.dart';
@@ -9,33 +14,53 @@ import 'package:fl_chart/fl_chart.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import '../theme/colors.dart';
+import '../constants.dart';
 
 class ThermometerScreen extends StatefulWidget {
-  const ThermometerScreen({super.key});
+  final List<List<dynamic>>? playbackData;
+
+  const ThermometerScreen({super.key, this.playbackData});
+
   @override
   State<StatefulWidget> createState() => _ThermometerScreenState();
 }
 
 class _ThermometerScreenState extends State<ThermometerScreen> {
-  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
-  ThermometerStateProvider? _temperatureProvider;
+  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  final CsvService _csvService = CsvService();
+  late ThermometerStateProvider _temperatureProvider;
+  late ThermometerConfigProvider _configProvider;
+
   bool _showGuide = false;
   bool _snackbarShown = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeProvider();
-  }
-
-  Future<void> _initializeProvider() async {
     _temperatureProvider = ThermometerStateProvider();
-    await _temperatureProvider!.initializeSensors();
+    _configProvider = ThermometerConfigProvider();
+
+    _temperatureProvider.onPlaybackEnd = () {
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    };
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        if (widget.playbackData != null) {
+          _temperatureProvider.startPlayback(widget.playbackData!);
+        } else {
+          _temperatureProvider.setConfigProvider(_configProvider);
+          _temperatureProvider.initializeSensors();
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
-    _temperatureProvider?.dispose();
+    _temperatureProvider.dispose();
     super.dispose();
   }
 
@@ -45,9 +70,9 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
         SnackBar(
           content: Text(
             message,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: snackBarContentColor),
           ),
-          backgroundColor: Colors.grey[700],
+          backgroundColor: snackBarBackgroundColor,
           duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
         ),
@@ -75,15 +100,166 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
     ];
   }
 
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(appLocalizations.showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'thermometer_config',
+          child: Text(appLocalizations.thermometerConfig),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            _navigateToLoggedData();
+            break;
+          case 'thermometer_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider.value(
+          value: _configProvider,
+          child: const ThermometerConfigScreen(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _navigateToLoggedData() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoggedDataScreen(
+          instrumentNames: [appLocalizations.thermometerTitle.toLowerCase()],
+          appBarName: appLocalizations.thermometerTitle,
+          instrumentIcons: [instrumentIcons[12]],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_temperatureProvider.isRecording) {
+      final data = _temperatureProvider.stopRecording();
+      await _showSaveFileDialog(data);
+    } else {
+      await _temperatureProvider.startRecording();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${appLocalizations.recordingStarted}...',
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
+    final TextEditingController filenameController = TextEditingController();
+    final String defaultFilename =
+        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
+    filenameController.text = defaultFilename;
+
+    final String? fileName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(appLocalizations.saveRecording),
+          content: TextField(
+            controller: filenameController,
+            decoration: InputDecoration(
+              hintText: appLocalizations.enterFileName,
+              labelText: appLocalizations.fileName,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(appLocalizations.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, filenameController.text);
+              },
+              child: Text(appLocalizations.save),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (fileName != null) {
+      _csvService.writeMetaData(
+          appLocalizations.thermometerTitle.toLowerCase(), data);
+      final file = await _csvService.saveCsvFile(
+          appLocalizations.thermometerTitle.toLowerCase(), fileName, data);
+      if (mounted) {
+        if (file != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                appLocalizations.failedToSave,
+                style: TextStyle(color: snackBarContentColor),
+              ),
+              backgroundColor: snackBarBackgroundColor,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ThermometerStateProvider>.value(
-      value: _temperatureProvider!,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThermometerStateProvider>.value(
+          value: _temperatureProvider,
+        ),
+        ChangeNotifierProvider<ThermometerConfigProvider>.value(
+          value: _configProvider,
+        ),
+      ],
       child: Consumer<ThermometerStateProvider>(
         builder: (context, provider, child) {
           if (!provider.isSensorAvailable() &&
               !_snackbarShown &&
-              provider.isInitialized()) {
+              provider.isInitialized() &&
+              !provider.isPlayingBack) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showSensorErrorSnackbar(
                   appLocalizations.temperatureSensorUnavailableMessage);
@@ -94,8 +270,27 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
           return Stack(
             children: [
               CommonScaffold(
-                title: appLocalizations.thermometerTitle,
+                title: provider.isPlayingBack
+                    ? '${appLocalizations.thermometerTitle} - Playback'
+                    : appLocalizations.thermometerTitle,
                 onGuidePressed: _showInstrumentGuide,
+                onOptionsPressed:
+                    provider.isPlayingBack ? null : _showOptionsMenu,
+                onRecordPressed:
+                    provider.isPlayingBack ? null : _toggleRecording,
+                isRecording: provider.isRecording,
+                isPlayingBack: provider.isPlayingBack,
+                isPlaybackPaused: provider.isPlaybackPaused,
+                onPlaybackPauseResume: provider.isPlayingBack
+                    ? (provider.isPlaybackPaused
+                        ? _temperatureProvider.resumePlayback
+                        : _temperatureProvider.pausePlayback)
+                    : null,
+                onPlaybackStop: provider.isPlayingBack
+                    ? () async {
+                        await _temperatureProvider.stopPlayback();
+                      }
+                    : null,
                 body: SafeArea(
                     child: LayoutBuilder(builder: (context, constraints) {
                   final isLargeScreen = constraints.maxWidth > 900;

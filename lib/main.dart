@@ -17,6 +17,7 @@ import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
+import 'package:pslab/view/gas_sensor_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
 import 'package:pslab/view/logged_data_screen.dart';
@@ -142,6 +143,8 @@ class MyApp extends StatelessWidget {
                     const _LocaleAware(child: SoundMeterScreen()),
                 '/thermometer': (context) =>
                     const _LocaleAware(child: ThermometerScreen()),
+                '/gassensor': (context) =>
+                    const _LocaleAware(child: GasSensorScreen()),
                 '/sensors': (context) =>
                     const _LocaleAware(child: SensorsScreen()),
                 '/experiments': (context) =>
