@@ -346,6 +346,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
             body: Stack(
               children: [
                 SafeArea(
+                  left: false,
+                  right: false,
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Column(

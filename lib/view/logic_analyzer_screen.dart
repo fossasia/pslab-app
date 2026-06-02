@@ -283,6 +283,8 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
                 onOptionsPressed: _showOptionsMenu,
                 onGuidePressed: _showInstrumentGuide,
                 body: SafeArea(
+                  left: false,
+                  right: false,
                   minimum: const EdgeInsets.only(right: 0, bottom: 0),
                   child: Container(
                     decoration: BoxDecoration(
