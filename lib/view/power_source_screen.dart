@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -34,11 +36,79 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
   final TextEditingController _pv2Controller = TextEditingController();
   final TextEditingController _pv3Controller = TextEditingController();
   final TextEditingController _pcsController = TextEditingController();
+  final FocusNode _pv1Focus = FocusNode();
+  final FocusNode _pv2Focus = FocusNode();
+  final FocusNode _pv3Focus = FocusNode();
+  final FocusNode _pcsFocus = FocusNode();
+
+  final FocusNode _keyboardFocusNode = FocusNode();
+  Pin? _hoveredPin;
+
+  bool get _anyFieldFocused =>
+      _pv1Focus.hasFocus ||
+      _pv2Focus.hasFocus ||
+      _pv3Focus.hasFocus ||
+      _pcsFocus.hasFocus;
+
+  static const double _scrollStepUnit = 50.0;
+  final Map<Pin, double> _scrollAccumulators = {};
+
+  void _handlePointerScroll(
+    PointerSignalEvent event,
+    Pin pin,
+    double value,
+    double step,
+    Future<void> Function(double) onValueChanged,
+  ) {
+    if (event is! PointerScrollEvent) return;
+
+    GestureBinding.instance.pointerSignalResolver.register(event, (_) {
+      final double accumulated =
+          (_scrollAccumulators[pin] ?? 0) + event.scrollDelta.dy;
+      final int steps = (accumulated / _scrollStepUnit).truncate();
+      if (steps == 0) {
+        _scrollAccumulators[pin] = accumulated;
+        return;
+      }
+      _scrollAccumulators[pin] = accumulated - steps * _scrollStepUnit;
+
+      onValueChanged(value - steps * step);
+    });
+  }
+
+  void _onFieldFocusChange() {
+    if (mounted) setState(() {});
+  }
+
+  KeyEventResult _handleArrowKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final Pin? pin = _hoveredPin;
+    if (pin == null || _anyFieldFocused) return KeyEventResult.ignored;
+
+    double delta;
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      delta = _provider.step;
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      delta = -_provider.step;
+    } else {
+      return KeyEventResult.ignored;
+    }
+
+    _provider.setValue(_provider.getValue(pin) + delta, pin);
+    return KeyEventResult.handled;
+  }
+
   @override
   void initState() {
     _provider = PowerSourceStateProvider();
     _configProvider = PowerSourceConfigProvider();
     _provider.setConfigProvider(_configProvider!);
+
+    for (final focusNode in [_pv1Focus, _pv2Focus, _pv3Focus, _pcsFocus]) {
+      focusNode.addListener(_onFieldFocusChange);
+    }
 
     _provider.onPlaybackEnd = () {
       if (mounted && Navigator.canPop(context)) {
@@ -143,6 +213,11 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
     _pv2Controller.dispose();
     _pv3Controller.dispose();
     _pcsController.dispose();
+    _pv1Focus.dispose();
+    _pv2Focus.dispose();
+    _pv3Focus.dispose();
+    _pcsFocus.dispose();
+    _keyboardFocusNode.dispose();
     super.dispose();
   }
 
@@ -220,107 +295,123 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
     required Future<void> Function(double) onValueChanged,
     required PowerSourceStateProvider provider,
     required TextEditingController controller,
+    required FocusNode focusNode,
   }) {
     final String expectedText = value.toStringAsFixed(2);
-    if (controller.text != expectedText) {
+    if (!focusNode.hasFocus && controller.text != expectedText) {
       controller.text = expectedText;
       controller.selection =
           TextSelection.collapsed(offset: expectedText.length);
     }
-    return Card(
-      color: scaffoldBackgroundColor,
-      child: Row(
-        children: [
-          Expanded(
-            flex: 45,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    controller: controller,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 18),
-                    onSubmitted: (v) async =>
-                        await onValueChanged(double.tryParse(v) ?? 0),
-                    decoration: InputDecoration(
-                      suffixText: suffix,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: powerSourceBorderLightRed),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: powerSourceBorderLightRed),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          height: 50,
-                          width: 55,
-                          child: IconButton.filled(
-                            icon: const Icon(Icons.arrow_drop_up),
-                            iconSize: 36,
-                            color: scaffoldBackgroundColor,
-                            onPressed: () async {
-                              await onValueChanged(value + provider.step);
-                            },
-                            style: IconButton.styleFrom(
-                              backgroundColor: primaryRed,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+    return MouseRegion(
+      onEnter: (_) {
+        _hoveredPin = pin;
+        if (!_anyFieldFocused) _keyboardFocusNode.requestFocus();
+      },
+      onExit: (_) {
+        if (_hoveredPin == pin) _hoveredPin = null;
+      },
+      child: Listener(
+        onPointerSignal: (event) => _handlePointerScroll(
+            event, pin, value, provider.step, onValueChanged),
+        child: Card(
+          color: scaffoldBackgroundColor,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 45,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(label,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      TextField(
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        controller: controller,
+                        focusNode: focusNode,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18),
+                        onSubmitted: (v) async =>
+                            await onValueChanged(double.tryParse(v) ?? 0),
+                        onTapOutside: (_) => focusNode.unfocus(),
+                        decoration: InputDecoration(
+                          suffixText: suffix,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: powerSourceBorderLightRed),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: powerSourceBorderLightRed),
                           ),
                         ),
-                        SizedBox(
-                          height: 50,
-                          width: 55,
-                          child: IconButton.filled(
-                            icon: const Icon(Icons.arrow_drop_down),
-                            iconSize: 36,
-                            color: scaffoldBackgroundColor,
-                            onPressed: () async {
-                              await onValueChanged(value - provider.step);
-                            },
-                            style: IconButton.styleFrom(
-                              backgroundColor: primaryRed,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                      ),
+                      const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: 55,
+                              child: IconButton.filled(
+                                icon: const Icon(Icons.arrow_drop_up),
+                                iconSize: 36,
+                                color: scaffoldBackgroundColor,
+                                onPressed: () async {
+                                  await onValueChanged(value + provider.step);
+                                },
+                                style: IconButton.styleFrom(
+                                  backgroundColor: primaryRed,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            SizedBox(
+                              height: 50,
+                              width: 55,
+                              child: IconButton.filled(
+                                icon: const Icon(Icons.arrow_drop_down),
+                                iconSize: 36,
+                                color: scaffoldBackgroundColor,
+                                onPressed: () async {
+                                  await onValueChanged(value - provider.step);
+                                },
+                                style: IconButton.styleFrom(
+                                  backgroundColor: primaryRed,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              Expanded(
+                flex: 55,
+                child: PowerSourceKnob(
+                  maxValue: maxValue,
+                  pin: pin,
+                ),
+              )
+            ],
           ),
-          Expanded(
-            flex: 55,
-            child: PowerSourceKnob(
-              maxValue: maxValue,
-              pin: pin,
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
@@ -342,7 +433,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                 provider: provider,
                 maxValue: 1000,
                 pin: Pin.pv1,
-                controller: _pv1Controller),
+                controller: _pv1Controller,
+                focusNode: _pv1Focus),
             _buildPowerCard(
                 label: appLocalizations.pinPV2,
                 value: provider.voltagePV2,
@@ -351,7 +443,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                 provider: provider,
                 maxValue: 660,
                 pin: Pin.pv2,
-                controller: _pv2Controller),
+                controller: _pv2Controller,
+                focusNode: _pv2Focus),
             _buildPowerCard(
                 label: appLocalizations.pinPV3,
                 value: provider.voltagePV3,
@@ -360,7 +453,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                 provider: provider,
                 maxValue: 330,
                 pin: Pin.pv3,
-                controller: _pv3Controller),
+                controller: _pv3Controller,
+                focusNode: _pv3Focus),
             _buildPowerCard(
                 label: appLocalizations.pinPCS,
                 value: provider.currentPCS,
@@ -369,7 +463,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                 provider: provider,
                 maxValue: 330,
                 pin: Pin.pcs,
-                controller: _pcsController),
+                controller: _pcsController,
+                focusNode: _pcsFocus),
           ];
 
           return Stack(
@@ -395,23 +490,31 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                         await _provider.stopPlayback();
                       }
                     : null,
-                body: ScrollConfiguration(
-                  behavior: const ScrollBehavior(),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return constraints.maxWidth < 600
-                          ? ListView(
-                              children: powerSourceCards,
-                            )
-                          : GridView(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 1.5,
-                              ),
-                              children: powerSourceCards,
-                            );
-                    },
+                body: Focus(
+                  focusNode: _keyboardFocusNode,
+                  autofocus: true,
+                  skipTraversal: true,
+                  onKeyEvent: _handleArrowKey,
+                  child: ScrollConfiguration(
+                    behavior: const ScrollBehavior(),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final double rowHeight =
+                            (constraints.maxHeight / 2).clamp(260.0, 480.0);
+                        return constraints.maxWidth < 600
+                            ? ListView(
+                                children: powerSourceCards,
+                              )
+                            : GridView(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisExtent: rowHeight,
+                                ),
+                                children: powerSourceCards,
+                              );
+                      },
+                    ),
                   ),
                 ),
               ),
