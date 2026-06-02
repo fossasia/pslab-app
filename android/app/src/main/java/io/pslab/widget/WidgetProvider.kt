@@ -22,7 +22,6 @@ import androidx.glance.unit.ColorProvider
 import androidx.compose.ui.graphics.Color
 import org.json.JSONArray
 import org.json.JSONException
-// Importa la tua MainActivity di Flutter per l'azione di click
 import io.pslab.MainActivity
 
 data class LogItem(val fileName: String, val instrument: String)
@@ -46,7 +45,7 @@ class WidgetProvider : GlanceAppWidget() {
                 )
             }
         } catch (e: JSONException) {
-            // Fallback in caso di errore
+            // fallback
         }
 
         provideContent {
@@ -83,7 +82,6 @@ class WidgetProvider : GlanceAppWidget() {
                 )
             }
 
-            // CONTENUTO PRINCIPALE
             if (logs.isEmpty()) {
                 Box(
                     modifier = GlanceModifier

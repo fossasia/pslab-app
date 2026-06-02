@@ -63,21 +63,36 @@ class CsvService {
 
       if (Platform.isAndroid) {
         try {
-          final allFiles = await getSavedFiles(instrumentName);
+          final externalDir = await getExternalStorageDirectory();
+          final pslabDir = Directory('${externalDir?.path}/PSLab');
 
-          final List<Map<String, String>> widgetListData = allFiles.map((f) {
-            final name = f.path.split('/').last;
-            return {
-              'fileName': name,
-              'instrument': instrumentName,
-            };
-          }).toList();
+          final logEntries =
+              <({String fileName, String instrument, DateTime modified})>[];
+          if (await pslabDir.exists()) {
+            for (final entity in pslabDir.listSync(followLinks: false)) {
+              if (entity is! Directory) continue;
+              final instrument = entity.path.split('/').last;
+              for (final file in entity
+                  .listSync(followLinks: false)
+                  .whereType<File>()
+                  .where((f) => f.path.endsWith('.csv'))) {
+                logEntries.add((
+                  fileName: file.path.split('/').last,
+                  instrument: instrument,
+                  modified: file.statSync().modified,
+                ));
+              }
+            }
+          }
+          logEntries.sort((a, b) => b.modified.compareTo(a.modified));
+          final widgetListData = logEntries
+              .take(20)
+              .map((e) => {'fileName': e.fileName, 'instrument': e.instrument})
+              .toList();
 
           await HomeWidget.saveWidgetData<String>(
               'logs_json_key', jsonEncode(widgetListData));
-          await HomeWidget.updateWidget(
-            androidName: 'widget.WidgetReceiver',
-          );
+          await HomeWidget.updateWidget(androidName: 'widget.WidgetReceiver');
         } catch (widgetError) {
           logger.w('Error during widget update: $widgetError');
         }
