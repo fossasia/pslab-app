@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.pslab.PSLab</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache-2.0</project_license> 
+  <name>PSLab</name>
+  <summary>Pocket Science Lab</summary>
+  <developer_name>FOSSASIA</developer_name>
+  <description>
+    <p>Instrument for scientific experiments and electronic measurements</p>
+  </description>
+  <launchable type="desktop-id">io.pslab.PSLab.desktop</launchable>
+  
+  <screenshots> 
+    <screenshot type="default">
+      <caption>Main interface of PSLab</caption>
+      <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/view_instrument_panel.png</image>
+    </screenshot>
+    <screenshot type="default">
+      <caption>About PSLab</caption>
+      <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/view_about_us.png</image>
+    </screenshot>
+    <screenshot type="default">
+      <caption>Pin Layout</caption>
+      <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/view_pin_layout_front.png</image>
+    </screenshot>
+    <screenshot type="default">
+      <caption>Oscilloscope</caption>
+      <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_oscilloscope_channel_view.png</image>
+    </screenshot>
+    <screenshot type="default">
+      <caption>Dust Sensor</caption>
+      <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_dust_sensor_view.png</image>
+    </screenshot>
+    <screenshot type="default">
+      <caption>Robotic arm</caption>
+      <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_robotic_arm_controller_view.png</image>
+    </screenshot>
+    <screenshot type="default">
+      <caption>Logical Analyzer</caption>
+      <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_logical_analyzer_view.png</image>
+    </screenshot>
+  </screenshots>
+  
+  
+  <url type="homepage">https://pslab.io/</url>
+  <url type="bugtracker">https://github.com/fossasia/pslab-app/issues</url>
+  <url type="vcs-browser">https://github.com/fossasia/pslab-app</url>
+
+  <categories>
+    <category>Development</category>
+    <category>Education</category>
+    <category>Science</category>
+  </categories>
+  
+  <content_rating type="oars-1.1" /> 
+  <releases> 
+    <release version="4.17.68" date="2026-05-08" />
+  </releases>
+</component>
