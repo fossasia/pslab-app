@@ -453,7 +453,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                   child: ListView.builder(
                     itemCount: _filteredFiles.length,
                     itemBuilder: (context, index) {
-                      final file = _filteredFiles[index].file as File;
+                      final file = File(_filteredFiles[index].file.path);
                       final stat = file.statSync();
                       final fileName = file.uri.pathSegments.last;
                       final instrumentName =
