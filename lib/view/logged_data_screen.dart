@@ -44,7 +44,10 @@ class LoggedDataFile {
 class _LoggedDataScreenState extends State<LoggedDataScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final CsvService _csvService = CsvService();
-  List<LoggedDataFile> _files = [];
+  List<LoggedDataFile> _allFiles = [];
+  List<LoggedDataFile> _filteredFiles = [];
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
   bool _isLoading = true;
 
   @override
@@ -57,17 +60,18 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     setState(() {
       _isLoading = true;
     });
-    _files = [];
+    _allFiles = [];
     for (var name in widget.instrumentNames) {
       final files = await _csvService.getSavedFiles(name);
       for (var file in files) {
-        _files.add(LoggedDataFile(instrumentName: name, file: file));
+        _allFiles.add(LoggedDataFile(instrumentName: name, file: file));
       }
     }
     if (mounted) {
       setState(() {
         _isLoading = false;
       });
+      _filterLogs(_searchController.text);
     }
   }
 
@@ -106,7 +110,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     if (_isLoading) {
       return;
     }
-    if (_files.isEmpty) {
+    if (_allFiles.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -358,29 +362,86 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     });
   }
 
+  void _filterLogs(String query) {
+    setState(() {
+      if (query.trim().isEmpty) {
+        _filteredFiles = List.from(_allFiles);
+      } else {
+        final search = query.trim().toLowerCase();
+        _filteredFiles = _allFiles.where((loggedFile) {
+          final fileName = loggedFile.file.uri.pathSegments.last.toLowerCase();
+          final instrumentName = loggedFile.instrumentName.toLowerCase();
+          return fileName.contains(search) || instrumentName.contains(search);
+        }).toList();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.appBarName,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
-        ),
         backgroundColor: primaryRed,
         iconTheme: IconThemeData(color: appBarContentColor),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                onChanged: _filterLogs,
+                style: TextStyle(
+                  color: appBarContentColor,
+                ),
+                decoration: InputDecoration(
+                  hintText: appLocalizations.searchLoggedDataHint,
+                  hintStyle: TextStyle(
+                    color: searchBarHintTextColor,
+                  ),
+                  border: InputBorder.none,
+                ),
+                cursorColor: appBarContentColor,
+              )
+            : Text(
+                widget.appBarName,
+                style: TextStyle(
+                  color: appBarContentColor,
+                  fontSize: 15,
+                ),
+              ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: _showOptionsMenu,
-          ),
+          if (_isSearching)
+            IconButton(
+              tooltip: appLocalizations.close,
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  _isSearching = false;
+                  _searchController.clear();
+                  _filteredFiles = List.from(_allFiles);
+                });
+              },
+            )
+          else ...[
+            IconButton(
+              tooltip: appLocalizations.search,
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  _isSearching = true;
+                  _filteredFiles = List.from(_allFiles);
+                });
+              },
+            ),
+            IconButton(
+              tooltip: appLocalizations.options,
+              icon: const Icon(Icons.more_vert),
+              onPressed: _showOptionsMenu,
+            ),
+          ],
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _files.isEmpty
+          : _filteredFiles.isEmpty
               ? Center(
                   child: Text(
                     appLocalizations.noLoggedData,
@@ -390,12 +451,13 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
               : RefreshIndicator(
                   onRefresh: _loadFiles,
                   child: ListView.builder(
-                    itemCount: _files.length,
+                    itemCount: _filteredFiles.length,
                     itemBuilder: (context, index) {
-                      final file = _files[index].file as File;
+                      final file = File(_filteredFiles[index].file.path);
                       final stat = file.statSync();
-                      final fileName = file.path.split('/').last;
-                      final instrumentName = _files[index].instrumentName;
+                      final fileName = file.uri.pathSegments.last;
+                      final instrumentName =
+                          _filteredFiles[index].instrumentName;
                       final formattedDate =
                           DateFormat.yMMMd().add_jm().format(stat.modified);
 
@@ -573,5 +635,11 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                   ),
                 ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }
