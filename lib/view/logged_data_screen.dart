@@ -72,7 +72,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
 
     if (Platform.isAndroid) {
       try {
-        final List<Map<String, String>> widgetListData = _files.map((f) {
+        final List<Map<String, String>> widgetListData = _allFiles.map((f) {
           final fileName = f.file.path.split('/').last;
           return {
             'fileName': fileName,
