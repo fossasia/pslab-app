@@ -42,6 +42,13 @@ class CommonScaffold extends StatefulWidget {
 }
 
 class _CommonScaffoldState extends State<CommonScaffold> {
+  void _setPortraitOrientation() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
   List<Widget> _buildResponsiveActions(double width) {
     final bool isVerySmall = width < 260;
     final bool isSmall = width < 320;
@@ -128,43 +135,74 @@ class _CommonScaffoldState extends State<CommonScaffold> {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
-    return Scaffold(
-      backgroundColor: scaffoldBackgroundColor,
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: appBarColor,
-          statusBarIconBrightness: Brightness.light,
-          statusBarBrightness: Brightness.dark,
-        ),
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.maybePop(context);
-              },
-              icon: Icon(
-                Icons.arrow_back,
-                color: appBarContentColor,
-              ),
-            );
-          },
-        ),
-        backgroundColor: primaryRed,
-        title: Text(
-          widget.title,
-          key: widget.scaffoldKey,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) return;
+
+        _setPortraitOrientation();
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+        if (context.mounted) {
+          Navigator.of(context).pop(result);
+        }
+      },
+      child: MediaQuery.removePadding(
+        context: context,
+        removeLeft: isLandscape,
+        removeRight: isLandscape,
+        child: Scaffold(
+          backgroundColor: scaffoldBackgroundColor,
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            titleSpacing: 4,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: appBarColor,
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
+            backgroundColor: primaryRed,
+            title: Row(
+              children: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints:
+                      const BoxConstraints(minWidth: 32, minHeight: 32),
+                  onPressed: () {
+                    _setPortraitOrientation();
+                    SystemChrome.setEnabledSystemUIMode(
+                        SystemUiMode.edgeToEdge);
+                    Navigator.maybePop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: appBarContentColor,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    widget.title,
+                    key: widget.scaffoldKey,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: appBarContentColor,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            actions: _buildResponsiveActions(width),
           ),
+          body: widget.body,
         ),
-        actions: _buildResponsiveActions(width),
       ),
-      body: widget.body,
     );
   }
 }

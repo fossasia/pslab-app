@@ -344,6 +344,8 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                         }
                       : null,
                   body: SafeArea(
+                    left: false,
+                    right: false,
                     minimum: const EdgeInsets.only(right: 0, bottom: 0),
                     child: LayoutBuilder(
                       builder: (context, constraints) {
