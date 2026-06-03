@@ -20,6 +20,7 @@ class PowerSourceScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
   final String powerSourceCircuit = 'assets/images/powersource_circuit.png';
   final List<List<dynamic>>? playbackData;
+
   const PowerSourceScreen({super.key, this.playbackData});
 
   @override
@@ -88,9 +89,11 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
     if (pin == null || _anyFieldFocused) return KeyEventResult.ignored;
 
     double delta;
-    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+    if ([LogicalKeyboardKey.arrowUp, LogicalKeyboardKey.arrowRight]
+        .contains(event.logicalKey)) {
       delta = _provider.step;
-    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+    } else if ([LogicalKeyboardKey.arrowDown, LogicalKeyboardKey.arrowLeft]
+        .contains(event.logicalKey)) {
       delta = -_provider.step;
     } else {
       return KeyEventResult.ignored;
