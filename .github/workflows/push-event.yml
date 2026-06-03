@@ -306,7 +306,7 @@ jobs:
 
           echo "Removing debug artifacts"
           
-          find ../artifcats -type f \( -name '*debug*' -o -name '*profile*' \) -delete
+          find ../artifacts -type f \( -name '*debug*' -o -name '*profile*' \) -delete
 
           echo "Copying new artifacts"
 
