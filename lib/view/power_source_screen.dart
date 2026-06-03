@@ -56,11 +56,11 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
   void _handlePointerScroll(
     PointerSignalEvent event,
     Pin pin,
-    double value,
     double step,
     Future<void> Function(double) onValueChanged,
   ) {
     if (event is! PointerScrollEvent) return;
+    if (_anyFieldFocused) return;
 
     GestureBinding.instance.pointerSignalResolver.register(event, (_) {
       final double accumulated =
@@ -72,7 +72,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
       }
       _scrollAccumulators[pin] = accumulated - steps * _scrollStepUnit;
 
-      onValueChanged(value - steps * step);
+      onValueChanged(_provider.getValue(pin) - steps * step);
     });
   }
 
@@ -312,8 +312,8 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
         if (_hoveredPin == pin) _hoveredPin = null;
       },
       child: Listener(
-        onPointerSignal: (event) => _handlePointerScroll(
-            event, pin, value, provider.step, onValueChanged),
+        onPointerSignal: (event) =>
+            _handlePointerScroll(event, pin, provider.step, onValueChanged),
         child: Card(
           color: scaffoldBackgroundColor,
           child: Row(
