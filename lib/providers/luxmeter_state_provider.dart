@@ -43,7 +43,7 @@ class LuxMeterStateProvider extends ChangeNotifier {
   double _luxMax = 0;
   double _luxSum = 0;
   int _dataCount = 0;
-
+  int? _playbackStartTimestamp;
   bool _sensorAvailable = false;
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
@@ -291,8 +291,8 @@ class LuxMeterStateProvider extends ChangeNotifier {
   }
 
   void startPlayback(List<List<dynamic>> data) {
-    if (data.length <= 1) return;
-
+    if (data.length <= 2) return;
+    _playbackStartTimestamp = int.tryParse(data[2][0].toString())?.toInt();
     _isPlayingBack = true;
     _isPlaybackPaused = false;
     _playbackData = data;
@@ -322,7 +322,10 @@ class LuxMeterStateProvider extends ChangeNotifier {
     final currentRow = _playbackData![_playbackIndex];
     if (currentRow.length > 2) {
       _currentLux = double.tryParse(currentRow[2].toString()) ?? 0.0;
-      _currentTime = (_playbackIndex - 1).toDouble();
+      final timestamp = int.tryParse(currentRow[0].toString())?.toInt();
+      if (timestamp != null && _playbackStartTimestamp != null) {
+        _currentTime = (timestamp - _playbackStartTimestamp!) / 1000.0;
+      }
       _updateData();
       _playbackIndex++;
       notifyListeners();
