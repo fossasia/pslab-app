@@ -155,7 +155,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
   /// Configuration snapshot of the most recent recording, captured at
   /// [stopRecording]. Used to persist metadata alongside the waveform.
-  OscilloscopeRecordingMetadata? get recordingMetadata => _lastRecordingMetadata;
+  OscilloscopeRecordingMetadata? get recordingMetadata =>
+      _lastRecordingMetadata;
   late int _timebaseDivisions;
   int get timebaseDivisions => _timebaseDivisions;
   bool _wakelockEnabled = false;

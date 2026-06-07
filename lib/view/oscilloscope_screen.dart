@@ -63,8 +63,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
     if (widget.playbackData != null && widget.playbackData!.isNotEmpty) {
       final metaRow = widget.playbackData!.first;
       if (metaRow.length >= 4) {
-        _playbackMetadata =
-            OscilloscopeRecordingMetadata.tryDecode(metaRow[3]);
+        _playbackMetadata = OscilloscopeRecordingMetadata.tryDecode(metaRow[3]);
       }
     }
 
@@ -383,118 +382,124 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                       minimum: const EdgeInsets.only(right: 0, bottom: 0),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
-                        return Container(
-                          margin: const EdgeInsets.only(left: 5, top: 5),
-                          child: widget.playbackData != null
-                              ? Column(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 5),
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        color: Colors.black,
-                                        child: OscilloscopeGraph(),
-                                      ),
-                                    ),
-                                    _PlaybackControlBar(
-                                      isPaused: provider.isPlaybackPaused,
-                                      isComplete: provider.isPlaybackComplete,
-                                      position: provider.playbackPosition,
-                                      duration: provider.playbackDuration,
-                                      currentFrame: provider.playbackCurrentFrame,
-                                      totalFrames: provider.playbackTotalFrames,
-                                      onPlayPause: () {
-                                        if (provider.isPlaybackPaused) {
-                                          _provider.resumePlayback();
-                                        } else {
-                                          _provider.pausePlayback();
-                                        }
-                                      },
-                                      onSeek: _provider.seekToFrame,
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 89,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(right: 5),
-                                        child: Stack(
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Expanded(
-                                                  flex: constraints.maxHeight <
-                                                          600
-                                                      ? 68
-                                                      : 80,
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            bottom: 20),
-                                                    color: Colors.black,
-                                                    child:
-                                                        const OscilloscopeGraph(),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: constraints.maxHeight <
-                                                          600
-                                                      ? 32
-                                                      : 20,
-                                                  child: Selector<
-                                                      OscilloscopeStateProvider,
-                                                      int>(
-                                                    selector: (context,
-                                                            provider) =>
-                                                        provider.selectedIndex,
-                                                    builder: (context,
-                                                        selectedIndex, _) {
-                                                      switch (selectedIndex) {
-                                                        case 0:
-                                                          return const ChannelParametersWidget();
-                                                        case 1:
-                                                          return const TimebaseTriggerWidget();
-                                                        case 2:
-                                                          return const DataAnalysisWidget();
-                                                        case 3:
-                                                          return const XYPlotWidget();
-                                                        default:
-                                                          return const ChannelParametersWidget();
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            provider.isMeasurementsChecked
-                                                ? Positioned(
-                                                    right: 0,
-                                                    top: 0,
-                                                    child: SizedBox(
-                                                        width: 135,
-                                                        child: MeasurementsList(
-                                                            dataParamsChannels:
-                                                                provider
-                                                                    .dataParamsChannels)),
-                                                  )
-                                                : const SizedBox.shrink(),
-                                          ],
+                          return Container(
+                            margin: const EdgeInsets.only(left: 5, top: 5),
+                            child: widget.playbackData != null
+                                ? Column(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(right: 5),
+                                          padding:
+                                              const EdgeInsets.only(bottom: 20),
+                                          color: Colors.black,
+                                          child: OscilloscopeGraph(),
                                         ),
                                       ),
-                                    ),
-                                    const Expanded(
-                                      flex: 11,
-                                      child: OscilloscopeScreenTabs(),
-                                    )
-                                  ],
-                                ),
-                        );
-                      },
-                    ),
+                                      _PlaybackControlBar(
+                                        isPaused: provider.isPlaybackPaused,
+                                        isComplete: provider.isPlaybackComplete,
+                                        position: provider.playbackPosition,
+                                        duration: provider.playbackDuration,
+                                        currentFrame:
+                                            provider.playbackCurrentFrame,
+                                        totalFrames:
+                                            provider.playbackTotalFrames,
+                                        onPlayPause: () {
+                                          if (provider.isPlaybackPaused) {
+                                            _provider.resumePlayback();
+                                          } else {
+                                            _provider.pausePlayback();
+                                          }
+                                        },
+                                        onSeek: _provider.seekToFrame,
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 89,
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(right: 5),
+                                          child: Stack(
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Expanded(
+                                                    flex:
+                                                        constraints.maxHeight <
+                                                                600
+                                                            ? 68
+                                                            : 80,
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              bottom: 20),
+                                                      color: Colors.black,
+                                                      child:
+                                                          const OscilloscopeGraph(),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex:
+                                                        constraints.maxHeight <
+                                                                600
+                                                            ? 32
+                                                            : 20,
+                                                    child: Selector<
+                                                        OscilloscopeStateProvider,
+                                                        int>(
+                                                      selector: (context,
+                                                              provider) =>
+                                                          provider
+                                                              .selectedIndex,
+                                                      builder: (context,
+                                                          selectedIndex, _) {
+                                                        switch (selectedIndex) {
+                                                          case 0:
+                                                            return const ChannelParametersWidget();
+                                                          case 1:
+                                                            return const TimebaseTriggerWidget();
+                                                          case 2:
+                                                            return const DataAnalysisWidget();
+                                                          case 3:
+                                                            return const XYPlotWidget();
+                                                          default:
+                                                            return const ChannelParametersWidget();
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              provider.isMeasurementsChecked
+                                                  ? Positioned(
+                                                      right: 0,
+                                                      top: 0,
+                                                      child: SizedBox(
+                                                          width: 135,
+                                                          child: MeasurementsList(
+                                                              dataParamsChannels:
+                                                                  provider
+                                                                      .dataParamsChannels)),
+                                                    )
+                                                  : const SizedBox.shrink(),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const Expanded(
+                                        flex: 11,
+                                        child: OscilloscopeScreenTabs(),
+                                      )
+                                    ],
+                                  ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                   actions: [
@@ -637,7 +642,8 @@ class _PlaybackControlBarState extends State<_PlaybackControlBar> {
           IconButton(
             onPressed: widget.onPlayPause,
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints.tightFor(width: buttonWidth, height: 40),
+            constraints:
+                BoxConstraints.tightFor(width: buttonWidth, height: 40),
             iconSize: iconSize,
             tooltip: widget.isComplete
                 ? 'Replay'
@@ -654,8 +660,7 @@ class _PlaybackControlBarState extends State<_PlaybackControlBar> {
                 inactiveTrackColor: Colors.white24,
                 thumbColor: primaryRed,
                 overlayColor: primaryRed.withValues(alpha: 0.2),
-                thumbShape:
-                    const RoundSliderThumbShape(enabledThumbRadius: 7),
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
               ),
               child: Slider(
                 value: sliderValue,
@@ -699,7 +704,8 @@ class _RecordingDetailsSheet extends StatelessWidget {
       if (m.enabledChannels.isNotEmpty)
         MapEntry('Channels', m.enabledChannels.join(', ')),
       if (m.range != null && m.range!.isNotEmpty) MapEntry('Range', m.range!),
-      if (m.enabledChannels.contains('CH3')) const MapEntry('CH3 Range', '±3.3V'),
+      if (m.enabledChannels.contains('CH3'))
+        const MapEntry('CH3 Range', '±3.3V'),
       if (m.timebase != null) MapEntry('Timebase', m.timebase.toString()),
       MapEntry('Trigger Mode',
           m.triggerEnabled ? _prettyMode(m.triggerMode) : 'Off'),
