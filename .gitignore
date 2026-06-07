@@ -3,6 +3,10 @@
 *.log
 *.pyc
 *.swp
+
+# FVM (local Flutter version manager)
+.fvm/
+.fvmrc
 .atom/
 .buildlog/
 .history

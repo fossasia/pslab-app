@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
@@ -18,8 +19,9 @@ import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 
 class LogicAnalyzerScreen extends StatefulWidget {
-  const LogicAnalyzerScreen({super.key, this.playbackData});
+  const LogicAnalyzerScreen({super.key, this.playbackData, this.fileName});
   final List<List<dynamic>>? playbackData;
+  final String? fileName;
   final logicAnalyzerCircuit = 'assets/images/logic_analyzer_circuit.png';
 
   @override
@@ -170,6 +172,17 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
     final String? fileName = await showSaveFileNameDialog(context);
 
     if (fileName != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              appLocalizations.saving,
+              style: TextStyle(color: snackBarContentColor),
+            ),
+            backgroundColor: snackBarBackgroundColor,
+          ),
+        );
+      }
       _csvService.writeMetaData(
           appLocalizations.logicAnalyzer.toLowerCase(), data);
       final file = await _csvService.saveCsvFile(
@@ -266,6 +279,158 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
     });
   }
 
+  String _formatDuration(double micros) {
+    if (micros >= 1e6) return '${(micros / 1e6).toStringAsFixed(3)} s';
+    if (micros >= 1e3) return '${(micros / 1e3).toStringAsFixed(3)} ms';
+    return '${micros.toStringAsFixed(2)} µs';
+  }
+
+  Widget _buildPlaybackBar(LogicAnalyzerStateProvider provider) {
+    final double total =
+        provider.recordingDurationUs <= 0 ? 1.0 : provider.recordingDurationUs;
+    final double position = provider.playbackPositionUs.clamp(0.0, total);
+    final bool atEnd = position >= total;
+    return Container(
+      color: Colors.black,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        children: [
+          IconButton(
+            tooltip: provider.isPlaybackPaused
+                ? appLocalizations.play
+                : appLocalizations.pause,
+            icon: Icon(
+              provider.isPlaybackPaused || atEnd
+                  ? Icons.play_arrow
+                  : Icons.pause,
+              color: Colors.white,
+            ),
+            onPressed: provider.togglePlaybackPause,
+          ),
+          Text(
+            _formatDuration(position),
+            style: const TextStyle(color: Colors.white, fontSize: 11),
+          ),
+          Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 2,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+              ),
+              child: Slider(
+                value: position,
+                min: 0,
+                max: total,
+                activeColor: primaryRed,
+                inactiveColor: Colors.white24,
+                onChanged: provider.seekPlayback,
+              ),
+            ),
+          ),
+          Text(
+            _formatDuration(total),
+            style: const TextStyle(color: Colors.white, fontSize: 11),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRecordingDetails() {
+    final entries = <MapEntry<String, String>>[];
+    if (_provider.recordedAt != null) {
+      entries.add(MapEntry(
+        'Date Recorded',
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(_provider.recordedAt!),
+      ));
+    }
+    if (widget.fileName != null) {
+      entries.add(MapEntry('File', widget.fileName!));
+    }
+    entries.add(MapEntry('Channels', '${_provider.channelMode}'));
+    if (_provider.analysisChannelNames.isNotEmpty) {
+      entries.add(
+          MapEntry('Channel Names', _provider.analysisChannelNames.join(', ')));
+    }
+    if (_provider.analysisEdgesNames.isNotEmpty) {
+      entries.add(MapEntry('Edges', _provider.analysisEdgesNames.join(', ')));
+    }
+    entries.add(
+        MapEntry('Duration', _formatDuration(_provider.recordingDurationUs)));
+    final points =
+        _provider.dataSets.fold<int>(0, (sum, set) => sum + set.length);
+    entries.add(MapEntry('Data Points', '$points'));
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: scaffoldBackgroundColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        final onSurface = Theme.of(context).colorScheme.onSurface;
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.article_outlined, color: primaryRed, size: 24),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Recording Details',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 4),
+                for (final e in entries)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 140,
+                          child: Text(
+                            e.key,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: onSurface,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            e.value,
+                            style: TextStyle(fontSize: 14, color: onSurface),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -279,67 +444,80 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
           return Stack(
             children: [
               CommonScaffold(
-                title: appLocalizations.logicAnalyzerTitle,
-                onOptionsPressed: _showOptionsMenu,
+                title: widget.playbackData != null
+                    ? (widget.fileName ?? appLocalizations.logicAnalyzerTitle)
+                    : appLocalizations.logicAnalyzerTitle,
+                onOptionsPressed:
+                    widget.playbackData != null ? null : _showOptionsMenu,
                 onGuidePressed: _showInstrumentGuide,
+                isPlayingBack: widget.playbackData != null,
+                onPlaybackStop: widget.playbackData != null
+                    ? () => Navigator.maybePop(context)
+                    : null,
                 body: SafeArea(
                   left: false,
                   right: false,
                   minimum: const EdgeInsets.only(right: 0, bottom: 0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: chartBackgroundColor,
-                    ),
-                    padding: const EdgeInsets.only(bottom: 5, top: 5),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 73,
-                          child: LogicAnalyzerGraph(),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: chartBackgroundColor,
+                          ),
+                          padding: const EdgeInsets.only(bottom: 5, top: 5),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 73,
+                                child: LogicAnalyzerGraph(),
+                              ),
+                              Expanded(
+                                flex: 27,
+                                child: LogicAnalyzerChannelSelection(),
+                              ),
+                            ],
+                          ),
                         ),
-                        Expanded(
-                          flex: 27,
-                          child: LogicAnalyzerChannelSelection(),
-                        ),
-                      ],
-                    ),
+                      ),
+                      if (provider.isPlayingBack) _buildPlaybackBar(provider),
+                    ],
                   ),
                 ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.save, color: Colors.white),
-                    onPressed: () async {
-                      if (!getIt.get<ScienceLab>().isConnected()) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                appLocalizations.notConnected,
-                                style: TextStyle(color: snackBarContentColor),
-                              ),
-                              backgroundColor: snackBarBackgroundColor,
-                            ),
-                          );
-                        }
-                        return;
-                      }
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              appLocalizations.saving,
-                              style: TextStyle(color: snackBarContentColor),
-                            ),
-                            backgroundColor: snackBarBackgroundColor,
-                          ),
-                        );
-                      }
-                      await _provider.logData();
-                      final data = _provider.recordedData;
-                      await _showSaveFileDialog(data);
-                    },
-                  ),
-                ],
+                actions: widget.playbackData != null
+                    ? [
+                        IconButton(
+                          tooltip: 'Recording details',
+                          icon: const Icon(Icons.article_outlined,
+                              color: Colors.white),
+                          onPressed: _showRecordingDetails,
+                        ),
+                      ]
+                    : [
+                        IconButton(
+                          icon: Icon(Icons.save, color: Colors.white),
+                          onPressed: () async {
+                            if (!getIt.get<ScienceLab>().isConnected()) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      appLocalizations.notConnected,
+                                      style: TextStyle(
+                                          color: snackBarContentColor),
+                                    ),
+                                    backgroundColor: snackBarBackgroundColor,
+                                  ),
+                                );
+                              }
+                              return;
+                            }
+                            await _provider.logData();
+                            final data = _provider.recordedData;
+                            await _showSaveFileDialog(data);
+                          },
+                        ),
+                      ],
               ),
               if (_showGuide)
                 InstrumentOverviewDrawer(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:fl_chart/fl_chart.dart';
@@ -55,6 +56,66 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   late ScienceLab _scienceLab;
   late bool isProcessing;
   late bool isData;
+
+  bool isPlayingBack = false;
+
+  double recordingDurationUs = 0;
+
+  DateTime? recordedAt;
+
+  double playbackPositionUs = 0;
+  bool isPlaybackPaused = false;
+  Timer? _playbackTimer;
+  static const Duration _playbackTick = Duration(milliseconds: 50);
+
+  void startPlaybackAnimation() {
+    if (recordingDurationUs <= 0) return;
+    playbackPositionUs = 0;
+    isPlaybackPaused = false;
+    _runPlaybackTimer();
+    notifyListeners();
+  }
+
+  void _runPlaybackTimer() {
+    _playbackTimer?.cancel();
+    final double stepUs =
+        recordingDurationUs * (_playbackTick.inMilliseconds / 5000.0);
+    _playbackTimer = Timer.periodic(_playbackTick, (timer) {
+      if (isPlaybackPaused) return;
+      playbackPositionUs += stepUs;
+      if (playbackPositionUs >= recordingDurationUs) {
+        playbackPositionUs = recordingDurationUs;
+        isPlaybackPaused = true;
+        timer.cancel();
+      }
+      notifyListeners();
+    });
+  }
+
+  void togglePlaybackPause() {
+    if (!isPlayingBack) return;
+    if (playbackPositionUs >= recordingDurationUs) {
+      playbackPositionUs = 0;
+      isPlaybackPaused = false;
+      _runPlaybackTimer();
+    } else {
+      isPlaybackPaused = !isPlaybackPaused;
+    }
+    notifyListeners();
+  }
+
+  void seekPlayback(double positionUs) {
+    if (!isPlayingBack) return;
+    playbackPositionUs = positionUs.clamp(0.0, recordingDurationUs);
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _playbackTimer?.cancel();
+    super.dispose();
+  }
+
   List<List<dynamic>> _recordedData = [];
 
   Position? currentPosition;
@@ -783,17 +844,33 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   }
 
   void loadPlaybackData(List<List<dynamic>> playbackData) {
-    dataSets =
-        parseFlSpotList(playbackData[playbackData.length - 1][2].toString());
-    maxY = double.parse(playbackData[playbackData.length - 1][3].toString());
-    minY = double.parse(playbackData[playbackData.length - 1][4].toString());
-    analysisChannelNames =
-        parseList(playbackData[playbackData.length - 1][5].toString());
-    analysisEdgesNames =
-        parseList(playbackData[playbackData.length - 1][6].toString());
+    final row = playbackData[playbackData.length - 1];
+    dataSets = parseFlSpotList(row[2].toString());
+    maxY = double.parse(row[3].toString());
+    minY = double.parse(row[4].toString());
+    analysisChannelNames = parseList(row[5].toString());
+    analysisEdgesNames = parseList(row[6].toString());
     channelMode = analysisChannelNames.length;
+
+    recordedAt = DateTime.tryParse(row[1].toString());
+    if (recordedAt == null) {
+      final epoch = int.tryParse(row[0].toString());
+      if (epoch != null) {
+        recordedAt = DateTime.fromMillisecondsSinceEpoch(epoch);
+      }
+    }
+    double maxX = 0;
+    for (final set in dataSets) {
+      for (final spot in set) {
+        if (spot.x > maxX) maxX = spot.x;
+      }
+    }
+    recordingDurationUs = maxX;
+
     setConfigData();
     isData = true;
+    isPlayingBack = true;
+    startPlaybackAnimation();
     notifyListeners();
   }
 
