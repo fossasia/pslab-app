@@ -37,7 +37,7 @@ class MPU6050Provider extends ChangeNotifier {
   int _selectedAccelRange = 16;
   int _selectedGyroRange = 2000;
   double? _selectedFilter; // null means OFF
-  String _selectedHighPassFilter = 'OFF';
+  final String _selectedHighPassFilter = 'OFF';
 
   Map<String, double> get currentValues => _currentValues;
   List<ChartDataPoint> get axData => List.unmodifiable(_axData);
