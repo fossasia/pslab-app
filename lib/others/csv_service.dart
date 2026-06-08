@@ -133,6 +133,32 @@ class CsvService {
     }
   }
 
+  Future<String?> renameFile(String filePath, String newBaseName) async {
+    try {
+      final file = File(filePath);
+      if (!await file.exists()) return null;
+
+      final trimmed = newBaseName.trim().replaceAll(RegExp(r'[\\/]'), '');
+      if (trimmed.isEmpty) return null;
+
+      final newName = trimmed.endsWith('.csv') ? trimmed : '$trimmed.csv';
+      final newPath = '${file.parent.path}/$newName';
+
+      if (newPath == filePath) return filePath;
+      if (await File(newPath).exists()) {
+        logger.w('Cannot rename: $newName already exists.');
+        return null;
+      }
+
+      final renamed = await file.rename(newPath);
+      logger.i('File renamed to ${renamed.path}');
+      return renamed.path;
+    } catch (e) {
+      logger.e('Error renaming file: $e');
+      return null;
+    }
+  }
+
   Future<void> deleteAllFiles(String instrumentName) async {
     try {
       final directory = await getInstrumentDirectory(instrumentName);
@@ -198,7 +224,8 @@ class CsvService {
     }
   }
 
-  void writeMetaData(String instrumentName, List<List<dynamic>> data) {
+  void writeMetaData(String instrumentName, List<List<dynamic>> data,
+      {String? extraMetadata}) {
     if (data.isNotEmpty && data[0].isNotEmpty && data[0][0] == instrumentName) {
       return;
     }
@@ -206,10 +233,11 @@ class CsvService {
     final now = DateTime.now();
     final sdf = DateFormat('yyyy-MM-dd HH:mm:ss');
     final metaDataTime = sdf.format(now);
-    final metaData = [
+    final metaData = <dynamic>[
       instrumentName,
       metaDataTime.split(' ')[0],
-      metaDataTime.split(' ')[1]
+      metaDataTime.split(' ')[1],
+      if (extraMetadata != null) extraMetadata,
     ];
     data.insert(0, metaData);
   }
