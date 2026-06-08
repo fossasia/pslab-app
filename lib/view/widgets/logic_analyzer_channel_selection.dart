@@ -517,9 +517,7 @@ class _LogicAnalyzerChannelSelectionState
                         fontSize: 14,
                       ),
                     ),
-                    onPressed: () => {
-                      provider.analyze(),
-                    },
+                    onPressed: provider.analyze,
                   )
               ],
             ),

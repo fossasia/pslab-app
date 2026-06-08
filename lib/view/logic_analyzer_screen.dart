@@ -397,32 +397,42 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
                 const SizedBox(height: 12),
                 const Divider(height: 1),
                 const SizedBox(height: 4),
-                for (final e in entries)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: 140,
-                          child: Text(
-                            e.key,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: onSurface,
+                        for (final e in entries)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 140,
+                                  child: Text(
+                                    e.key,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: onSurface,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    e.value,
+                                    style: TextStyle(
+                                        fontSize: 14, color: onSurface),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            e.value,
-                            style: TextStyle(fontSize: 14, color: onSurface),
-                          ),
-                        ),
                       ],
                     ),
                   ),
+                ),
               ],
             ),
           ),

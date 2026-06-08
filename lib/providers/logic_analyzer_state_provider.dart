@@ -67,6 +67,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
   bool isPlaybackPaused = false;
   Timer? _playbackTimer;
   static const Duration _playbackTick = Duration(milliseconds: 50);
+  // Total time the playhead takes to sweep across the whole recording.
+  static const Duration _playbackSweep = Duration(seconds: 5);
 
   void startPlaybackAnimation() {
     if (recordingDurationUs <= 0) return;
@@ -78,8 +80,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
 
   void _runPlaybackTimer() {
     _playbackTimer?.cancel();
-    final double stepUs =
-        recordingDurationUs * (_playbackTick.inMilliseconds / 5000.0);
+    final double stepUs = recordingDurationUs *
+        (_playbackTick.inMilliseconds / _playbackSweep.inMilliseconds);
     _playbackTimer = Timer.periodic(_playbackTick, (timer) {
       if (isPlaybackPaused) return;
       playbackPositionUs += stepUs;
@@ -870,8 +872,8 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
     setConfigData();
     isData = true;
     isPlayingBack = true;
+    // startPlaybackAnimation() already calls notifyListeners().
     startPlaybackAnimation();
-    notifyListeners();
   }
 
   void setConfigData() {

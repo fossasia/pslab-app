@@ -626,7 +626,8 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                 )
               : Focus(
                   focusNode: _keyboardFocusNode,
-                  autofocus: true,
+                  canRequestFocus: !_isSearching,
+                  autofocus: !_isSearching,
                   onKeyEvent: (node, event) => _handleKey(event),
                   child: RefreshIndicator(
                     onRefresh: _loadFiles,
