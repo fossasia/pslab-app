@@ -169,38 +169,24 @@ class _InstrumentOverviewDrawerState extends State<InstrumentOverviewDrawer>
                         ),
                       ),
                       Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return InteractiveViewer(
-                              boundaryMargin: EdgeInsets.zero,
-                              minScale: 1.0,
-                              maxScale: 4.0,
-                              constrained: false,
-                              child: SizedBox(
-                                width: constraints.maxWidth,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        widget.instrumentName,
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: guideDrawerHeadingColor,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16.0),
-                                      ...widget.content,
-                                      const SizedBox(height: 20.0),
-                                    ],
-                                  ),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.instrumentName,
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: guideDrawerHeadingColor,
                                 ),
                               ),
-                            );
-                          },
+                              const SizedBox(height: 16.0),
+                              ...widget.content,
+                              const SizedBox(height: 20.0),
+                            ],
+                          ),
                         ),
                       ),
                     ],

@@ -114,7 +114,9 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
     final RenderBox renderBox =
         _imageKey.currentContext!.findRenderObject() as RenderBox;
     final Size renderedSize = renderBox.size;
+
     final Offset localPosition = details.localPosition;
+    final Offset globalPosition = details.globalPosition;
 
     double scaleX = _colorMapWidth / renderedSize.width;
     double scaleY = _colorMapHeight / renderedSize.height;
@@ -136,84 +138,127 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
       if (a == 0) return;
 
       Color tappedColor = Color.fromARGB(255, r, g, b);
-      _findAndDisplayPin(tappedColor);
+
+      _findAndDisplayPin(tappedColor, globalPosition);
     }
   }
 
-  void _findAndDisplayPin(Color tappedColor) {
+  void _findAndDisplayPin(Color tappedColor, Offset tapPosition) {
     for (var pin in _pinDetails) {
       Color normalizedPinColor = pin.pinColor.withAlpha(255);
 
       if (normalizedPinColor.toARGB32() == tappedColor.toARGB32()) {
-        _showPinDialog(pin);
+        _showPinPopup(pin, tapPosition);
         return;
       }
     }
     log("MISSING COLOR: The image returned Hex #${tappedColor.toARGB32().toRadixString(16).toUpperCase()}");
   }
 
-  void _showPinDialog(PinDetails pin) {
+  void _showPinPopup(PinDetails pin, Offset tapPosition) {
+    final screenSize = MediaQuery.of(context).size;
+    const double boxWidth = 220.0;
+    const double arrowHeight = 12.0;
+
+    bool pointingUp = tapPosition.dy < (screenSize.height / 2);
+
+    double leftPosition = tapPosition.dx - (boxWidth / 2);
+
+    if (leftPosition < 10.0) {
+      leftPosition = 10.0;
+    } else if (leftPosition + boxWidth > screenSize.width - 10.0) {
+      leftPosition = screenSize.width - boxWidth - 10.0;
+    }
+
+    double relativeArrowX = tapPosition.dx - leftPosition;
+
+    if (relativeArrowX < 24.0) relativeArrowX = 24.0;
+    if (relativeArrowX > boxWidth - 24.0) relativeArrowX = boxWidth - 24.0;
+
     showDialog(
       context: context,
+      useSafeArea: false,
+      barrierColor: Colors.black12,
       builder: (BuildContext context) {
         return Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-          clipBehavior: Clip.antiAlias,
-          backgroundColor: cardBackgroundColor,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Stack(
             children: [
-              Container(
-                width: double.infinity,
-                height: 56.0,
-                color: appBarColor,
-                alignment: Alignment.center,
-                child: Text(
-                  pin.name,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () => Navigator.of(context).pop(),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Container(
-                        width: 16.0,
-                        height: 60.0,
-                        color: pin.pinColor,
-                        margin: const EdgeInsets.only(right: 16.0)),
-                    Expanded(
-                      child: Text(
-                        pin.description,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: blackTextColor, fontSize: 16.0),
-                      ),
+              Positioned(
+                top: pointingUp ? tapPosition.dy : null,
+                bottom:
+                    !pointingUp ? (screenSize.height - tapPosition.dy) : null,
+                left: leftPosition,
+                child: CustomPaint(
+                  painter: SpeechBubblePainter(
+                    color: cardBackgroundColor,
+                    arrowTargetX: relativeArrowX,
+                    isArrowUp: pointingUp,
+                  ),
+                  child: Container(
+                    width: boxWidth,
+                    padding: EdgeInsets.only(
+                      top: pointingUp ? arrowHeight + 14.0 : 14.0,
+                      bottom: !pointingUp ? arrowHeight + 14.0 : 14.0,
+                      left: 16.0,
+                      right: 16.0,
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.grey.shade200,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 14.0,
+                              height: 14.0,
+                              decoration: BoxDecoration(
+                                  color: pin.pinColor,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          pin.pinColor.withValues(alpha: 0.5),
+                                      blurRadius: 4.0,
+                                      offset: const Offset(0, 1),
+                                    )
+                                  ]),
+                            ),
+                            const SizedBox(width: 10.0),
+                            Expanded(
+                              child: Text(
+                                pin.name,
+                                style: TextStyle(
+                                  color: blackTextColor,
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text(
+                          pin.description,
+                          style: TextStyle(
+                            color: Colors.grey.shade700,
+                            fontSize: 13.0,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text("OK",
-                        style:
-                            TextStyle(color: blackTextColor, fontSize: 16.0)),
                   ),
                 ),
               ),
-              const SizedBox(height: 16.0),
             ],
           ),
         );
@@ -459,5 +504,66 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
         ],
       ),
     );
+  }
+}
+
+class SpeechBubblePainter extends CustomPainter {
+  final Color color;
+  final double arrowTargetX;
+  final bool isArrowUp;
+
+  SpeechBubblePainter({
+    required this.color,
+    required this.arrowTargetX,
+    required this.isArrowUp,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    const double radius = 12.0;
+    const double arrowW = 18.0;
+    const double arrowH = 12.0;
+
+    Path path = Path();
+
+    if (isArrowUp) {
+      Rect boxRect = Rect.fromLTWH(0, arrowH, size.width, size.height - arrowH);
+      path.addRRect(
+          RRect.fromRectAndRadius(boxRect, const Radius.circular(radius)));
+
+      Path arrow = Path();
+      arrow.moveTo(arrowTargetX, 0);
+      arrow.lineTo(arrowTargetX - arrowW / 2, arrowH + 1);
+      arrow.lineTo(arrowTargetX + arrowW / 2, arrowH + 1);
+      arrow.close();
+
+      path = Path.combine(PathOperation.union, path, arrow);
+    } else {
+      Rect boxRect = Rect.fromLTWH(0, 0, size.width, size.height - arrowH);
+      path.addRRect(
+          RRect.fromRectAndRadius(boxRect, const Radius.circular(radius)));
+
+      Path arrow = Path();
+      arrow.moveTo(arrowTargetX, size.height);
+      arrow.lineTo(arrowTargetX - arrowW / 2, size.height - arrowH - 1);
+      arrow.lineTo(arrowTargetX + arrowW / 2, size.height - arrowH - 1);
+      arrow.close();
+
+      path = Path.combine(PathOperation.union, path, arrow);
+    }
+
+    canvas.drawShadow(path, Colors.black, 6.0, false);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant SpeechBubblePainter oldDelegate) {
+    return oldDelegate.color != color ||
+        oldDelegate.arrowTargetX != arrowTargetX ||
+        oldDelegate.isArrowUp != isArrowUp;
   }
 }

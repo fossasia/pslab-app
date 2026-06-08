@@ -126,6 +126,89 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
+  Future<void> _renameFile(File file) async {
+    final currentName = file.uri.pathSegments.last.replaceAll('.csv', '');
+    final controller = TextEditingController(text: currentName);
+
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(appLocalizations.renameLog),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  appLocalizations.renameHint,
+                  style: TextStyle(fontSize: 14, color: hintTextColor),
+                ),
+              ),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: const UnderlineInputBorder(),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primaryRed),
+                  ),
+                  suffixText: '.csv',
+                ),
+                onSubmitted: (value) => Navigator.of(context).pop(value),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                appLocalizations.cancel.toUpperCase(),
+                style: TextStyle(color: primaryRed),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(controller.text),
+              child: Text(
+                appLocalizations.ok,
+                style: TextStyle(color: primaryRed),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (newName == null || newName.trim().isEmpty) return;
+    if (newName.trim() == currentName) return;
+
+    final newPath = await _csvService.renameFile(file.path, newName);
+    if (!mounted) return;
+    if (newPath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            appLocalizations.fileNameExists,
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          appLocalizations.renamed,
+          style: TextStyle(color: snackBarContentColor),
+        ),
+        backgroundColor: snackBarBackgroundColor,
+      ),
+    );
+    _loadFiles();
+  }
+
   Future<void> _deleteAllFiles() async {
     if (_isLoading) {
       return;
@@ -204,6 +287,13 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   }
 
   Future<void> _openFile(File file, String instrumentName) async {
+    // Oscilloscope recordings store waveform frames, not a simple x/y table,
+    // so the generic chart viewer can't render them ("No valid data to
+    // display"). Tapping the file should behave like Play and open the
+    // oscilloscope playback screen, which also shows the recording details.
+    if (instrumentName.toLowerCase() == 'oscilloscope') {
+      return _playFile(file, instrumentName);
+    }
     final data = await _csvService.readCsvFromFile(file);
     if (mounted) {
       if (instrumentName.toLowerCase() == 'robotic arm') {
@@ -280,10 +370,15 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           );
           break;
         case 'oscilloscope':
+          final recordingName =
+              file.uri.pathSegments.last.replaceAll('.csv', '');
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => OscilloscopeScreen(playbackData: data),
+              builder: (context) => OscilloscopeScreen(
+                playbackData: data,
+                playbackName: recordingName,
+              ),
             ),
           );
           break;
@@ -548,6 +643,8 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                 );
                               } else if (value == appLocalizations.share) {
                                 _csvService.shareFile(file.path);
+                              } else if (value == appLocalizations.rename) {
+                                _renameFile(file);
                               } else if (value == appLocalizations.delete) {
                                 _deleteFile(file.path);
                               }
@@ -625,6 +722,22 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                   ),
                                   title: Text(
                                     appLocalizations.share,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              PopupMenuItem<String>(
+                                value: appLocalizations.rename,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(
+                                    Icons.drive_file_rename_outline,
+                                    color: primaryRed,
+                                  ),
+                                  title: Text(
+                                    appLocalizations.rename,
                                     style: TextStyle(
                                       color: Colors.black,
                                     ),
