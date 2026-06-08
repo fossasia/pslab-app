@@ -509,6 +509,7 @@ class _LogicAnalyzerChannelSelectionState
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
+                    onPressed: provider.analyze,
                     child: Text(
                       appLocalizations.analyze.toUpperCase(),
                       style: TextStyle(
@@ -517,7 +518,6 @@ class _LogicAnalyzerChannelSelectionState
                         fontSize: 14,
                       ),
                     ),
-                    onPressed: provider.analyze,
                   )
               ],
             ),
