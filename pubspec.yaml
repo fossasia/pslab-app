@@ -44,7 +44,7 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^11.0.2
   flutter_screenutil: ^5.9.3
-  flusbserial: ^0.5.0
+  flusbserial: ^0.6.0
   inno_bundle: ^0.11.2
   flutter_map: ^8.3.0
   latlong2: ^0.9.1

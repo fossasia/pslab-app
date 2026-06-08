@@ -197,10 +197,10 @@ packages:
     dependency: transitive
     description:
       name: dart_libusb
-      sha256: "6e3e6999ee09cde919af10931e9476202ac89b37e3b88fe8ef458bc6ae59bfd8"
+      sha256: "6d15c7b788aad3353b23a3fc4c746a761f860053be936fd61f72d221256ef02e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   dart_polylabel2:
     dependency: transitive
     description:
@@ -309,10 +309,10 @@ packages:
     dependency: "direct main"
     description:
       name: flusbserial
-      sha256: f8d5d893ccc0581e56a90b44c777bc88f6c0e7caf3f4f9dd4569ce0e3fa5e9dd
+      sha256: "889ceb4d1e577210d73eaef547832127a6e2216ad374956129bc0494fccb7d77"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.0"
+    version: "0.6.0"
   flutter:
     dependency: "direct main"
     description: flutter
