@@ -39,7 +39,8 @@ class AccelerometerStateProvider extends ChangeNotifier {
   StreamSubscription? _locationStream;
   Position? currentPosition;
   Function? onPlaybackEnd;
-  double? get _currentLimit => _configProvider?.config.highLimit.toDouble();
+  double? get _currentHighLimit => _configProvider?.config.highLimit.toDouble();
+  double? get _currentLowLimit => _configProvider?.config.lowLimit.toDouble();
   void setConfigProvider(AccelerometerConfigProvider configProvider) {
     _configProvider = configProvider;
   }
@@ -211,21 +212,24 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final limit = _currentLimit;
+    final highLimit = _currentHighLimit;
+    final lowLimit = _currentLowLimit;
 
-    final bool shouldClip = limit != null && !_isPlayingBack;
+    final bool shouldClip = !_isPlayingBack;
 
-    final x = (shouldClip && _accelerometerEvent.x > limit)
-        ? limit
-        : _accelerometerEvent.x;
+    final double x;
+    final double y;
+    final double z;
 
-    final y = (shouldClip && _accelerometerEvent.y > limit)
-        ? limit
-        : _accelerometerEvent.y;
-
-    final z = (shouldClip && _accelerometerEvent.z > limit)
-        ? limit
-        : _accelerometerEvent.z;
+    if (shouldClip && highLimit != null && lowLimit != null) {
+      x = _accelerometerEvent.x.clamp(-lowLimit, highLimit).toDouble();
+      y = _accelerometerEvent.y.clamp(-lowLimit, highLimit).toDouble();
+      z = _accelerometerEvent.z.clamp(-lowLimit, highLimit).toDouble();
+    } else {
+      x = _accelerometerEvent.x;
+      y = _accelerometerEvent.y;
+      z = _accelerometerEvent.z;
+    }
 
     _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:pslab/others/csv_service.dart';
@@ -52,6 +53,10 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = true;
 
+  final FocusNode _keyboardFocusNode = FocusNode(debugLabel: 'LoggedDataKeys');
+  int _selectedIndex = -1;
+  final Map<String, GlobalKey> _itemKeys = {};
+
   @override
   void initState() {
     super.initState();
@@ -90,9 +95,60 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     if (mounted) {
       setState(() {
         _isLoading = false;
+        if (_selectedIndex >= _filteredFiles.length) {
+          _selectedIndex = _filteredFiles.length - 1;
+        }
       });
       _filterLogs(_searchController.text);
     }
+  }
+
+  GlobalKey _keyFor(String path) =>
+      _itemKeys.putIfAbsent(path, () => GlobalKey());
+
+  void _ensureSelectedVisible() {
+    if (_selectedIndex < 0 || _selectedIndex >= _filteredFiles.length) return;
+    final ctx =
+        _itemKeys[_filteredFiles[_selectedIndex].file.path]?.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 200),
+        alignment: 0.5,
+      );
+    }
+  }
+
+  KeyEventResult _handleKey(KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    if (_filteredFiles.isEmpty) return KeyEventResult.ignored;
+
+    if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      setState(() => _selectedIndex =
+          (_selectedIndex + 1).clamp(0, _filteredFiles.length - 1));
+      _ensureSelectedVisible();
+      return KeyEventResult.handled;
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      setState(
+          () => _selectedIndex = _selectedIndex <= 0 ? 0 : _selectedIndex - 1);
+      _ensureSelectedVisible();
+      return KeyEventResult.handled;
+    } else if (event.logicalKey == LogicalKeyboardKey.enter ||
+        event.logicalKey == LogicalKeyboardKey.numpadEnter) {
+      if (_selectedIndex >= 0 && _selectedIndex < _filteredFiles.length) {
+        final selected = _filteredFiles[_selectedIndex];
+        _openFile(File(selected.file.path), selected.instrumentName);
+      }
+      return KeyEventResult.handled;
+    } else if (event.logicalKey == LogicalKeyboardKey.delete) {
+      if (_selectedIndex >= 0 && _selectedIndex < _filteredFiles.length) {
+        _deleteFile(_filteredFiles[_selectedIndex].file.path);
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   Future<void> _deleteFile(String filePath, {bool askConfirm = true}) async {
@@ -291,7 +347,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     // so the generic chart viewer can't render them ("No valid data to
     // display"). Tapping the file should behave like Play and open the
     // oscilloscope playback screen, which also shows the recording details.
-    if (instrumentName.toLowerCase() == 'oscilloscope') {
+    if (instrumentName.toLowerCase() == 'oscilloscope' ||
+        instrumentName.toLowerCase() ==
+            appLocalizations.logicAnalyzer.toLowerCase()) {
       return _playFile(file, instrumentName);
     }
     final data = await _csvService.readCsvFromFile(file);
@@ -394,7 +452,10 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => LogicAnalyzerScreen(playbackData: data),
+              builder: (context) => LogicAnalyzerScreen(
+                playbackData: data,
+                fileName: file.uri.pathSegments.last,
+              ),
             ),
           );
           break;
@@ -563,208 +624,223 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                     style: TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 )
-              : RefreshIndicator(
-                  onRefresh: _loadFiles,
-                  child: ListView.builder(
-                    itemCount: _filteredFiles.length,
-                    itemBuilder: (context, index) {
-                      final file = File(_filteredFiles[index].file.path);
-                      final stat = file.statSync();
-                      final fileName = file.uri.pathSegments.last;
-                      final instrumentName =
-                          _filteredFiles[index].instrumentName;
-                      final formattedDate =
-                          DateFormat.yMMMd().add_jm().format(stat.modified);
+              : Focus(
+                  focusNode: _keyboardFocusNode,
+                  canRequestFocus: !_isSearching,
+                  autofocus: !_isSearching,
+                  onKeyEvent: (node, event) => _handleKey(event),
+                  child: RefreshIndicator(
+                    onRefresh: _loadFiles,
+                    child: ListView.builder(
+                      itemCount: _filteredFiles.length,
+                      itemBuilder: (context, index) {
+                        final file = File(_filteredFiles[index].file.path);
+                        final stat = file.statSync();
+                        final fileName = file.uri.pathSegments.last;
+                        final instrumentName =
+                            _filteredFiles[index].instrumentName;
+                        final formattedDate =
+                            DateFormat.yMMMd().add_jm().format(stat.modified);
+                        final bool selected = index == _selectedIndex;
 
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        color: Theme.of(context).colorScheme.surface,
-                        margin:
-                            const EdgeInsets.only(left: 8, right: 8, top: 8),
-                        child: ListTile(
-                          onTap: () => _openFile(file, instrumentName),
-                          leading: Image.asset(
-                            widget.instrumentIcons[
-                                widget.instrumentNames.indexOf(instrumentName)],
-                            color: primaryRed,
+                        return Card(
+                          key: _keyFor(file.path),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
                           ),
-                          title: Text(fileName,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                              '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
-                          isThreeLine: true,
-                          trailing: PopupMenuButton<String>(
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.black),
-                            onSelected: (value) async {
-                              if (value == appLocalizations.play) {
-                                _playFile(file, instrumentName);
-                              } else if (value == appLocalizations.location) {
-                                final data =
-                                    await _csvService.readCsvFromFile(file);
-                                if (!context.mounted) return;
-                                double latitude = 0;
-                                double longitude = 0;
-                                if (data[data.length - 1]
-                                        [data[data.length - 1].length - 2]
-                                    is double) {
-                                  latitude = data[data.length - 1]
+                          color: selected
+                              ? primaryRed.withValues(alpha: 0.08)
+                              : Theme.of(context).colorScheme.surface,
+                          margin:
+                              const EdgeInsets.only(left: 8, right: 8, top: 8),
+                          child: ListTile(
+                            onTap: () {
+                              setState(() => _selectedIndex = index);
+                              _openFile(file, instrumentName);
+                            },
+                            leading: Image.asset(
+                              widget.instrumentIcons[widget.instrumentNames
+                                  .indexOf(instrumentName)],
+                              color: primaryRed,
+                            ),
+                            title: Text(fileName,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                                '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
+                            isThreeLine: true,
+                            trailing: PopupMenuButton<String>(
+                              icon: const Icon(Icons.more_vert,
+                                  color: Colors.black),
+                              onSelected: (value) async {
+                                if (value == appLocalizations.play) {
+                                  _playFile(file, instrumentName);
+                                } else if (value == appLocalizations.location) {
+                                  final data =
+                                      await _csvService.readCsvFromFile(file);
+                                  if (!context.mounted) return;
+                                  double latitude = 0;
+                                  double longitude = 0;
+                                  if (data[data.length - 1]
                                           [data[data.length - 1].length - 2]
-                                      .toDouble();
-                                  longitude = data[data.length - 1]
-                                          [data[data.length - 1].length - 1]
-                                      .toDouble();
-                                }
-                                if (latitude == 0 && longitude == 0) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        appLocalizations
-                                            .noLocationDataAvailable,
-                                        style: TextStyle(
-                                            color: snackBarContentColor),
+                                      is double) {
+                                    latitude = data[data.length - 1]
+                                            [data[data.length - 1].length - 2]
+                                        .toDouble();
+                                    longitude = data[data.length - 1]
+                                            [data[data.length - 1].length - 1]
+                                        .toDouble();
+                                  }
+                                  if (latitude == 0 && longitude == 0) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          appLocalizations
+                                              .noLocationDataAvailable,
+                                          style: TextStyle(
+                                              color: snackBarContentColor),
+                                        ),
+                                        backgroundColor:
+                                            snackBarBackgroundColor,
                                       ),
-                                      backgroundColor: snackBarBackgroundColor,
+                                    );
+                                    return;
+                                  }
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MapScreen(
+                                        latitude: latitude,
+                                        longitude: longitude,
+                                      ),
                                     ),
                                   );
-                                  return;
+                                } else if (value == appLocalizations.share) {
+                                  _csvService.shareFile(file.path);
+                                } else if (value == appLocalizations.rename) {
+                                  _renameFile(file);
+                                } else if (value == appLocalizations.delete) {
+                                  _deleteFile(file.path);
                                 }
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MapScreen(
-                                      latitude: latitude,
-                                      longitude: longitude,
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                if (instrumentName == appLocalizations.soundMeter.toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.barometer
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.powerSource
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.gyroscope
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.luxMeter
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.waveGenerator
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.oscilloscope
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.multimeter
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.logicAnalyzer
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.accelerometer
+                                            .toLowerCase() ||
+                                    instrumentName ==
+                                        appLocalizations.compassTitle
+                                            .toLowerCase())
+                                  PopupMenuItem<String>(
+                                    value: appLocalizations.play,
+                                    child: ListTile(
+                                      dense: true,
+                                      leading: Icon(
+                                        Icons.play_arrow,
+                                        color: primaryRed,
+                                      ),
+                                      title: Text(
+                                        appLocalizations.play,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                );
-                              } else if (value == appLocalizations.share) {
-                                _csvService.shareFile(file.path);
-                              } else if (value == appLocalizations.rename) {
-                                _renameFile(file);
-                              } else if (value == appLocalizations.delete) {
-                                _deleteFile(file.path);
-                              }
-                            },
-                            itemBuilder: (BuildContext context) => [
-                              if (instrumentName == appLocalizations.soundMeter.toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.barometer
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.powerSource
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.gyroscope
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.luxMeter.toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.waveGenerator
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.oscilloscope
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.multimeter
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.logicAnalyzer
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.accelerometer
-                                          .toLowerCase() ||
-                                  instrumentName ==
-                                      appLocalizations.compassTitle
-                                          .toLowerCase())
                                 PopupMenuItem<String>(
-                                  value: appLocalizations.play,
+                                  value: appLocalizations.location,
                                   child: ListTile(
                                     dense: true,
                                     leading: Icon(
-                                      Icons.play_arrow,
+                                      Icons.map,
                                       color: primaryRed,
                                     ),
                                     title: Text(
-                                      appLocalizations.play,
+                                      appLocalizations.location,
                                       style: TextStyle(
                                         color: Colors.black,
                                       ),
                                     ),
                                   ),
                                 ),
-                              PopupMenuItem<String>(
-                                value: appLocalizations.location,
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.map,
-                                    color: primaryRed,
-                                  ),
-                                  title: Text(
-                                    appLocalizations.location,
-                                    style: TextStyle(
-                                      color: Colors.black,
+                                PopupMenuItem<String>(
+                                  value: appLocalizations.share,
+                                  child: ListTile(
+                                    dense: true,
+                                    leading: Icon(
+                                      Icons.share,
+                                      color: primaryRed,
+                                    ),
+                                    title: Text(
+                                      appLocalizations.share,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              PopupMenuItem<String>(
-                                value: appLocalizations.share,
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.share,
-                                    color: primaryRed,
-                                  ),
-                                  title: Text(
-                                    appLocalizations.share,
-                                    style: TextStyle(
-                                      color: Colors.black,
+                                PopupMenuItem<String>(
+                                  value: appLocalizations.rename,
+                                  child: ListTile(
+                                    dense: true,
+                                    leading: Icon(
+                                      Icons.drive_file_rename_outline,
+                                      color: primaryRed,
+                                    ),
+                                    title: Text(
+                                      appLocalizations.rename,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              PopupMenuItem<String>(
-                                value: appLocalizations.rename,
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.drive_file_rename_outline,
-                                    color: primaryRed,
-                                  ),
-                                  title: Text(
-                                    appLocalizations.rename,
-                                    style: TextStyle(
-                                      color: Colors.black,
+                                PopupMenuItem<String>(
+                                  value: appLocalizations.delete,
+                                  child: ListTile(
+                                    dense: true,
+                                    leading: Icon(
+                                      Icons.delete,
+                                      color: primaryRed,
+                                    ),
+                                    title: Text(
+                                      appLocalizations.delete,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              PopupMenuItem<String>(
-                                value: appLocalizations.delete,
-                                child: ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.delete,
-                                    color: primaryRed,
-                                  ),
-                                  title: Text(
-                                    appLocalizations.delete,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
     );
@@ -772,6 +848,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
 
   @override
   void dispose() {
+    _keyboardFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }

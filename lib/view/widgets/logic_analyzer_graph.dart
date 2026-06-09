@@ -123,6 +123,17 @@ class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
                         ),
                         clipData: const FlClipData.all(),
                         lineBarsData: provider.createPlots(),
+                        extraLinesData: provider.isPlayingBack
+                            ? ExtraLinesData(
+                                verticalLines: [
+                                  VerticalLine(
+                                    x: provider.playbackPositionUs,
+                                    color: primaryRed,
+                                    strokeWidth: 1.5,
+                                  ),
+                                ],
+                              )
+                            : const ExtraLinesData(),
                         maxY: provider.getMaxY(),
                         minY: provider.getMinY(),
                       ),
