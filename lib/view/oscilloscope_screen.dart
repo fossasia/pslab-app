@@ -480,7 +480,12 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                                       right: 0,
                                                       top: 0,
                                                       child: SizedBox(
-                                                          width: 135,
+                                                          width: (constraints
+                                                                      .maxWidth *
+                                                                  0.18)
+                                                              .clamp(
+                                                                  100.0, 350.0)
+                                                              .toDouble(),
                                                           child: MeasurementsList(
                                                               dataParamsChannels:
                                                                   provider
