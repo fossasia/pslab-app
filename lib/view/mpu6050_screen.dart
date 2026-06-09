@@ -73,7 +73,7 @@ class _MPU6050ScreenState extends State<MPU6050Screen> {
       child: Consumer<MPU6050Provider>(
         builder: (context, provider, child) {
           return CommonScaffold(
-            title: appLocalizations.mpu650,
+            title: appLocalizations.mpu6050,
             body: Column(
               children: [
                 Expanded(
