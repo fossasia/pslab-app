@@ -379,6 +379,7 @@
     "luxmeterConfigurations": "लक्स मीटर सेटिंग्स",
     "updatePeriod": "अपडेट टाइम",
     "luxmeterUpdatePeriodHint": "वो टाइम इंटरवल बताएं जिस पर डेटा अपडेट होगा (100 ms से 1000 ms)",
+    "soundMeterUpdatePeriodHint": "वो टाइम इंटरवल बताएं जिस पर डेटा अपडेट होगा (100 ms से 1000 ms)",
     "highLimit": "हाई लिमिट",
     "lowLimit": "लो लिमिट",
     "luxmeterHighLimitHint": "रिकॉर्ड करने के लिए लक्स की मैक्स लिमिट बताएं (10 Lx से 10000 Lx)",
