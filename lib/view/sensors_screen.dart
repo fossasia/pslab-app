@@ -7,6 +7,7 @@ import 'package:pslab/view/ads1115_screen.dart';
 import 'package:pslab/view/vl53l0x_screen.dart';
 import 'package:pslab/view/apds9960_screen.dart';
 import 'package:pslab/view/tsl2561_screen.dart';
+import 'package:pslab/view/mpu6050_screen.dart';
 
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
@@ -242,6 +243,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'TSL2561':
         targetScreen = const TSL2561Screen();
+        break;
+      case 'MPU6050':
+        targetScreen = const MPU6050Screen();
         break;
 
       default:

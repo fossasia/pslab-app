@@ -730,5 +730,11 @@
     "pin_dpl_name": "D+",
     "pin_dpl_desc": "Test pin for USB Data +",
     "pin_dmi_name": "D-",
-    "pin_dmi_desc": "Test pin for USB Data -"
+    "pin_dmi_desc": "Test pin for USB Data -",
+    "mpu6050" : "MPU6050",
+    "gyroRange" : "Gyro Range",
+    "accelerationRange" : "Acceleration Range",
+    "acceleration" : "Acceleration",
+    "angularVelocity" : "Angular Velocity",
+    "temp" : "Temp"
 }
