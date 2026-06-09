@@ -59,6 +59,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
             child: LineChart(
               LineChartData(
                 backgroundColor: chartBackgroundColor,
+                lineTouchData: LineTouchData(
+                  enabled: !oscilloscopeStateProvider.isPlayingBack,
+                ),
                 titlesData: FlTitlesData(
                   show: true,
                   topTitles: AxisTitles(

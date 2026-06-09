@@ -138,8 +138,10 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
 
   @override
   void didChangeDependencies() {
-    _setPortraitOrientation();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    if (ModalRoute.of(context)?.isCurrent ?? true) {
+      _setPortraitOrientation();
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
     super.didChangeDependencies();
   }
 

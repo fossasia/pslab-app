@@ -53,9 +53,11 @@ class ApplicationsListItem extends StatelessWidget {
           final double headingSize = 22 * scale;
           final double descSize = 16 * scale;
 
-          final double icon = (100 * scale)
-              .clamp(0.0, w * 0.32)
-              .clamp(0.0, (tileHeight - inset * 2) * 0.5);
+          final double widthCap = (w * 0.32).clamp(0.0, double.infinity);
+          final double heightCap =
+              ((tileHeight - inset * 2) * 0.5).clamp(0.0, double.infinity);
+          final double icon =
+              (100 * scale).clamp(0.0, widthCap).clamp(0.0, heightCap);
 
           return SizedBox(
             height: tileHeight,
