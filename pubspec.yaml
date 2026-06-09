@@ -6,7 +6,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.4
-  flutter: '3.44.0'
+  flutter: '3.44.1'
 
 dependencies:
   flutter:
@@ -25,7 +25,7 @@ dependencies:
       url: https://github.com/marcnause/usbserial.git
       ref: master
   get_it: ^9.2.1
-  record: ^6.2.1
+  record: ^7.0.0
   data: ^0.15.1
   logger: ^2.7.0
   url_launcher: ^6.3.2
@@ -44,7 +44,7 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^11.0.2
   flutter_screenutil: ^5.9.3
-  flusbserial: ^0.5.0
+  flusbserial: ^0.6.0
   inno_bundle: ^0.11.2
   flutter_map: ^8.3.0
   latlong2: ^0.9.1

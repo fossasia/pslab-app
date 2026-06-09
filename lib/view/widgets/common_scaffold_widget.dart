@@ -143,7 +143,9 @@ class _CommonScaffoldState extends State<CommonScaffold> {
       onPopInvokedWithResult: (bool didPop, Object? result) {
         if (didPop) return;
 
-        _setPortraitOrientation();
+        if (!widget.isPlayingBack) {
+          _setPortraitOrientation();
+        }
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
         if (context.mounted) {
@@ -173,7 +175,9 @@ class _CommonScaffoldState extends State<CommonScaffold> {
                   constraints:
                       const BoxConstraints(minWidth: 32, minHeight: 32),
                   onPressed: () {
-                    _setPortraitOrientation();
+                    if (!widget.isPlayingBack) {
+                      _setPortraitOrientation();
+                    }
                     SystemChrome.setEnabledSystemUIMode(
                         SystemUiMode.edgeToEdge);
                     Navigator.maybePop(context);

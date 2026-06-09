@@ -16,6 +16,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../communication/analytics_class.dart';
 import '../communication/science_lab.dart';
+import '../models/oscilloscope_recording_metadata.dart';
 import '../others/audio_jack.dart';
 
 enum MODE { rising, falling, dual }
@@ -86,6 +87,54 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   bool get isPlayingBack => _isPlayingBack;
   bool _isPlaybackPaused = false;
   bool get isPlaybackPaused => _isPlaybackPaused;
+  bool _isPlaybackComplete = false;
+  bool get isPlaybackComplete => _isPlaybackComplete;
+
+  int get playbackTotalFrames {
+    if (_playbackData == null) return 0;
+    final n = _playbackData!.length - 1;
+    return n > 0 ? n : 0;
+  }
+
+  int get playbackCurrentFrame {
+    if (_playbackData == null) return 0;
+    return (_playbackIndex - 1).clamp(0, playbackTotalFrames);
+  }
+
+  Duration get playbackPosition {
+    if (_playbackData == null) return Duration.zero;
+    final base = _firstTimestampMs;
+    if (base == 0) return Duration.zero;
+    final shown = (_playbackIndex - 1).clamp(1, _playbackData!.length - 1);
+    final cur = int.tryParse(_playbackData![shown][0].toString());
+    if (cur == null) return Duration.zero;
+    final ms = cur - base;
+    return Duration(milliseconds: ms > 0 ? ms : 0);
+  }
+
+  Duration get playbackDuration {
+    final ms = _lastTimestampMs - _firstTimestampMs;
+    return Duration(milliseconds: ms > 0 ? ms : 0);
+  }
+
+  int get _firstTimestampMs {
+    if (_playbackData == null) return 0;
+    for (int i = 1; i < _playbackData!.length; i++) {
+      final v = int.tryParse(_playbackData![i][0].toString());
+      if (v != null) return v;
+    }
+    return 0;
+  }
+
+  int get _lastTimestampMs {
+    if (_playbackData == null) return 0;
+    for (int i = _playbackData!.length - 1; i >= 1; i--) {
+      final v = int.tryParse(_playbackData![i][0].toString());
+      if (v != null) return v;
+    }
+    return 0;
+  }
+
   List<List<dynamic>>? _playbackData;
   int _playbackIndex = 0;
   Timer? _playbackTimer;
@@ -101,6 +150,13 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late List<List<FlSpot>> dataEntriesCurveFit;
   late List<String> dataParamsChannels;
   List<List<dynamic>> _recordedData = [];
+  DateTime? _recordingStartedAt;
+  OscilloscopeRecordingMetadata? _lastRecordingMetadata;
+
+  /// Configuration snapshot of the most recent recording, captured at
+  /// [stopRecording]. Used to persist metadata alongside the waveform.
+  OscilloscopeRecordingMetadata? get recordingMetadata =>
+      _lastRecordingMetadata;
   late int _timebaseDivisions;
   int get timebaseDivisions => _timebaseDivisions;
   bool _wakelockEnabled = false;
@@ -741,7 +797,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
   void _startPlaybackTimer() {
     if (_playbackIndex >= _playbackData!.length) {
-      stopPlayback();
+      _completePlayback();
       return;
     }
 
@@ -792,9 +848,22 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     });
   }
 
+  void _completePlayback() {
+    _isPlaybackComplete = true;
+    _isPlaybackPaused = true;
+    _playbackTimer?.cancel();
+
+    if (_wakelockEnabled) {
+      WakelockPlus.disable();
+      _wakelockEnabled = false;
+    }
+    notifyListeners();
+  }
+
   Future<void> stopPlayback() async {
     _isPlayingBack = false;
     _isPlaybackPaused = false;
+    _isPlaybackComplete = false;
     _playbackTimer?.cancel();
     _playbackData = null;
     _playbackIndex = 0;
@@ -813,6 +882,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
     _isPlayingBack = true;
     _isPlaybackPaused = false;
+    _isPlaybackComplete = false;
     _playbackData = data;
     _playbackIndex = 1;
 
@@ -840,7 +910,23 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   void resumePlayback() {
-    if (_isPlayingBack && _isPlaybackPaused) {
+    if (!_isPlayingBack) return;
+
+    if (_isPlaybackComplete) {
+      _isPlaybackComplete = false;
+      _isPlaybackPaused = false;
+      _playbackIndex = 1;
+      dataEntries.clear();
+      if (!_wakelockEnabled) {
+        WakelockPlus.enable();
+        _wakelockEnabled = true;
+      }
+      _startPlaybackTimer();
+      notifyListeners();
+      return;
+    }
+
+    if (_isPlaybackPaused) {
       _isPlaybackPaused = false;
       if (!_wakelockEnabled) {
         WakelockPlus.enable();
@@ -848,6 +934,47 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       }
       _startPlaybackTimer();
       notifyListeners();
+    }
+  }
+
+  void _renderFrameAt(int index) {
+    if (_playbackData == null) return;
+    if (index < 1 || index >= _playbackData!.length) return;
+    final row = _playbackData![index];
+    if (row.length > 2) {
+      dataEntries = parseFlSpotList(row[2]);
+    }
+    if (row.length > 3) {
+      dataParamsChannels = parseChannelsList(row[3]);
+    }
+    if (row.length > 4) {
+      oscilloscopeAxesScale
+          .setXAxisScale(double.tryParse(row[4].toString()) ?? 875.0);
+    }
+    if (row.length > 5) {
+      oscilloscopeAxesScale
+          .setYAxisScale(double.tryParse(row[5].toString()) ?? 16.0);
+    }
+  }
+
+  void seekToFrame(int frame) {
+    if (_playbackData == null || !_isPlayingBack) return;
+    final maxIndex = _playbackData!.length - 1;
+    if (maxIndex < 1) return;
+
+    frame = frame.clamp(1, maxIndex);
+    _playbackTimer?.cancel();
+    _isPlaybackComplete = false;
+    _renderFrameAt(frame);
+    _playbackIndex = frame + 1;
+    notifyListeners();
+
+    if (!_isPlaybackPaused) {
+      _playbackTimer = Timer(const Duration(milliseconds: 150), () {
+        if (_isPlayingBack && !_isPlaybackPaused) {
+          _startPlaybackTimer();
+        }
+      });
     }
   }
 
@@ -859,6 +986,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       await _startGeoLocationUpdates();
     }
     _isRecording = true;
+    _recordingStartedAt = DateTime.now();
     _recordedData = [
       [
         'Timestamp',
@@ -880,8 +1008,58 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       _locationStream!.cancel();
     }
     _isRecording = false;
+    _lastRecordingMetadata = _buildRecordingMetadata();
     notifyListeners();
     return _recordedData;
+  }
+
+  /// Snapshots the live oscilloscope configuration so it can be saved with the
+  /// recording. The app exposes a single (global) Y-axis range selection, so a
+  /// single range string is captured; CH3's fixed ±3.3V is shown by the UI.
+  OscilloscopeRecordingMetadata _buildRecordingMetadata() {
+    final channelSet = <String>{};
+    for (int i = 1; i < _recordedData.length; i++) {
+      final row = _recordedData[i];
+      if (row.length > 3 && row[3] is List) {
+        for (final c in (row[3] as List)) {
+          final name = c.toString().trim();
+          if (name.isNotEmpty) channelSet.add(name);
+        }
+      }
+    }
+    const channelOrder = ['CH1', 'CH2', 'CH3', 'MIC'];
+    final channels = <String>[
+      for (final c in channelOrder)
+        if (channelSet.contains(c)) c,
+      for (final c in channelSet)
+        if (!channelOrder.contains(c)) c,
+    ];
+    if (channels.isEmpty) {
+      channels.addAll([
+        if (isCH1Selected) 'CH1',
+        if (isCH2Selected) 'CH2',
+        if (isCH3Selected) 'CH3',
+        if (isMICSelected || isInBuiltMICSelected) 'MIC',
+      ]);
+    }
+    final frameCount = _recordedData.isNotEmpty ? _recordedData.length - 1 : 0;
+    final yScale = oscilloscopeAxesScale.yAxisScale;
+    final rangeText = yScale == yScale.roundToDouble()
+        ? yScale.toStringAsFixed(0)
+        : yScale.toString();
+    return OscilloscopeRecordingMetadata(
+      recordedAt: _recordingStartedAt,
+      enabledChannels: channels,
+      range: '±${rangeText}V',
+      timebase: timebase,
+      triggerEnabled: isTriggerSelected,
+      triggerChannel: triggerChannel,
+      triggerMode: triggerMode,
+      triggerLevel: trigger,
+      samplingRate: timeGap > 0 ? 1e6 / timeGap : null,
+      samplesPerFrame: samples,
+      sampleCount: frameCount,
+    );
   }
 
   void setTimebaseDivisions(int divisions) {
@@ -1078,6 +1256,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (_timer.isActive) {
       _timer.cancel();
     }
+    _playbackTimer?.cancel();
     if (_wakelockEnabled) {
       WakelockPlus.disable();
     }
