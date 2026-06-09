@@ -330,14 +330,7 @@ class DustSensorStateProvider extends ChangeNotifier {
     }
     _isRecording = true;
     _recordedData = [
-      [
-        'Timestamp',
-        'DateTime',
-        'PM2.5',
-        'PM10',
-        'Latitude',
-        'Longitude'
-      ]
+      ['Timestamp', 'DateTime', 'PM2.5', 'PM10', 'Latitude', 'Longitude']
     ];
     notifyListeners();
   }

@@ -19,7 +19,7 @@ class _DustSensorCardState extends State<DustSensorCard> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
     DustSensorStateProvider provider =
-    Provider.of<DustSensorStateProvider>(context);
+        Provider.of<DustSensorStateProvider>(context);
 
     double pm25 = provider.getCurrentDust();
     String airQuality = provider.getAirQuality();
