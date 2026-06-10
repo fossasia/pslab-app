@@ -522,26 +522,6 @@ Please try to follow the mentioned guidelines while writing and submitting your 
  * The activity/fragment file name corresponding to the layout files should be named as                       (activity/fragment name)(activity/fragment).java like ```ChannelsParameterFragment.java``` corresponding to the layout file ```fragment_channels_parameter.xml``` .
  * The corresponding widgets for buttons, textboxes, checkboxes etc. in activity files should be named as (viewtype/widget)(fragment/activity name)(no. in the file) like ```spinnerChannelSelect1``` corresponding to ```spinner_channel_select1``` .
 
-## Developers
-
-### Maintainers
-The project is maintained by
-- Padmal ([@CloudyPadmal](https://github.com/CloudyPadmal))
-- Mario Behling ([@mariobehling](http://github.com/mariobehling))
-- Lorenz Gerber ([@lorenzgerber](https://github.com/lorenzgerber))
-- Wei Tat ([@cweitat](https://github.com/cweitat))
-- Wai Gie ([@woshikie](https://github.com/woshikie))
-
-### Alumni
-- Neel Trivedi ([@neel1998](https://github.com/neel1998))
-- Akarshan Gandotra ([@akarshan96](https://github.com/akarshan96))
-- Asitava Sarkar ([@asitava1998](https://github.com/asitava1998))
-- Vivek Singh Bhadauria ([@viveksb007](https://github.com/viveksb007))
-- Avjeet ([@Avjeet](https://github.com/Avjeet))
-- Abhinav ([@abhinavraj23](https://github.com/abhinavraj23))
-- Harsh ([@harsh-2711](https://github.com/harsh-2711))
-- Yatri ([@yatri1609](https://github.com/yatri1609))
-
 ## License
 
 This project is currently licensed under the Apache License 2.0. A copy of [LICENSE](LICENSE) is to be present along with the source code. To obtain the software under a different license, please contact FOSSASIA.

@@ -247,6 +247,55 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     _configProvider = oscilloscopeConfigProvider;
   }
 
+  void setChannelSelected(String channel, bool selected) {
+    switch (channel) {
+      case 'CH1':
+        isCH1Selected = selected;
+        break;
+      case 'CH2':
+        isCH2Selected = selected;
+        break;
+      case 'CH3':
+        isCH3Selected = selected;
+        break;
+      case 'MIC':
+        isMICSelected = selected;
+        break;
+      default:
+        return;
+    }
+    if (!selected) {
+      _removeChannelData(channel);
+    }
+    notifyListeners();
+  }
+
+  void removeChannelData(String channel) {
+    _removeChannelData(channel);
+    notifyListeners();
+  }
+
+  void _removeChannelData(String channel) {
+    final index = dataParamsChannels.indexOf(channel);
+    if (index == -1) {
+      return;
+    }
+
+    dataParamsChannels.removeAt(index);
+    if (index < dataEntries.length) {
+      dataEntries.removeAt(index);
+    }
+
+    if (curveFittingChannel1 == channel) {
+      curveFittingChannel1 = '';
+      dataEntriesCurveFit = [];
+    }
+    if (curveFittingChannel2 == channel) {
+      curveFittingChannel2 = '';
+      dataEntriesCurveFit = [];
+    }
+  }
+
   Future<void> _startGeoLocationUpdates() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -1226,7 +1275,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   void resetGraph() {
     if (dataEntries.isEmpty &&
         dataEntriesXYPlot.isEmpty &&
-        dataEntriesCurveFit.isEmpty) {
+        dataEntriesCurveFit.isEmpty &&
+        dataParamsChannels.isEmpty) {
       return;
     }
     oscilloscopeAxesScale.setYAxisScaleMax(oscilloscopeAxesScale.yAxisScale);
@@ -1235,6 +1285,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     dataEntries = [];
     dataEntriesXYPlot = [];
     dataEntriesCurveFit = [];
+    dataParamsChannels = [];
     notifyListeners();
   }
 

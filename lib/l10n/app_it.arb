@@ -381,6 +381,7 @@
     "luxmeterConfigurations": "Configurazioni Luxmetro",
     "updatePeriod": "Periodo di Aggiornamento",
     "luxmeterUpdatePeriodHint": "Fornisci l'intervallo di tempo in cui i dati verranno aggiornati (da 100 ms a 1000 ms)",
+    "soundMeterUpdatePeriodHint": "Fornisci l'intervallo di tempo in cui i dati verranno aggiornati (da 100 ms a 1000 ms)",
     "highLimit": "Limite Massimo",
     "luxmeterHighLimitHint": "Inserisci il limite massimo del valore di lux da registrare (da 10 Lx a 10000 Lx)",
     "sensorGain": "Guadagno del Sensore",

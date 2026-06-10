@@ -38,6 +38,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
   bool get isRecording => _isRecording;
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
+  int? _playbackStartTimestamp;
 
   SoundMeterConfigProvider? _configProvider;
 
@@ -49,6 +50,27 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
   void setConfigProvider(SoundMeterConfigProvider configProvider) {
     _configProvider = configProvider;
+    _configProvider?.addListener(_onConfigChanged);
+  }
+
+  Future<void> _onConfigChanged() async {
+    await disposeSensors();
+    _resetDbData();
+    initializeSensors(onError: onSensorError);
+  }
+
+  void _resetDbData() {
+    _dbData.clear();
+    _timeData.clear();
+    dbChartData.clear();
+    _dbSum = 0;
+    _dataCount = 0;
+    _dbMin = 0;
+    _dbMax = 0;
+    _currentTime = 0;
+    _currentDb = 0;
+    _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+    notifyListeners();
   }
 
   SoundMeterConfigProvider? get configProvider => _configProvider;
@@ -114,13 +136,18 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
 
-      _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        _currentTime =
-            (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
-        _updateData();
-        notifyListeners();
-      });
+      final intervalMs = _configProvider?.config.updatePeriod ?? 1000;
 
+      _timeTimer = Timer.periodic(
+        Duration(milliseconds: intervalMs),
+        (timer) {
+          _currentTime =
+              (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
+
+          _updateData();
+          notifyListeners();
+        },
+      );
       _audioTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
         if (_audioJack != null && _audioJack!.isListening()) {
           final audioData = _audioJack!.read();
@@ -159,7 +186,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
     return dbSPL.clamp(20.0, 120.0);
   }
 
-  void disposeSensors() async {
+  Future<void> disposeSensors() async {
     _timeTimer?.cancel();
     _audioTimer?.cancel();
     await _audioJack?.close();
@@ -167,7 +194,8 @@ class SoundMeterStateProvider extends ChangeNotifier {
   }
 
   void startPlayback(List<List<dynamic>> data) {
-    if (data.length <= 1) return;
+    if (data.length <= 2) return;
+    _playbackStartTimestamp = int.tryParse(data[2][0].toString())?.toInt();
 
     _isPlayingBack = true;
     _isPlaybackPaused = false;
@@ -198,7 +226,10 @@ class SoundMeterStateProvider extends ChangeNotifier {
     final currentRow = _playbackData![_playbackIndex];
     if (currentRow.length > 2) {
       _currentDb = double.tryParse(currentRow[2].toString()) ?? 0.0;
-      _currentTime = (_playbackIndex - 1).toDouble();
+      final timestamp = int.tryParse(currentRow[0].toString())?.toInt();
+      if (timestamp != null && _playbackStartTimestamp != null) {
+        _currentTime = (timestamp - _playbackStartTimestamp!) / 1000.0;
+      }
       _updateData();
       _playbackIndex++;
       notifyListeners();
@@ -278,6 +309,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
     if (_locationStream != null) {
       _locationStream!.cancel();
     }
+    _configProvider?.removeListener(_onConfigChanged);
     _playbackTimer?.cancel();
     disposeSensors();
     super.dispose();
