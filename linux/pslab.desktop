@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=PSLab
-Exec=/usr/bin/pslab
+Exec=pslab
 Icon=pslab
 Terminal=false
 Type=Application
