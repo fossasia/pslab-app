@@ -51,7 +51,8 @@ class GyroscopeProvider extends ChangeNotifier {
   bool get isPlaybackPaused => _isPlaybackPaused;
 
   GyroscopeConfigProvider? _configProvider;
-  double? get _currentLimit => _configProvider?.config.highLimit.toDouble();
+  double? get _currentHighLimit => _configProvider?.config.highLimit.toDouble();
+  double? get _currentLowLimit => _configProvider?.config.lowLimit.toDouble();
   Position? currentPosition;
   StreamSubscription? _locationStream;
 
@@ -229,18 +230,24 @@ class GyroscopeProvider extends ChangeNotifier {
   }
 
   void _updateData() {
-    final limit = _currentLimit;
+    final highLimit = _currentHighLimit;
+    final lowLimit = _currentLowLimit;
 
-    final bool shouldClip = !_isPlayingBack && limit != null;
+    final bool shouldClip = !_isPlayingBack;
 
-    final double x =
-        (shouldClip && _gyroscopeEvent.x > limit) ? limit : _gyroscopeEvent.x;
+    final double x;
+    final double y;
+    final double z;
 
-    final double y =
-        (shouldClip && _gyroscopeEvent.y > limit) ? limit : _gyroscopeEvent.y;
-
-    final double z =
-        (shouldClip && _gyroscopeEvent.z > limit) ? limit : _gyroscopeEvent.z;
+    if (shouldClip && highLimit != null && lowLimit != null) {
+      x = _gyroscopeEvent.x.clamp(-lowLimit, highLimit).toDouble();
+      y = _gyroscopeEvent.y.clamp(-lowLimit, highLimit).toDouble();
+      z = _gyroscopeEvent.z.clamp(-lowLimit, highLimit).toDouble();
+    } else {
+      x = _gyroscopeEvent.x;
+      y = _gyroscopeEvent.y;
+      z = _gyroscopeEvent.z;
+    }
 
     _gyroscopeEvent = GyroscopeEvent(x, y, z, DateTime.now());
     if (_isRecording) {
