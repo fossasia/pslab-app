@@ -9,6 +9,8 @@ import 'package:pslab/view/apds9960_screen.dart';
 import 'package:pslab/view/tsl2561_screen.dart';
 import 'package:pslab/view/mpu6050_screen.dart';
 
+import 'package:pslab/view/max30102_screen.dart';
+
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
@@ -145,6 +147,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
           'MPU6050',
           'MPU925X',
           'BMP180',
+          'MAX30102',
         ];
         _sensorAddresses = {
           'HMC5883L': '30',
@@ -153,6 +156,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
           'APDS9960': '57',
           'SHT21': '64',
           'ADS1115': '72',
+          'MAX30102': '87',
           'MLX90614': '90',
           'CCS811': '90',
           'MPU6050': '104',
@@ -173,6 +177,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
       'BMP180',
       'CCS811',
       'HMC5883L',
+      'MAX30102',
       'MLX90614',
       'MPU6050',
       'MPU925X',
@@ -246,6 +251,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'MPU6050':
         targetScreen = const MPU6050Screen();
+        break;
+      case 'MAX30102':
+        targetScreen = const MAX30102Screen();
         break;
 
       default:

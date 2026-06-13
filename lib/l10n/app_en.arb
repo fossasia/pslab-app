@@ -738,5 +738,11 @@
     "accelerationRange" : "Acceleration Range",
     "acceleration" : "Acceleration",
     "angularVelocity" : "Angular Velocity",
-    "temp" : "Temp"
+    "temp" : "Temp",
+    "adcEstimateLabel" : "*Values are algorithmic estimates based on raw ADC.",
+    "metrics" : "Metrics",
+    "max30102" : "MAX30102",
+    "estBMP" : "Est. BPM",
+    "estSpo2" : "SpO2 %",
+    "imgMissing" : "Img Missing"
 }
