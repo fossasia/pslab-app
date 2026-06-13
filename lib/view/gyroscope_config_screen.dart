@@ -19,6 +19,7 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
   final TextEditingController _updatePeriodController = TextEditingController();
   final TextEditingController _highLimitController = TextEditingController();
   final TextEditingController _sensorGainController = TextEditingController();
+  final TextEditingController _lowLimitController = TextEditingController();
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
@@ -30,6 +31,7 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
       _updatePeriodController.text = provider.config.updatePeriod.toString();
       _highLimitController.text = provider.config.highLimit.toString();
       _sensorGainController.text = provider.config.sensorGain.toString();
+      _lowLimitController.text = provider.config.lowLimit.toString();
     });
   }
 
@@ -38,6 +40,7 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
     _updatePeriodController.dispose();
     _highLimitController.dispose();
     _sensorGainController.dispose();
+    _lowLimitController.dispose();
     super.dispose();
   }
 
@@ -137,6 +140,30 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
                         }
                       },
                       hint: appLocalizations.gyroscopeHighLimitHint,
+                    ),
+                    ConfigInputItem(
+                      title: appLocalizations.lowLimit,
+                      value:
+                          '${provider.config.lowLimit} ${appLocalizations.gyroscopeAxisLabel}',
+                      controller: _lowLimitController,
+                      onChanged: (value) {
+                        final intValue = int.tryParse(value);
+                        if (intValue != null &&
+                            intValue >= 0 &&
+                            intValue <= 1000) {
+                          provider.updateLowLimit(intValue);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                  appLocalizations.lowLimitErrorMessage,
+                                  style: TextStyle(color: snackBarContentColor),
+                                ),
+                                backgroundColor: snackBarBackgroundColor),
+                          );
+                        }
+                      },
+                      hint: appLocalizations.gyroscopeLowLimitHint,
                     ),
                     ConfigInputItem(
                       title: appLocalizations.sensorGain,
