@@ -16,7 +16,7 @@ void main() {
       isLinux: false,
     );
 
-    expect(version, '1.2.3');
+    expect(version, '1.2.3+45');
   });
 
   test(
@@ -53,7 +53,7 @@ void main() {
         resolvedExecutable: executablePath,
       );
 
-      expect(version, '9.8.7');
+      expect(version, '9.8.7+45');
     },
   );
 }
