@@ -10,7 +10,7 @@ Future<String> resolveAboutUsVersion({
   bool? isLinux,
   String? resolvedExecutable,
 }) async {
-  String version = "";
+  var version = "";
 
   try {
     final packageInfo = await (packageInfoLoader ?? PackageInfo.fromPlatform)();
@@ -18,16 +18,21 @@ Future<String> resolveAboutUsVersion({
     if (packageInfo.version.isNotEmpty) {
       version = packageInfo.version;
     } else {
-      final versionFromBundle = await _loadLinuxBundleVersion(
+      version = await _loadLinuxBundleVersion(
         isLinux: isLinux,
         resolvedExecutable: resolvedExecutable,
       );
-      if (versionFromBundle.isNotEmpty) {
-        version = versionFromBundle;
-      }
     }
 
-    return version += "+${packageInfo.buildNumber}";
+    version = version.trim();
+    final buildNumber = packageInfo.buildNumber.trim();
+    if (version.isEmpty) {
+      return '';
+    }
+    if (buildNumber.isEmpty) {
+      return version;
+    }
+    return '$version+$buildNumber';
   } catch (_) {
     final versionFromBundle = await _loadLinuxBundleVersion(
       isLinux: isLinux,
