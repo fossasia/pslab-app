@@ -47,9 +47,8 @@ void main(List<String> args) async {
     if (Platform.isWindows) {
       console_helper.attachParentConsole();
     }
-    final Future<String> appVersionFuture = resolveAboutUsVersion();
-    await appVersionFuture.then((version) => stdout.writeln(version));
-    await stdout.flush();
+    final version = (await resolveAboutUsVersion()).trim();
+    stdout.writeln(version.isNotEmpty ? version : 'Unknown');
     exit(0);
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/about_us_version_resolver.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -156,13 +157,20 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       }
 
                       return Text(
-                        'Unknown',
+                        appLocalizations.unknown,
+                        style: const TextStyle(fontSize: 15),
+                      );
+                    } else if (snapshot.hasError) {
+                      logger.e(
+                          "Error getting version information: ${snapshot.error.toString()}");
+                      return Text(
+                        appLocalizations.error,
                         style: const TextStyle(fontSize: 15),
                       );
                     }
 
-                    return const Text(
-                      'Loading...',
+                    return Text(
+                      appLocalizations.loading,
                       style: TextStyle(fontSize: 15),
                     );
                   },

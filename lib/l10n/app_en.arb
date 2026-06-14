@@ -738,5 +738,8 @@
     "accelerationRange" : "Acceleration Range",
     "acceleration" : "Acceleration",
     "angularVelocity" : "Angular Velocity",
-    "temp" : "Temp"
+    "temp" : "Temp",
+    "error" : "Error",
+    "loading" : "Loading...",
+    "unknown" : "Unknown"
 }
