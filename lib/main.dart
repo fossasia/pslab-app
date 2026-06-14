@@ -7,12 +7,12 @@ import 'package:pslab/providers/sht21_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/settings_config_provider.dart';
+import 'package:pslab/others/about_us_version_resolver.dart';
 import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
@@ -48,8 +48,8 @@ void main(List<String> args) async {
     if (Platform.isWindows) {
       console_helper.attachParentConsole();
     }
-    final info = await PackageInfo.fromPlatform();
-    stdout.writeln('${info.appName} ${info.version}+${info.buildNumber}');
+    final version = (await resolveAboutUsVersion()).trim();
+    stdout.writeln(version.isNotEmpty ? version : 'Unknown');
     await stdout.flush();
     exit(0);
   }

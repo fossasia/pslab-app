@@ -153,7 +153,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
         builder: (context) => LoggedDataScreen(
           instrumentNames: [appLocalizations.thermometerTitle.toLowerCase()],
           appBarName: appLocalizations.thermometerTitle,
-          instrumentIcons: [instrumentIcons[12]],
+          instrumentIcons: [instrumentIcons[11]],
         ),
       ),
     );

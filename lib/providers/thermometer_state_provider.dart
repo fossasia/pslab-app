@@ -40,6 +40,7 @@ class ThermometerStateProvider extends ChangeNotifier {
   double _temperatureMax = 0;
   double _temperatureSum = 0;
   int _dataCount = 0;
+  int? _playbackStartTimestamp;
 
   bool _isSensorAvailable = false;
   bool _isInitialized = false;
@@ -321,7 +322,8 @@ class ThermometerStateProvider extends ChangeNotifier {
   }
 
   void startPlayback(List<List<dynamic>> data) {
-    if (data.length <= 1) return;
+    if (data.length <= 2) return;
+    _playbackStartTimestamp = int.tryParse(data[2][0].toString())?.toInt();
 
     _isPlayingBack = true;
     _isPlaybackPaused = false;
@@ -343,7 +345,12 @@ class ThermometerStateProvider extends ChangeNotifier {
     final currentRow = _playbackData![_playbackIndex];
     if (currentRow.length > 2) {
       _currentTemperature = double.tryParse(currentRow[2].toString()) ?? 0.0;
-      _currentTime = (_playbackIndex - 1).toDouble();
+      final timestamp = int.tryParse(currentRow[0].toString())?.toInt();
+      if (timestamp != null && _playbackStartTimestamp != null) {
+        _currentTime = (timestamp - _playbackStartTimestamp!) / 1000.0;
+      } else {
+        _currentTime = (_playbackIndex - 1).toDouble();
+      }
       _updateData();
       _playbackIndex++;
       notifyListeners();
@@ -390,6 +397,7 @@ class ThermometerStateProvider extends ChangeNotifier {
     _playbackTimer?.cancel();
     _playbackData = null;
     _playbackIndex = 0;
+    _playbackStartTimestamp = null;
 
     _resetTemperatureData();
     notifyListeners();

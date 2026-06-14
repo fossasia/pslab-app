@@ -304,6 +304,10 @@ jobs:
 
           find . -maxdepth 1 -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.exe' -o -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' -o -name '*.zip' \) -delete
 
+          echo "Removing debug artifacts"
+          
+          find ../artifacts -type f \( -name '*debug*' -o -name '*profile*' \) -delete
+
           echo "Copying new artifacts"
 
           find ../artifacts -type f \( \
