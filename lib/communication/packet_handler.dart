@@ -84,7 +84,7 @@ class PacketHandler {
       if (numBytesRead == 3) {
         return _buffer[0];
       } else {
-        logger.e("Error in getting voltage");
+        logger.e("Error in getting byte");
       }
     } catch (e) {
       logger.e(e);
