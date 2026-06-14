@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
-import 'package:pslab/view/about_us_version_resolver.dart';
+import 'package:pslab/others/about_us_version_resolver.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 

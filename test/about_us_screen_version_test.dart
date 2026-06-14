@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pslab/view/about_us_version_resolver.dart';
+import 'package:pslab/others/about_us_version_resolver.dart';
 
 void main() {
   test('uses package_info_plus version when available', () async {
