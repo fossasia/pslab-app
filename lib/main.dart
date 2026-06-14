@@ -49,6 +49,7 @@ void main(List<String> args) async {
     }
     final version = (await resolveAboutUsVersion()).trim();
     stdout.writeln(version.isNotEmpty ? version : 'Unknown');
+    await stdout.flush();
     exit(0);
   }
 

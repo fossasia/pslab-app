@@ -171,7 +171,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
 
                     return Text(
                       appLocalizations.loading,
-                      style: TextStyle(fontSize: 15),
+                      style: const TextStyle(fontSize: 15),
                     );
                   },
                 ),
