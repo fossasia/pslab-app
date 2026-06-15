@@ -37,7 +37,7 @@ dependencies:
   light: ^5.0.0
   connectivity_plus: ^7.1.1
   carousel_slider: ^5.1.1
-  vibration: ^3.1.8
+  vibration: ^3.2.0
   shared_preferences: ^2.5.5
   csv: ^8.0.0
   share_plus: ^13.1.0
