@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:pslab/communication/peripherals/i2c.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/view/sht21_screen.dart';
 import 'package:pslab/view/bmp180_screen.dart';
 import 'package:pslab/view/ads1115_screen.dart';
@@ -25,8 +27,159 @@ class SensorsScreen extends StatefulWidget {
 class _SensorsScreenState extends State<SensorsScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _hasScanned = false;
+  bool _isScanning = false;
   List<String> _detectedSensors = [];
   Map<String, String> _sensorAddresses = {};
+
+  Future<void> _performAutoscan(BoardStateProvider boardProvider) async {
+    if (!boardProvider.pslabIsConnected || _isScanning) return;
+
+    setState(() {
+      _isScanning = true;
+    });
+
+    try {
+      I2C i2c =
+          I2C(boardProvider.scienceLabCommon.getScienceLab().mPacketHandler);
+
+      List<int> scannedAddresses = await i2c.scan(null);
+
+      final Map<int, List<String>> knownSensors = {
+        30: ['HMC5883L'],
+        41: ['VL53L0X'],
+        64: ['SHT21'],
+        72: ['ADS1115'],
+        105: ['MPU925X'],
+        119: ['BMP180'],
+      };
+
+      List<String> actualDetectedSensors = [];
+      Map<String, String> actualSensorAddresses = {};
+
+      for (int address in scannedAddresses) {
+        if (address == 104) {
+          try {
+            int deviceId = await i2c.readByte(104, 0x75);
+            if (deviceId == 104) {
+              actualDetectedSensors.add('MPU6050');
+              actualSensorAddresses['MPU6050'] = '0x68';
+            }
+          } catch (e) {
+            logger.e('Failed to read MPU6050 ID at address 104: $e');
+          }
+        } else if (address == 57) {
+          bool foundSpecific = false;
+          try {
+            int apdsId = await i2c.readByte(57, 0x92);
+            if (apdsId == 171) {
+              actualDetectedSensors.add('APDS9960');
+              actualSensorAddresses['APDS9960'] = '0x39';
+              foundSpecific = true;
+            }
+          } catch (e) {
+            logger.e('Failed to read APDS9960 ID at address 57: $e');
+          }
+
+          if (!foundSpecific) {
+            try {
+              int tslId = await i2c.readByte(57, 0x8A);
+              if ((tslId & 0xF0) == 0x50) {
+                actualDetectedSensors.add('TSL2561');
+                actualSensorAddresses['TSL2561'] = '0x39';
+                foundSpecific = true;
+              }
+            } catch (e) {
+              logger.e('Failed to read TSL2561 ID at address 57: $e');
+            }
+          }
+
+          if (!foundSpecific) {
+            actualDetectedSensors.add('TSL2561');
+            actualSensorAddresses['TSL2561'] = '0x39';
+            actualDetectedSensors.add('APDS9960');
+            actualSensorAddresses['APDS9960'] = '0x39';
+          }
+        } else if (address == 90) {
+          bool foundSpecific = false;
+          try {
+            int ccsId = await i2c.readByte(90, 0x20);
+            if (ccsId == 129) {
+              actualDetectedSensors.add('CCS811');
+              actualSensorAddresses['CCS811'] = '0x5A';
+              foundSpecific = true;
+            }
+          } catch (e) {
+            logger.e('Failed to read CCS811 ID at address 90: $e');
+          }
+
+          if (!foundSpecific) {
+            actualDetectedSensors.add('MLX90614');
+            actualSensorAddresses['MLX90614'] = '0x5A';
+            actualDetectedSensors.add('CCS811');
+            actualSensorAddresses['CCS811'] = '0x5A';
+          }
+        } else if (knownSensors.containsKey(address)) {
+          for (String sensorName in knownSensors[address]!) {
+            actualDetectedSensors.add(sensorName);
+            actualSensorAddresses[sensorName] =
+                '0x${address.toRadixString(16).toUpperCase()}';
+          }
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _hasScanned = true;
+          _detectedSensors = actualDetectedSensors;
+          _sensorAddresses = actualSensorAddresses;
+        });
+      }
+    } catch (e) {
+      logger.e('I2C Autoscan failed completely: $e');
+      if (mounted) {
+        setState(() {
+          _hasScanned = true;
+          _detectedSensors = [];
+          _sensorAddresses = {};
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isScanning = false;
+        });
+      }
+    }
+  }
+
+  String _getSensorDescription(String sensorName) {
+    switch (sensorName) {
+      case 'ADS1115':
+        return appLocalizations.sensorDescADS1115;
+      case 'APDS9960':
+        return appLocalizations.sensorDescAPDS9960;
+      case 'BMP180':
+        return appLocalizations.sensorDescBMP180;
+      case 'CCS811':
+        return appLocalizations.sensorDescCCS811;
+      case 'HMC5883L':
+        return appLocalizations.sensorDescHMC5883L;
+      case 'MLX90614':
+        return appLocalizations.sensorDescMLX90614;
+      case 'MPU6050':
+        return appLocalizations.sensorDescMPU6050;
+      case 'MPU925X':
+        return appLocalizations.sensorDescMPU925X;
+      case 'SHT21':
+        return appLocalizations.sensorDescSHT21;
+      case 'TSL2561':
+        return appLocalizations.sensorDescTSL2561;
+      case 'VL53L0X':
+        return appLocalizations.sensorDescVL53L0X;
+      default:
+        return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,42 +187,58 @@ class _SensorsScreenState extends State<SensorsScreen> {
       builder: (context, boardProvider, child) {
         return CommonScaffold(
           title: appLocalizations.sensors,
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _performAutoscan(boardProvider);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryRed,
-                      foregroundColor: buttonTextColor,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    child: Text(
-                      appLocalizations.autoscan.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+          actions: [
+            Padding(
+              padding:
+                  const EdgeInsets.only(right: 12.0, top: 10.0, bottom: 10.0),
+              child: OutlinedButton(
+                onPressed:
+                    _isScanning ? null : () => _performAutoscan(boardProvider),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  disabledForegroundColor: Colors.white70,
+                  side: BorderSide(
+                    color: _isScanning ? Colors.white70 : Colors.white,
+                    width: 1.5,
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
-                const SizedBox(height: 20),
+                child: _isScanning
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          color: Colors.white70,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : Text(
+                        appLocalizations.autoscan.toUpperCase(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.1,
+                          fontSize: 12,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+          body: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Container(
                   width: double.infinity,
                   padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   decoration: BoxDecoration(
                     color: sensorStatusBackgroundColor,
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: sensorStatusBorder,
                       width: 1,
@@ -79,26 +248,29 @@ class _SensorsScreenState extends State<SensorsScreen> {
                     _getStatusText(boardProvider),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       color: blackTextColor,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-                if (_hasScanned) ...[
-                  const SizedBox(height: 30),
-                  Text(
-                    appLocalizations.selectSensor.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: blackTextColor,
-                    ),
+                const SizedBox(height: 24),
+                Text(
+                  appLocalizations.selectSensor.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: blackTextColor,
                   ),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    child: _buildSensorList(),
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () => _performAutoscan(boardProvider),
+                    color: primaryRed,
+                    child: _buildSensorListContent(),
                   ),
-                ],
+                ),
               ],
             ),
           ),
@@ -111,62 +283,22 @@ class _SensorsScreenState extends State<SensorsScreen> {
     if (!boardProvider.pslabIsConnected) {
       return appLocalizations.notConnected;
     }
-
     if (!_hasScanned) {
       return appLocalizations.autoScanHint;
     }
-
     if (_detectedSensors.isEmpty) {
       return appLocalizations.noSensorDetected;
     }
 
-    String result = '';
+    List<String> formattedSensors = [];
     for (String sensor in _detectedSensors) {
       String address = _sensorAddresses[sensor] ?? '';
-      result += '$address: [$sensor]\n';
+      formattedSensors.add('$sensor ($address)');
     }
-    return result.trim();
+    return 'Detected: ${formattedSensors.join(', ')}';
   }
 
-  void _performAutoscan(BoardStateProvider boardProvider) {
-    setState(() {
-      _hasScanned = true;
-
-      if (boardProvider.pslabIsConnected) {
-        _detectedSensors = [
-          'HMC5883L',
-          'VL53L0X',
-          'TSL2561',
-          'APDS9960',
-          'SHT21',
-          'ADS1115',
-          'MLX90614',
-          'CCS811',
-          'MPU6050',
-          'MPU925X',
-          'BMP180',
-        ];
-        _sensorAddresses = {
-          'HMC5883L': '30',
-          'VL53L0X': '41',
-          'TSL2561': '57',
-          'APDS9960': '57',
-          'SHT21': '64',
-          'ADS1115': '72',
-          'MLX90614': '90',
-          'CCS811': '90',
-          'MPU6050': '104',
-          'MPU925X': '105',
-          'BMP180': '119',
-        };
-      } else {
-        _detectedSensors = [];
-        _sensorAddresses = {};
-      }
-    });
-  }
-
-  Widget _buildSensorList() {
+  Widget _buildSensorListContent() {
     final sensors = [
       'ADS1115',
       'APDS9960',
@@ -181,48 +313,109 @@ class _SensorsScreenState extends State<SensorsScreen> {
       'VL53L0X',
     ];
 
-    return ListView.builder(
-      itemCount: sensors.length,
-      itemBuilder: (context, index) {
-        final sensor = sensors[index];
-        final isDetected = _detectedSensors.contains(sensor);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isDesktop = constraints.maxWidth > 600;
+        int crossAxisCount = isDesktop ? 3 : 1;
+        double spacing = 12.0;
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 1),
-          child: Material(
-            color: primaryRed,
-            child: InkWell(
-              onTap: () {
-                _onSensorTap(sensor);
-              },
-              child: Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: primaryRed,
-                  border: isDetected
-                      ? Border.all(color: buttonTextColor, width: 2)
-                      : null,
-                ),
-                child: Text(
-                  sensor,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: buttonTextColor,
-                    fontSize: 16,
-                    fontWeight: isDetected ? FontWeight.w600 : FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
+        final itemWidth =
+            (constraints.maxWidth - (spacing * (crossAxisCount - 1))) /
+                crossAxisCount;
+
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 20, top: 4),
+          child: Wrap(
+            spacing: spacing,
+            runSpacing: 20,
+            children: sensors.map((sensor) {
+              final isDetected = _detectedSensors.contains(sensor);
+
+              return SizedBox(
+                width: itemWidth,
+                child: _buildSensorChip(sensor, isDetected, isDesktop),
+              );
+            }).toList(),
           ),
         );
       },
     );
   }
 
-  void _onSensorTap(String sensorName) {
+  Widget _buildSensorChip(String sensor, bool isDetected, bool isDesktop) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _onSensorTap(sensor, isDetected),
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.topCenter,
+          children: [
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(top: 8),
+              padding: isDesktop
+                  ? const EdgeInsets.fromLTRB(16, 24, 16, 20)
+                  : const EdgeInsets.fromLTRB(8, 16, 8, 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: isDetected ? Colors.green : primaryRed,
+                  width: 1.5,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _getSensorDescription(sensor),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: isDesktop ? 14 : 12,
+                      fontWeight: FontWeight.w400,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 0,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: Text(
+                  sensor,
+                  style: TextStyle(
+                    color: isDetected ? Colors.green.shade700 : primaryRed,
+                    fontWeight: FontWeight.bold,
+                    fontSize: isDesktop ? 15 : 13,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onSensorTap(String sensorName, bool isDetected) {
+    if (!isDetected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$sensorName ${appLocalizations.mightNotConnected}'),
+          duration: const Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+
     Widget? targetScreen;
 
     switch (sensorName) {
@@ -247,23 +440,19 @@ class _SensorsScreenState extends State<SensorsScreen> {
       case 'MPU6050':
         targetScreen = const MPU6050Screen();
         break;
-
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
                 Text('$sensorName ${appLocalizations.screenNotImplemented}'),
             duration: const Duration(milliseconds: 500),
+            behavior: SnackBarBehavior.floating,
           ),
         );
         return;
     }
 
     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => targetScreen!,
-      ),
-    );
+        context, MaterialPageRoute(builder: (context) => targetScreen!));
   }
 }

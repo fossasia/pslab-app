@@ -738,5 +738,17 @@
     "accelerationRange" : "Acceleration Range",
     "acceleration" : "Acceleration",
     "angularVelocity" : "Angular Velocity",
-    "temp" : "Temp"
+    "temp" : "Temp",
+    "sensorDescADS1115": "Precision 16-Bit Analog-to-Digital Converter",
+    "sensorDescAPDS9960": "RGB Color, Light & Gesture Sensor",
+    "sensorDescBMP180": "Barometric Pressure & Temperature",
+    "sensorDescCCS811": "eCO2 & TVOC Indoor Air Quality",
+    "sensorDescHMC5883L": "3-Axis Digital Magnetometer Compass",
+    "sensorDescMLX90614": "Non-Contact Infrared Temperature",
+    "sensorDescMPU6050": "6-Axis Accelerometer & Gyroscope",
+    "sensorDescMPU925X": "9-Axis Motion Tracking (Accel/Gyro/Mag)",
+    "sensorDescSHT21": "Digital Humidity & Temperature",
+    "sensorDescTSL2561": "Wide-Range Ambient Light (Lux)",
+    "sensorDescVL53L0X": "Time-of-Flight (ToF) Laser Distance",
+    "mightNotConnected" : "might not be connected."
 }
