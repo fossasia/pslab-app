@@ -41,7 +41,7 @@ dependencies:
   shared_preferences: ^2.5.5
   csv: ^8.0.0
   share_plus: ^13.1.0
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   file_picker: ^12.0.0-beta.5
   flutter_screenutil: ^5.9.3
   flusbserial: ^0.6.0
