@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -138,7 +137,7 @@ class _AdaptiveSaveDialogState extends State<_AdaptiveSaveDialog> {
                   SizedBox(
                     width: isLandscape ? 80 : 90,
                     child: DropdownButtonFormField<String>(
-                      value: _selectedFormat,
+                      initialValue: _selectedFormat,
                       iconEnabledColor: primaryRed,
                       style: TextStyle(
                           fontSize: inputFontSize, color: Colors.black),

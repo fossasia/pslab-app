@@ -298,7 +298,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           ExperimentOverlayWidget(
             onExperimentComplete: () async {
               if (_provider.isRecording) {
-                final data = _provider.stopRecording();
+                _provider.stopRecording();
               }
               if (context.mounted) {
                 Navigator.pop(context);

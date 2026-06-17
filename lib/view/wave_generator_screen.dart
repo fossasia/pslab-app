@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/others/data_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/wave_generator_config_provider.dart';
 import 'package:pslab/providers/wave_generator_state_provider.dart';
@@ -15,7 +14,6 @@ import 'package:pslab/view/widgets/analog_waveform_controls.dart';
 import 'package:pslab/view/widgets/digital_waveform_controls.dart';
 import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/view/widgets/wave_generator_graph.dart';
 import 'package:pslab/view/widgets/wave_generator_main_controls.dart';
 
@@ -413,6 +411,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                         );
                       }
                       await _provider.logData();
+                      if (!context.mounted) return;
                       final data = _provider.recordedData;
                       await ExportHelper.handleSaveData(
                         context: context,
