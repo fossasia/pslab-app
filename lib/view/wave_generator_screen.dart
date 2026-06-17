@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/others/csv_service.dart';
+import 'package:pslab/others/data_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/wave_generator_config_provider.dart';
 import 'package:pslab/providers/wave_generator_state_provider.dart';
@@ -13,6 +13,7 @@ import 'package:pslab/view/wave_generator_config_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/analog_waveform_controls.dart';
 import 'package:pslab/view/widgets/digital_waveform_controls.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/view/widgets/wave_generator_graph.dart';
@@ -34,7 +35,6 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late WaveGeneratorStateProvider _provider;
   late WaveGeneratorConfigProvider? _configProvider;
-  final CsvService _csvService = CsvService();
   bool _showGuide = false;
 
   @override
@@ -86,40 +86,6 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
       InstrumentBulletPoint(text: appLocalizations.pwmBulletPoint3),
       InstrumentBulletPoint(text: appLocalizations.pwmBulletPoint4),
     ];
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.waveGenerator.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.waveGenerator.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
-    }
   }
 
   void _showOptionsMenu() {
@@ -448,7 +414,12 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                       }
                       await _provider.logData();
                       final data = _provider.recordedData;
-                      await _showSaveFileDialog(data);
+                      await ExportHelper.handleSaveData(
+                        context: context,
+                        instrumentName:
+                            appLocalizations.waveGenerator.toLowerCase(),
+                        data: data,
+                      );
                     },
                   ),
                 ],

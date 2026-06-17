@@ -30,9 +30,16 @@ class SettingsConfig {
   }
 
   factory SettingsConfig.fromJson(Map<String, dynamic> json) {
+    String parsedFormat = json['exportFormat'] ?? 'CSV';
+    const allowedFormats = ['CSV', 'TXT', 'JSON'];
+
+    if (!allowedFormats.contains(parsedFormat)) {
+      parsedFormat = 'CSV';
+    }
+
     return SettingsConfig(
       autoStart: json['autoStart'] ?? true,
-      exportFormat: json['exportFormat'] ?? 'CSV',
+      exportFormat: parsedFormat,
       languageCode: json['languageCode'] ?? 'en',
     );
   }

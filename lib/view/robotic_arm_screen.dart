@@ -4,6 +4,7 @@ import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/robotic_arm_controls.dart';
 import 'package:pslab/view/widgets/robotic_arm_dialog.dart';
 import 'package:pslab/view/widgets/robotic_arm_summary.dart';
@@ -26,6 +27,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
   bool _showGuide = false;
   static const imagePath = 'assets/images/robotic_arm_guide.png';
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   @override
   void initState() {
     super.initState();
@@ -192,116 +194,12 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                 icon: const Icon(Icons.save, color: Colors.white),
                 tooltip: appLocalizations.saveData,
                 onPressed: () async {
-                  final TextEditingController fileNameController =
-                      TextEditingController();
-
-                  final String? enteredFileName = await showDialog<String>(
+                  final exportData = provider.generateExportData();
+                  await ExportHelper.handleSaveData(
                     context: context,
-                    barrierDismissible: false,
-                    builder: (context) {
-                      return Dialog(
-                        insetPadding: EdgeInsets.zero,
-                        backgroundColor: Colors.transparent,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            margin: EdgeInsets.zero,
-                            padding: const EdgeInsets.all(8),
-                            width: 220,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  appLocalizations.enterFileName,
-                                  style: TextStyle(fontSize: 9),
-                                ),
-                                const SizedBox(height: 2),
-                                TextField(
-                                  controller: fileNameController,
-                                  style: const TextStyle(fontSize: 12),
-                                  decoration: const InputDecoration(
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 6, vertical: 6),
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    SizedBox(
-                                      height: 26,
-                                      child: TextButton(
-                                        style: TextButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 6),
-                                          minimumSize: Size.zero,
-                                          tapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                        ),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(null),
-                                        child: Text(appLocalizations.cancel,
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.black)),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    SizedBox(
-                                      height: 26,
-                                      child: TextButton(
-                                        style: TextButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 6),
-                                          minimumSize: Size.zero,
-                                          tapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).pop(
-                                              fileNameController.text.trim());
-                                        },
-                                        child: Text(appLocalizations.save,
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.black)),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                    instrumentName: appLocalizations.roboticArm.toLowerCase(),
+                    data: exportData,
                   );
-
-                  try {
-                    await provider.exportTimelineToCsv(
-                      instrumentName:
-                          appLocalizations.roboticArmTitle.toLowerCase(),
-                      fileName: (enteredFileName!),
-                    );
-
-                    if (!context.mounted) return;
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(appLocalizations.fileSaved)),
-                    );
-                  } catch (e) {
-                    if (!context.mounted) return;
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(appLocalizations.csvSavingError)),
-                    );
-                  }
                 },
               ),
               IconButton(
@@ -327,11 +225,8 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                         ),
                       ),
                     );
-
                     if (data != null) {
-                      setState(() {
-                        provider.importTimelineFromCsv(data);
-                      });
+                      await provider.importTimelineData(data);
                     }
                   }
                 },

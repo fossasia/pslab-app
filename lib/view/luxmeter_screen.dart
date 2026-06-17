@@ -5,12 +5,11 @@ import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
 import 'package:pslab/providers/luxmeter_config_provider.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/luxmeter_card.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/luxmeter_config_screen.dart';
 import '../providers/experiment_provider.dart';
@@ -34,7 +33,6 @@ class LuxMeterScreen extends StatefulWidget {
 class _LuxMeterScreenState extends State<LuxMeterScreen> {
   late LuxMeterStateProvider _provider;
   late LuxMeterConfigProvider _configProvider;
-  final CsvService _csvService = CsvService();
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic_.png';
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
@@ -132,7 +130,11 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.luxMeter.toLowerCase(),
+        data: data,
+      );
     } else {
       await _provider.startRecording();
       if (!mounted) return;
@@ -145,39 +147,6 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
           backgroundColor: snackBarBackgroundColor,
         ),
       );
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(appLocalizations.luxMeter.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.luxMeter.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
     }
   }
 
@@ -330,7 +299,6 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
             onExperimentComplete: () async {
               if (_provider.isRecording) {
                 final data = _provider.stopRecording();
-                await _showSaveFileDialog(data);
               }
               if (context.mounted) {
                 Navigator.pop(context);
