@@ -476,6 +476,7 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
                               return;
                             }
                             await _provider.logData();
+                            if (!context.mounted) return;
                             final data = _provider.recordedData;
                             await ExportHelper.handleSaveData(
                               context: context,

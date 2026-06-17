@@ -174,10 +174,10 @@ class RoboticArmStateProvider extends ChangeNotifier {
         if (scienceLab.isConnected()) {
           try {
             await scienceLab.servo4(
-              angles[0] ?? 0,
-              angles[1] ?? 0,
-              angles[2] ?? 0,
-              angles[3] ?? 0,
+              angles[0] ?? -1,
+              angles[1] ?? -1,
+              angles[2] ?? -1,
+              angles[3] ?? -1,
               maxAngle: maxAngle,
               frequency: selectedFrequency == appLocalizations.frequency50Hz
                   ? 50
