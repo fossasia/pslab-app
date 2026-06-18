@@ -754,6 +754,7 @@
     "sensorDescCCS811": "eCO2 & TVOC Indoor Air Quality",
     "sensorDescHMC5883L": "3-Axis Digital Magnetometer Compass",
     "sensorDescMLX90614": "Non-Contact Infrared Temperature",
+    "sensorDescMAX30102": "Pulse Oximeter & Heart-Rate ",
     "sensorDescMPU6050": "6-Axis Accelerometer & Gyroscope",
     "sensorDescMPU925X": "9-Axis Motion Tracking (Accel/Gyro/Mag)",
     "sensorDescSHT21": "Digital Humidity & Temperature",

@@ -51,6 +51,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
         41: ['VL53L0X'],
         64: ['SHT21'],
         72: ['ADS1115'],
+        87: ['MAX30102'],
         105: ['MPU925X'],
         119: ['BMP180'],
       };
@@ -126,6 +127,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
             actualSensorAddresses[sensorName] =
                 '0x${address.toRadixString(16).toUpperCase()}';
           }
+        } else {
+          logger.i(
+              "Detected unknown sensor with address 0x${address.toRadixString(16).toUpperCase()} ($address)");
         }
       }
 
@@ -166,6 +170,8 @@ class _SensorsScreenState extends State<SensorsScreen> {
         return appLocalizations.sensorDescCCS811;
       case 'HMC5883L':
         return appLocalizations.sensorDescHMC5883L;
+      case 'MAX30102':
+        return appLocalizations.sensorDescMAX30102;
       case 'MLX90614':
         return appLocalizations.sensorDescMLX90614;
       case 'MPU6050':
@@ -297,47 +303,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
       String address = _sensorAddresses[sensor] ?? '';
       formattedSensors.add('$sensor ($address)');
     }
-    return result.trim();
-  }
-
-  void _performAutoscan(BoardStateProvider boardProvider) {
-    setState(() {
-      _hasScanned = true;
-
-      if (boardProvider.pslabIsConnected) {
-        _detectedSensors = [
-          'HMC5883L',
-          'VL53L0X',
-          'TSL2561',
-          'APDS9960',
-          'SHT21',
-          'ADS1115',
-          'MLX90614',
-          'CCS811',
-          'MPU6050',
-          'MPU925X',
-          'BMP180',
-          'MAX30102',
-        ];
-        _sensorAddresses = {
-          'HMC5883L': '30',
-          'VL53L0X': '41',
-          'TSL2561': '57',
-          'APDS9960': '57',
-          'SHT21': '64',
-          'ADS1115': '72',
-          'MAX30102': '87',
-          'MLX90614': '90',
-          'CCS811': '90',
-          'MPU6050': '104',
-          'MPU925X': '105',
-          'BMP180': '119',
-        };
-      } else {
-        _detectedSensors = [];
-        _sensorAddresses = {};
-      }
-    });
+    return 'Detected: ${formattedSensors.join(', ')}';
   }
 
   Widget _buildSensorListContent() {
