@@ -6,7 +6,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.4
-  flutter: '3.44.1'
+  flutter: '3.44.2'
 
 dependencies:
   flutter:
@@ -37,18 +37,18 @@ dependencies:
   light: ^5.0.0
   connectivity_plus: ^7.1.1
   carousel_slider: ^5.1.1
-  vibration: ^3.1.8
+  vibration: ^3.2.0
   shared_preferences: ^2.5.5
   csv: ^8.0.0
   share_plus: ^13.1.0
-  path_provider: ^2.1.5
-  file_picker: ^12.0.0-beta.5
+  path_provider: ^2.1.6
+  file_picker: ^12.0.0-beta.7
   flutter_screenutil: ^5.9.3
   flusbserial: ^0.6.0
   inno_bundle: ^0.11.2
   flutter_map: ^8.3.0
   latlong2: ^0.9.1
-  geolocator: ^14.0.2
+  geolocator: ^14.0.3
   wakelock_plus: ^1.6.1
   image: ^4.9.1
   serial: ^0.0.7+1

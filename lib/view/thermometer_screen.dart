@@ -339,6 +339,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
   Widget _buildChartSection() {
     return Consumer<ThermometerStateProvider>(
       builder: (context, provider, child) {
+        final unit = context.watch<ThermometerConfigProvider>().config.unit;
         final screenWidth = MediaQuery.of(context).size.width;
         final cardMargin = screenWidth < 400 ? 8.0 : 12.0;
         final cardPadding = screenWidth < 400 ? 2.0 : 5.0;
@@ -353,8 +354,8 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
             color: chartBackgroundColor,
             borderRadius: BorderRadius.zero,
           ),
-          child:
-              _buildChart(screenWidth, maxTime, minTime, timeInterval, spots),
+          child: _buildChart(
+              screenWidth, maxTime, minTime, timeInterval, spots, unit),
         );
       },
     );
@@ -394,7 +395,7 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
   }
 
   Widget _buildChart(double screenWidth, double maxTime, double minTime,
-      double timeInterval, List<FlSpot> spots) {
+      double timeInterval, List<FlSpot> spots, String unit) {
     final chartFontSize = screenWidth < 400
         ? 8.0
         : screenWidth < 600
@@ -441,7 +442,9 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
             ),
             leftTitles: AxisTitles(
               axisNameWidget: Text(
-                appLocalizations.celsius,
+                unit == "Fahrenheit"
+                    ? appLocalizations.fahrenheitUnit
+                    : appLocalizations.celsius,
                 style: TextStyle(
                   fontSize: axisNameFontSize,
                   color: chartTextColor,
