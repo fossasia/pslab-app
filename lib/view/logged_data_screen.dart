@@ -426,6 +426,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
               builder: (context) => PowerSourceScreen(playbackData: data),
             ),
           );
+          break;
         case 'luxmeter':
           Navigator.push(
             context,
