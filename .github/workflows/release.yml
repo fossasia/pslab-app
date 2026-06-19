@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Download repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Prepare Secrets (Android)
         env:
