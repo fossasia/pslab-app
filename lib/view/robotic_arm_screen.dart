@@ -219,7 +219,9 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (_) => LoggedDataScreen(
-                          instrumentNames: [appLocalizations.roboticArmTitle],
+                          instrumentNames: [
+                            appLocalizations.roboticArmTitle.toLowerCase()
+                          ],
                           appBarName: appLocalizations.showLoggedData,
                           instrumentIcons: [instrumentIcons[12]],
                         ),
