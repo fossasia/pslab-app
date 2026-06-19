@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/providers/thermometer_state_provider.dart';
 import 'package:pslab/providers/thermometer_config_provider.dart';
 import 'package:pslab/view/thermometer_config_screen.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/thermometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -27,7 +26,6 @@ class ThermometerScreen extends StatefulWidget {
 
 class _ThermometerScreenState extends State<ThermometerScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  final CsvService _csvService = CsvService();
   late ThermometerStateProvider _temperatureProvider;
   late ThermometerConfigProvider _configProvider;
 
@@ -162,7 +160,11 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
   Future<void> _toggleRecording() async {
     if (_temperatureProvider.isRecording) {
       final data = _temperatureProvider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.thermometer.toLowerCase(),
+        data: data,
+      );
     } else {
       await _temperatureProvider.startRecording();
       if (!mounted) return;
@@ -175,71 +177,6 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
           backgroundColor: snackBarBackgroundColor,
         ),
       );
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final TextEditingController filenameController = TextEditingController();
-    final String defaultFilename =
-        '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
-    filenameController.text = defaultFilename;
-
-    final String? fileName = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(appLocalizations.saveRecording),
-          content: TextField(
-            controller: filenameController,
-            decoration: InputDecoration(
-              hintText: appLocalizations.enterFileName,
-              labelText: appLocalizations.fileName,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(appLocalizations.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, filenameController.text);
-              },
-              child: Text(appLocalizations.save),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.thermometerTitle.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.thermometerTitle.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
     }
   }
 

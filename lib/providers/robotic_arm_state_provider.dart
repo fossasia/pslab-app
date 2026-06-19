@@ -10,11 +10,8 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/science_lab_common.dart';
 import 'package:vibration/vibration.dart';
 
-import '../others/csv_service.dart';
-
 class RoboticArmStateProvider extends ChangeNotifier {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
-  final CsvService _csvService = CsvService();
 
   final List<double> servoValues = [0, 0, 0, 0];
   List<List<double?>> timelineDegrees = [];
@@ -214,13 +211,10 @@ class RoboticArmStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> exportTimelineToCsv({
-    required String instrumentName,
-    required String fileName,
-  }) async {
-    List<List<dynamic>> csvData = [];
+  List<List<dynamic>> generateExportData() {
+    List<List<dynamic>> exportData = [];
 
-    csvData
+    exportData
         .add(['Timestamp', 'Servo1', 'Servo2', 'Servo3', 'Servo4', 'DateTime']);
 
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
@@ -230,8 +224,8 @@ class RoboticArmStateProvider extends ChangeNotifier {
       final timestamp = i;
       final dateTime = dateFormat.format(DateTime.now());
 
-      csvData.add([
-        timestamp,
+      exportData.add([
+        timestamp.toString(),
         row[0]?.toString() ?? 'null',
         row[1]?.toString() ?? 'null',
         row[2]?.toString() ?? 'null',
@@ -240,22 +234,23 @@ class RoboticArmStateProvider extends ChangeNotifier {
       ]);
     }
 
-    await _csvService.saveCsvFile(instrumentName, fileName, csvData);
+    return exportData;
   }
 
-  Future<void> importTimelineFromCsv(List<List<dynamic>> csv) async {
-    if (csv.length <= 2) return;
+  Future<void> importTimelineData(List<List<dynamic>> data) async {
+    if (data.length <= 2) return;
 
-    final dataRows = csv.skip(1).toList();
+    final dataRows = data.skip(2).toList();
 
     for (int i = 0; i < totalTimelineItems; i++) {
       if (i < dataRows.length && dataRows[i].length >= 5) {
         final row = dataRows[i];
+
         timelineDegrees[i] = [
-          double.tryParse(row[1].toString()),
-          double.tryParse(row[2].toString()),
-          double.tryParse(row[3].toString()),
-          double.tryParse(row[4].toString()),
+          row[1] == 'null' ? null : double.tryParse(row[1].toString()),
+          row[2] == 'null' ? null : double.tryParse(row[2].toString()),
+          row[3] == 'null' ? null : double.tryParse(row[3].toString()),
+          row[4] == 'null' ? null : double.tryParse(row[4].toString()),
         ];
       } else {
         timelineDegrees[i] = [null, null, null, null];

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/compass_config_screen.dart';
 import '../l10n/app_localizations.dart';
@@ -41,7 +40,6 @@ class CompassScreenContent extends StatefulWidget {
 
 class _CompassScreenContentState extends State<CompassScreenContent> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
-  final CsvService _csvService = CsvService();
 
   late CompassProvider _provider;
   late CompassConfigProvider _configProvider;
@@ -155,7 +153,11 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.compass.toLowerCase(),
+        data: data,
+      );
     } else {
       await _provider.startRecording();
       if (!mounted) return;
@@ -168,40 +170,6 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
           backgroundColor: snackBarBackgroundColor,
         ),
       );
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.compassTitle.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.compassTitle.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
     }
   }
 

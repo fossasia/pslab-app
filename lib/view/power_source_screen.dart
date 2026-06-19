@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/power_source_config_provider.dart';
 import 'package:pslab/providers/power_source_state_provider.dart';
@@ -12,9 +11,9 @@ import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/power_source_config_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/power_source_knob.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 
 class PowerSourceScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
@@ -31,7 +30,6 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late PowerSourceStateProvider _provider;
   late PowerSourceConfigProvider? _configProvider;
-  final CsvService _csvService = CsvService();
   bool _showGuide = false;
   final TextEditingController _pv1Controller = TextEditingController();
   final TextEditingController _pv2Controller = TextEditingController();
@@ -227,7 +225,11 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.powerSource.toLowerCase(),
+        data: data,
+      );
     } else {
       bool hasStarted = await _provider.startRecording();
       if (!mounted) return;
@@ -251,40 +253,6 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
             backgroundColor: snackBarBackgroundColor,
           ),
         );
-      }
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.powerSource.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.powerSource.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
       }
     }
   }

@@ -47,9 +47,12 @@ class SettingsConfigProvider extends ChangeNotifier {
   }
 
   void updateExportFormat(String exportFormat) {
-    if (exportFormat != "CSV" && exportFormat != "TXT") {
+    const allowedFormats = ["CSV", "TXT", "JSON"];
+
+    if (!allowedFormats.contains(exportFormat)) {
       exportFormat = "CSV";
     }
+
     _config = _config.copyWith(exportFormat: exportFormat);
     notifyListeners();
     _saveConfigToPrefs();
