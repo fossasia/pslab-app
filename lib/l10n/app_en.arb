@@ -760,5 +760,7 @@
     "sensorDescSHT21": "Digital Humidity & Temperature",
     "sensorDescTSL2561": "Wide-Range Ambient Light (Lux)",
     "sensorDescVL53L0X": "Time-of-Flight (ToF) Laser Distance",
-    "mightNotConnected" : "might not be connected."
+    "mightNotConnected" : "might not be connected.",
+    "hmc5883l" : "HMC5883L",
+    "gauss" : "Gauss"
 }

@@ -10,8 +10,8 @@ import 'package:pslab/view/vl53l0x_screen.dart';
 import 'package:pslab/view/apds9960_screen.dart';
 import 'package:pslab/view/tsl2561_screen.dart';
 import 'package:pslab/view/mpu6050_screen.dart';
-
 import 'package:pslab/view/max30102_screen.dart';
+import 'package:pslab/view/hmc5883l_screen.dart';
 
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import '../../providers/board_state_provider.dart';
@@ -47,7 +47,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
       List<int> scannedAddresses = await i2c.scan(null);
 
       final Map<int, List<String>> knownSensors = {
-        30: ['HMC5883L'],
+        13: ['HMC5883L'], // QMC5883L
+        30: ['HMC5883L'], // Original HMC5883L
+        44: ['HMC5883L'], // QMC5883P
         41: ['VL53L0X'],
         64: ['SHT21'],
         72: ['ADS1115'],
@@ -451,6 +453,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'MAX30102':
         targetScreen = const MAX30102Screen();
+        break;
+      case 'HMC5883L':
+        targetScreen = const HMC5883LScreen();
         break;
 
       default:
