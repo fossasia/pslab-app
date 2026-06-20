@@ -63,7 +63,6 @@ class CompassProvider extends ChangeNotifier {
     _configProvider?.removeListener(_onConfigChanged);
     _configProvider = configProvider;
     _configProvider?.addListener(_onConfigChanged);
-    _onConfigChanged();
   }
 
   void _onConfigChanged() {
@@ -151,14 +150,14 @@ class CompassProvider extends ChangeNotifier {
       _hmc5883l = await HMC5883L.create(i2c, scienceLab);
 
       _externalSensorTimer =
-          Timer.periodic(const Duration(milliseconds: 100), (timer) async {
+          Timer.periodic(const Duration(milliseconds: 400), (timer) async {
         if (_isPlayingBack) return;
 
         try {
           List<double> rawData = await _hmc5883l!.getRaw();
 
-          _magnetometerEvent = MagnetometerEvent(
-              rawData[0], rawData[1], rawData[2], DateTime.now());
+          _magnetometerEvent = MagnetometerEvent(rawData[0] * 100.0,
+              rawData[1] * 100.0, rawData[2] * 100.0, DateTime.now());
 
           _updateCompassDirection();
           notifyListeners();

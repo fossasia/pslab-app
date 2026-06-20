@@ -64,7 +64,7 @@ class HMC5883L {
         int x = _convertBytesToInt(data[0], data[1]);
         int z = _convertBytesToInt(data[2], data[3]);
         int y = _convertBytesToInt(data[4], data[5]);
-        return [x / 10.9, y / 10.9, z / 10.9];
+        return [x / 1090.0, y / 1090.0, z / 1090.0];
       }
 
       data = await i2c.readBulk(13, 0x00, 6);
@@ -72,7 +72,7 @@ class HMC5883L {
         int x = _convertBytesToInt(data[1], data[0]);
         int y = _convertBytesToInt(data[3], data[2]);
         int z = _convertBytesToInt(data[5], data[4]);
-        return [x / 30.0, y / 30.0, z / 30.0];
+        return [x / 3000.0, y / 3000.0, z / 3000.0];
       }
 
       data = await i2c.readBulk(44, 0x01, 6);
@@ -80,8 +80,7 @@ class HMC5883L {
         int x = _convertBytesToInt(data[1], data[0]);
         int y = _convertBytesToInt(data[3], data[2]);
         int z = _convertBytesToInt(data[5], data[4]);
-
-        return [x / 30.0, y / 30.0, z / 30.0];
+        return [x / 3000.0, y / 3000.0, z / 3000.0];
       }
 
       return [0.0, 0.0, 0.0];
