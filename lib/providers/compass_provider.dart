@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+
 import 'package:pslab/others/logger_service.dart';
+import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/communication/peripherals/i2c.dart';
+import '../communication/sensors/hmc5883l.dart';
 
 import '../l10n/app_localizations.dart';
 import 'locator.dart';
@@ -12,12 +16,18 @@ import 'compass_config_provider.dart';
 
 class CompassProvider extends ChangeNotifier {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   MagnetometerEvent _magnetometerEvent =
       MagnetometerEvent(0, 0, 0, DateTime.now());
   AccelerometerEvent _accelerometerEvent =
       AccelerometerEvent(0, 0, 0, DateTime.now());
+
   StreamSubscription? _magnetometerSubscription;
   StreamSubscription? _accelerometerSubscription;
+
+  HMC5883L? _hmc5883l;
+  Timer? _externalSensorTimer;
+
   String _selectedAxis = 'X';
   double _currentDegree = 0.0;
   int _direction = 0;
@@ -50,7 +60,15 @@ class CompassProvider extends ChangeNotifier {
   bool get isPlaybackPaused => _isPlaybackPaused;
 
   void setConfigProvider(CompassConfigProvider configProvider) {
+    _configProvider?.removeListener(_onConfigChanged);
     _configProvider = configProvider;
+    _configProvider?.addListener(_onConfigChanged);
+    _onConfigChanged();
+  }
+
+  void _onConfigChanged() {
+    disposeSensors();
+    initializeSensors();
   }
 
   Future<void> _startGeoLocationUpdates() async {
@@ -79,43 +97,84 @@ class CompassProvider extends ChangeNotifier {
     }
 
     _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     ).listen((Position position) {
       currentPosition = position;
     });
   }
 
   void initializeSensors() {
-    _magnetometerSubscription = magnetometerEventStream().listen(
-      (event) {
-        _magnetometerEvent = event;
-        _updateCompassDirection();
-        notifyListeners();
-      },
-      onError: (error) {
-        logger.e("${appLocalizations.magnetometerError}: $error");
-      },
-      cancelOnError: false,
-    );
-
     _accelerometerSubscription = accelerometerEventStream().listen(
       (event) {
         _accelerometerEvent = event;
-        _updateCompassDirection();
-        notifyListeners();
+        if (_configProvider?.config.sensorSource == 'inbuilt') {
+          _updateCompassDirection();
+          notifyListeners();
+        }
       },
-      onError: (error) {
-        logger.e("${appLocalizations.accelerometerError}: $error");
-      },
+      onError: (error) =>
+          logger.e("${appLocalizations.accelerometerError}: $error"),
       cancelOnError: false,
     );
+
+    if (_configProvider?.config.sensorSource == 'hmc5883l') {
+      _initExternalCompass();
+    } else {
+      _magnetometerSubscription = magnetometerEventStream().listen(
+        (event) {
+          _magnetometerEvent = event;
+          _updateCompassDirection();
+          notifyListeners();
+        },
+        onError: (error) =>
+            logger.e("${appLocalizations.magnetometerError}: $error"),
+        cancelOnError: false,
+      );
+    }
+  }
+
+  Future<void> _initExternalCompass() async {
+    try {
+      final scienceLab = getIt.get<ScienceLab>();
+
+      if (!scienceLab.isConnected()) {
+        logger.w(appLocalizations.pslabNotConnected);
+        _magnetometerSubscription = magnetometerEventStream().listen((event) {
+          _magnetometerEvent = event;
+          _updateCompassDirection();
+          notifyListeners();
+        });
+        return;
+      }
+
+      final i2c = I2C(scienceLab.mPacketHandler);
+      _hmc5883l = await HMC5883L.create(i2c, scienceLab);
+
+      _externalSensorTimer =
+          Timer.periodic(const Duration(milliseconds: 100), (timer) async {
+        if (_isPlayingBack) return;
+
+        try {
+          List<double> rawData = await _hmc5883l!.getRaw();
+
+          _magnetometerEvent = MagnetometerEvent(
+              rawData[0], rawData[1], rawData[2], DateTime.now());
+
+          _updateCompassDirection();
+          notifyListeners();
+        } catch (e) {
+          logger.e("Error reading external compass: $e");
+        }
+      });
+    } catch (e) {
+      logger.e("Failed to initialize PSLab Compass: $e");
+    }
   }
 
   void disposeSensors() {
     _magnetometerSubscription?.cancel();
     _accelerometerSubscription?.cancel();
+    _externalSensorTimer?.cancel();
     _playbackTimer?.cancel();
   }
 
@@ -167,8 +226,6 @@ class CompassProvider extends ChangeNotifier {
       _playbackIndex++;
       notifyListeners();
     } else {
-      logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns');
       _playbackIndex++;
       notifyListeners();
     }

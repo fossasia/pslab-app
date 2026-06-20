@@ -22,6 +22,7 @@ class _CompassConfigScreenState extends State<CompassConfigScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: appBarContentColor),
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: appBarColor,
           statusBarIconBrightness: Brightness.light,
@@ -62,13 +63,35 @@ class _CompassConfigScreenState extends State<CompassConfigScreen> {
           child: Consumer<CompassConfigProvider>(
             builder: (context, provider, child) {
               return SingleChildScrollView(
-                child: ConfigCheckboxItem(
-                  title: appLocalizations.locationData,
-                  subtitle: appLocalizations.locationDataHint,
-                  value: provider.config.includeLocationData,
-                  onChanged: (value) {
-                    provider.updateIncludeLocationData(value);
-                  },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ConfigDropdownItem(
+                      title: 'Sensor Source',
+                      selectedValue: provider.config.sensorSource,
+                      options: [
+                        ConfigOption(
+                          value: 'inbuilt',
+                          displayName: appLocalizations.inBuiltSensor,
+                        ),
+                        ConfigOption(
+                          value: 'hmc5883l',
+                          displayName: appLocalizations.hmc5883l,
+                        ),
+                      ],
+                      onChanged: (value) {
+                        provider.updateSensorSource(value);
+                      },
+                    ),
+                    ConfigCheckboxItem(
+                      title: appLocalizations.locationData,
+                      subtitle: appLocalizations.locationDataHint,
+                      value: provider.config.includeLocationData,
+                      onChanged: (value) {
+                        provider.updateIncludeLocationData(value);
+                      },
+                    ),
+                  ],
                 ),
               );
             },
