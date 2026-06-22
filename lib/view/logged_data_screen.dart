@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
@@ -18,6 +17,7 @@ import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
 import '../l10n/app_localizations.dart';
+import '../others/data_service.dart';
 import '../providers/locator.dart';
 import 'accelerometer_screen.dart';
 import 'compass_screen.dart';
@@ -47,7 +47,7 @@ class LoggedDataFile {
 
 class _LoggedDataScreenState extends State<LoggedDataScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
-  final CsvService _csvService = CsvService();
+  final DataService _dataService = DataService();
   List<LoggedDataFile> _allFiles = [];
   List<LoggedDataFile> _filteredFiles = [];
   bool _isSearching = false;
@@ -70,7 +70,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     });
     _allFiles = [];
     for (var name in widget.instrumentNames) {
-      final files = await _csvService.getSavedFiles(name);
+      final files = await _dataService.getSavedFiles(name);
       for (var file in files) {
         _allFiles.add(LoggedDataFile(instrumentName: name, file: file));
       }
@@ -178,13 +178,22 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
 
     if (confirmed) {
-      await _csvService.deleteFile(filePath);
+      await _dataService.deleteFile(filePath);
       _loadFiles();
     }
   }
 
   Future<void> _renameFile(File file) async {
-    final currentName = file.uri.pathSegments.last.replaceAll('.csv', '');
+    final fullFileName = file.uri.pathSegments.last;
+    final extensionIndex = fullFileName.lastIndexOf('.');
+
+    final currentName = extensionIndex != -1
+        ? fullFileName.substring(0, extensionIndex)
+        : fullFileName;
+
+    final extension =
+        extensionIndex != -1 ? fullFileName.substring(extensionIndex) : '';
+
     final controller = TextEditingController(text: currentName);
 
     final newName = await showDialog<String>(
@@ -211,7 +220,8 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: primaryRed),
                   ),
-                  suffixText: '.csv',
+                  // Display the dynamic extension (.csv, .txt, .json)
+                  suffixText: extension,
                 ),
                 onSubmitted: (value) => Navigator.of(context).pop(value),
               ),
@@ -240,7 +250,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     if (newName == null || newName.trim().isEmpty) return;
     if (newName.trim() == currentName) return;
 
-    final newPath = await _csvService.renameFile(file.path, newName);
+    final newPath = await _dataService.renameFile(file.path, newName);
     if (!mounted) return;
     if (newPath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -304,7 +314,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
 
     if (confirmed == true) {
       for (var name in widget.instrumentNames) {
-        await _csvService.deleteAllFiles(name);
+        await _dataService.deleteAllFiles(name);
       }
       _loadFiles();
     }
@@ -344,16 +354,12 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   }
 
   Future<void> _openFile(File file, String instrumentName) async {
-    // Oscilloscope recordings store waveform frames, not a simple x/y table,
-    // so the generic chart viewer can't render them ("No valid data to
-    // display"). Tapping the file should behave like Play and open the
-    // oscilloscope playback screen, which also shows the recording details.
     if (instrumentName.toLowerCase() == 'oscilloscope' ||
         instrumentName.toLowerCase() ==
             appLocalizations.logicAnalyzer.toLowerCase()) {
       return _playFile(file, instrumentName);
     }
-    final data = await _csvService.readCsvFromFile(file);
+    final data = await _dataService.readDataFromFile(file);
     if (mounted) {
       if (instrumentName.toLowerCase() == 'robotic arm') {
         Navigator.pop(context, data);
@@ -378,7 +384,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   }
 
   Future<void> _playFile(File file, String instrumentName) async {
-    final data = await _csvService.readCsvFromFile(file);
+    final data = await _dataService.readDataFromFile(file);
     if (data.isNotEmpty && mounted) {
       switch (instrumentName) {
         case 'sound meter':
@@ -420,6 +426,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
               builder: (context) => PowerSourceScreen(playbackData: data),
             ),
           );
+          break;
         case 'luxmeter':
           Navigator.push(
             context,
@@ -437,8 +444,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           );
           break;
         case 'oscilloscope':
-          final recordingName =
-              file.uri.pathSegments.last.replaceAll('.csv', '');
+          final recordingName = file.uri.pathSegments.last;
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -489,7 +495,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   }
 
   Future<void> _pickAndImportFile(String instrumentName) async {
-    final data = await _csvService.pickAndReadCsvFile();
+    final data = await _dataService.pickAndReadFile();
     if (data != null && mounted) {
       if (instrumentName.toLowerCase() == 'robotic arm') {
         Navigator.pop(context, data);
@@ -564,6 +570,21 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final playableInstruments = {
+      appLocalizations.soundMeter.toLowerCase(),
+      appLocalizations.barometer.toLowerCase(),
+      appLocalizations.powerSource.toLowerCase(),
+      appLocalizations.gyroscope.toLowerCase(),
+      appLocalizations.luxMeter.toLowerCase(),
+      appLocalizations.waveGenerator.toLowerCase(),
+      appLocalizations.oscilloscope.toLowerCase(),
+      appLocalizations.multimeter.toLowerCase(),
+      appLocalizations.logicAnalyzer.toLowerCase(),
+      appLocalizations.accelerometer.toLowerCase(),
+      appLocalizations.compassTitle.toLowerCase(),
+      appLocalizations.thermometerTitle.toLowerCase(),
+    };
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryRed,
@@ -686,7 +707,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                   _playFile(file, instrumentName);
                                 } else if (value == appLocalizations.location) {
                                   final data =
-                                      await _csvService.readCsvFromFile(file);
+                                      await _dataService.readDataFromFile(file);
                                   if (!context.mounted) return;
                                   double latitude = 0;
                                   double longitude = 0;
@@ -725,7 +746,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                     ),
                                   );
                                 } else if (value == appLocalizations.share) {
-                                  _csvService.shareFile(file.path);
+                                  _dataService.shareFile(file.path);
                                 } else if (value == appLocalizations.rename) {
                                   _renameFile(file);
                                 } else if (value == appLocalizations.delete) {
@@ -733,40 +754,8 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                 }
                               },
                               itemBuilder: (BuildContext context) => [
-                                if (instrumentName == appLocalizations.soundMeter.toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.barometer
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.powerSource
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.gyroscope
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.luxMeter
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.waveGenerator
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.oscilloscope
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.multimeter
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.logicAnalyzer
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.accelerometer
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.compassTitle
-                                            .toLowerCase() ||
-                                    instrumentName ==
-                                        appLocalizations.thermometerTitle
-                                            .toLowerCase())
+                                if (playableInstruments
+                                    .contains(instrumentName))
                                   PopupMenuItem<String>(
                                     value: appLocalizations.play,
                                     child: ListTile(

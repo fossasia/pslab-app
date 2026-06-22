@@ -21,7 +21,7 @@ jobs:
     outputs:
       is_code: ${{ steps.check.outputs.is_code }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -38,7 +38,7 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: Common Workflow
@@ -66,7 +66,7 @@ jobs:
     needs: [ changes, common ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: Android Workflow
@@ -88,7 +88,7 @@ jobs:
         with:
           xcode-version: '26.3.0'
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: iOS Workflow
@@ -105,7 +105,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: Android Screenshot Workflow
@@ -131,7 +131,7 @@ jobs:
         with:
           xcode-version: '26.3.0'
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: iPhone Screenshot Workflow
@@ -156,7 +156,7 @@ jobs:
         with:
           xcode-version: '26.3.0'
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: iPad Screenshot Workflow
@@ -174,7 +174,7 @@ jobs:
     needs: [ changes, common ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: Web App Workflow
@@ -190,7 +190,7 @@ jobs:
     needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'windows-latest' || 'ubuntu-latest' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: Windows Workflow
@@ -206,7 +206,7 @@ jobs:
     needs: [ changes, common ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: Linux Workflow
@@ -222,7 +222,7 @@ jobs:
     needs: [ changes, common ]
     runs-on: ${{ needs.changes.outputs.is_code == 'true' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: Linux ARM64 Workflow
@@ -244,7 +244,7 @@ jobs:
         with:
           xcode-version: '26.3.0'
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
 
       - name: macOS Workflow

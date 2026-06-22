@@ -158,7 +158,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
         removeRight: isLandscape,
         child: Scaffold(
           backgroundColor: scaffoldBackgroundColor,
-          resizeToAvoidBottomInset: true,
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             automaticallyImplyLeading: false,
             titleSpacing: 4,

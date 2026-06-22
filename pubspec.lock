@@ -992,10 +992,10 @@ packages:
     dependency: transitive
     description:
       name: record_android
-      sha256: "88b35177f0fb3582836f0b9ffcf388e178d85b9b94b4259e6a722391a93f321e"
+      sha256: "6722be803d8b2a0945112d69cfbda1391970c5cff2cb53c16afd307a6b7ef0c4"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   record_ios:
     dependency: transitive
     description:

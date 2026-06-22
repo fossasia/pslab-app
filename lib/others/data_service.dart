@@ -11,8 +11,15 @@ import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 
-class CsvService {
+class DataService {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
+  bool _isSupportedFormat(String path) {
+    final lower = path.toLowerCase();
+    return lower.endsWith('.csv') ||
+        lower.endsWith('.txt') ||
+        lower.endsWith('.json');
+  }
 
   Future<Directory> getInstrumentDirectory(String instrumentName) async {
     if (Platform.isAndroid) {
@@ -37,8 +44,8 @@ class CsvService {
     }
   }
 
-  Future<File?> saveCsvFile(
-      String instrumentName, String fileName, List<List<dynamic>> data) async {
+  Future<File?> saveDataFile(String instrumentName, String fileName,
+      List<List<dynamic>> data, String format) async {
     try {
       if (data.length <= 1) {
         logger.w('${appLocalizations.noDataRecorded} $fileName');
@@ -46,19 +53,30 @@ class CsvService {
       }
       final directory = await getInstrumentDirectory(instrumentName);
 
+      String ext = format.toLowerCase();
       String finalFileName;
       if (fileName.isEmpty) {
         finalFileName =
-            '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.csv';
+            '${DateFormat('yyyy-MM-dd_HH-mm-ss').format(DateTime.now())}.$ext';
       } else {
-        finalFileName = fileName.endsWith('.csv') ? fileName : '$fileName.csv';
+        finalFileName =
+            fileName.endsWith('.$ext') ? fileName : '$fileName.$ext';
       }
 
       final file = File('${directory.path}/$finalFileName');
 
-      final codec = csv.Csv();
-      final csvData = codec.encode(data);
-      await file.writeAsString(csvData);
+      String fileContent;
+      if (format == 'JSON') {
+        fileContent = jsonEncode(data);
+      } else if (format == 'TXT') {
+        final codec = csv.Csv(fieldDelimiter: '\t');
+        fileContent = codec.encode(data);
+      } else {
+        final codec = csv.Csv();
+        fileContent = codec.encode(data);
+      }
+
+      await file.writeAsString(fileContent);
       logger.i('${appLocalizations.csvFileSaved}: ${file.path}');
 
       if (Platform.isAndroid) {
@@ -75,7 +93,7 @@ class CsvService {
               for (final file in entity
                   .listSync(followLinks: false)
                   .whereType<File>()
-                  .where((f) => f.path.endsWith('.csv'))) {
+                  .where((f) => _isSupportedFormat(f.path))) {
                 logEntries.add((
                   fileName: file.path.split('/').last,
                   instrument: instrument,
@@ -110,7 +128,7 @@ class CsvService {
       final directory = await getInstrumentDirectory(instrumentName);
       final files = directory
           .listSync()
-          .where((item) => item.path.endsWith('.csv'))
+          .where((item) => _isSupportedFormat(item.path))
           .toList();
       files.sort(
           (a, b) => b.statSync().modified.compareTo(a.statSync().modified));
@@ -141,7 +159,9 @@ class CsvService {
       final trimmed = newBaseName.trim().replaceAll(RegExp(r'[\\/]'), '');
       if (trimmed.isEmpty) return null;
 
-      final newName = trimmed.endsWith('.csv') ? trimmed : '$trimmed.csv';
+      final extension = file.path.split('.').last;
+      final newName =
+          trimmed.endsWith('.$extension') ? trimmed : '$trimmed.$extension';
       final newPath = '${file.parent.path}/$newName';
 
       if (newPath == filePath) return filePath;
@@ -181,16 +201,16 @@ class CsvService {
     }
   }
 
-  Future<List<List<dynamic>>?> pickAndReadCsvFile() async {
+  Future<List<List<dynamic>>?> pickAndReadFile() async {
     try {
       final result = await FilePicker.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['csv'],
+        allowedExtensions: ['csv', 'txt', 'json'],
       );
 
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
-        return await readCsvFromFile(file);
+        return await readDataFromFile(file);
       }
     } catch (e) {
       logger.e('${appLocalizations.csvPickingError}: $e');
@@ -198,26 +218,35 @@ class CsvService {
     return null;
   }
 
-  Future<List<List<dynamic>>> readCsvFromFile(File file) async {
+  Future<List<List<dynamic>>> readDataFromFile(File file) async {
     try {
-      final lines = file
-          .openRead()
-          .transform(utf8.decoder)
-          .transform(const LineSplitter());
+      final extension = file.path.split('.').last.toLowerCase();
 
-      final List<List<dynamic>> rows = [];
+      if (extension == 'json') {
+        final content = await file.readAsString();
+        final decoded = jsonDecode(content) as List<dynamic>;
+        return decoded.map((e) => (e as List<dynamic>).toList()).toList();
+      } else {
+        final lines = file
+            .openRead()
+            .transform(utf8.decoder)
+            .transform(const LineSplitter());
 
-      final codec = csv.Csv(dynamicTyping: true);
+        final List<List<dynamic>> rows = [];
 
-      await for (final line in lines) {
-        final parsedRow = codec.decode(line);
+        final codec = extension == 'txt'
+            ? csv.Csv(fieldDelimiter: '\t', dynamicTyping: true)
+            : csv.Csv(dynamicTyping: true);
 
-        if (parsedRow.isNotEmpty) {
-          rows.add(parsedRow.first);
+        await for (final line in lines) {
+          final parsedRow = codec.decode(line);
+
+          if (parsedRow.isNotEmpty) {
+            rows.add(parsedRow.first);
+          }
         }
+        return rows;
       }
-
-      return rows;
     } catch (e) {
       logger.e('${appLocalizations.csvReadingError}: $e');
       return [];

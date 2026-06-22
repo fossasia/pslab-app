@@ -386,7 +386,8 @@
     "lowLimit": "Low Limit",
     "luxmeterHighLimitHint": "Please provide the maximum limit of lux value to be recorded (10 Lx to 10000 Lx)",
     "sensorGain": "Sensor Gain",
-    "sensorGainHint": "Please set gain of the sensor",
+    "sensorGainHint": "Please set gain of the sensor (0 to 100)",
+    "sensorGainErrorMessage": "Entered gain is not within the limits!",
     "locationData": "Include Location Data",
     "locationDataHint": "Include the location data in the logged file",
     "activeSensor": "Active Sensor",
@@ -760,5 +761,7 @@
     "sensorDescSHT21": "Digital Humidity & Temperature",
     "sensorDescTSL2561": "Wide-Range Ambient Light (Lux)",
     "sensorDescVL53L0X": "Time-of-Flight (ToF) Laser Distance",
-    "mightNotConnected" : "might not be connected."
+    "mightNotConnected" : "might not be connected.",
+    "hmc5883l" : "HMC5883L",
+    "gauss" : "Gauss"
 }

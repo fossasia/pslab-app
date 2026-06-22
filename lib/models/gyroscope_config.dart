@@ -1,7 +1,7 @@
 class GyroscopeConfig {
   final int updatePeriod;
   final int highLimit;
-  final int sensorGain;
+  final double sensorGain;
   final int lowLimit;
   final bool includeLocationData;
 
@@ -9,7 +9,7 @@ class GyroscopeConfig {
     this.updatePeriod = 1000,
     this.highLimit = 200,
     this.lowLimit = 200,
-    this.sensorGain = 1,
+    this.sensorGain = 1.0,
     this.includeLocationData = true,
   });
 
@@ -17,7 +17,7 @@ class GyroscopeConfig {
     int? updatePeriod,
     int? highLimit,
     int? lowLimit,
-    int? sensorGain,
+    double? sensorGain,
     bool? includeLocationData,
   }) {
     return GyroscopeConfig(
@@ -44,7 +44,7 @@ class GyroscopeConfig {
       updatePeriod: json['updatePeriod'] ?? 1000,
       highLimit: json['highLimit'] ?? 200,
       lowLimit: json['lowLimit'] ?? 200,
-      sensorGain: json['sensorGain'] ?? 1,
+      sensorGain: json['sensorGain'] ?? 1.0,
       includeLocationData: json['includeLocationData'] ?? true,
     );
   }

@@ -170,9 +170,20 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
                       value: provider.config.sensorGain.toString(),
                       controller: _sensorGainController,
                       onChanged: (value) {
-                        final intValue = int.tryParse(value);
-                        if (intValue != null) {
-                          provider.updateSensorGain(intValue);
+                        final doubleValue = double.tryParse(value);
+                        if (doubleValue != null &&
+                            doubleValue >= 0 &&
+                            doubleValue <= 100) {
+                          provider.updateSensorGain(doubleValue);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                  appLocalizations.sensorGainErrorMessage,
+                                  style: TextStyle(color: snackBarContentColor),
+                                ),
+                                backgroundColor: snackBarBackgroundColor),
+                          );
                         }
                       },
                       hint: appLocalizations.sensorGainHint,
