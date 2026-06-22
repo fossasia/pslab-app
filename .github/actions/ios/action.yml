@@ -27,19 +27,34 @@ runs:
         pod install --repo-update
 
     - name: Build iOS IPA (No code signing for PRs)
-      if: ${{ github.event_name == 'pull_request' }}
+      # if: ${{ github.event_name == 'pull_request' }} # TODO: Uncomment once iOS certs are renewed.
       shell: bash
       env:
         VERSION_NAME: ${{ inputs.VERSION_NAME }}
         VERSION_CODE: ${{ inputs.VERSION_CODE }}
       run: |
-        flutter build ipa --no-codesign --build-name $VERSION_NAME --build-number $VERSION_CODE
+        flutter build ios --release --no-codesign --build-name "$VERSION_NAME" --build-number "$VERSION_CODE"
 
-    - name: Build iOS IPA (With Code Signing)
-      if: ${{ github.event_name != 'pull_request' }}
-      shell: bash
-      env:
-        VERSION_NAME: ${{ inputs.VERSION_NAME }}
-        VERSION_CODE: ${{ inputs.VERSION_CODE }}
-      run: |
-        flutter build ipa --build-name $VERSION_NAME --build-number $VERSION_CODE
+        cd build/ios/iphoneos
+        mkdir Payload
+        cp -r Runner.app Payload/
+        zip -qr pslab-unsigned.ipa Payload/
+        mv pslab-unsigned.ipa ../../../
+
+    # - name: Build Signed iOS IPA (For Production) # TODO: Uncomment once iOS certs are renewed.
+    #  if: ${{ github.event_name != 'pull_request' }}
+    #  shell: bash
+    #  env:
+    #    VERSION_NAME: ${{ inputs.VERSION_NAME }}
+    #   VERSION_CODE: ${{ inputs.VERSION_CODE }}
+    # run: |
+        # flutter build ipa --build-name "$VERSION_NAME" --build-number "$VERSION_CODE"
+
+    - name: Store IPA file
+      uses: actions/upload-artifact@v7
+      with:
+        name: iOS IPA Generated
+        path: |
+          pslab-unsigned.ipa
+          build/ios/ipa/*.ipa
+        if-no-files-found: ignore
