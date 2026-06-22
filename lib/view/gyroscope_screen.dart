@@ -194,24 +194,46 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
                     }
                   : null,
               body: SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: GyroscopeCard(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    const double kPerCardMin = 150.0;
+                    const double kPerCardScrollHeight = 220.0;
+                    final double available = constraints.maxHeight;
+                    final bool needsScroll = available < kPerCardMin * 3;
+
+                    final List<Widget> cards = [
+                      GyroscopeCard(
                           color: xOrientationChartLineColor,
                           axis: appLocalizations.xAxis),
-                    ),
-                    Expanded(
-                      child: GyroscopeCard(
+                      GyroscopeCard(
                           color: yOrientationChartLineColor,
                           axis: appLocalizations.yAxis),
-                    ),
-                    Expanded(
-                      child: GyroscopeCard(
+                      GyroscopeCard(
                           color: zOrientationChartLineColor,
                           axis: appLocalizations.zAxis),
-                    ),
-                  ],
+                    ];
+
+                    if (needsScroll) {
+                      return SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            for (final card in cards)
+                              SizedBox(
+                                height: kPerCardScrollHeight,
+                                child: card,
+                              ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return Column(
+                      children: [
+                        for (final card in cards) Expanded(child: card),
+                      ],
+                    );
+                  },
                 ),
               ),
             );
