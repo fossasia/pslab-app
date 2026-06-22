@@ -214,7 +214,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
   void _updateData() {
     final highLimit = _currentHighLimit;
     final lowLimit = _currentLowLimit;
-
+    final gain = (_configProvider?.config.sensorGain ?? 1.0).toDouble();
     final bool shouldClip = !_isPlayingBack;
 
     final double x;
@@ -222,13 +222,13 @@ class AccelerometerStateProvider extends ChangeNotifier {
     final double z;
 
     if (shouldClip && highLimit != null && lowLimit != null) {
-      x = _accelerometerEvent.x.clamp(-lowLimit, highLimit).toDouble();
-      y = _accelerometerEvent.y.clamp(-lowLimit, highLimit).toDouble();
-      z = _accelerometerEvent.z.clamp(-lowLimit, highLimit).toDouble();
+      x = (_accelerometerEvent.x * gain).clamp(-lowLimit, highLimit).toDouble();
+      y = (_accelerometerEvent.y * gain).clamp(-lowLimit, highLimit).toDouble();
+      z = (_accelerometerEvent.z * gain).clamp(-lowLimit, highLimit).toDouble();
     } else {
-      x = _accelerometerEvent.x;
-      y = _accelerometerEvent.y;
-      z = _accelerometerEvent.z;
+      x = _accelerometerEvent.x * gain;
+      y = _accelerometerEvent.y * gain;
+      z = _accelerometerEvent.z * gain;
     }
 
     _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
