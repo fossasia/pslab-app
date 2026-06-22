@@ -509,7 +509,16 @@ class _LogicAnalyzerChannelSelectionState
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    onPressed: provider.analyze,
+                    onPressed: () async {
+                      final success = await provider.analyze();
+                      if (!success && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(appLocalizations.notConnected),
+                          ),
+                        );
+                      }
+                    },
                     child: Text(
                       appLocalizations.analyze.toUpperCase(),
                       style: TextStyle(
