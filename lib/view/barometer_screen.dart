@@ -10,9 +10,8 @@ import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/barometer_card.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 
 import '../others/logger_service.dart';
@@ -38,7 +37,6 @@ class BarometerScreen extends StatefulWidget {
 
 class _BarometerScreenState extends State<BarometerScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
-  final CsvService _csvService = CsvService();
   late BarometerStateProvider _provider;
   bool _showGuide = false;
   static const imagePath = 'assets/images/bmp180_schematic.png';
@@ -191,7 +189,11 @@ class _BarometerScreenState extends State<BarometerScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.barometer.toLowerCase(),
+        data: data,
+      );
     } else {
       await _provider.startRecording();
       if (!mounted) return;
@@ -204,39 +206,6 @@ class _BarometerScreenState extends State<BarometerScreen> {
           backgroundColor: snackBarBackgroundColor,
         ),
       );
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(appLocalizations.barometer.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.barometer.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
     }
   }
 
@@ -360,7 +329,11 @@ class _BarometerScreenState extends State<BarometerScreen> {
             onExperimentComplete: () async {
               if (_provider.isRecording) {
                 final data = _provider.stopRecording();
-                await _showSaveFileDialog(data);
+                await ExportHelper.handleSaveData(
+                  context: context,
+                  instrumentName: appLocalizations.barometer.toLowerCase(),
+                  data: data,
+                );
               }
               if (context.mounted) {
                 Navigator.pop(context);

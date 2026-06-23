@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/multimeter_config_provider.dart';
 import 'package:pslab/providers/multimeter_state_provider.dart';
@@ -11,9 +10,9 @@ import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/multimeter_config_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/multimeter_knob.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 
 class MultimeterScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
@@ -29,7 +28,6 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late MultimeterStateProvider _provider;
   late MultimeterConfigProvider? _configProvider;
-  final CsvService _csvService = CsvService();
   bool _showGuide = false;
 
   double _scrollAccumulator = 0.0;
@@ -193,7 +191,11 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.multimeter.toLowerCase(),
+        data: data,
+      );
     } else {
       bool hasStarted = await _provider.startRecording();
       if (!mounted) return;
@@ -217,40 +219,6 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
             backgroundColor: snackBarBackgroundColor,
           ),
         );
-      }
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.multimeter.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.multimeter.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
       }
     }
   }

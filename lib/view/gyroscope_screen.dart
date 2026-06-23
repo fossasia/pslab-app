@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/gyroscope_config_provider.dart';
 import 'package:pslab/providers/gyroscope_state_provider.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/gyroscope_card.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 import '../theme/colors.dart';
 import '../constants.dart';
@@ -26,7 +25,6 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _showGuide = false;
   static const imagePath = 'assets/images/gyroscope_axes_orientation.png';
-  final CsvService _csvService = CsvService();
   late GyroscopeProvider _provider;
   late GyroscopeConfigProvider _configProvider;
 
@@ -147,7 +145,11 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.gyroscope.toLowerCase(),
+        data: data,
+      );
     } else {
       await _provider.startRecording();
       if (!mounted) return;
@@ -160,39 +162,6 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
           backgroundColor: snackBarBackgroundColor,
         ),
       );
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(appLocalizations.gyroscope.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.gyroscope.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
     }
   }
 
@@ -225,24 +194,46 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
                     }
                   : null,
               body: SafeArea(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: GyroscopeCard(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    const double kPerCardMin = 150.0;
+                    const double kPerCardScrollHeight = 220.0;
+                    final double available = constraints.maxHeight;
+                    final bool needsScroll = available < kPerCardMin * 3;
+
+                    final List<Widget> cards = [
+                      GyroscopeCard(
                           color: xOrientationChartLineColor,
                           axis: appLocalizations.xAxis),
-                    ),
-                    Expanded(
-                      child: GyroscopeCard(
+                      GyroscopeCard(
                           color: yOrientationChartLineColor,
                           axis: appLocalizations.yAxis),
-                    ),
-                    Expanded(
-                      child: GyroscopeCard(
+                      GyroscopeCard(
                           color: zOrientationChartLineColor,
                           axis: appLocalizations.zAxis),
-                    ),
-                  ],
+                    ];
+
+                    if (needsScroll) {
+                      return SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            for (final card in cards)
+                              SizedBox(
+                                height: kPerCardScrollHeight,
+                                child: card,
+                              ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return Column(
+                      children: [
+                        for (final card in cards) Expanded(child: card),
+                      ],
+                    );
+                  },
                 ),
               ),
             );

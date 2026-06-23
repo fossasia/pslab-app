@@ -129,26 +129,28 @@ jobs:
 
       - uses: actions/checkout@v7
 
-      - name: Prepare Build Keys
-        if: ${{ github.repository == 'fossasia/pslab-app' }}
-        env:
-          ENCRYPTED_IOS_IV: ${{ secrets.ENCRYPTED_IOS_IV }}
-          ENCRYPTED_IOS_KEY: ${{ secrets.ENCRYPTED_IOS_KEY }}
-        run: |
-          bash scripts/prep-ios-key.sh
+      # # TODO: Uncomment once iOS certs are renewed.
+      # - name: Prepare Build Keys
+      #   if: ${{ github.repository == 'fossasia/pslab-app' }}
+      #   env:
+      #     ENCRYPTED_IOS_IV: ${{ secrets.ENCRYPTED_IOS_IV }}
+      #     ENCRYPTED_IOS_KEY: ${{ secrets.ENCRYPTED_IOS_KEY }}
+      #   run: |
+      #     bash scripts/prep-ios-key.sh
 
-      - name: Setup Certs
-        if: ${{ github.repository == 'fossasia/pslab-app' }}
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-        run: |
-          cd ./iOS
-          git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
-          fastlane setupCertificates
-          if [[ $? -ne 0 ]]; then
-              exit 1
-          fi
+      # # TODO: Uncomment once iOS certs are renewed.
+      # - name: Setup Certs
+      #   if: ${{ github.repository == 'fossasia/pslab-app' }}
+      #   env:
+      #     MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      #     MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+      #   run: |
+      #     cd ./iOS
+      #     git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
+      #     fastlane setupCertificates
+      #     if [[ $? -ne 0 ]]; then
+      #         exit 1
+      #     fi
 
       - name: iOS Workflow
         uses: ./.github/actions/ios
@@ -156,14 +158,25 @@ jobs:
           VERSION_NAME: ${{needs.common.outputs.VERSION_NAME}}
           VERSION_CODE: ${{needs.common.outputs.VERSION_CODE}}
 
-      - name: Push app to testflight
-        if: ${{ github.repository == 'fossasia/pslab-app' }}
-        run: |
-          cd ./iOS
-          fastlane uploadToBeta
-          if [[ $? -ne 0 ]]; then
-              exit 1
-          fi
+      # # TODO: Uncomment once iOS certs are renewed.
+      # - name: Push app to testflight
+      #   if: ${{ github.repository == 'fossasia/pslab-app' }}
+      #   run: |
+      #     cd ./iOS
+      #     fastlane uploadToBeta
+      #     if [[ $? -ne 0 ]]; then
+      #         exit 1
+      #     fi
+
+      - name: Upload iOS IPA
+        uses: actions/upload-artifact@v7
+        with:
+          name: iOS IPA Final
+          # TODO: Remove pslab-unsigned.ipa from this list once iOS certs are renewed.
+          path: |
+            pslab-unsigned.ipa 
+            build/ios/ipa/*.ipa
+          if-no-files-found: ignore
 
   web:
     name: Web App Flutter Build
@@ -271,7 +284,7 @@ jobs:
 
   publish-app-branch:
     name: Publish artifacts to app branch
-    needs: [android, windows, linux, linux-arm64, macos, web]
+    needs: [android, ios, windows, linux, linux-arm64, macos, web]
     if: ${{ github.repository == 'fossasia/pslab-app' }}
     runs-on: ubuntu-latest
 
@@ -302,7 +315,7 @@ jobs:
 
           echo "Removing old artifacts"
 
-          find . -maxdepth 1 -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.exe' -o -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' -o -name '*.zip' \) -delete
+          find . -maxdepth 1 -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.ipa' -o -name '*.exe' -o -name '*.deb' -o -name '*.rpm' -o -name '*.dmg' -o -name '*.zip' \) -delete
 
           echo "Removing debug artifacts"
           
@@ -313,6 +326,7 @@ jobs:
           find ../artifacts -type f \( \
             -name '*.apk' -o \
             -name '*.aab' -o \
+            -name '*.ipa' -o \
             -name '*.exe' -o \
             -name '*.deb' -o \
             -name '*.rpm' -o \

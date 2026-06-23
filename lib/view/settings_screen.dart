@@ -70,6 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       options: [
                         ConfigOption(value: 'CSV', displayName: 'CSV'),
                         ConfigOption(value: 'TXT', displayName: 'TXT'),
+                        ConfigOption(value: 'JSON', displayName: 'JSON'),
                       ],
                       onChanged: (value) {
                         provider.updateExportFormat(value);

@@ -198,56 +198,59 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
         await Geolocator.getCurrentPosition(locationSettings: locationSettings);
   }
 
-  Future<void> analyze() async {
+  Future<bool> analyze() async {
+    if (!_scienceLab.isConnected()) {
+      return false;
+    }
     isProcessing = true;
     notifyListeners();
 
-    currentChannel = 0;
-    dataSets.clear();
-    analysisChannelNames.clear();
-    analysisEdgesNames.clear();
-    digitalChannels.clear();
+    try {
+      currentChannel = 0;
+      dataSets.clear();
+      analysisChannelNames.clear();
+      analysisEdgesNames.clear();
+      digitalChannels.clear();
 
-    switch (channelMode) {
-      case 1:
-        analysisChannelNames.add(channelSelectSpinner1);
-        analysisEdgesNames.add(edgeSelectSpinner1);
-        break;
-      case 2:
-        analysisChannelNames
-            .addAll([channelSelectSpinner1, channelSelectSpinner2]);
-        analysisEdgesNames.addAll([edgeSelectSpinner1, edgeSelectSpinner2]);
-        break;
-      case 3:
-        analysisChannelNames.addAll([
-          channelSelectSpinner1,
-          channelSelectSpinner2,
-          channelSelectSpinner3
-        ]);
-        analysisEdgesNames.addAll(
-            [edgeSelectSpinner1, edgeSelectSpinner2, edgeSelectSpinner3]);
-        break;
-      case 4:
-        analysisChannelNames.addAll([
-          channelSelectSpinner1,
-          channelSelectSpinner2,
-          channelSelectSpinner3,
-          channelSelectSpinner4
-        ]);
-        analysisEdgesNames.addAll([
-          edgeSelectSpinner1,
-          edgeSelectSpinner2,
-          edgeSelectSpinner3,
-          edgeSelectSpinner4
-        ]);
-        break;
-      default:
-        analysisChannelNames.add(channelSelectSpinner1);
-        analysisEdgesNames.add(edgeSelectSpinner1);
-        break;
-    }
+      switch (channelMode) {
+        case 1:
+          analysisChannelNames.add(channelSelectSpinner1);
+          analysisEdgesNames.add(edgeSelectSpinner1);
+          break;
+        case 2:
+          analysisChannelNames
+              .addAll([channelSelectSpinner1, channelSelectSpinner2]);
+          analysisEdgesNames.addAll([edgeSelectSpinner1, edgeSelectSpinner2]);
+          break;
+        case 3:
+          analysisChannelNames.addAll([
+            channelSelectSpinner1,
+            channelSelectSpinner2,
+            channelSelectSpinner3
+          ]);
+          analysisEdgesNames.addAll(
+              [edgeSelectSpinner1, edgeSelectSpinner2, edgeSelectSpinner3]);
+          break;
+        case 4:
+          analysisChannelNames.addAll([
+            channelSelectSpinner1,
+            channelSelectSpinner2,
+            channelSelectSpinner3,
+            channelSelectSpinner4
+          ]);
+          analysisEdgesNames.addAll([
+            edgeSelectSpinner1,
+            edgeSelectSpinner2,
+            edgeSelectSpinner3,
+            edgeSelectSpinner4
+          ]);
+          break;
+        default:
+          analysisChannelNames.add(channelSelectSpinner1);
+          analysisEdgesNames.add(edgeSelectSpinner1);
+          break;
+      }
 
-    if (_scienceLab.isConnected()) {
       switch (channelMode) {
         case 1:
           await captureOne(analysisChannelNames[0], analysisEdgesNames[0]);
@@ -273,9 +276,11 @@ class LogicAnalyzerStateProvider extends ChangeNotifier {
           break;
       }
       isData = true;
+      return true;
+    } finally {
+      isProcessing = false;
+      notifyListeners();
     }
-    isProcessing = false;
-    notifyListeners();
   }
 
   double getMaxY() {

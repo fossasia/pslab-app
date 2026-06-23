@@ -232,7 +232,7 @@ class GyroscopeProvider extends ChangeNotifier {
   void _updateData() {
     final highLimit = _currentHighLimit;
     final lowLimit = _currentLowLimit;
-
+    final gain = (_configProvider?.config.sensorGain ?? 1).toDouble();
     final bool shouldClip = !_isPlayingBack;
 
     final double x;
@@ -240,13 +240,13 @@ class GyroscopeProvider extends ChangeNotifier {
     final double z;
 
     if (shouldClip && highLimit != null && lowLimit != null) {
-      x = _gyroscopeEvent.x.clamp(-lowLimit, highLimit).toDouble();
-      y = _gyroscopeEvent.y.clamp(-lowLimit, highLimit).toDouble();
-      z = _gyroscopeEvent.z.clamp(-lowLimit, highLimit).toDouble();
+      x = (_gyroscopeEvent.x * gain).clamp(-lowLimit, highLimit).toDouble();
+      y = (_gyroscopeEvent.y * gain).clamp(-lowLimit, highLimit).toDouble();
+      z = (_gyroscopeEvent.z * gain).clamp(-lowLimit, highLimit).toDouble();
     } else {
-      x = _gyroscopeEvent.x;
-      y = _gyroscopeEvent.y;
-      z = _gyroscopeEvent.z;
+      x = _gyroscopeEvent.x * gain;
+      y = _gyroscopeEvent.y * gain;
+      z = _gyroscopeEvent.z * gain;
     }
 
     _gyroscopeEvent = GyroscopeEvent(x, y, z, DateTime.now());

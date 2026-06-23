@@ -3,12 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/providers/accelerometer_state_provider.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/accelerometer_card.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/view/logged_data_screen.dart';
 
 import '../providers/accelerometer_config_provider.dart';
@@ -27,7 +26,6 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _showGuide = false;
   static const imagePath = 'assets/images/bh1750_schematic_.png';
-  final CsvService _csvService = CsvService();
   late AccelerometerStateProvider _provider;
   late AccelerometerConfigProvider _configProvider;
 
@@ -156,7 +154,11 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.accelerometer.toLowerCase(),
+        data: data,
+      );
     } else {
       await _provider.startRecording();
       if (!mounted) return;
@@ -169,40 +171,6 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
           backgroundColor: snackBarBackgroundColor,
         ),
       );
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.accelerometer.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.accelerometer.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
     }
   }
 

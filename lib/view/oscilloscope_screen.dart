@@ -6,7 +6,6 @@ import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/models/oscilloscope_recording_metadata.dart';
-import 'package:pslab/others/csv_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_config_provider.dart';
 import 'package:pslab/theme/colors.dart';
@@ -15,11 +14,11 @@ import 'package:pslab/view/oscilloscope_config_screen.dart';
 import 'package:pslab/view/widgets/channel_parameters_widget.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/data_analysis_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/widgets/measurements_list.dart';
 import 'package:pslab/view/widgets/oscilloscope_graph.dart';
 import 'package:pslab/view/widgets/oscilloscope_screen_tabs.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/view/widgets/timebase_trigger_widget.dart';
 import 'package:pslab/view/widgets/xyplot_widget.dart';
 
@@ -44,7 +43,6 @@ class OscilloscopeScreen extends StatefulWidget {
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   late OscilloscopeStateProvider _provider;
   late OscilloscopeConfigProvider? _configProvider;
-  final CsvService _csvService = CsvService();
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _showGuide = false;
   OscilloscopeRecordingMetadata? _playbackMetadata;
@@ -269,7 +267,11 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.oscilloscope.toLowerCase(),
+        data: data,
+      );
     } else {
       bool hasStarted = await _provider.startRecording();
       if (!mounted) return;
@@ -293,41 +295,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
             backgroundColor: snackBarBackgroundColor,
           ),
         );
-      }
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.oscilloscope.toLowerCase(), data,
-          extraMetadata: _provider.recordingMetadata?.encode());
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.oscilloscope.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
       }
     }
   }

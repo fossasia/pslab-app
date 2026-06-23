@@ -1028,7 +1028,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   Future<bool> startRecording() async {
-    if (!_scienceLab.isConnected()) {
+    if (!_scienceLab.isConnected() && !isInBuiltMICSelected) {
       return false;
     }
     if (_configProvider.config.includeLocationData) {

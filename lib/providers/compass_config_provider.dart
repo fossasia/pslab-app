@@ -39,6 +39,12 @@ class CompassConfigProvider extends ChangeNotifier {
     _saveConfigToPrefs();
   }
 
+  void updateSensorSource(String sensorSource) {
+    _config = _config.copyWith(sensorSource: sensorSource);
+    notifyListeners();
+    _saveConfigToPrefs();
+  }
+
   void resetToDefaults() {
     _config = const CompassConfig();
     notifyListeners();

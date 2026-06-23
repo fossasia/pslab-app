@@ -51,7 +51,7 @@ class GyroscopeConfigProvider extends ChangeNotifier {
     _saveConfigToPrefs();
   }
 
-  void updateSensorGain(int sensorGain) {
+  void updateSensorGain(double sensorGain) {
     _config = _config.copyWith(sensorGain: sensorGain);
     notifyListeners();
     _saveConfigToPrefs();

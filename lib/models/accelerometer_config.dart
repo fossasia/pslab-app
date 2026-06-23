@@ -3,7 +3,7 @@ class AccelerometerConfig {
   final int highLimit;
   final int lowLimit;
   final String activeSensor;
-  final int sensorGain;
+  final double sensorGain;
   final bool includeLocationData;
 
   const AccelerometerConfig({
@@ -11,7 +11,7 @@ class AccelerometerConfig {
     this.highLimit = 200,
     this.lowLimit = 200,
     this.activeSensor = 'In-built Sensor',
-    this.sensorGain = 1,
+    this.sensorGain = 1.0,
     this.includeLocationData = true,
   });
 
@@ -20,7 +20,7 @@ class AccelerometerConfig {
     int? highLimit,
     int? lowLimit,
     String? activeSensor,
-    int? sensorGain,
+    double? sensorGain,
     bool? includeLocationData,
   }) {
     return AccelerometerConfig(
@@ -50,7 +50,7 @@ class AccelerometerConfig {
       highLimit: json['highLimit'] ?? 200,
       lowLimit: json['lowLimit'] ?? json['depthLimit'] ?? 200,
       activeSensor: json['activeSensor'] ?? 'In-built Sensor',
-      sensorGain: json['sensorGain'] ?? 1,
+      sensorGain: json['sensorGain'] ?? 1.0,
       includeLocationData: json['includeLocationData'] ?? true,
     );
   }
