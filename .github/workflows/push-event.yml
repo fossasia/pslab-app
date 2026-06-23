@@ -171,7 +171,7 @@ jobs:
       - name: Upload iOS IPA
         uses: actions/upload-artifact@v7
         with:
-          name: iOS IPA Generated
+          name: iOS IPA Final
           # TODO: Remove pslab-unsigned.ipa from this list once iOS certs are renewed.
           path: |
             pslab-unsigned.ipa 
