@@ -16,12 +16,13 @@ import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
+import 'package:pslab/view/thermometer_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../others/data_service.dart';
 import '../providers/locator.dart';
 import 'accelerometer_screen.dart';
 import 'compass_screen.dart';
-import 'package:pslab/view/thermometer_screen.dart';
+import 'gas_sensor_screen.dart';
 
 class LoggedDataScreen extends StatefulWidget {
   final List<String> instrumentNames;
@@ -220,7 +221,6 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: primaryRed),
                   ),
-                  // Display the dynamic extension (.csv, .txt, .json)
                   suffixText: extension,
                 ),
                 onSubmitted: (value) => Navigator.of(context).pop(value),
@@ -490,6 +490,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'gas sensor':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GasSensorScreen(playbackData: data),
+            ),
+          );
+          break;
       }
     }
   }
@@ -583,6 +591,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       appLocalizations.accelerometer.toLowerCase(),
       appLocalizations.compassTitle.toLowerCase(),
       appLocalizations.thermometerTitle.toLowerCase(),
+      appLocalizations.gasSensor.toLowerCase(),
     };
 
     return Scaffold(

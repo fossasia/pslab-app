@@ -763,5 +763,14 @@
     "sensorDescVL53L0X": "Time-of-Flight (ToF) Laser Distance",
     "mightNotConnected" : "might not be connected.",
     "hmc5883l" : "HMC5883L",
-    "gauss" : "Gauss"
+    "gauss" : "Gauss",
+    "i2cError" : "Check I2C wiring.",
+    "ccs881" : "CCS811",
+    "eco2" : "eCO2",
+    "tvoc" : "TVOC",
+    "ppb" : "ppb",
+    "concentrationPpm" : "Concentration (PPM)",
+    "gasSensorConfig" : "Gas Sensor Configurations",
+    "gasSensorPeriodHint" : "Enter update period (100 - 5000 ms)",
+    "mq135" : "MQ-135"
 }
