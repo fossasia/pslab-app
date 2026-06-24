@@ -94,7 +94,7 @@ class _GasSensorConfigScreenState extends State<GasSensorConfigScreen> {
                             displayName: appLocalizations.mq135),
                         ConfigOption(
                             value: 'CCS811',
-                            displayName: appLocalizations.ccs881),
+                            displayName: appLocalizations.ccs811),
                       ],
                       onChanged: (value) {
                         provider.updateActiveSensor(value);
