@@ -765,7 +765,7 @@
     "hmc5883l" : "HMC5883L",
     "gauss" : "Gauss",
     "i2cError" : "Check I2C wiring.",
-    "ccs881" : "CCS811",
+    "ccs811" : "CCS811",
     "eco2" : "eCO2",
     "tvoc" : "TVOC",
     "ppb" : "ppb",

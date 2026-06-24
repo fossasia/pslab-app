@@ -73,7 +73,7 @@ class _CCS811ScreenState extends State<CCS811Screen> {
       child: Consumer<CCS811Provider>(
         builder: (context, provider, child) {
           return CommonScaffold(
-            title: appLocalizations.ccs881,
+            title: appLocalizations.ccs811,
             body: Column(
               children: [
                 Expanded(
