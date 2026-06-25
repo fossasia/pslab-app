@@ -170,7 +170,12 @@ class BarometerStateProvider extends ChangeNotifier {
 
     _barometerSubscription = barometerEventStream().listen(
       (BarometerEvent event) {
-        _currentPressure = event.pressure / 1013.25;
+        double pressure = event.pressure / 1013.25;
+        final limit = _currentLimit;
+        if (limit != null && pressure > limit) {
+          pressure = limit;
+        }
+        _currentPressure = pressure;
         _currentAltitude = _pressureToAltitude(_currentPressure);
         _currentTemperature = 0.0;
 
