@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -158,7 +157,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
         builder: (context) => LoggedDataScreen(
           instrumentNames: [appLocalizations.gasSensor.toLowerCase()],
           appBarName: appLocalizations.gasSensor,
-          instrumentIcons: [instrumentIcons[4]],
+          instrumentIcons: [instrumentIcons[13]],
         ),
       ),
     );
