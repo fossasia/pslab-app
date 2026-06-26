@@ -22,6 +22,7 @@ import '../providers/locator.dart';
 import 'accelerometer_screen.dart';
 import 'compass_screen.dart';
 import 'package:pslab/view/thermometer_screen.dart';
+import 'package:pslab/view/robotic_arm_screen.dart';
 
 class LoggedDataScreen extends StatefulWidget {
   final List<String> instrumentNames;
@@ -362,7 +363,15 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     final data = await _dataService.readDataFromFile(file);
     if (mounted) {
       if (instrumentName.toLowerCase() == 'robotic arm') {
-        Navigator.pop(context, data);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => RoboticArmScreen(
+              importedData: data,
+            ),
+          ),
+        );
+        return;
       } else {
         final config = _getChartConfig(instrumentName);
         Navigator.push(
