@@ -44,6 +44,7 @@ class BarometerStateProvider extends ChangeNotifier {
   bool get isRecording => _isRecording;
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
+  int? _playbackStartTimestamp;
 
   StreamSubscription? _barometerSubscription;
 
@@ -60,10 +61,12 @@ class BarometerStateProvider extends ChangeNotifier {
 
   Position? currentPosition;
   StreamSubscription? _locationStream;
+  int _currentUpdatePeriod = 1000;
 
   BarometerStateProvider(this._configProvider) {
     _configProvider.addListener(_onConfigChanged);
     _currentSensorType = _configProvider.config.activeSensor;
+    _currentUpdatePeriod = _configProvider.config.updatePeriod;
   }
 
   Future<void> _startGeoLocationUpdates() async {
@@ -101,11 +104,16 @@ class BarometerStateProvider extends ChangeNotifier {
   }
 
   void _onConfigChanged() {
+    if (_isPlayingBack) return;
+
     final newSensorType = _configProvider.config.activeSensor;
-    if (_currentSensorType != newSensorType) {
-      logger
-          .d("Sensor type changed from $_currentSensorType to $newSensorType");
+    final newUpdatePeriod = _configProvider.config.updatePeriod;
+
+    if (_currentSensorType != newSensorType ||
+        _currentUpdatePeriod != newUpdatePeriod) {
       _currentSensorType = newSensorType;
+      _currentUpdatePeriod = newUpdatePeriod;
+
       _reinitializeSensors();
     }
   }
@@ -141,14 +149,16 @@ class BarometerStateProvider extends ChangeNotifier {
 
     try {
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-      _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        _currentTime =
-            (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
-        if (_sensorAvailable) {
+      _timeTimer = Timer.periodic(
+        Duration(milliseconds: _currentUpdatePeriod),
+        (timer) {
+          _currentTime =
+              (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
+
           _updateData();
-        }
-        notifyListeners();
-      });
+          notifyListeners();
+        },
+      );
 
       if (_currentSensorType == 'In-built Sensor') {
         _initializeBuiltInSensor();
@@ -286,7 +296,8 @@ class BarometerStateProvider extends ChangeNotifier {
   }
 
   void startPlayback(List<List<dynamic>> data) {
-    if (data.length <= 1) return;
+    if (data.length <= 2) return;
+    _playbackStartTimestamp = int.tryParse(data[2][0].toString())?.toInt();
 
     _isPlayingBack = true;
     _isPlaybackPaused = false;
@@ -320,7 +331,10 @@ class BarometerStateProvider extends ChangeNotifier {
       if (currentRow.length > 3) {
         _currentAltitude = double.tryParse(currentRow[3].toString());
       }
-      _currentTime = (_playbackIndex - 1).toDouble();
+      final timestamp = int.tryParse(currentRow[0].toString())?.toInt();
+      if (timestamp != null && _playbackStartTimestamp != null) {
+        _currentTime = (timestamp - _playbackStartTimestamp!) / 1000.0;
+      }
       _updateData();
       _playbackIndex++;
       notifyListeners();
@@ -364,6 +378,7 @@ class BarometerStateProvider extends ChangeNotifier {
   Future<void> stopPlayback() async {
     _isPlayingBack = false;
     _isPlaybackPaused = false;
+    _playbackStartTimestamp = null;
     _playbackTimer?.cancel();
     _playbackData = null;
     _playbackIndex = 0;
