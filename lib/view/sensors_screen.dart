@@ -18,6 +18,7 @@ import '../../providers/board_state_provider.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
 import '../theme/colors.dart';
+import 'ccs811_screen.dart';
 
 class SensorsScreen extends StatefulWidget {
   const SensorsScreen({super.key});
@@ -432,6 +433,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
     switch (sensorName) {
       case 'ADS1115':
         targetScreen = const ADS1115Screen();
+        break;
+      case 'CCS811':
+        targetScreen = const CCS811Screen();
         break;
       case 'BMP180':
         targetScreen = const BMP180Screen();
