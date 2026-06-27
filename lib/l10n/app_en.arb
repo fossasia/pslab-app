@@ -766,5 +766,11 @@
     "gauss" : "Gauss",
     "mlx90614" : "MLX90614",
     "objectTemperature" : "Object Temp",
-    "ambientTemperature" : "Ambient Temp"
+    "ambientTemperature" : "Ambient Temp",
+    "i2cError" : "Check I2C wiring.",
+    "ccs811" : "CCS811",
+    "eco2" : "eCO2",
+    "tvoc" : "TVOC",
+    "ppb" : "ppb",
+    "concentrationPpm" : "Concentration (PPM)"
 }
