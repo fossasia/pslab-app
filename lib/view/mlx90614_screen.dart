@@ -106,7 +106,7 @@ class _MLX90614ScreenState extends State<MLX90614Screen> {
                           yAxisLabel:
                               '${appLocalizations.temperature} (${appLocalizations.temperatureUnitLabel})',
                           data: provider.objectTemperatureData,
-                          lineColor: Colors.black,
+                          lineColor: Colors.blue,
                           unit: appLocalizations.temperatureUnitLabel,
                           maxDataPoints: provider.numberOfReadings,
                           showDots: true,
