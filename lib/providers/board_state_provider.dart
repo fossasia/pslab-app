@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -23,6 +25,8 @@ class BoardStateProvider extends ChangeNotifier {
   int pslabVersion = 0;
   int pslabFirmwareVersion = 0;
   bool _isProcessing = false;
+  StreamSubscription<UsbEvent>? _usbSubscription;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
@@ -44,7 +48,7 @@ class BoardStateProvider extends ChangeNotifier {
 
     if (configProvider.config.autoStart) {
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-        UsbSerial.usbEventStream?.listen(
+        _usbSubscription = UsbSerial.usbEventStream?.listen(
           (UsbEvent usbEvent) async {
             if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
               if (_isProcessing) return;
@@ -68,7 +72,7 @@ class BoardStateProvider extends ChangeNotifier {
       }
     }
 
-    Connectivity()
+    _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> results) {
       if (results.contains(ConnectivityResult.none)) {
@@ -119,5 +123,13 @@ class BoardStateProvider extends ChangeNotifier {
       }
     }
     return false;
+  }
+
+  @override
+  void dispose() {
+    _usbSubscription?.cancel();
+    _connectivitySubscription?.cancel();
+    legacyFirmwareNotifier.dispose();
+    super.dispose();
   }
 }
