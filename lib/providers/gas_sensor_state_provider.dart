@@ -18,7 +18,6 @@ class GasSensorStateProvider extends ChangeNotifier {
 
   double _currentValue = 0.0;
   String _activeMode = "Raw";
-  String _previousMode = "Raw";
 
   Timer? _readTimer;
 
@@ -124,7 +123,6 @@ class GasSensorStateProvider extends ChangeNotifier {
 
         if (newMode != _activeMode) {
           _activeMode = newMode;
-          _previousMode = _activeMode;
           clearData();
           _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
           notifyListeners();
