@@ -137,9 +137,11 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                 onTap: () async {
                   final uri = Uri.parse(appLocalizations.feedbackForm);
                   if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri);
+                    await launchUrl(uri);
                   } else {
-                  debugPrint('Could not launch ${appLocalizations.feedbackForm}');
+                    debugPrint(
+                      'Could not launch ${appLocalizations.feedbackForm}',
+                    );
                   }
                 },
               ),
@@ -167,7 +169,8 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       );
                     } else if (snapshot.hasError) {
                       logger.e(
-                          "Error getting version information: ${snapshot.error.toString()}");
+                        "Error getting version information: ${snapshot.error.toString()}",
+                      );
                       return Text(
                         appLocalizations.error,
                         style: const TextStyle(fontSize: 15),
