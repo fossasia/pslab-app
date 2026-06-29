@@ -774,13 +774,13 @@
     "mightNotConnected" : "might not be connected.",
     "hmc5883l" : "HMC5883L",
     "gauss" : "Gauss",
+    "mlx90614" : "MLX90614",
+    "objectTemperature" : "Object Temp",
+    "ambientTemperature" : "Ambient Temp",
     "i2cError" : "Check I2C wiring.",
     "ccs811" : "CCS811",
     "eco2" : "eCO2",
     "tvoc" : "TVOC",
     "ppb" : "ppb",
-    "concentrationPpm" : "Concentration (PPM)",
-    "gasSensorConfig" : "Gas Sensor Configurations",
-    "gasSensorPeriodHint" : "Enter update period (100 - 5000 ms)",
-    "mq135" : "MQ-135"
+    "concentrationPpm" : "Concentration (PPM)"
 }
