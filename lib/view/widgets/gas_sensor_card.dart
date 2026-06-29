@@ -41,111 +41,144 @@ class _GasSensorCardState extends State<GasSensorCard> {
   }
 
   Widget _buildSensorUI(GasSensorStateProvider provider) {
-    double currentPpm = provider.getCurrentPpm().clamp(0.0, 5000.0);
+    String mode = provider.getActiveMode();
+    String unitText = mode == 'Raw' ? "LEVEL" : "PPM";
+
+    double maxScaleLimit = mode == 'Raw' ? 1024.0 : 5000.0;
+    double currentValue = provider.getCurrentValue().clamp(0.0, maxScaleLimit);
+    String activeGasName = provider.getActiveMode();
 
     return Column(
       children: [
         Expanded(
-          child: Center(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                GxRadialGauge(
-                  value: GaugeValue(value: currentPpm, min: 0, max: 5000),
-                  size: const Size(220, 220),
-                  startAngleInDegree: 140,
-                  sweepAngleInDegree: 260,
-                  showValueAtCenter: false,
-                  showMajorTicks: true,
-                  showLabels: true,
-                  interval: 1000,
-                  labelTickStyle: const RadialTickLabelStyle(
-                    padding: 22,
-                    position: RadialElementPosition.outside,
-                  ),
-                  majorTickStyle: RadialTickStyle(
-                    color: Colors.blueGrey.shade300,
-                    thickness: 2,
-                    length: 12,
-                    position: RadialElementPosition.outside,
-                    alignment: RadialElementAlignment.start,
-                  ),
-                  style: RadialGaugeStyle(
-                    color: Colors.grey.shade200,
-                    thickness: 15,
-                    gradient: const LinearGradient(
-                      colors: [
-                        gaugeGradientStart,
-                        gaugeGradientCenter,
-                        gaugeGradientEnd,
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                  ),
-                  showNeedle: true,
-                  needle: RadialNeedle(
-                    color: Colors.grey.shade800,
-                    shape: RadialNeedleShape.tapperedLine,
-                    thickness: 8,
-                    alignment: RadialElementAlignment.end,
-                    circle: const NeedleCircle(
-                      radius: 8,
-                      innerColor: Colors.black87,
-                      paintingStyle: PaintingStyle.fill,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 30,
-                  child: Column(
-                    children: [
-                      Text(
-                        currentPpm.toInt().toString(),
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.black87,
-                        ),
+          child: Transform.translate(
+            offset: const Offset(0, 20.0),
+            child: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  GxRadialGauge(
+                    value: GaugeValue(
+                        value: currentValue,
+                        min: 0,
+                        max: mode == 'Raw' ? 1024 : 5000),
+                    size: const Size(220, 220),
+                    startAngleInDegree: 140,
+                    sweepAngleInDegree: 260,
+                    showValueAtCenter: false,
+                    showMajorTicks: true,
+                    showLabels: true,
+                    interval: mode == 'Raw' ? 200 : 1000,
+                    labelTickStyle: const RadialTickLabelStyle(
+                      padding: 22,
+                      position: RadialElementPosition.outside,
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w500,
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          appLocalizations.ppmCO2,
-                          style: TextStyle(
+                    ),
+                    majorTickStyle: RadialTickStyle(
+                      color: Colors.blueGrey.shade300,
+                      thickness: 2,
+                      length: 12,
+                      position: RadialElementPosition.outside,
+                      alignment: RadialElementAlignment.start,
+                    ),
+                    style: const RadialGaugeStyle(
+                      color: Color(0xFFEEEEEE),
+                      thickness: 15,
+                      gradient: LinearGradient(
+                        colors: [
+                          gaugeGradientStart,
+                          gaugeGradientCenter,
+                          gaugeGradientEnd
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                    ),
+                    showNeedle: true,
+                    needle: const RadialNeedle(
+                      color: Color(0xFF424242),
+                      shape: RadialNeedleShape.tapperedLine,
+                      thickness: 8,
+                      alignment: RadialElementAlignment.end,
+                      circle: NeedleCircle(
+                        radius: 8,
+                        innerColor: Colors.black87,
+                        paintingStyle: PaintingStyle.fill,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 30,
+                    child: Column(
+                      children: [
+                        Text(
+                          currentValue.toInt().toString(),
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: Colors.blueGrey,
-                            letterSpacing: 1.5,
+                            color: Colors.black87,
                           ),
                         ),
-                      ),
-                    ],
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            unitText,
+                            style: const TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.blueGrey,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            activeGasName.toUpperCase(),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: Colors.black87,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
                 child: _buildBorderedStatBox(
-                    appLocalizations.minLabel, provider.getMinPpm())),
+                    appLocalizations.minLabel, provider.getMinValue())),
             const SizedBox(width: 8),
             Expanded(
                 child: _buildBorderedStatBox(
-                    appLocalizations.avgLabel, provider.getAveragePpm())),
+                    appLocalizations.avgLabel, provider.getAverageValue())),
             const SizedBox(width: 8),
             Expanded(
                 child: _buildBorderedStatBox(
-                    appLocalizations.maxLabel, provider.getMaxPpm())),
+                    appLocalizations.maxLabel, provider.getMaxValue())),
           ],
         ),
       ],
@@ -153,16 +186,13 @@ class _GasSensorCardState extends State<GasSensorCard> {
   }
 
   Widget _buildBorderedStatBox(String label, double value) {
-    Color borderColor = primaryRed;
-    Color boxBgColor = cardBackgroundColor;
-
     return Stack(
       children: [
         Container(
           margin: const EdgeInsets.only(top: 8, bottom: 4),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            border: Border.all(width: 1.2, color: borderColor),
+            border: Border.all(width: 1.2, color: primaryRed),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
@@ -184,12 +214,11 @@ class _GasSensorCardState extends State<GasSensorCard> {
             alignment: Alignment.center,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              color: boxBgColor,
+              color: cardBackgroundColor,
               child: Text(
                 label,
                 style: TextStyle(
-                  color: borderColor,
-                  fontStyle: FontStyle.normal,
+                  color: primaryRed,
                   fontWeight: FontWeight.w800,
                   fontSize: 12,
                   letterSpacing: 1,
