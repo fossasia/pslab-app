@@ -8,12 +8,11 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/theme/colors.dart';
 
 import 'package:pslab/providers/locator.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
-import 'package:pslab/view/widgets/save_filename_dialog.dart';
 import 'package:pslab/view/widgets/dust_sensor_card.dart';
 
 import '../constants.dart';
-import '../others/csv_service.dart';
 import '../providers/dust_sensor_config_provider.dart';
 import 'dust_sensor_config_screen.dart';
 import 'logged_data_screen.dart';
@@ -28,7 +27,6 @@ class DustSensorScreen extends StatefulWidget {
 
 class _DustSensorScreenState extends State<DustSensorScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  final CsvService _csvService = CsvService();
   late DustSensorStateProvider _provider;
   late DustSensorConfigProvider _configProvider;
   bool _showGuide = false;
@@ -122,7 +120,11 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
   Future<void> _toggleRecording() async {
     if (_provider.isRecording) {
       final data = _provider.stopRecording();
-      await _showSaveFileDialog(data);
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.dustSensor.toLowerCase(),
+        data: data,
+      );
     } else {
       await _provider.startRecording();
       if (!mounted) return;
@@ -135,40 +137,6 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
           backgroundColor: snackBarBackgroundColor,
         ),
       );
-    }
-  }
-
-  Future<void> _showSaveFileDialog(List<List<dynamic>> data) async {
-    final String? fileName = await showSaveFileNameDialog(context);
-
-    if (fileName != null) {
-      _csvService.writeMetaData(
-          appLocalizations.dustSensor.toLowerCase(), data);
-      final file = await _csvService.saveCsvFile(
-          appLocalizations.dustSensor.toLowerCase(), fileName, data);
-      if (mounted) {
-        if (file != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${appLocalizations.fileSaved}: ${file.path.split('/').last}',
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                appLocalizations.failedToSave,
-                style: TextStyle(color: snackBarContentColor),
-              ),
-              backgroundColor: snackBarBackgroundColor,
-            ),
-          );
-        }
-      }
     }
   }
 
