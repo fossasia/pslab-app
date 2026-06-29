@@ -18,6 +18,7 @@ class GasSensorStateProvider extends ChangeNotifier {
 
   double _currentValue = 0.0;
   String _activeMode = "Raw";
+  int _updatePeriod = 1000;
 
   Timer? _readTimer;
 
@@ -119,13 +120,31 @@ class GasSensorStateProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString('gas_sensor_config');
       if (jsonString != null) {
-        String newMode = json.decode(jsonString)['activeGas'] ?? 'Raw';
+        final configData = json.decode(jsonString);
+        String newMode = configData['activeGas'] ?? 'Raw';
+        int newPeriod = configData['updatePeriod'] ?? 1000;
+
+        bool modeChanged = false;
+        bool periodChanged = false;
 
         if (newMode != _activeMode) {
           _activeMode = newMode;
           clearData();
           _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+          modeChanged = true;
+        }
+
+        if (newPeriod != _updatePeriod) {
+          _updatePeriod = newPeriod;
+          periodChanged = true;
+        }
+
+        if (modeChanged || periodChanged) {
           notifyListeners();
+        }
+
+        if (periodChanged && _readTimer != null && _readTimer!.isActive) {
+          _startReadingGasData();
         }
       }
     } catch (e) {
@@ -186,7 +205,7 @@ class GasSensorStateProvider extends ChangeNotifier {
   void _startReadingGasData() {
     _readTimer?.cancel();
     _readTimer =
-        Timer.periodic(const Duration(milliseconds: 1000), (timer) async {
+        Timer.periodic(Duration(milliseconds: _updatePeriod), (timer) async {
       if (_isPlayingRecordedData) return;
       await fetchConfig();
       if (!_isSensorAvailable ||
@@ -255,9 +274,9 @@ class GasSensorStateProvider extends ChangeNotifier {
         'Timestamp',
         'DateTime',
         'Readings',
+        'Active Gas',
         'Latitude',
-        'Longitude',
-        'Active Gas'
+        'Longitude'
       ]
     ];
     notifyListeners();
@@ -278,7 +297,8 @@ class GasSensorStateProvider extends ChangeNotifier {
     _isPlayingRecordedData = true;
     _isPlaybackPaused = false;
     _playbackData = data;
-    _playbackIndex = 1;
+
+    _playbackIndex = 2;
 
     _readTimer?.cancel();
 
@@ -308,8 +328,8 @@ class GasSensorStateProvider extends ChangeNotifier {
         _currentTime = (timestamp - _playbackStartTimestamp!) / 1000.0;
       }
 
-      if (currentRow.length > 5) {
-        _activeMode = currentRow[5].toString();
+      if (currentRow.length > 3) {
+        _activeMode = currentRow[3].toString();
       }
 
       _updateData();
@@ -386,9 +406,9 @@ class GasSensorStateProvider extends ChangeNotifier {
         now.millisecondsSinceEpoch.toString(),
         dateFormat.format(now),
         _currentValue.toStringAsFixed(2),
+        _activeMode,
         currentPosition?.latitude.toString() ?? 0,
-        currentPosition?.longitude.toString() ?? 0,
-        _activeMode
+        currentPosition?.longitude.toString() ?? 0
       ]);
     }
 
