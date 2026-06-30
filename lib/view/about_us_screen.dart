@@ -135,7 +135,14 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                   style: const TextStyle(fontSize: 15),
                 ),
                 onTap: () async {
-                  await launchUrl(Uri.parse(appLocalizations.feedbackForm));
+                  final uri = Uri.parse(appLocalizations.feedbackForm);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri);
+                  } else {
+                    debugPrint(
+                      'Could not launch ${appLocalizations.feedbackForm}',
+                    );
+                  }
                 },
               ),
               const Divider(thickness: 0.5),
@@ -162,7 +169,8 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                       );
                     } else if (snapshot.hasError) {
                       logger.e(
-                          "Error getting version information: ${snapshot.error.toString()}");
+                        "Error getting version information: ${snapshot.error.toString()}",
+                      );
                       return Text(
                         appLocalizations.error,
                         style: const TextStyle(fontSize: 15),
