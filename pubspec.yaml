@@ -6,7 +6,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.4
-  flutter: '3.44.2'
+  flutter: '3.44.4'
 
 dependencies:
   flutter:
@@ -30,17 +30,17 @@ dependencies:
   logger: ^2.7.0
   url_launcher: ^6.3.2
   font_awesome_flutter: ^11.0.0
-  package_info_plus: ^10.1.0
-  sensors_plus: ^7.0.0
+  package_info_plus: ^10.2.0
+  sensors_plus: ^7.1.0
   sleek_circular_slider: ^2.1.0
   gauge_indicator: ^0.6.0
   light: ^5.0.0
-  connectivity_plus: ^7.1.1
+  connectivity_plus: ^7.2.0
   carousel_slider: ^5.1.1
   vibration: ^3.2.0
   shared_preferences: ^2.5.5
   csv: ^8.0.0
-  share_plus: ^13.1.0
+  share_plus: ^13.2.0
   path_provider: ^2.1.6
   file_picker: ^12.0.0-beta.7
   flutter_screenutil: ^5.9.3
