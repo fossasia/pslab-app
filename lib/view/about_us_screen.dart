@@ -36,7 +36,7 @@ Widget buildContactList(List<Map<String, dynamic>> items) {
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri);
           } else {
-            debugPrint('Could not launch ${item['url']}');
+            logger.e('Could not launch URL: ${item['url']}');
           }
         },
       );
@@ -140,8 +140,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     await launchUrl(uri);
                   } else {
                     logger.e(
-                      'Could not launch feedback form URL',
-                      'url=${appLocalizations.feedbackForm}',
+                      'Could not launch feedback form URL: ${appLocalizations.feedbackForm}',
                     );
                   }
                 },
