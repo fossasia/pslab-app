@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -147,7 +148,7 @@ class FAQScreen extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      throw '${appLocalizations.launchError} $url';
+      logger.e('${appLocalizations.launchError} $url');
     }
   }
 }
