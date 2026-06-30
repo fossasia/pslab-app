@@ -25,7 +25,7 @@ dependencies:
       url: https://github.com/marcnause/usbserial.git
       ref: master
   get_it: ^9.2.1
-  record: ^7.1.0
+  record: ^7.1.1
   data: ^0.15.1
   logger: ^2.7.0
   url_launcher: ^6.3.2
