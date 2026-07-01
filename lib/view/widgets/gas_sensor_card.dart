@@ -5,6 +5,7 @@ import 'package:pslab/providers/gas_sensor_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../../providers/gas_sensor_config_provider.dart';
 import '../../providers/locator.dart';
 
 class GasSensorCard extends StatefulWidget {
@@ -46,7 +47,18 @@ class _GasSensorCardState extends State<GasSensorCard> {
 
     double maxScaleLimit = mode == 'Raw' ? 1024.0 : 5000.0;
     double currentValue = provider.getCurrentValue().clamp(0.0, maxScaleLimit);
-    String activeGasName = provider.getActiveMode();
+
+    final List<String> allowedModes = [
+      'Raw',
+      'CO2',
+      'NH3',
+      'Alcohol',
+      'CO',
+      'Toluene',
+      'Acetone'
+    ];
+
+    String currentMode = allowedModes.contains(mode) ? mode : 'Raw';
 
     return Column(
       children: [
@@ -59,9 +71,7 @@ class _GasSensorCardState extends State<GasSensorCard> {
                 children: [
                   GxRadialGauge(
                     value: GaugeValue(
-                        value: currentValue,
-                        min: 0,
-                        max: mode == 'Raw' ? 1024 : 5000),
+                        value: currentValue, min: 0, max: maxScaleLimit),
                     size: const Size(220, 220),
                     startAngleInDegree: 140,
                     sweepAngleInDegree: 260,
@@ -149,19 +159,79 @@ class _GasSensorCardState extends State<GasSensorCard> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(20),
+        PopupMenuButton<String>(
+          initialValue: currentMode,
+          color: Colors.white,
+          position: PopupMenuPosition.under,
+          constraints: const BoxConstraints(minWidth: 160, maxWidth: 160),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(
-            activeGasName.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: Colors.black87,
-              letterSpacing: 1.2,
+          onSelected: (String newValue) {
+            provider.setActiveMode(newValue);
+            Provider.of<GasSensorConfigProvider>(context, listen: false)
+                .updateActiveGas(newValue);
+          },
+          itemBuilder: (BuildContext context) {
+            return allowedModes.map((String value) {
+              return PopupMenuItem<String>(
+                value: value,
+                child: Center(
+                  child: Text(
+                    value.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              );
+            }).toList();
+          },
+          child: SizedBox(
+            width: 160,
+            height: 36,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    currentMode.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black87,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black12, width: 1.2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.02),
+                          blurRadius: 2,
+                          offset: const Offset(0, 1),
+                        )
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.black87,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
