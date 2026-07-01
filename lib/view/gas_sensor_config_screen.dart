@@ -61,44 +61,10 @@ class _GasSensorConfigScreenState extends State<GasSensorConfigScreen> {
                     _isControllerInitialized = true;
                   }
 
-                  String currentMode = provider.config.activeGas;
-                  final List<String> allowedModes = [
-                    'Raw',
-                    'CO2',
-                    'NH3',
-                    'Alcohol',
-                    'CO',
-                    'Toluene',
-                    'Acetone'
-                  ];
-
-                  if (!allowedModes.contains(currentMode)) {
-                    currentMode = 'Raw';
-                  }
-
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ConfigDropdownItem(
-                          title: "Active Gas",
-                          selectedValue: currentMode,
-                          options: [
-                            ConfigOption(value: 'Raw', displayName: 'Raw'),
-                            ConfigOption(value: 'CO2', displayName: 'CO2'),
-                            ConfigOption(value: 'NH3', displayName: 'NH3'),
-                            ConfigOption(
-                                value: 'Alcohol', displayName: 'Alcohol'),
-                            ConfigOption(value: 'CO', displayName: 'CO'),
-                            ConfigOption(
-                                value: 'Toluene', displayName: 'Toluene'),
-                            ConfigOption(
-                                value: 'Acetone', displayName: 'Acetone'),
-                          ],
-                          onChanged: (value) {
-                            provider.updateActiveGas(value);
-                          },
-                        ),
                         ConfigInputItem(
                           title: appLocalizations.updatePeriod,
                           value:
