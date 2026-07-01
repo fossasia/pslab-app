@@ -47,7 +47,7 @@ dependencies:
   flusbserial: ^0.6.0
   inno_bundle: ^0.11.2
   flutter_map: ^8.3.0
-  latlong2: ^0.9.1
+  latlong2: ^0.10.1
   geolocator: ^14.0.3
   wakelock_plus: ^1.6.1
   image: ^4.9.1
