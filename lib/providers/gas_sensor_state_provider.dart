@@ -462,6 +462,17 @@ class GasSensorStateProvider extends ChangeNotifier {
     super.dispose();
   }
 
+  void setActiveMode(String mode) {
+    if (_activeMode != mode) {
+      _activeMode = mode;
+
+      clearData();
+      _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
+
+      notifyListeners();
+    }
+  }
+
   double getCurrentValue() => _currentValue;
   String getActiveMode() => _activeMode;
 
