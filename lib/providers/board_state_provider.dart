@@ -48,6 +48,7 @@ class BoardStateProvider extends ChangeNotifier {
 
     if (configProvider.config.autoStart) {
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+        await _usbSubscription?.cancel();
         _usbSubscription = UsbSerial.usbEventStream?.listen(
           (UsbEvent usbEvent) async {
             if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
@@ -72,6 +73,7 @@ class BoardStateProvider extends ChangeNotifier {
       }
     }
 
+    await _connectivitySubscription?.cancel();
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> results) {
