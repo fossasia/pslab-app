@@ -18,6 +18,8 @@ class DustSensorStateProvider extends ChangeNotifier {
   double _currentPM25 = 0.0;
   double _currentPM10 = 0.0;
 
+  final List<int> _uartBuffer = [];
+
   Timer? _timeTimer;
   Timer? _dustTimer;
 
@@ -97,54 +99,131 @@ class DustSensorStateProvider extends ChangeNotifier {
     });
   }
 
+  Future<void> testSingleUARTRead() async {
+    ScienceLab scienceLab = getIt.get<ScienceLab>();
+
+    logger.i("--- STARTING SINGLE UART TEST ---");
+
+    if (!scienceLab.isConnected()) {
+      logger.e("TEST: ScienceLab is not connected!");
+      return;
+    }
+
+    try {
+      // 1. Wait 2 seconds. The SDS011 sends data once every 1 second.
+      // This guarantees that at least one packet should be waiting in the PSLab buffer.
+      logger.i("TEST: Waiting 2 seconds to let SDS011 send data...");
+      await Future.delayed(const Duration(seconds: 2));
+
+      // 2. Check available bytes
+      logger.i("TEST: Requesting available byte count...");
+      int available = await scienceLab.getUART2BytesAvailable();
+      logger.i("TEST: PSLab reports $available bytes available.");
+
+      // 3. Read if available
+      if (available > 0) {
+        List<int> rxBytes = await scienceLab.readUARTBytes(available);
+        logger.i("TEST: Successfully read $available bytes.");
+
+        // Convert to HEX string for easy reading in the console
+        String hexString = rxBytes.map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase()).join(' ');
+        logger.i("TEST: RAW DATA (HEX): $hexString");
+
+        if (rxBytes.contains(0xAA)) {
+          logger.i("TEST: SUCCESS! Found SDS011 Start Byte (0xAA) in the stream.");
+        } else {
+          logger.w("TEST: Data received, but no 0xAA start byte. Is baud rate correct? Are RX/TX swapped?");
+        }
+      } else {
+        logger.w("TEST: No data available. The sensor might be asleep, or TX/RX are disconnected.");
+      }
+    } catch (e) {
+      logger.e("TEST: Exception during single read: $e");
+    }
+
+    logger.i("--- END SINGLE UART TEST ---");
+  }
+
+
+
   void initializeSensors({Function(String)? onError}) async {
     onSensorError = onError;
 
     try {
       ScienceLab scienceLab = getIt.get<ScienceLab>();
 
+      // 1. Configure the UART port on the PSLab to 9600 baud
       await scienceLab.configureUART(baudRate: 9600);
       await Future.delayed(const Duration(milliseconds: 500));
 
+      // Give the sensor a second to spin up the fan and stabilize [cite: 314]
+      await Future.delayed(const Duration(seconds: 1));
+      // ---------------------------------------------------------
+
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
 
+      // 2. Start Time Tracking Timer
       _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        _currentTime =
-            (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
-        _updateData();
-        notifyListeners();
+        if (!_isPlayingBack) {
+          _currentTime =
+              (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
+          _updateData();
+          notifyListeners();
+        }
       });
 
-      _dustTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+      // 3. Start UART Polling Timer (Runs every 1 second)
+      _dustTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+        if (!scienceLab.isConnected()) return;
+
         int available = await scienceLab.getUART2BytesAvailable();
-        if (available < 10) {
-          logger.d("SDS011: only $available bytes available, skipping");
-          return;
+
+        if (available > 0) {
+          List<int> rxBytes = await scienceLab.readUARTBytes(available);
+          String hexData = rxBytes.map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase()).join(' ');
+          logger.i("📥 RECEIVED DATA: $hexData");
+          _uartBuffer.addAll(rxBytes);
         }
 
-        List<int> rxBytes = await scienceLab.readUARTBytes(20);
+        // 4. Process the continuous buffer
+        while (_uartBuffer.length >= 10) {
+          int headerIdx = _uartBuffer.indexOf(0xAA);
 
-        int startIdx = -1;
-        for (int i = 0; i <= rxBytes.length - 10; i++) {
-          if (rxBytes[i] == 0xAA && rxBytes[i + 9] == 0xAB) {
-            startIdx = i;
+          if (headerIdx == -1) {
+            _uartBuffer.clear();
             break;
           }
-        }
-        if (startIdx == -1) return;
 
-        final frame = rxBytes.sublist(startIdx, startIdx + 10);
-        int checksum = 0;
-        for (int i = 2; i <= 7; i++) {
-          checksum += frame[i];
-        }
+          if (headerIdx > 0) {
+            _uartBuffer.removeRange(0, headerIdx);
+          }
 
-        if ((checksum & 0xFF) == frame[8]) {
-          _currentPM25 = ((frame[3] * 256) + frame[2]) / 10.0;
-          _currentPM10 = ((frame[5] * 256) + frame[4]) / 10.0;
-          notifyListeners();
-        } else {
-          logger.w("SDS011: Checksum error");
+          if (_uartBuffer.length >= 10) {
+            if (_uartBuffer[9] != 0xAB) {
+              _uartBuffer.removeAt(0);
+              continue;
+            }
+
+            final frame = _uartBuffer.sublist(0, 10);
+            _uartBuffer.removeRange(0, 10);
+
+            if (frame[1] != 0xC0) continue;
+
+            int checksum = 0;
+            for (int i = 2; i <= 7; i++) {
+              checksum += frame[i];
+            }
+
+            if ((checksum & 0xFF) == frame[8]) {
+              _currentPM25 = ((frame[3] * 256) + frame[2]) / 10.0;
+              _currentPM10 = ((frame[5] * 256) + frame[4]) / 10.0;
+
+              logger.d("SDS011 Valid Reading -> PM2.5: $_currentPM25, PM10: $_currentPM10");
+              notifyListeners();
+            } else {
+              logger.w("SDS011: Checksum error on received frame.");
+            }
+          }
         }
       });
     } catch (e) {

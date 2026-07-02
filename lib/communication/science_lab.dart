@@ -1411,12 +1411,25 @@ class ScienceLab {
 
   Future<int> getUART2BytesAvailable() async {
     if (!isConnected()) return 0;
+
     try {
       mPacketHandler.sendByte(mCommandsProto.uart2);
       mPacketHandler.sendByte(mCommandsProto.readUart2Status);
-      return await mPacketHandler.getByte();
+
+      await Future.delayed(const Duration(milliseconds: 20));
+
+      Uint8List rawBuffer = Uint8List(4);
+      int bytesRead = await mPacketHandler.read(rawBuffer, 4);
+
+      if (bytesRead > 0) {
+        logger.i("DEBUG: Firmware answer with $bytesRead bytes: ${rawBuffer.sublist(0, bytesRead)}");
+
+        return rawBuffer[0];
+      }
+
+      return 0;
     } catch (e) {
-      logger.e("Error reading UART2 status: $e");
+      logger.e("DEBUG ERROR: $e");
       return 0;
     }
   }
@@ -1434,6 +1447,30 @@ class ScienceLab {
     } catch (e) {
       logger.e("Error reading bytes from UART2: $e");
       return [];
+    }
+  }
+
+  Future<void> writeUARTBytes(List<int> bytes) async {
+    if (!isConnected()) return;
+
+    try {
+      for (int i = 0; i < bytes.length; i++) {
+        mPacketHandler.sendByte(mCommandsProto.uart2);
+
+        mPacketHandler.sendByte(mCommandsProto.sendByte);
+
+        mPacketHandler.sendByte(bytes[i]);
+
+        try {
+          await mPacketHandler.getAcknowledgement();
+        } catch (e) {
+          logger.w("UART2: No ACK for byte index $i, continuing...");
+        }
+      }
+
+      logger.i("UART2: Successfully wrote ${bytes.length} bytes to TX2.");
+    } catch (e) {
+      logger.e("Error writing bytes to UART2: $e");
     }
   }
 }
