@@ -48,33 +48,33 @@ class BoardStateProvider extends ChangeNotifier {
 
     if (configProvider.config.autoStart) {
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-        _usbSubscription ??= UsbSerial.usbEventStream?.listen(
-          (UsbEvent usbEvent) async {
-            if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
-              if (_isProcessing) return;
-              _isProcessing = true;
-              if (!scienceLabCommon.isConnected() &&
-                  await attemptToConnectPSLab()) {
-                pslabIsConnected = await scienceLabCommon.openDevice();
-                await setPSLabVersionIDs();
-                await fetchFirmwareVersion();
-                _isProcessing = false;
-              }
-            } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
-                !scienceLabCommon.isWiFiConnected()) {
-              scienceLabCommon.setConnected(false);
-              pslabIsConnected = false;
-              pslabVersionID = 'Not Connected';
-              notifyListeners();
+        _usbSubscription ??= UsbSerial.usbEventStream?.listen((
+          UsbEvent usbEvent,
+        ) async {
+          if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
+            if (_isProcessing) return;
+            _isProcessing = true;
+            if (!scienceLabCommon.isConnected() &&
+                await attemptToConnectPSLab()) {
+              pslabIsConnected = await scienceLabCommon.openDevice();
+              await setPSLabVersionIDs();
+              await fetchFirmwareVersion();
+              _isProcessing = false;
             }
-          },
-        );
+          } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
+              !scienceLabCommon.isWiFiConnected()) {
+            scienceLabCommon.setConnected(false);
+            pslabIsConnected = false;
+            pslabVersionID = 'Not Connected';
+            notifyListeners();
+          }
+        });
       }
     }
 
-    _connectivitySubscription ??= Connectivity()
-        .onConnectivityChanged
-        .listen((List<ConnectivityResult> results) {
+    _connectivitySubscription ??= Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) {
       if (results.contains(ConnectivityResult.none)) {
         scienceLabCommon.setWiFiConnected(false);
         pslabIsConnected = false;
@@ -104,8 +104,10 @@ class BoardStateProvider extends ChangeNotifier {
 
   Future<void> fetchFirmwareVersion() async {
     if (getIt.get<ScienceLab>().isConnected()) {
-      pslabFirmwareVersion =
-          await getIt.get<ScienceLab>().mPacketHandler.getFirmwareVersion();
+      pslabFirmwareVersion = await getIt
+          .get<ScienceLab>()
+          .mPacketHandler
+          .getFirmwareVersion();
     }
     if (pslabFirmwareVersion < 3 && pslabFirmwareVersion != 0) {
       legacyFirmwareNotifier.value = "LegacyFirmwareDetected";
