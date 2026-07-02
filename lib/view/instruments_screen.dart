@@ -119,6 +119,11 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
       // _InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensorDesc, '/dustsensor'),
       _InstrumentData(appLocalizations.soundMeter,
           appLocalizations.soundMeterDesc, '/soundmeter'),
+
+      _InstrumentData(
+          'OLED Display',
+          'Draw shapes & render text on an external OLED display.',
+          '/oledDisplay'),
     ];
 
     _filteredIndices =

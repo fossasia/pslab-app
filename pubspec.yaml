@@ -57,6 +57,7 @@ dependencies:
   ffi: ^2.2.0
   home_widget: ^0.9.2
   girix_code_gauge: ^0.0.6
+  image_picker: ^1.2.3
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_test:

@@ -772,5 +772,8 @@
     "eco2" : "eCO2",
     "tvoc" : "TVOC",
     "ppb" : "ppb",
-    "concentrationPpm" : "Concentration (PPM)"
+    "concentrationPpm" : "Concentration (PPM)",
+    "oledDisplayTitle": "OLED Display",
+    "oledDisplayIntro": "The OLED Display is a compact monochrome screen that communicates with the PSLab device via the I2C protocol. It allows you to render text, draw live shapes, and display custom GIFs.",
+    "oledDisplayConnection": "To use this instrument, connect the OLED's VCC, GND, SDA, and SCL pins directly to the corresponding 3.3V, GND, SDA, and SCL pins on the PSLab board's I2C header."
 }
