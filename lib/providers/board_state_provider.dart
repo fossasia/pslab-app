@@ -29,6 +29,7 @@ class BoardStateProvider extends ChangeNotifier {
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
     configProvider = SettingsConfigProvider();
+    pslabVersionID = appLocalizations.notConnected;
   }
 
   Future<void> initialize() async {
