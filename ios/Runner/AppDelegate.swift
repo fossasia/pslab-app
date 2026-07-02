@@ -4,7 +4,7 @@ import AVFoundation
 import CoreLocation
 
 @main
-@objc class AppDelegate: FlutterAppDelegate, CLLocationManagerDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate, CLLocationManagerDelegate {
 
     private var pendingPermissionResult: FlutterResult?
     private var locationManager: CLLocationManager?
@@ -13,34 +13,32 @@ import CoreLocation
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        guard let controller: FlutterViewController = window?.rootViewController as? FlutterViewController else {
-            return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-        }
-
-        let permissionChannel = FlutterMethodChannel(
-            name: "io.pslab/permissions",
-            binaryMessenger: controller.binaryMessenger
-        )
-
-        permissionChannel.setMethodCallHandler { [weak self] call, result in
-            guard let args = call.arguments as? [String: Any],
-                  let permission = args["permission"] as? String else {
-                result(FlutterError(code: "INVALID_ARGS", message: "Missing permission argument", details: nil))
-                return
-            }
-
-            if call.method == "checkStatus" {
-                self?.handleCheckStatus(permission: permission, result: result)
-            } else if call.method == "request" {
-                self?.handleRequest(permission: permission, result: result)
-            } else {
-                result(FlutterMethodNotImplemented)
-            }
-        }
-
-        GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
+
+    func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+                GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+                let permissionChannel = FlutterMethodChannel(
+                            name: "io.pslab/permissions",
+                            binaryMessenger: engineBridge.applicationRegistrar.messenger()
+                        )
+
+                        permissionChannel.setMethodCallHandler { [weak self] call, result in
+                            guard let args = call.arguments as? [String: Any],
+                                  let permission = args["permission"] as? String else {
+                                result(FlutterError(code: "INVALID_ARGS", message: "Missing permission argument", details: nil))
+                                return
+                            }
+
+                            if call.method == "checkStatus" {
+                                self?.handleCheckStatus(permission: permission, result: result)
+                            } else if call.method == "request" {
+                                self?.handleRequest(permission: permission, result: result)
+                            } else {
+                                result(FlutterMethodNotImplemented)
+                            }
+                        }
+               }
 
     private func handleCheckStatus(permission: String, result: @escaping FlutterResult) {
         if permission == "microphone" {
