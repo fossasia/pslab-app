@@ -1392,4 +1392,85 @@ class ScienceLab {
       logger.e("Error in servo4(): $e");
     }
   }
+
+  Future<void> configureUART({required int baudRate}) async {
+    if (!isConnected()) return;
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.uart2);
+      mPacketHandler.sendByte(mCommandsProto.setBaud);
+      mPacketHandler.sendInt(baudRate);
+
+      await mPacketHandler.getAcknowledgement();
+      logger.i("UART2 peripheral successfully configured at $baudRate baud.");
+    } catch (e) {
+      logger.e("Error configuring UART2: $e");
+      rethrow;
+    }
+  }
+
+  Future<int> getUART2BytesAvailable() async {
+    if (!isConnected()) return 0;
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.uart2);
+      mPacketHandler.sendByte(mCommandsProto.readUart2Status);
+
+      await Future.delayed(const Duration(milliseconds: 20));
+
+      Uint8List rawBuffer = Uint8List(4);
+      int bytesRead = await mPacketHandler.read(rawBuffer, 4);
+
+      if (bytesRead > 0) {
+        logger.i("DEBUG: Firmware answer with $bytesRead bytes: ${rawBuffer.sublist(0, bytesRead)}");
+
+        return rawBuffer[0];
+      }
+
+      return 0;
+    } catch (e) {
+      logger.e("DEBUG ERROR: $e");
+      return 0;
+    }
+  }
+
+  Future<List<int>> readUARTBytes(int bytesToRead) async {
+    if (!isConnected()) return [];
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.uart2);
+      mPacketHandler.sendByte(mCommandsProto.readByte);
+      mPacketHandler.sendByte(bytesToRead);
+      Uint8List rawBuffer = Uint8List(bytesToRead + 1); // +1 for ACK
+      await mPacketHandler.read(rawBuffer, bytesToRead + 1);
+      return rawBuffer.sublist(0, bytesToRead).map((b) => b & 0xFF).toList();
+    } catch (e) {
+      logger.e("Error reading bytes from UART2: $e");
+      return [];
+    }
+  }
+
+  Future<void> writeUARTBytes(List<int> bytes) async {
+    if (!isConnected()) return;
+
+    try {
+      for (int i = 0; i < bytes.length; i++) {
+        mPacketHandler.sendByte(mCommandsProto.uart2);
+
+        mPacketHandler.sendByte(mCommandsProto.sendByte);
+
+        mPacketHandler.sendByte(bytes[i]);
+
+        try {
+          await mPacketHandler.getAcknowledgement();
+        } catch (e) {
+          logger.w("UART2: No ACK for byte index $i, continuing...");
+        }
+      }
+
+      logger.i("UART2: Successfully wrote ${bytes.length} bytes to TX2.");
+    } catch (e) {
+      logger.e("Error writing bytes to UART2: $e");
+    }
+  }
 }
