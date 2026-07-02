@@ -1,26 +1,40 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/gas_sensor_state_provider.dart';
+import 'package:pslab/providers/gas_sensor_config_provider.dart';
+import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
+import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import 'gas_sensor_config_screen.dart';
 import 'widgets/gas_sensor_card.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
+import '../constants.dart';
 import '../theme/colors.dart';
 
 class GasSensorScreen extends StatefulWidget {
-  const GasSensorScreen({super.key});
+  final bool isExperiment;
+  final List<List<dynamic>>? playbackData;
+
+  const GasSensorScreen({
+    super.key,
+    this.isExperiment = false,
+    this.playbackData,
+  });
+
   @override
   State<StatefulWidget> createState() => _GasSensorScreenState();
 }
 
 class _GasSensorScreenState extends State<GasSensorScreen> {
   AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
-  GasSensorStateProvider? _gasProvider;
+  late GasSensorStateProvider _gasProvider;
+  late GasSensorConfigProvider _configProvider;
   bool _showGuide = false;
-  bool _snackbarShown = false;
 
   static const imagePath = 'assets/images/mq_135_gas_sensor.png';
 
@@ -28,25 +42,31 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
   void initState() {
     super.initState();
     _gasProvider = GasSensorStateProvider();
-    _gasProvider!.initializeSensors();
+    _configProvider = GasSensorConfigProvider();
+
+    _gasProvider.onPlaybackEnd = () {
+      if (mounted && Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    };
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        if (widget.playbackData != null) {
+          _gasProvider.startPlayback(widget.playbackData!);
+        } else {
+          _gasProvider.initializeSensors();
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
-    _gasProvider?.dispose();
+    _gasProvider.disposeSensors();
+    _gasProvider.dispose();
+    _configProvider.dispose();
     super.dispose();
-  }
-
-  void _showSensorErrorSnackbar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message, style: TextStyle(color: snackBarContentColor)),
-          backgroundColor: snackBarBackgroundColor,
-          duration: const Duration(seconds: 4),
-        ),
-      );
-    }
   }
 
   void _showInstrumentGuide() {
@@ -63,59 +83,143 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
 
   List<Widget> _getGasSensorContent() {
     return [
-      InstrumentIntroText(
-        text: appLocalizations.gasSensorGuideIntro,
-      ),
-      const SizedBox(height: 8),
-      InstrumentIntroText(
-        text: appLocalizations.gasSensorGuideDetail,
-      ),
+      InstrumentIntroText(text: appLocalizations.gasSensorGuideIntro),
+      const SizedBox(height: 12),
+      InstrumentIntroText(text: appLocalizations.gasSensorGuideDetail),
       const SizedBox(height: 16),
       Text(
         appLocalizations.gasSensorGuideConnectLabel,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
       const SizedBox(height: 8),
-      InstrumentIntroText(
-        text: appLocalizations.gasSensorGuideConnectStep1,
-      ),
-      InstrumentIntroText(
-        text: appLocalizations.gasSensorGuideConnectStep2,
-      ),
-      InstrumentIntroText(
-        text: appLocalizations.gasSensorGuideConnectStep3,
-      ),
+      InstrumentIntroText(text: appLocalizations.gasSensorGuideConnectStep1),
+      InstrumentIntroText(text: appLocalizations.gasSensorGuideConnectStep2),
+      InstrumentIntroText(text: appLocalizations.gasSensorGuideConnectStep3),
       const SizedBox(height: 16),
-      const InstrumentImage(
-        imagePath: imagePath,
-      ),
+      const InstrumentImage(imagePath: imagePath),
       const SizedBox(height: 16),
-      InstrumentIntroText(
-        text: appLocalizations.gasSensorGuideWarning,
-      ),
+      InstrumentIntroText(text: appLocalizations.gasSensorGuideWarning),
     ];
+  }
+
+  void _showOptionsMenu() {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width,
+        0,
+        0,
+        MediaQuery.of(context).size.height,
+      ),
+      items: [
+        PopupMenuItem(
+          value: 'show_logged_data',
+          child: Text(appLocalizations.showLoggedData),
+        ),
+        PopupMenuItem(
+          value: 'gas_sensor_config',
+          child: Text("${appLocalizations.gasSensor} Config"),
+        ),
+      ],
+      elevation: 8,
+    ).then((value) {
+      if (value != null) {
+        switch (value) {
+          case 'show_logged_data':
+            _navigateToLoggedData();
+            break;
+          case 'gas_sensor_config':
+            _navigateToConfig();
+            break;
+        }
+      }
+    });
+  }
+
+  void _navigateToConfig() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChangeNotifierProvider<GasSensorConfigProvider>.value(
+          value: _configProvider,
+          child: const GasSensorConfigScreen(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _navigateToLoggedData() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoggedDataScreen(
+          instrumentNames: [appLocalizations.gasSensor.toLowerCase()],
+          appBarName: appLocalizations.gasSensor,
+          instrumentIcons: [instrumentIcons[13]],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_gasProvider.isRecording) {
+      final data = _gasProvider.stopRecording();
+      await ExportHelper.handleSaveData(
+        context: context,
+        instrumentName: appLocalizations.gasSensor.toLowerCase(),
+        data: data,
+      );
+    } else {
+      await _gasProvider.startRecording();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${appLocalizations.recordingStarted}...',
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<GasSensorStateProvider>.value(
-      value: _gasProvider!,
-      child: Consumer<GasSensorStateProvider>(
-        builder: (context, provider, child) {
-          if (!provider.isSensorAvailable() &&
-              !_snackbarShown &&
-              provider.isInitialized()) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _showSensorErrorSnackbar(appLocalizations.noGasSensor);
-              _snackbarShown = true;
-            });
-          }
-
-          return Stack(
-            children: [
-              CommonScaffold(
-                title: appLocalizations.gasSensor,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<GasSensorStateProvider>.value(
+            value: _gasProvider),
+        ChangeNotifierProvider<GasSensorConfigProvider>.value(
+            value: _configProvider),
+      ],
+      child: Stack(
+        children: [
+          Consumer<GasSensorStateProvider>(
+            builder: (context, provider, child) {
+              return CommonScaffold(
+                title: provider.isPlayingData()
+                    ? '${appLocalizations.gasSensor} - ${appLocalizations.playback}'
+                    : appLocalizations.gasSensor,
+                onOptionsPressed:
+                    provider.isPlayingData() ? null : _showOptionsMenu,
                 onGuidePressed: _showInstrumentGuide,
+                onRecordPressed:
+                    provider.isPlayingData() ? null : _toggleRecording,
+                isRecording: provider.isRecording,
+                isPlayingBack: provider.isPlayingData(),
+                isPlaybackPaused: provider.isPlaybackPaused,
+                onPlaybackPauseResume: provider.isPlayingData()
+                    ? (provider.isPlaybackPaused
+                        ? _gasProvider.resumePlayback
+                        : _gasProvider.pausePlayback)
+                    : null,
+                onPlaybackStop: provider.isPlayingData()
+                    ? () async {
+                        await _gasProvider.stopPlayback();
+                      }
+                    : null,
                 body: SafeArea(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
@@ -138,16 +242,16 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
                     },
                   ),
                 ),
-              ),
-              if (_showGuide)
-                InstrumentOverviewDrawer(
-                  instrumentName: appLocalizations.gasSensor,
-                  content: _getGasSensorContent(),
-                  onHide: _hideInstrumentGuide,
-                ),
-            ],
-          );
-        },
+              );
+            },
+          ),
+          if (_showGuide)
+            InstrumentOverviewDrawer(
+              instrumentName: appLocalizations.gasSensor,
+              content: _getGasSensorContent(),
+              onHide: _hideInstrumentGuide,
+            ),
+        ],
       ),
     );
   }
@@ -175,8 +279,13 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
               ),
             ],
           ),
-          child: _buildChart(screenWidth, provider.getMaxTime(),
-              provider.getMinTime(), provider.getTimeInterval(), spots),
+          child: _buildChart(
+              screenWidth,
+              provider.getMaxTime(),
+              provider.getMinTime(),
+              provider.getTimeInterval(),
+              spots,
+              provider.getActiveMode()),
         );
       },
     );
@@ -192,8 +301,32 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
   }
 
   Widget _buildChart(double screenWidth, double maxTime, double minTime,
-      double timeInterval, List<FlSpot> spots) {
+      double timeInterval, List<FlSpot> spots, String activeMode) {
     final axisNameFontSize = screenWidth < 400 ? 11.0 : 12.0;
+
+    double yMax = 1024;
+    double yInterval = 200;
+    String yLabel = "Raw Data";
+
+    final cleanedMode = activeMode.trim();
+    bool isPpmMode = cleanedMode.toLowerCase() != 'raw' ||
+        spots.any((spot) => spot.y > 1024);
+
+    if (isPpmMode) {
+      yMax = 5000;
+      yInterval = 1000;
+      if (cleanedMode.toLowerCase() == 'raw') {
+        yLabel = appLocalizations.concentrationPpm;
+      } else {
+        yLabel = cleanedMode.toLowerCase().contains('ppm')
+            ? cleanedMode
+            : "$cleanedMode (ppm)";
+      }
+    } else {
+      yMax = 1024;
+      yInterval = 200;
+      yLabel = appLocalizations.airQuality;
+    }
 
     return Padding(
       padding: const EdgeInsets.only(right: 16.0, top: 8.0),
@@ -224,7 +357,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
               ),
             ),
             leftTitles: AxisTitles(
-              axisNameWidget: Text(appLocalizations.ppmCO2,
+              axisNameWidget: Text(yLabel,
                   style: TextStyle(
                       fontSize: axisNameFontSize,
                       color: chartTextColor,
@@ -232,9 +365,9 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
               sideTitles: SideTitles(
                 reservedSize: 40,
                 showTitles: true,
-                interval: 1000,
+                interval: yInterval,
                 getTitlesWidget: (value, meta) {
-                  if (value % 1000 != 0) return const SizedBox.shrink();
+                  if (value % yInterval != 0) return const SizedBox.shrink();
                   return SideTitleWidget(
                     meta: meta,
                     space: 6,
@@ -252,7 +385,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
             show: true,
             drawHorizontalLine: true,
             drawVerticalLine: true,
-            horizontalInterval: 1000,
+            horizontalInterval: yInterval,
             verticalInterval: timeInterval,
             getDrawingHorizontalLine: (value) =>
                 FlLine(color: chartBorderColor, strokeWidth: 1),
@@ -269,7 +402,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
             ),
           ),
           minY: 0,
-          maxY: 5000,
+          maxY: yMax,
           maxX: maxTime > 0 ? maxTime : 10,
           minX: minTime,
           clipData: const FlClipData.all(),
@@ -286,7 +419,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
                 gradient: LinearGradient(
                   colors: [
                     chartLineColor.withValues(alpha: 0.3),
-                    chartLineColor.withValues(alpha: 0.0),
+                    chartLineColor.withValues(alpha: 0.0)
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
