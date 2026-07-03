@@ -4,7 +4,7 @@ inputs:
   IPAD_DEVICE_MODEL:
     description: 'Model of the iPad device to be used when running tests'
     required: false
-    default: iPad Pro 13-inch (M4)
+    default: iPad Pro 13-inch (M5)
 
 runs:
   using: "composite"
