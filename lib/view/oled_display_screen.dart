@@ -370,8 +370,10 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
                                                       width: 2),
                                                 ),
                                                 hintText: provider.isGifPlaying
-                                                    ? appLocalizations.gifPlaying
-                                                    :appLocalizations.typeAndSend,
+                                                    ? appLocalizations
+                                                        .gifPlaying
+                                                    : appLocalizations
+                                                        .typeAndSend,
                                                 hintStyle: const TextStyle(
                                                     color: Colors.black38,
                                                     fontSize: 13),
