@@ -21,6 +21,8 @@ class DustSensorStateProvider extends ChangeNotifier {
   Timer? _timeTimer;
   Timer? _dustTimer;
 
+  final List<int> _uartBuffer = [];
+
   final List<double> _pm25Data = [];
   final List<double> _pm10Data = [];
   final List<double> _timeData = [];
@@ -97,54 +99,256 @@ class DustSensorStateProvider extends ChangeNotifier {
     });
   }
 
+  Future<void> testSingleUARTRead() async {
+    ScienceLab scienceLab = getIt.get<ScienceLab>();
+
+    logger.i("--- STARTING SINGLE UART TEST ---");
+
+    if (!scienceLab.isConnected()) {
+      logger.e("TEST: ScienceLab is not connected!");
+      return;
+    }
+
+    try {
+      // 1. Wait 2 seconds. The SDS011 sends data once every 1 second.
+      // This guarantees that at least one packet should be waiting in the PSLab buffer.
+      logger.i("TEST: Waiting 2 seconds to let SDS011 send data...");
+      await Future.delayed(const Duration(seconds: 2));
+
+      // 2. Check available bytes
+      logger.i("TEST: Requesting available byte count...");
+      int available = await scienceLab.getUART2BytesAvailable();
+      logger.i("TEST: PSLab reports $available bytes available.");
+
+      // 3. Read if available
+      if (available > 0) {
+        List<int> rxBytes = await scienceLab.readUARTBytes(available);
+        logger.i("TEST: Successfully read $available bytes.");
+
+        // Convert to HEX string for easy reading in the console
+        String hexString = rxBytes
+            .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
+            .join(' ');
+        logger.i("TEST: RAW DATA (HEX): $hexString");
+
+        if (rxBytes.contains(0xAA)) {
+          logger.i(
+              "TEST: SUCCESS! Found SDS011 Start Byte (0xAA) in the stream.");
+        } else {
+          logger.w(
+              "TEST: Data received, but no 0xAA start byte. Is baud rate correct? Are RX/TX swapped?");
+        }
+      } else {
+        logger.w(
+            "TEST: No data available. The sensor might be asleep, or TX/RX are disconnected.");
+      }
+    } catch (e) {
+      logger.e("TEST: Exception during single read: $e");
+    }
+
+    logger.i("--- END SINGLE UART TEST ---");
+  }
+
+  Future<void> testAndWakeSensor() async {
+    ScienceLab scienceLab = getIt.get<ScienceLab>();
+
+    // 1. Define the official Wake/Work command (19 bytes)
+    final List<int> wakeCommand = [
+      0xAA,
+      0xB4,
+      0x06,
+      0x01,
+      0x01,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0xFF,
+      0xFF,
+      0x06,
+      0xAB
+    ];
+
+    logger.i("TEST: Sending Wake command sequence...");
+
+    // Send it 3 times to ensure the sensor catches it
+    for (int i = 0; i < 3; i++) {
+      await scienceLab.writeUARTBytes(wakeCommand);
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    logger.i("TEST: Checking for data now...");
+
+    // Check for data
+    int available = await scienceLab.getUART2BytesAvailable();
+    if (available > 0) {
+      List<int> rxBytes = await scienceLab.readUARTBytes(available);
+      String hexString = rxBytes
+          .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
+          .join(' ');
+      logger.i("TEST: DATA RECEIVED: $hexString");
+
+      if (rxBytes.contains(0xAA)) {
+        logger.i("TEST: SUCCESS! Sensor is awake and streaming.");
+      }
+    } else {
+      logger.w("TEST: Still no data. Check if fan is spinning now!");
+    }
+  }
+
+  Future<void> testBlindUARTRead() async {
+    ScienceLab scienceLab = getIt.get<ScienceLab>();
+
+    logger.i("--- STARTING BLIND UART TEST ---");
+
+    if (!scienceLab.isConnected()) {
+      logger.e("TEST: ScienceLab is not connected!");
+      return;
+    }
+
+    try {
+      // 1. Wait 2 seconds to ensure the SDS011 has transmitted.
+      logger.i("TEST: Waiting 2 seconds...");
+      await Future.delayed(const Duration(seconds: 2));
+
+      // 2. BYPASS THE STATUS CHECK.
+      // We are going to force the PSLab to give us 10 bytes, whether it thinks it has them or not.
+      logger.i("TEST: Bypassing status check. Forcing a read of 10 bytes...");
+      List<int> rxBytes = await scienceLab.readUARTBytes(10);
+
+      // 3. Analyze the results
+      if (rxBytes.isNotEmpty && rxBytes.any((b) => b != 0)) {
+        String hexString = rxBytes
+            .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
+            .join(' ');
+        logger.i("TEST: SUCCESS! Blind read captured data: $hexString");
+
+        if (rxBytes.contains(0xAA)) {
+          logger.i("TEST: Found the SDS011 start byte (0xAA)!");
+        }
+      } else {
+        logger.w(
+            "TEST: Blind read returned empty or all zeroes. The PSLab RX pin is definitely receiving nothing.");
+      }
+    } catch (e) {
+      logger.e("TEST: Exception during blind read: $e");
+    }
+
+    logger.i("--- END BLIND UART TEST ---");
+  }
+
   void initializeSensors({Function(String)? onError}) async {
     onSensorError = onError;
 
     try {
       ScienceLab scienceLab = getIt.get<ScienceLab>();
 
+      // ---------------------------------------------------------
+      // NEW: WAKE UP THE SDS011
+      // ---------------------------------------------------------
+      logger.i("Sending Wake/Work command to SDS011...");
+
+      final List<int> wakeCommand = [
+        0xAA, // Head [cite: 300]
+        0xB4, // Command ID [cite: 300]
+        0x06, // Data byte 1: Instruction [cite: 300]
+        0x01, // Data byte 2: 1 = Set mode [cite: 300]
+        0x01, // Data byte 3: 1 = Work mode [cite: 300]
+        0x00, 0x00, 0x00, 0x00, 0x00, // Data 4-8 (Reserved) [cite: 300]
+        0x00, 0x00, 0x00, 0x00, 0x00, // Data 9-13 (Reserved) [cite: 300, 303]
+        0xFF, 0xFF, // Data 14-15: Device ID (All devices) [cite: 303]
+        0x06, // Checksum [cite: 303]
+        0xAB // Tail [cite: 303]
+      ];
+
       await scienceLab.configureUART(baudRate: 9600);
       await Future.delayed(const Duration(milliseconds: 500));
 
+// 1. Sveglia il sensore
+      await scienceLab.writeUARTBytes(wakeCommand);
+      await Future.delayed(const Duration(seconds: 1));
+
+// 2. Forza la modalità streaming (Active Reporting)
+      await scienceLab.setStreamingMode();
+      await Future.delayed(const Duration(seconds: 1));
+
+      await scienceLab.writeUARTBytes(wakeCommand);
+
+      // Give the sensor a second to spin up the fan and stabilize [cite: 314]
+      await Future.delayed(const Duration(seconds: 1));
+      // ---------------------------------------------------------
+
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
 
+      // 2. Start Time Tracking Timer
       _timeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        _currentTime =
-            (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
-        _updateData();
-        notifyListeners();
+        if (!_isPlayingBack) {
+          _currentTime =
+              (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
+          _updateData();
+          notifyListeners();
+        }
       });
 
+      // 3. Start UART Polling Timer (Runs every 1 second)
       _dustTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+        if (!scienceLab.isConnected()) return;
         int available = await scienceLab.getUART2BytesAvailable();
-        if (available < 10) {
-          logger.d("SDS011: only $available bytes available, skipping");
-          return;
+        if (available > 0) {
+          List<int> rxBytes = await scienceLab.readUARTBytes(available);
+
+          logger.d(
+              "Dati grezzi ricevuti: ${rxBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}");
+
+          _uartBuffer.addAll(rxBytes);
         }
 
-        List<int> rxBytes = await scienceLab.readUARTBytes(20);
+        // 4. Process the continuous buffer
+        while (_uartBuffer.length >= 10) {
+          int headerIdx = _uartBuffer.indexOf(0xAA);
 
-        int startIdx = -1;
-        for (int i = 0; i <= rxBytes.length - 10; i++) {
-          if (rxBytes[i] == 0xAA && rxBytes[i + 9] == 0xAB) {
-            startIdx = i;
+          if (headerIdx == -1) {
+            _uartBuffer.clear();
             break;
           }
-        }
-        if (startIdx == -1) return;
 
-        final frame = rxBytes.sublist(startIdx, startIdx + 10);
-        int checksum = 0;
-        for (int i = 2; i <= 7; i++) {
-          checksum += frame[i];
-        }
+          if (headerIdx > 0) {
+            _uartBuffer.removeRange(0, headerIdx);
+          }
 
-        if ((checksum & 0xFF) == frame[8]) {
-          _currentPM25 = ((frame[3] * 256) + frame[2]) / 10.0;
-          _currentPM10 = ((frame[5] * 256) + frame[4]) / 10.0;
-          notifyListeners();
-        } else {
-          logger.w("SDS011: Checksum error");
+          if (_uartBuffer.length >= 10) {
+            if (_uartBuffer[9] != 0xAB) {
+              _uartBuffer.removeAt(0);
+              continue;
+            }
+
+            final frame = _uartBuffer.sublist(0, 10);
+            _uartBuffer.removeRange(0, 10);
+
+            if (frame[1] != 0xC0) continue;
+
+            int checksum = 0;
+            for (int i = 2; i <= 7; i++) {
+              checksum += frame[i];
+            }
+
+            if ((checksum & 0xFF) == frame[8]) {
+              _currentPM25 = ((frame[3] * 256) + frame[2]) / 10.0;
+              _currentPM10 = ((frame[5] * 256) + frame[4]) / 10.0;
+
+              logger.d(
+                  "SDS011 Valid Reading -> PM2.5: $_currentPM25, PM10: $_currentPM10");
+              notifyListeners();
+            } else {
+              logger.w("SDS011: Checksum error on received frame.");
+            }
+          }
         }
       });
     } catch (e) {

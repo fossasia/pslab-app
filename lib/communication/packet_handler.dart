@@ -152,13 +152,22 @@ class PacketHandler {
 
   Future<int> read(Uint8List dest, int bytesToRead) async {
     int numBytesRead = await _commonRead(bytesToRead);
-    for (int i = 0; i < bytesToRead; i++) {
+
+    // Safety check: Only loop up to the number of bytes actually received
+    // to prevent copying stale garbage data from the buffer.
+    int loopLimit = numBytesRead > 0 ? numBytesRead : 0;
+    for (int i = 0; i < loopLimit; i++) {
       dest[i] = _buffer[i];
     }
+
     if (numBytesRead == bytesToRead) {
       return numBytesRead;
+    } else if (numBytesRead > 0) {
+      logger.w(
+          "PacketHandler: Partial read completed ($numBytesRead/$bytesToRead bytes).");
+      return numBytesRead;
     } else {
-      logger.e("Error in PacketHandler Reading");
+      logger.e("Error in PacketHandler Reading: 0 bytes received.");
     }
     return -1;
   }

@@ -76,27 +76,34 @@ class DesktopUSBCommunicationHandler implements CommunicationHandler {
   Future<int> read(Uint8List dest, int bytesToRead, int timeoutMillis) async {
     int numBytesRead = 0;
     int bytesToBeReadTemp = bytesToRead;
+
     try {
       while (numBytesRead < bytesToRead) {
         Uint8List? receivedData =
             await mDevice?.read(bytesToBeReadTemp, timeoutMillis);
+
         int? readNow = receivedData?.length;
-        logger.d("Received chunk: $receivedData");
-        if (readNow == 0) {
-          logger.e("Read Error: $bytesToBeReadTemp");
-          return numBytesRead;
+
+        if (readNow == null || readNow == 0) {
+          // If we read nothing and timeout, stop trying to avoid an infinite hang
+          break;
         } else {
-          int readLength = readNow!.clamp(0, bytesToBeReadTemp);
+          int readLength = readNow.clamp(0, bytesToBeReadTemp);
           dest.setRange(numBytesRead, numBytesRead + readLength, receivedData!);
           numBytesRead += readLength;
           bytesToBeReadTemp -= readLength;
         }
       }
     } catch (e) {
-      logger.e("Exception during read: $e");
+      // If we hit a LIBUSB_ERROR_TIMEOUT but we already have data, it's just a partial read.
+      if (numBytesRead > 0) {
+        logger.d(
+            "Partial read completed before timeout. Read: $numBytesRead/$bytesToRead bytes.");
+      } else {
+        logger.w("USB Read Timeout: Expected $bytesToRead bytes but got 0.");
+      }
     }
 
-    logger.d("Bytes Read: $numBytesRead");
     return numBytesRead;
   }
 

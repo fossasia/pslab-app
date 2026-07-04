@@ -1411,12 +1411,26 @@ class ScienceLab {
 
   Future<int> getUART2BytesAvailable() async {
     if (!isConnected()) return 0;
+
     try {
       mPacketHandler.sendByte(mCommandsProto.uart2);
       mPacketHandler.sendByte(mCommandsProto.readUart2Status);
-      return await mPacketHandler.getByte();
+
+      await Future.delayed(const Duration(milliseconds: 2));
+
+      Uint8List rawBuffer = Uint8List(1);
+      int bytesRead = await mPacketHandler.read(rawBuffer, 1);
+
+      if (bytesRead == 1) {
+        return rawBuffer[0] & 0xFF;
+      }
+
+      logger.w(
+          "DEBUG: getUART2BytesAvailable read $bytesRead bytes instead of 1.");
+      return 0;
     } catch (e) {
-      logger.e("Error reading UART2 status: $e");
+      // Un-silence the catch block for our test!
+      logger.e("DEBUG ERROR in getUART2BytesAvailable: $e");
       return 0;
     }
   }
@@ -1435,5 +1449,75 @@ class ScienceLab {
       logger.e("Error reading bytes from UART2: $e");
       return [];
     }
+  }
+
+  /// Writes a list of bytes out of the UART2 TX pin.
+  Future<void> writeUARTBytes(List<int> bytes) async {
+    if (!isConnected()) return;
+
+    try {
+      for (int i = 0; i < bytes.length; i++) {
+        // 1. Target the UART2 peripheral
+        mPacketHandler.sendByte(mCommandsProto.uart2);
+
+        // 2. Tell it we are sending exactly ONE byte
+        mPacketHandler.sendByte(mCommandsProto.sendByte);
+
+        // 3. Send the actual byte
+        mPacketHandler.sendByte(bytes[i]);
+      }
+
+      logger.i("UART2: Successfully wrote ${bytes.length} bytes to TX2.");
+    } catch (e) {
+      logger.e("Error writing bytes to UART2: $e");
+    }
+  }
+
+  Future<void> sendSleepCommand() async {
+    if (!isConnected()) return;
+
+    // Comando di Sleep secondo il protocollo (19 byte)
+    final List<int> sleepCommand = [
+      0xAA, // Head
+      0xB4, // Command ID
+      0x06, // Data byte 1: Set Sleep/Work
+      0x01, // Data byte 2: Set Mode (1 = Set)
+      0x00, // Data byte 3: 0 = Sleep (Fan & Laser off)
+      0x00, 0x00, 0x00, 0x00, 0x00, // Padding
+      0x00, 0x00, 0x00, 0x00, 0x00,
+      0xFF, 0xFF, // Device ID
+      0x05, // Checksum (0xAA+0xB4+0x06+0x01+0x00... = 0x05)
+      0xAB // Tail
+    ];
+
+    await writeUARTBytes(sleepCommand);
+    logger.i("Comando SLEEP inviato!");
+  }
+
+  Future<void> setStreamingMode() async {
+    // Comando: AA B4 02 01 00 00 ... (01=Set, 00=Active Report Mode)
+    final List<int> streamModeCommand = [
+      0xAA,
+      0xB4,
+      0x02,
+      0x01,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0xFF,
+      0xFF,
+      0x02,
+      0xAB
+    ];
+    await writeUARTBytes(streamModeCommand);
+    logger.i("Comando STREAMING MODE inviato!");
   }
 }
