@@ -23,6 +23,8 @@ class OLED {
 
   List<int> _lastBuffer = List.filled(1024, -1);
 
+  bool _isBusy = false;
+
   OLED._(this.i2c, this.model) {
     _pages = (model == OledModel.ssd1306_128x32) ? 4 : 8;
     _columnOffset = (model == OledModel.sh1106_128x64) ? 2 : 0;
@@ -39,6 +41,8 @@ class OLED {
     if (!scienceLab.isConnected()) throw Exception("ScienceLab device absent");
 
     try {
+      await i2c.config(400000);
+
       List<int> initSequence = [
         0xAE,
         0xD5,
@@ -63,9 +67,6 @@ class OLED {
         0xC8,
         0xDA,
         _pages == 4 ? 0x02 : 0x12,
-      ]);
-
-      initSequence.addAll([
         0x81,
         0x7F,
         0xD9,
@@ -81,6 +82,7 @@ class OLED {
         await i2c.write(address, [cmd], _commandMode);
       }
 
+      await Future.delayed(const Duration(milliseconds: 50));
       await clearDisplay();
     } catch (e) {
       logger.e("[$tag] Fatal initialization error: $e");
@@ -96,25 +98,29 @@ class OLED {
   }
 
   Future<void> clearDisplay() async {
+    if (_isBusy) return;
+    _isBusy = true;
+
     try {
       for (int page = 0; page < _pages; page++) {
-        await i2c.write(address, [0xB0 + page], _commandMode);
-        await i2c.write(address, [0x00], _commandMode);
-        await i2c.write(address, [0x10], _commandMode);
+        await _setPosition(0, page);
 
-        for (int chunk = 0; chunk < 128; chunk += 16) {
-          int size = (chunk + 16 > 128) ? 128 - chunk : 16;
-          await i2c.write(address, List.filled(size, 0x00), _dataMode);
-        }
+        await i2c.write(address, List.filled(128, 0x00), _dataMode);
       }
+
       _lastBuffer = List.filled(1024, 0);
     } catch (e) {
       logger.e("[$tag] Error during clearDisplay: $e");
+    } finally {
+      _isBusy = false;
     }
   }
 
   Future<void> sendFrameBuffer(List<int> buffer) async {
     if (buffer.length != 1024) return;
+
+    if (_isBusy) return;
+    _isBusy = true;
 
     try {
       for (int page = 0; page < _pages; page++) {
@@ -135,14 +141,12 @@ class OLED {
           try {
             await _setPosition(firstCol, page);
 
-            for (int chunk = 0; chunk < length; chunk += 16) {
-              int chunkSize = (chunk + 16 > length) ? length - chunk : 16;
-              List<int> bytes = buffer.sublist(startIdx + firstCol + chunk,
-                  startIdx + firstCol + chunk + chunkSize);
-              await i2c.write(address, bytes, _dataMode);
-            }
+            List<int> bytes = buffer.sublist(
+                startIdx + firstCol, startIdx + firstCol + length);
+            await i2c.write(address, bytes, _dataMode);
           } catch (e) {
             _lastBuffer = List.filled(1024, -1);
+            _isBusy = false;
             return;
           }
 
@@ -153,6 +157,8 @@ class OLED {
       }
     } catch (e) {
       _lastBuffer = List.filled(1024, -1);
+    } finally {
+      _isBusy = false;
     }
   }
 }

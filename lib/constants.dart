@@ -49,5 +49,5 @@ List<String> instrumentNames = [
   appLocalizations.roboticArmTitle.toLowerCase(),
   appLocalizations.gasSensor.toLowerCase(),
   appLocalizations.soundMeter.toLowerCase(),
-  'oled display',
+  appLocalizations.oledDisplayTitle.toLowerCase(),
 ];

@@ -24,6 +24,8 @@ import 'compass_screen.dart';
 import 'package:pslab/view/thermometer_screen.dart';
 import 'package:pslab/view/robotic_arm_screen.dart';
 
+import 'oled_display_screen.dart';
+
 class LoggedDataScreen extends StatefulWidget {
   final List<String> instrumentNames;
   final String appBarName;
@@ -499,6 +501,16 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'oled display':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OledDisplayScreen(
+                importedData: data,
+              ),
+            ),
+          );
+          break;
       }
     }
   }
@@ -592,6 +604,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       appLocalizations.accelerometer.toLowerCase(),
       appLocalizations.compassTitle.toLowerCase(),
       appLocalizations.thermometerTitle.toLowerCase(),
+      appLocalizations.oledDisplayTitle.toLowerCase(),
     };
 
     return Scaffold(
