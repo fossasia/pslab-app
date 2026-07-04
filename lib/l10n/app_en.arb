@@ -696,13 +696,14 @@
     "comingSoon": "Coming Soon",
     "startRecording": "Start Recording",
     "stopRecording": "Stop Recording",
-    "gasSensorGuideIntro": "To use this instrument, you need an MQ-135 semiconductor gas sensor.",
-    "gasSensorGuideDetail": "The MQ-135 is primarily intended for detecting flammable gases and broad air quality, but its readings can be mathematically translated to estimate CO2 Parts Per Million (PPM).",
+    "gasSensorGuideIntro": "The MQ-135 is a broad-spectrum semiconductor gas sensor. It utilizes a Tin Dioxide (SnO2) sensitive layer whose electrical conductivity changes when exposed to clean air versus air polluted with target gases.",
+    "gasSensorGuideDetail": "The Mathematical Formula:\nThe sensor does not read gases individually. Instead, any detectable gas causes the sensor's internal resistance (Rs) to drop relative to its baseline resistance in fresh air (R0).\n\nppm = a * (Rs / R0)^b\n\nWhere 'a' represents the scaling multiplier and 'b' represents the curve slope. By altering these coefficients based on the manufacturer's datasheet curves, the app can calculate estimations for different gases:\n• Carbon Dioxide (CO2): a ≈ 110.5, b ≈ -2.86\n• Ammonia (NH3): a ≈ 102.2, b ≈ -2.47\n• Alcohol / Ethanol: a ≈ 75.4, b ≈ -3.12",
     "gasSensorGuideConnectLabel": "How to connect:",
     "gasSensorGuideConnectStep1": "1. Connect the PSLab +5V pin to the sensor's VCC pin.",
     "gasSensorGuideConnectStep2": "2. Connect the PSLab GND pin to the sensor's GND pin.",
     "gasSensorGuideConnectStep3": "3. Connect the PSLab CH1 pin to the sensor's Analog Out (A0) pin.",
-    "gasSensorGuideWarning": "Note: Readings are estimated based on default load and baseline resistances and assume a fresh air environment during calibration.",
+    "gasSensorGuideWarning": "Important Scientific Limitation:\nBecause the sensor reacts to all of these gases simultaneously on the same electrical line, it cannot differentiate between them. For example, if you configure to display Ammonia (NH3) from configuration menu, but alcohol fumes enter the room, the sensor will misinterpret the resistance drop and show a massive, false spike in Ammonia.\n\nTherefore, all target-specific outputs are mathematical approximations assuming a strictly controlled background environment."
+,
     "ppmCO2" : "PPM CO₂",
     "noGasSensor" : "Gas Sensor Unavailable Please connect Gas Sensor",
     "tsl2561" : "TSL2561",
@@ -803,5 +804,6 @@
     "canvas": "CANVAS",
     "configure": "CONFIGURE",
     "liveRender": "Live Render",
-    "snapshotSaved": "Canvas Snapshot Saved to Logs!"
+    "snapshotSaved": "Canvas Snapshot Saved to Logs!",
+    "airQuality" : "Air Quality"
 }
