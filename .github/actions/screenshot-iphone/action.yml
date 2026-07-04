@@ -4,7 +4,7 @@ inputs:
   IPHONE_DEVICE_MODEL:
     description: 'Model of the iPhone device to be used when running tests'
     required: false
-    default: iPhone 16 Pro Max
+    default: iPhone 17 Pro Max
 
 runs:
   using: "composite"
