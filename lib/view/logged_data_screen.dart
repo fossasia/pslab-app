@@ -511,12 +511,12 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           break;
         case 'oled display':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OledDisplayScreen(
-                importedData: data,
-              ),
-          );
+              context,
+              MaterialPageRoute(
+                builder: (context) => OledDisplayScreen(
+                  importedData: data,
+                ),
+              ));
           break;
         case 'gas sensor':
           Navigator.push(
