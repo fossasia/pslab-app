@@ -56,4 +56,33 @@ void main() {
       expect(version, '9.8.7+45');
     },
   );
+
+  test('uses version in default path from package', () async {
+    final executablePath =
+        '${Platform.pathSeparator}usr${Platform.pathSeparator}bin${Platform.pathSeparator}'
+        'pslab';
+    final versionFile = File(
+      '${Platform.pathSeparator}usr${Platform.pathSeparator}bin${Platform.pathSeparator}'
+      'data${Platform.pathSeparator}flutter_assets${Platform.pathSeparator}'
+      'version.json',
+    );
+
+    IOOverrides.runZoned(() async {
+      await versionFile.create(recursive: true);
+      await versionFile.writeAsString('{"version":"6.5.3"}');
+
+      final version = await resolveAboutUsVersion(
+        packageInfoLoader: () async => PackageInfo(
+          appName: 'pslab',
+          packageName: 'io.pslab',
+          version: '',
+          buildNumber: '1234',
+        ),
+        isLinux: true,
+        resolvedExecutable: executablePath,
+      );
+
+      expect(version, '6.5.3+1234');
+    });
+  });
 }
