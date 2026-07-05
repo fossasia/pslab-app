@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -23,13 +24,7 @@ class ConnectDeviceScreen extends StatefulWidget {
 }
 
 Widget _stepText(String text) {
-  return Text(
-    text,
-    style: const TextStyle(
-      fontSize: 14,
-      height: 1.35,
-    ),
-  );
+  return Text(text, style: const TextStyle(fontSize: 14, height: 1.35));
 }
 
 class _HomeScreenState extends State<ConnectDeviceScreen> {
@@ -39,10 +34,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
   void _showSnackBar(String message, {Color? backgroundColor}) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-      ),
+      SnackBar(content: Text(message), backgroundColor: backgroundColor),
     );
   }
 
@@ -97,15 +89,13 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     Center(
                       child: Image.asset(
                         provider.pslabIsConnected
                             ? (provider.scienceLabCommon.isWiFiConnected()
-                                ? ConnectDeviceScreen.iconWifiConnected
-                                : ConnectDeviceScreen.iconUsbConnected)
+                                  ? ConnectDeviceScreen.iconWifiConnected
+                                  : ConnectDeviceScreen.iconUsbConnected)
                             : ConnectDeviceScreen.iconUsbDisconnected,
                         width: 80,
                         height: 80,
@@ -114,7 +104,11 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                     Center(
                       child: Container(
                         margin: const EdgeInsets.only(
-                            top: 20, bottom: 24, left: 40, right: 40),
+                          top: 20,
+                          bottom: 24,
+                          left: 40,
+                          right: 40,
+                        ),
                         child: Text(
                           provider.pslabIsConnected
                               ? '${appLocalizations.deviceConnected}\n\n${provider.pslabVersionID}'
@@ -139,9 +133,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                             color: Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Theme.of(context)
-                                  .dividerColor
-                                  .withValues(alpha: 0.6),
+                              color: Theme.of(
+                                context,
+                              ).dividerColor.withValues(alpha: 0.6),
                             ),
                           ),
                           child: Column(
@@ -172,9 +166,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       child: Center(
                         child: Text(
                           appLocalizations.wifiConnection,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                     ),
@@ -213,8 +205,11 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       ),
                     ),
                     Container(
-                      margin:
-                          const EdgeInsets.only(top: 30, left: 120, right: 120),
+                      margin: const EdgeInsets.only(
+                        top: 30,
+                        left: 120,
+                        right: 120,
+                      ),
                       child: Divider(color: dividerColor, height: 1),
                     ),
                     Center(
@@ -223,8 +218,14 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         padding: const EdgeInsets.all(10),
                         child: GestureDetector(
                           onTap: () async {
-                            await launchUrl(
-                                Uri.parse(appLocalizations.pslabUrl));
+                            final uri = Uri.parse(appLocalizations.pslabUrl);
+                            if (await canLaunchUrl(uri)) {
+                              await launchUrl(uri);
+                            } else {
+                              logger.e(
+                                'Could not launch ${appLocalizations.pslabUrl}',
+                              );
+                            }
                           },
                           child: Text(
                             appLocalizations.whatIsPslab,
@@ -240,9 +241,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
