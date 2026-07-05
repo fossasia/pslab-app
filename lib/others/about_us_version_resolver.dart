@@ -57,6 +57,7 @@ Future<String> _loadLinuxBundleVersion({
   final candidatePaths = <String>[
     '${executableParent.path}/data/flutter_assets/version.json',
     '${executableParent.parent.path}/share/pslab/flutter_assets/version.json',
+    '/usr/share/pslab/flutter_assets/version.json',
   ];
 
   for (final candidatePath in candidatePaths) {
