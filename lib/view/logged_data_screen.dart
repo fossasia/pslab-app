@@ -16,6 +16,7 @@ import 'package:pslab/view/oscilloscope_screen.dart';
 import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
+import 'package:pslab/view/gas_sensor_screen.dart';
 import '../l10n/app_localizations.dart';
 import '../others/data_service.dart';
 import '../providers/locator.dart';
@@ -23,6 +24,8 @@ import 'accelerometer_screen.dart';
 import 'compass_screen.dart';
 import 'package:pslab/view/thermometer_screen.dart';
 import 'package:pslab/view/robotic_arm_screen.dart';
+
+import 'oled_display_screen.dart';
 
 class LoggedDataScreen extends StatefulWidget {
   final List<String> instrumentNames;
@@ -344,6 +347,13 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           'xDataColumnIndex': 0,
           'yDataColumnIndex': 2,
         };
+      case 'gas sensor':
+        return {
+          'xAxisLabel': appLocalizations.timeAxisLabel,
+          'yAxisLabel': 'Value',
+          'xDataColumnIndex': 0,
+          'yDataColumnIndex': 2,
+        };
       default:
         return {
           'xAxisLabel': appLocalizations.timeAxisLabel,
@@ -499,6 +509,23 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
             ),
           );
           break;
+        case 'oled display':
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OledDisplayScreen(
+                  importedData: data,
+                ),
+              ));
+          break;
+        case 'gas sensor':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GasSensorScreen(playbackData: data),
+            ),
+          );
+          break;
       }
     }
   }
@@ -592,6 +619,8 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       appLocalizations.accelerometer.toLowerCase(),
       appLocalizations.compassTitle.toLowerCase(),
       appLocalizations.thermometerTitle.toLowerCase(),
+      appLocalizations.oledDisplayTitle.toLowerCase(),
+      appLocalizations.gasSensor.toLowerCase(),
     };
 
     return Scaffold(

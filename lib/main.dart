@@ -37,6 +37,7 @@ import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/thermometer_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
 import 'package:pslab/view/experiments_screen.dart';
+import 'package:pslab/view/oled_display_screen.dart';
 import 'constants.dart';
 
 void main(List<String> args) async {
@@ -159,6 +160,8 @@ class MyApp extends StatelessWidget {
                         instrumentIcons: instrumentIcons,
                       ),
                     ),
+                '/oledDisplay': (context) =>
+                    const _LocaleAware(child: OledDisplayScreen()),
               },
             );
           },
