@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -59,8 +60,17 @@ class MapScreen extends StatelessWidget {
               attributions: [
                 TextSourceAttribution(
                   appLocalizations.openStreetMapContributors,
-                  onTap: () => launchUrl(
-                      Uri.parse('https://openstreetmap.org/copyright')),
+                  onTap: () async {
+                    final uri =
+                        Uri.parse('https://openstreetmap.org/copyright');
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(uri);
+                    } else {
+                      logger.e(
+                        'Could not launch https://openstreetmap.org/copyright',
+                      );
+                    }
+                  },
                 ),
               ],
             ),
