@@ -115,36 +115,41 @@ class DustSensorStateProvider extends ChangeNotifier {
         notifyListeners();
       });
 
-      _dustTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
-        int available = await scienceLab.getUART2BytesAvailable();
-        if (available < 10) {
-          logger.d("SDS011: only $available bytes available, skipping");
-          return;
-        }
+      _dustTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+        await scienceLab.writeUARTBytes([
+          0xAA,
+          0xB4,
+          0x04,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0x00,
+          0xFF,
+          0xFF,
+          0x02,
+          0xAB
+        ]);
 
-        List<int> rxBytes = await scienceLab.readUARTBytes(20);
+        await Future.delayed(const Duration(milliseconds: 100));
 
-        int startIdx = -1;
-        for (int i = 0; i <= rxBytes.length - 10; i++) {
-          if (rxBytes[i] == 0xAA && rxBytes[i + 9] == 0xAB) {
-            startIdx = i;
-            break;
+        int head = await scienceLab.readSingleUARTByte();
+
+        if (head == 0xAA) {
+          List<int> frame = [0xAA];
+          for (int i = 0; i < 9; i++) {
+            frame.add(await scienceLab.readSingleUARTByte());
           }
-        }
-        if (startIdx == -1) return;
-
-        final frame = rxBytes.sublist(startIdx, startIdx + 10);
-        int checksum = 0;
-        for (int i = 2; i <= 7; i++) {
-          checksum += frame[i];
-        }
-
-        if ((checksum & 0xFF) == frame[8]) {
-          _currentPM25 = ((frame[3] * 256) + frame[2]) / 10.0;
-          _currentPM10 = ((frame[5] * 256) + frame[4]) / 10.0;
-          notifyListeners();
+          logger.d("Data: $frame");
         } else {
-          logger.w("SDS011: Checksum error");
+          logger.d("No valid answer, head : $head");
         }
       });
     } catch (e) {

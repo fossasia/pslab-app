@@ -1460,4 +1460,20 @@ class ScienceLab {
       logger.e("Error writing bytes to UART2: $e");
     }
   }
+
+  Future<int> readSingleUARTByte() async {
+    if (!isConnected()) return -1;
+    try {
+      mPacketHandler.sendByte(mCommandsProto.uart2);
+      mPacketHandler.sendByte(mCommandsProto
+          .readByte); // Assicurati che punti al comando che legge 1 byte
+      // Il PSLab invia 1 byte di dati + eventuale conferma
+      Uint8List rawBuffer = Uint8List(1);
+      await mPacketHandler.read(rawBuffer, 1);
+      return rawBuffer[0] & 0xFF;
+    } catch (e) {
+      logger.e("Errore lettura singolo byte: $e");
+      return -1;
+    }
+  }
 }
