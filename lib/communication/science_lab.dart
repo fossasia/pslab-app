@@ -1414,9 +1414,15 @@ class ScienceLab {
     try {
       mPacketHandler.sendByte(mCommandsProto.uart2);
       mPacketHandler.sendByte(mCommandsProto.readUart2Status);
-      return await mPacketHandler.getByte();
+
+      Uint8List rawBuffer = Uint8List(2);
+      int bytesRead = await mPacketHandler.read(rawBuffer, 2);
+
+      if (bytesRead >= 2) {
+        return rawBuffer[1] & 0xFF;
+      }
+      return 0;
     } catch (e) {
-      logger.e("Error reading UART2 status: $e");
       return 0;
     }
   }
@@ -1434,6 +1440,24 @@ class ScienceLab {
     } catch (e) {
       logger.e("Error reading bytes from UART2: $e");
       return [];
+    }
+  }
+
+  Future<void> getUART2BytesAvailable(List<int> bytes) async {
+    if (!isConnected()) return;
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.uart2);
+      mPacketHandler.sendByte(mCommandsProto.sendByte);
+      mPacketHandler.sendByte(bytes.length);
+      for (int b in bytes) {
+        mPacketHandler.sendByte(b);
+      }
+
+      await mPacketHandler.getAcknowledgement();
+      logger.i("UART2: Successfully wrote ${bytes.length} bytes to TX2.");
+    } catch (e) {
+      logger.e("Error writing bytes to UART2: $e");
     }
   }
 }
