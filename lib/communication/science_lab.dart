@@ -1443,7 +1443,7 @@ class ScienceLab {
     }
   }
 
-  Future<void> getUART2BytesAvailable(List<int> bytes) async {
+  Future<void> writeUARTBytes(List<int> bytes) async {
     if (!isConnected()) return;
 
     try {
