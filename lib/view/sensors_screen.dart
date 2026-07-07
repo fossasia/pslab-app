@@ -10,6 +10,7 @@ import 'package:pslab/view/vl53l0x_screen.dart';
 import 'package:pslab/view/apds9960_screen.dart';
 import 'package:pslab/view/tsl2561_screen.dart';
 import 'package:pslab/view/mpu6050_screen.dart';
+import 'package:pslab/view/mpu925x_screen.dart';
 import 'package:pslab/view/max30102_screen.dart';
 import 'package:pslab/view/hmc5883l_screen.dart';
 
@@ -456,6 +457,9 @@ class _SensorsScreenState extends State<SensorsScreen> {
       case 'MPU6050':
         targetScreen = const MPU6050Screen();
         break;
+      case 'MPU925X':
+        targetScreen = const MPU925XScreen();
+        break;
       case 'MAX30102':
         targetScreen = const MAX30102Screen();
         break;
@@ -464,7 +468,6 @@ class _SensorsScreenState extends State<SensorsScreen> {
         break;
       case 'MLX90614':
         targetScreen = const MLX90614Screen();
-
         break;
       default:
         ScaffoldMessenger.of(context).showSnackBar(
