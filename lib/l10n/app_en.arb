@@ -805,5 +805,9 @@
     "configure": "CONFIGURE",
     "liveRender": "Live Render",
     "snapshotSaved": "Canvas Snapshot Saved to Logs!",
-    "airQuality" : "Air Quality"
+    "airQuality" : "Air Quality",
+    "mpu925x" : "MPU925X",
+    "angle" : "Angle",
+    "magnetometer" : "Magnetometer"
+
 }

@@ -74,7 +74,7 @@ class _MPU925XScreenState extends State<MPU925XScreen> {
       child: Consumer<MPU925XProvider>(
         builder: (context, provider, child) {
           return CommonScaffold(
-            title: "MPU925X",
+            title: appLocalizations.mpu925x,
             body: Column(
               children: [
                 Expanded(
@@ -86,8 +86,9 @@ class _MPU925XScreenState extends State<MPU925XScreen> {
                         _buildRawDataSection(provider),
                         const SizedBox(height: 24),
                         SensorChartWidget(
-                          title: "${appLocalizations.plot} - Accelerometer",
-                          yAxisLabel: "Acceleration",
+                          title:
+                              "${appLocalizations.plot} - ${appLocalizations.accelerometer}",
+                          yAxisLabel: appLocalizations.acceleration,
                           unit: "g",
                           data: provider.axData,
                           lineColor: Colors.blue,
@@ -100,7 +101,8 @@ class _MPU925XScreenState extends State<MPU925XScreen> {
                         ),
                         const SizedBox(height: 20),
                         SensorChartWidget(
-                          title: "${appLocalizations.plot} - Gyroscope",
+                          title:
+                              "${appLocalizations.plot} - ${appLocalizations.gyroscope}",
                           yAxisLabel: "Angle",
                           unit: "rad/s",
                           data: provider.gxData,
@@ -114,7 +116,8 @@ class _MPU925XScreenState extends State<MPU925XScreen> {
                         ),
                         const SizedBox(height: 20),
                         SensorChartWidget(
-                          title: "${appLocalizations.plot} - Magnetometer",
+                          title:
+                              "${appLocalizations.plot} - ${appLocalizations.magnetometer}",
                           yAxisLabel: "Magnetic Field",
                           unit: "µT",
                           data: provider.mxData,
