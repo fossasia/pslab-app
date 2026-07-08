@@ -10,7 +10,7 @@ class MPU925XProvider extends ChangeNotifier {
   MPU925X? _mpu925x;
   Timer? _dataTimer;
 
-  Map<String, double> _currentValues = {
+  final Map<String, double> _currentValues = {
     'ax': 0.0,
     'ay': 0.0,
     'az': 0.0,
