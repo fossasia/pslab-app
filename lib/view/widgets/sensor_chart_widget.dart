@@ -343,7 +343,6 @@ class SensorChartWidget extends StatelessWidget {
       ],
     );
   }
-  
 
   double _getMinX() {
     if (minX != null) return minX!;

@@ -71,6 +71,12 @@ class MPU925X {
     return val;
   }
 
+  int _toSigned16LittleEndian(int lsb, int msb) {
+    int val = (msb << 8) | lsb;
+    if (val >= 0x8000) val -= 0x10000;
+    return val;
+  }
+
   Future<String> whoAmIAK8963() async {
     await _initMagnetometer();
     List<int> vals = await i2c.readBulk(ak8963Address, 0x00, 1);
@@ -96,7 +102,8 @@ class MPU925X {
       double ay = _toSigned16(data[2], data[3]) / accelScaling[arIndex];
       double az = _toSigned16(data[4], data[5]) / accelScaling[arIndex];
 
-      double temp = _toSigned16(data[6], data[7]) / 340.0 + 36.53;
+      double rawTemp = _toSigned16(data[6], data[7]).toDouble();
+      double temp = (rawTemp / 333.87) + 21.0;
 
       double gx = _toSigned16(data[8], data[9]) / gyroScaling[grIndex];
       double gy = _toSigned16(data[10], data[11]) / gyroScaling[grIndex];
@@ -122,13 +129,14 @@ class MPU925X {
       List<int> vals = await i2c.readBulk(ak8963Address, 0x03, 7);
       if (vals.length < 7) return null;
 
-      int mx = _toSigned16(vals[0], vals[1]);
-      int my = _toSigned16(vals[2], vals[3]);
-      int mz = _toSigned16(vals[4], vals[5]);
+      int mx = _toSigned16LittleEndian(vals[0], vals[1]);
+      int my = _toSigned16LittleEndian(vals[2], vals[3]);
+      int mz = _toSigned16LittleEndian(vals[4], vals[5]);
 
-      if ((vals[6] & 0x08) != 0) {
-        return [mx / 65535.0, my / 65535.0, mz / 65535.0];
+      if ((vals[6] & 0x08) == 0) {
+        return [mx * 0.15, my * 0.15, mz * 0.15];
       } else {
+        logger.w("AK8963 Magnetic Sensor Overflow detected");
         return null;
       }
     } catch (e) {
