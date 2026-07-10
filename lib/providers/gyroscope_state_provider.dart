@@ -7,10 +7,20 @@ import 'package:pslab/providers/gyroscope_config_provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:intl/intl.dart';
+import 'package:pslab/communication/peripherals/i2c.dart';
+import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/communication/sensors/mpu6050.dart';
+import 'package:pslab/providers/locator.dart';
+// import 'package:pslab/communication/sensors/mpu925x.dart'; // TODO: Uncomment when merged
 
 class GyroscopeProvider extends ChangeNotifier {
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
   GyroscopeEvent _gyroscopeEvent = GyroscopeEvent(0, 0, 0, DateTime.now());
+  Timer? _externalSensorTimer;
+  int _debugLogCounter = 0;
+
+  MPU6050? _mpu6050;
+  // MPU925X? _mpu925x; // TODO: Uncomment when merged
 
   final List<double> _xData = [];
   final List<double> _yData = [];
@@ -45,7 +55,8 @@ class GyroscopeProvider extends ChangeNotifier {
   double get zMin => _zMin;
   double get zMax => _zMax;
 
-  bool get isListening => _gyroscopeSubscription != null;
+  bool get isListening =>
+      _gyroscopeSubscription != null || _externalSensorTimer != null;
   bool get isRecording => _isRecording;
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
@@ -98,25 +109,123 @@ class GyroscopeProvider extends ChangeNotifier {
     });
   }
 
-  void initializeSensors() {
-    if (_gyroscopeSubscription != null) return;
+  Future<void> initializeSensors({I2C? i2c, ScienceLab? scienceLab}) async {
+    logger.i("=> initializeSensors() triggered! (Gyroscope)");
 
-    _gyroscopeSubscription = gyroscopeEventStream().listen(
-      (event) {
-        _gyroscopeEvent = event;
-        _updateData();
-        notifyListeners();
-      },
-      onError: (error) {
-        logger.e("Gyroscope error: $error");
-      },
-      cancelOnError: true,
-    );
+    _gyroscopeSubscription?.cancel();
+    _gyroscopeSubscription = null;
+    _externalSensorTimer?.cancel();
+    _externalSensorTimer = null;
+
+    String selectedSensor =
+        _configProvider?.config.activeSensor ?? 'In-built Sensor';
+    logger.i("Active Sensor from Config: $selectedSensor");
+
+    if (selectedSensor == 'In-built Sensor') {
+      if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS) {
+        try {
+          logger.i("Starting Built-in Gyroscope Stream...");
+          _gyroscopeSubscription = gyroscopeEventStream().listen(
+            (event) {
+              _gyroscopeEvent = event;
+              _updateData();
+              notifyListeners();
+            },
+            onError: (error) {
+              logger.e("Built-in Gyroscope error: $error");
+            },
+            cancelOnError: true,
+          );
+        } catch (e) {
+          logger.w("Failed to start built-in stream: $e");
+        }
+      } else {
+        logger.w(
+            "Ignoring Built-in Sensor: Not supported on Desktop environments.");
+      }
+    } else {
+      logger.i("Attempting to mount External I2C Sensor: $selectedSensor");
+
+      if (scienceLab == null) {
+        try {
+          scienceLab = getIt.get<ScienceLab>();
+        } catch (e) {
+          logger.e("Failed to fetch ScienceLab from locator: $e");
+        }
+      }
+
+      if (i2c == null && scienceLab != null && scienceLab.isConnected()) {
+        i2c = I2C(scienceLab.mPacketHandler);
+      }
+
+      if (i2c == null || scienceLab == null || !scienceLab.isConnected()) {
+        logger.w("ABORT: PSLab device is disconnected or I2C unavailable.");
+        return;
+      }
+
+      try {
+        if (selectedSensor == 'MPU6050') {
+          logger.i("Creating MPU6050 hardware instance...");
+          _mpu6050 = await MPU6050.create(i2c, scienceLab);
+          logger.i("MPU6050 Instance created successfully!");
+        } else if (selectedSensor == 'MPU925X') {
+          // _mpu925x = await MPU925X.create(i2c, scienceLab);
+        }
+
+        int period = _configProvider?.config.updatePeriod ?? 1000;
+        logger.i("Starting external sensor polling timer. Period: $period ms");
+
+        _debugLogCounter = 0;
+        _externalSensorTimer =
+            Timer.periodic(Duration(milliseconds: period), (timer) async {
+          await _fetchExternalSensorData();
+        });
+      } catch (e) {
+        logger.e(
+            'HARDWARE FAIL: Could not mount external I2C gyroscope ($selectedSensor). Error: $e');
+      }
+    }
+  }
+
+  Future<void> _fetchExternalSensorData() async {
+    if (_isPlayingBack) return;
+    String selectedSensor =
+        _configProvider?.config.activeSensor ?? 'In-built Sensor';
+    Map<String, double> rawData = {};
+
+    try {
+      if (selectedSensor == 'MPU6050' && _mpu6050 != null) {
+        rawData = await _mpu6050!.getRawData();
+      } else if (selectedSensor == 'MPU925X') {
+        // rawData = await _mpu925x!.getRawData();
+      } else {
+        return;
+      }
+
+      if (_debugLogCounter % 10 == 0) {
+        logger.d("POLL SUCCESS ($selectedSensor): $rawData");
+      }
+      _debugLogCounter++;
+
+      double x = rawData['gx'] ?? 0.0;
+      double y = rawData['gy'] ?? 0.0;
+      double z = rawData['gz'] ?? 0.0;
+
+      _gyroscopeEvent = GyroscopeEvent(x, y, z, DateTime.now());
+      _updateData();
+      notifyListeners();
+    } catch (e) {
+      logger.e('POLL ERROR: Failed to read raw data from $selectedSensor: $e');
+    }
   }
 
   void disposeSensors() {
+    logger.i("Disposing sensor streams/timers...");
     _gyroscopeSubscription?.cancel();
     _gyroscopeSubscription = null;
+    _externalSensorTimer?.cancel();
+    _externalSensorTimer = null;
   }
 
   void startPlayback(List<List<dynamic>> data) {
@@ -158,7 +267,7 @@ class GyroscopeProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 5');
+          'Skipping playback row at index $_playbackIndex due to insufficient columns.');
       _playbackIndex++;
       notifyListeners();
     }
@@ -174,12 +283,8 @@ class GyroscopeProvider extends ChangeNotifier {
 
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
-          interval = Duration(milliseconds: timeDiff);
-          if (interval.inMilliseconds < 100) {
-            interval = const Duration(milliseconds: 100);
-          } else if (interval.inMilliseconds > 10000) {
-            interval = const Duration(seconds: 10);
-          }
+          final clampedTimeDiff = timeDiff.clamp(100, 10000);
+          interval = Duration(milliseconds: clampedTimeDiff);
         }
       } catch (e) {
         interval = const Duration(seconds: 1);
@@ -298,8 +403,6 @@ class GyroscopeProvider extends ChangeNotifier {
       yData.add(FlSpot(i.toDouble(), _yData[i]));
       zData.add(FlSpot(i.toDouble(), _zData[i]));
     }
-
-    notifyListeners();
   }
 
   Future<void> startRecording() async {

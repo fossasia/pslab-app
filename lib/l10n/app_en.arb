@@ -805,5 +805,7 @@
     "configure": "CONFIGURE",
     "liveRender": "Live Render",
     "snapshotSaved": "Canvas Snapshot Saved to Logs!",
-    "airQuality" : "Air Quality"
+    "airQuality" : "Air Quality",
+    "autoScaleGraph" : "Auto-Scale Graph",
+    "autoScaleDescription" : "Dynamically scale the chart axes to fit the data"
 }

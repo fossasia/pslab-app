@@ -67,9 +67,12 @@ class MPU6050 {
         throw Exception("Expected 14 bytes but got ${data.length}");
       }
 
-      double ax = _toSigned16(data[0], data[1]) / accelScaling[arIndex];
-      double ay = _toSigned16(data[2], data[3]) / accelScaling[arIndex];
-      double az = _toSigned16(data[4], data[5]) / accelScaling[arIndex];
+      double ax =
+          (_toSigned16(data[0], data[1]) / accelScaling[arIndex]) * 9.81;
+      double ay =
+          (_toSigned16(data[2], data[3]) / accelScaling[arIndex]) * 9.81;
+      double az =
+          (_toSigned16(data[4], data[5]) / accelScaling[arIndex]) * 9.81;
 
       double temp = _toSigned16(data[6], data[7]) / 340.0 + 36.53;
 

@@ -1,18 +1,28 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/accelerometer_config_provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:pslab/communication/peripherals/i2c.dart';
+import 'package:pslab/communication/science_lab.dart';
+import 'package:pslab/communication/sensors/mpu6050.dart';
+import 'package:pslab/providers/locator.dart';
+// import 'package:pslab/communication/sensors/mpu925x.dart'; // TODO: Uncomment when merged
 
 class AccelerometerStateProvider extends ChangeNotifier {
   AccelerometerEvent _accelerometerEvent =
       AccelerometerEvent(0, 0, 0, DateTime.now());
   StreamSubscription? _accelerometerSubscription;
+  Timer? _externalSensorTimer;
+  int _debugLogCounter = 0;
+
+  MPU6050? _mpu6050;
+  // MPU925X? _mpu925x; // TODO: Uncomment when merged
+
   final List<double> _xData = [];
   final List<double> _yData = [];
   final List<double> _zData = [];
@@ -32,15 +42,19 @@ class AccelerometerStateProvider extends ChangeNotifier {
   Timer? _playbackTimer;
   bool _isPlaybackPaused = false;
   List<List<dynamic>> _recordedData = [];
+
   bool get isRecording => _isRecording;
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
+
   AccelerometerConfigProvider? _configProvider;
   StreamSubscription? _locationStream;
   Position? currentPosition;
   Function? onPlaybackEnd;
+
   double? get _currentHighLimit => _configProvider?.config.highLimit.toDouble();
   double? get _currentLowLimit => _configProvider?.config.lowLimit.toDouble();
+
   void setConfigProvider(AccelerometerConfigProvider configProvider) {
     _configProvider = configProvider;
   }
@@ -67,11 +81,8 @@ class AccelerometerStateProvider extends ChangeNotifier {
       );
 
       _locationStream = Stream.periodic(const Duration(seconds: 6))
-          .asyncMap(
-        (_) => Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        ),
-      )
+          .asyncMap((_) =>
+              Geolocator.getCurrentPosition(locationSettings: locationSettings))
           .listen((Position position) {
         currentPosition = position;
       });
@@ -80,30 +91,124 @@ class AccelerometerStateProvider extends ChangeNotifier {
     }
   }
 
-  void initializeSensors() {
-    _accelerometerSubscription = accelerometerEventStream().listen(
-      (event) {
-        _accelerometerEvent = event;
-        _updateData();
-        notifyListeners();
-      },
-      onError: (error) {
-        logger.e("Accelerometer error: $error");
-      },
-      cancelOnError: true,
-    );
+  Future<void> initializeSensors({I2C? i2c, ScienceLab? scienceLab}) async {
+    logger.i("=> initializeSensors() triggered!");
+
+    _accelerometerSubscription?.cancel();
+    _externalSensorTimer?.cancel();
+
+    String selectedSensor =
+        _configProvider?.config.activeSensor ?? 'In-built Sensor';
+    logger.i("Active Sensor from Config: $selectedSensor");
+
+    if (selectedSensor == 'In-built Sensor') {
+      if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS) {
+        try {
+          logger.i("Starting Built-in Accelerometer Stream...");
+          _accelerometerSubscription = accelerometerEventStream().listen(
+            (event) {
+              _accelerometerEvent = event;
+              _updateData();
+              notifyListeners();
+            },
+            onError: (error) =>
+                logger.e("Built-in Accelerometer error: $error"),
+            cancelOnError: true,
+          );
+        } catch (e) {
+          logger.w("Failed to start built-in stream: $e");
+        }
+      } else {
+        logger.w(
+            "Ignoring Built-in Sensor: Not supported on Desktop environments.");
+      }
+    } else {
+      logger.i("Attempting to mount External I2C Sensor: $selectedSensor");
+
+      if (scienceLab == null) {
+        try {
+          scienceLab = getIt.get<ScienceLab>();
+        } catch (e) {
+          logger.e("Failed to fetch ScienceLab from locator: $e");
+        }
+      }
+
+      if (i2c == null && scienceLab != null && scienceLab.isConnected()) {
+        i2c = I2C(scienceLab.mPacketHandler);
+      }
+
+      if (i2c == null || scienceLab == null || !scienceLab.isConnected()) {
+        logger.w("ABORT: PSLab device is disconnected or I2C unavailable.");
+        return;
+      }
+
+      try {
+        if (selectedSensor == 'MPU6050') {
+          logger.i("Creating MPU6050 hardware instance...");
+          _mpu6050 = await MPU6050.create(i2c, scienceLab);
+          logger.i("MPU6050 Instance created successfully!");
+        } else if (selectedSensor == 'MPU925X') {
+          // _mpu925x = await MPU925X.create(i2c, scienceLab);
+        }
+
+        int period = _configProvider?.config.updatePeriod ?? 500;
+        logger.i("Starting external sensor polling timer. Period: $period ms");
+
+        _debugLogCounter = 0;
+        _externalSensorTimer =
+            Timer.periodic(Duration(milliseconds: period), (timer) async {
+          await _fetchExternalSensorData();
+        });
+      } catch (e) {
+        logger.e(
+            'HARDWARE FAIL: Could not mount external I2C sensor ($selectedSensor). Error: $e');
+      }
+    }
+  }
+
+  Future<void> _fetchExternalSensorData() async {
+    if (_isPlayingBack) return;
+    String selectedSensor =
+        _configProvider?.config.activeSensor ?? 'In-built Sensor';
+    Map<String, double> rawData = {};
+
+    try {
+      if (selectedSensor == 'MPU6050' && _mpu6050 != null) {
+        rawData = await _mpu6050!.getRawData();
+      } else if (selectedSensor == 'MPU925X') {
+        // rawData = await _mpu925x!.getRawData(); // TODO: Uncomment when merged
+      } else {
+        return;
+      }
+
+      if (_debugLogCounter % 10 == 0) {
+        logger.d("POLL SUCCESS ($selectedSensor): $rawData");
+      }
+      _debugLogCounter++;
+
+      double x = rawData['ax'] ?? 0.0;
+      double y = rawData['ay'] ?? 0.0;
+      double z = rawData['az'] ?? 0.0;
+
+      _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
+      _updateData();
+      notifyListeners();
+    } catch (e) {
+      logger.e('POLL ERROR: Failed to read raw data from $selectedSensor: $e');
+    }
   }
 
   void disposeSensors() {
+    logger.i("Disposing sensor streams/timers...");
     _accelerometerSubscription?.cancel();
+    _externalSensorTimer?.cancel();
     _playbackTimer?.cancel();
   }
 
   @override
   void dispose() {
-    if (_locationStream != null) {
-      _locationStream!.cancel();
-    }
+    _locationStream?.cancel();
     disposeSensors();
     super.dispose();
   }
@@ -112,9 +217,6 @@ class AccelerometerStateProvider extends ChangeNotifier {
     if (data.length <= 1) return;
     _isPlayingBack = true;
     _isPlaybackPaused = false;
-    _playbackTimer?.cancel();
-    _playbackData = data;
-    _playbackIndex = 1;
     disposeSensors();
     _xData.clear();
     _yData.clear();
@@ -122,6 +224,8 @@ class AccelerometerStateProvider extends ChangeNotifier {
     xData.clear();
     yData.clear();
     zData.clear();
+    _playbackData = data;
+    _playbackIndex = 1;
     _startPlaybackTimer();
     notifyListeners();
   }
@@ -143,33 +247,23 @@ class AccelerometerStateProvider extends ChangeNotifier {
       _playbackIndex++;
       notifyListeners();
     } else {
-      logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 5');
       _playbackIndex++;
       notifyListeners();
     }
 
     Duration interval = const Duration(seconds: 1);
-
     if (_playbackIndex < _playbackData!.length && _playbackIndex > 1) {
       try {
         final currentTimestamp =
             int.tryParse(_playbackData![_playbackIndex - 1][0].toString());
         final nextTimestamp =
             int.tryParse(_playbackData![_playbackIndex][0].toString());
-
         if (currentTimestamp != null && nextTimestamp != null) {
           final timeDiff = nextTimestamp - currentTimestamp;
-          interval = Duration(milliseconds: timeDiff);
-          if (interval.inMilliseconds < 100) {
-            interval = const Duration(milliseconds: 100);
-          } else if (interval.inMilliseconds > 10000) {
-            interval = const Duration(seconds: 10);
-          }
+          final clampedTimeDiff = timeDiff.clamp(100, 10000);
+          interval = Duration(milliseconds: clampedTimeDiff);
         }
-      } catch (e) {
-        interval = const Duration(seconds: 1);
-      }
+      } catch (_) {}
     }
 
     _playbackTimer = Timer(interval, () {
@@ -217,23 +311,18 @@ class AccelerometerStateProvider extends ChangeNotifier {
     final gain = (_configProvider?.config.sensorGain ?? 1.0).toDouble();
     final bool shouldClip = !_isPlayingBack;
 
-    final double x;
-    final double y;
-    final double z;
+    double x = _accelerometerEvent.x * gain;
+    double y = _accelerometerEvent.y * gain;
+    double z = _accelerometerEvent.z * gain;
 
     if (shouldClip && highLimit != null && lowLimit != null) {
-      x = (_accelerometerEvent.x * gain).clamp(-lowLimit, highLimit).toDouble();
-      y = (_accelerometerEvent.y * gain).clamp(-lowLimit, highLimit).toDouble();
-      z = (_accelerometerEvent.z * gain).clamp(-lowLimit, highLimit).toDouble();
-    } else {
-      x = _accelerometerEvent.x * gain;
-      y = _accelerometerEvent.y * gain;
-      z = _accelerometerEvent.z * gain;
+      x = x.clamp(-lowLimit, highLimit);
+      y = y.clamp(-lowLimit, highLimit);
+      z = z.clamp(-lowLimit, highLimit);
     }
 
     _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
 
-    _accelerometerEvent = AccelerometerEvent(x, y, z, DateTime.now());
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
@@ -276,8 +365,6 @@ class AccelerometerStateProvider extends ChangeNotifier {
       yData.add(FlSpot(i.toDouble(), _yData[i]));
       zData.add(FlSpot(i.toDouble(), _zData[i]));
     }
-
-    notifyListeners();
   }
 
   Future<void> startRecording() async {
@@ -300,9 +387,7 @@ class AccelerometerStateProvider extends ChangeNotifier {
   }
 
   List<List<dynamic>> stopRecording() {
-    if (_locationStream != null) {
-      _locationStream!.cancel();
-    }
+    _locationStream?.cancel();
     _isRecording = false;
     notifyListeners();
     return _recordedData;

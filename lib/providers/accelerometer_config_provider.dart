@@ -70,6 +70,12 @@ class AccelerometerConfigProvider extends ChangeNotifier {
     _saveConfigToPrefs();
   }
 
+  void updateAutoScale(bool autoScale) {
+    _config = _config.copyWith(autoScale: autoScale);
+    notifyListeners();
+    _saveConfigToPrefs();
+  }
+
   void resetToDefaults() {
     _config = const AccelerometerConfig();
     notifyListeners();

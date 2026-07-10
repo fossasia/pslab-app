@@ -28,30 +28,48 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
   late GyroscopeProvider _provider;
   late GyroscopeConfigProvider _configProvider;
 
+  String? _lastActiveSensor;
+
   @override
   void initState() {
     super.initState();
     _provider = GyroscopeProvider();
     _configProvider = GyroscopeConfigProvider();
+
     _provider.onPlaybackEnd = () {
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
       }
     };
+
+    _configProvider.addListener(_handleConfigChange);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         if (widget.playbackData != null) {
           _provider.startPlayback(widget.playbackData!);
         } else {
           _provider.setConfigProvider(_configProvider);
-          _provider.initializeSensors();
         }
       }
     });
   }
 
+  void _handleConfigChange() {
+    if (!mounted || widget.playbackData != null) return;
+
+    final currentSensor = _configProvider.config.activeSensor;
+
+    if (_lastActiveSensor != currentSensor) {
+      _lastActiveSensor = currentSensor;
+      _provider.initializeSensors();
+    }
+  }
+
   @override
   void dispose() {
+    _configProvider.removeListener(_handleConfigChange);
+    _provider.disposeSensors();
     _provider.dispose();
     super.dispose();
   }
@@ -196,8 +214,9 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
               body: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    const double kPerCardMin = 150.0;
+                    const double kPerCardMin = 155.0;
                     const double kPerCardScrollHeight = 220.0;
+
                     final double available = constraints.maxHeight;
                     final bool needsScroll = available < kPerCardMin * 3;
 
