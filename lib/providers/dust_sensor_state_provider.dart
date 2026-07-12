@@ -103,7 +103,7 @@ class DustSensorStateProvider extends ChangeNotifier {
     try {
       ScienceLab scienceLab = getIt.get<ScienceLab>();
 
-      await scienceLab.configureUART(baudRate: 9600);
+      await scienceLab.configureUART2(9600);
       await Future.delayed(const Duration(milliseconds: 500));
 
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
@@ -115,43 +115,41 @@ class DustSensorStateProvider extends ChangeNotifier {
         notifyListeners();
       });
 
-      _dustTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-        await scienceLab.writeUARTBytes([
-          0xAA,
-          0xB4,
-          0x04,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0xFF,
-          0xFF,
-          0x02,
-          0xAB
-        ]);
+      int updateInterval = _configProvider?.config.updatePeriod ?? 1000;
 
-        await Future.delayed(const Duration(milliseconds: 100));
+      _dustTimer = Timer.periodic(
+        Duration(milliseconds: updateInterval),
+        (timer) async {
+          if (!scienceLab.isConnected()) return;
 
-        int head = await scienceLab.readSingleUARTByte();
+          int byte = await scienceLab.readSingleUART2Byte();
 
-        if (head == 0xAA) {
-          List<int> frame = [0xAA];
-          for (int i = 0; i < 9; i++) {
-            frame.add(await scienceLab.readSingleUARTByte());
+          if (byte == 0xAA) {
+            List<int> frame = [0xAA];
+
+            for (int i = 0; i < 9; i++) {
+              frame.add(await scienceLab.readSingleUART2Byte());
+            }
+
+            if (frame.length == 10 && frame[1] == 0xC0 && frame[9] == 0xAB) {
+              int checksum = 0;
+
+              for (int i = 2; i <= 7; i++) {
+                checksum += frame[i];
+              }
+
+              if ((checksum & 0xFF) == frame[8]) {
+                _currentPM25 = ((frame[3] * 256) + frame[2]) / 10.0;
+                _currentPM10 = ((frame[5] * 256) + frame[4]) / 10.0;
+
+                logger.i("Parsed PM2.5: $_currentPM25, PM10: $_currentPM10");
+              } else {
+                logger.w("Checksum mismatch. Discarding corrupt frame.");
+              }
+            }
           }
-          logger.d("Data: $frame");
-        } else {
-          logger.d("No valid answer, head : $head");
-        }
-      });
+        },
+      );
     } catch (e) {
       logger.e("Dust sensor initialization error: $e");
       _handleSensorError(e);

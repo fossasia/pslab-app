@@ -1476,4 +1476,37 @@ class ScienceLab {
       return -1;
     }
   }
+
+  Future<void> configureUART2(int baudRate) async {
+    if (!isConnected()) return;
+
+    // Calculates the BRG divider to prevent firmware framing errors.
+    int brgValue = (64000000 ~/ (4 * baudRate)) - 1;
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.uart2);
+      mPacketHandler.sendByte(mCommandsProto.setBaud);
+      mPacketHandler.sendInt(brgValue);
+      await mPacketHandler.getAcknowledgement();
+    } catch (e) {
+      logger.e("Error configuring UART2: $e");
+    }
+  }
+
+  Future<int> readSingleUART2Byte() async {
+    if (!isConnected()) return -1;
+
+    try {
+      mPacketHandler.sendByte(mCommandsProto.uart2);
+      mPacketHandler.sendByte(mCommandsProto.readByte);
+
+      // Do not send a third byte (bytesToRead) here.
+      Uint8List rawBuffer = Uint8List(1);
+      await mPacketHandler.read(rawBuffer, 1);
+
+      return rawBuffer[0] & 0xFF;
+    } catch (e) {
+      return -1;
+    }
+  }
 }
