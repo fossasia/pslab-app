@@ -1506,6 +1506,7 @@ class ScienceLab {
 
       return rawBuffer[0] & 0xFF;
     } catch (e) {
+      logger.e("Error read single UART2: $e");
       return -1;
     }
   }

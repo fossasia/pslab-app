@@ -123,6 +123,7 @@ class DustSensorStateProvider extends ChangeNotifier {
           if (!scienceLab.isConnected()) return;
 
           int byte = await scienceLab.readSingleUART2Byte();
+          logger.i(byte);
 
           if (byte == 0xAA) {
             List<int> frame = [0xAA];
@@ -146,7 +147,11 @@ class DustSensorStateProvider extends ChangeNotifier {
               } else {
                 logger.w("Checksum mismatch. Discarding corrupt frame.");
               }
+            } else {
+              logger.e(frame.length);
             }
+          } else {
+            logger.e("byte is not as expected");
           }
         },
       );
