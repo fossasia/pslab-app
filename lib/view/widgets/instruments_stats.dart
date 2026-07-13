@@ -5,13 +5,15 @@ import 'package:pslab/theme/colors.dart';
 
 class Instrumentstats extends StatelessWidget {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   final String unit;
-  final double titleFontSize;
-  final double statFontSize;
   final double minValue;
   final double maxValue;
   final double avgValue;
   final double? currentAltitude;
+
+  final double titleFontSize;
+  final double statFontSize;
 
   const Instrumentstats({
     super.key,
@@ -26,134 +28,91 @@ class Instrumentstats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final availableHeight = constraints.maxHeight;
-        final titleHeight = titleFontSize * 1.5;
-        final remainingHeight = availableHeight - titleHeight - 16;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: titleHeight,
-              child: Center(
-                child: Text(
-                  appLocalizations.builtIn,
-                  style: TextStyle(
-                    color: blackTextColor,
-                    fontSize: titleFontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child:
+              _buildBorderedStatBox(appLocalizations.minLabel, minValue, unit),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child:
+              _buildBorderedStatBox(appLocalizations.avgLabel, avgValue, unit),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child:
+              _buildBorderedStatBox(appLocalizations.maxLabel, maxValue, unit),
+        ),
+        if (currentAltitude != null) ...[
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildBorderedStatBox(
+              appLocalizations.altitudeLabel,
+              currentAltitude!,
+              appLocalizations.meterUnit,
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: remainingHeight > 0 ? remainingHeight : 0,
-                  ),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        StatItem(
-                          label: '${appLocalizations.maxLabel} ($unit)',
-                          value: maxValue,
-                          fontSize: statFontSize,
-                        ),
-                        StatItem(
-                          label: '${appLocalizations.minLabel} ($unit)',
-                          value: minValue,
-                          fontSize: statFontSize,
-                        ),
-                        StatItem(
-                          label: '${appLocalizations.avgLabel} ($unit)',
-                          value: avgValue,
-                          fontSize: statFontSize,
-                        ),
-                        if (currentAltitude != null)
-                          StatItem(
-                            label:
-                                '${appLocalizations.altitudeLabel} (${appLocalizations.meterUnit})',
-                            value: currentAltitude!,
-                            fontSize: statFontSize,
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+          ),
+        ]
+      ],
     );
   }
-}
 
-class StatItem extends StatelessWidget {
-  final String label;
-  final double value;
-  final double fontSize;
+  Widget _buildBorderedStatBox(String label, double value, String displayUnit) {
+    String fullLabel = '$label ($displayUnit)';
 
-  const StatItem({
-    super.key,
-    required this.label,
-    required this.fontSize,
-    required this.value,
-  });
+    String displayValue = value.truncateToDouble() == value
+        ? value.toInt().toString()
+        : value.toStringAsFixed(2);
 
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final padding = screenWidth < 400 ? 15.0 : 20.0;
-
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 8, bottom: 4),
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          decoration: BoxDecoration(
+            border: Border.all(width: 1.2, color: primaryRed),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
               child: Text(
-                label,
-                style: TextStyle(
-                  color: cardContentColor,
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Center(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: padding, vertical: 3),
-                decoration: BoxDecoration(
-                  border: Border.all(color: instrumentStatBoxColor),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  value.toStringAsFixed(2),
-                  style: TextStyle(
-                    color: cardContentColor,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                displayValue,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black87,
                 ),
               ),
             ),
-          ],
+          ),
         ),
-      ),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 3,
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              color: cardBackgroundColor,
+              child: Text(
+                fullLabel.toUpperCase(),
+                style: TextStyle(
+                  color: primaryRed,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 8,
+                  letterSpacing: 0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
