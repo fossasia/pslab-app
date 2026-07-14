@@ -6,7 +6,7 @@ class InstrumentGauge extends StatelessWidget {
   final double currentValue;
   final double minValue;
   final double maxValue;
-  final int interval; 
+  final int interval;
   final String unit;
   final double size;
   final int decimalPlaces;
