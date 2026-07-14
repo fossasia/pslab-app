@@ -181,7 +181,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
     double dbFS = 20 * log(rms) / ln10;
 
-    double dbSPL = dbFS + 94;
+    double dbSPL = dbFS + 64;
 
     return dbSPL.clamp(20.0, 120.0);
   }

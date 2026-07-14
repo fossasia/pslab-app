@@ -1,11 +1,12 @@
 import 'package:pslab/theme/colors.dart';
-import 'package:pslab/view/widgets/gauge_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/providers/soundmeter_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
+
+import 'gauge_widget.dart';
 
 class SoundMeterCard extends StatefulWidget {
   const SoundMeterCard({super.key});
@@ -15,22 +16,25 @@ class SoundMeterCard extends StatefulWidget {
 
 class _SoundMeterCardState extends State<SoundMeterCard> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isLargeScreen = screenWidth > 900;
+
     SoundMeterStateProvider provider =
         Provider.of<SoundMeterStateProvider>(context);
+
     double currentDb = provider.getCurrentDb();
     double minDb = provider.getMinDb();
     double maxDb = provider.getMaxDb();
     double avgDb = provider.getAverageDb();
+
     final cardMargin = screenWidth < 400 ? 8.0 : 12.0;
     final cardPadding = screenWidth < 400 ? 12.0 : 20.0;
-    final gaugeSize = isLargeScreen ? 240.0 : screenWidth * 0.45;
+    final gaugeSize = isLargeScreen ? 260.0 : screenWidth * 0.55;
     final titleFontSize = isLargeScreen ? 25.0 : 20.0;
     final statFontSize = isLargeScreen ? 20.0 : 15.0;
-    final dbValueFontSize = isLargeScreen ? 20.0 : 16.0;
 
     return Card(
       margin: EdgeInsets.all(cardMargin),
@@ -43,68 +47,32 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
           color: cardBackgroundColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Container(
-          padding: EdgeInsets.all(cardPadding),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              if (isLargeScreen) {
-                return Column(
-                  children: [
-                    Expanded(
-                      flex: 40,
-                      child: Center(
-                        child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentDb,
-                          minValue: 0,
-                          maxValue: 200,
-                          unit: appLocalizations.db,
-                          currentValueFontSize: dbValueFontSize,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 60,
-                      child: Instrumentstats(
-                        titleFontSize: titleFontSize,
-                        statFontSize: statFontSize,
-                        maxValue: maxDb,
-                        minValue: minDb,
-                        avgValue: avgDb,
-                        unit: appLocalizations.db,
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return Row(
-                  children: [
-                    Expanded(
-                      flex: screenWidth < 500 ? 40 : 35,
-                      child: Instrumentstats(
-                        titleFontSize: titleFontSize,
-                        statFontSize: statFontSize,
-                        maxValue: maxDb,
-                        minValue: minDb,
-                        avgValue: avgDb,
-                        unit: appLocalizations.db,
-                      ),
-                    ),
-                    Expanded(
-                      flex: screenWidth < 500 ? 60 : 65,
-                      child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentDb,
-                          minValue: 0,
-                          maxValue: 200,
-                          unit: appLocalizations.db,
-                          currentValueFontSize: dbValueFontSize),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
+        padding: EdgeInsets.all(cardPadding),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: InstrumentGauge(
+                  size: gaugeSize,
+                  currentValue: currentDb,
+                  minValue: 0,
+                  maxValue: 200,
+                  interval: 20,
+                  unit: appLocalizations.db,
+                  decimalPlaces: 1,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Instrumentstats(
+              titleFontSize: titleFontSize,
+              statFontSize: statFontSize,
+              maxValue: maxDb,
+              minValue: minDb,
+              avgValue: avgDb,
+              unit: appLocalizations.db,
+            ),
+          ],
         ),
       ),
     );
