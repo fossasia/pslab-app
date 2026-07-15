@@ -1,14 +1,13 @@
 import 'package:pslab/theme/colors.dart';
-import 'package:pslab/view/widgets/gauge_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/providers/thermometer_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';
-
 import 'package:pslab/providers/thermometer_config_provider.dart';
-
 import '../../l10n/app_localizations.dart';
 import '../../providers/locator.dart';
+
+import 'gauge_widget.dart';
 
 class ThermometerCard extends StatefulWidget {
   const ThermometerCard({super.key});
@@ -34,21 +33,20 @@ class _ThermometerCardState extends State<ThermometerCard> {
     double maxTemp = stateProvider.getMaxTemperature();
     double avgTemp = stateProvider.getAverageTemperature();
 
-    String activeUnit = configProvider.config.unit == 'Fahrenheit'
+    bool isFahrenheit = configProvider.config.unit == 'Fahrenheit';
+    String activeUnit = isFahrenheit
         ? appLocalizations.fahrenheitUnit
         : appLocalizations.celsius;
 
-    double gaugeMin =
-        configProvider.config.unit == 'Fahrenheit' ? -40.0 : -40.0;
-    double gaugeMax =
-        configProvider.config.unit == 'Fahrenheit' ? 257.0 : 125.0;
+    double gaugeMin = isFahrenheit ? -40.0 : -40.0;
+    double gaugeMax = isFahrenheit ? 257.0 : 125.0;
+    int gaugeInterval = isFahrenheit ? 50 : 20;
 
     final cardMargin = screenWidth < 400 ? 8.0 : 12.0;
     final cardPadding = screenWidth < 400 ? 12.0 : 20.0;
-    final gaugeSize = isLargeScreen ? 240.0 : screenWidth * 0.45;
+    final gaugeSize = isLargeScreen ? 260.0 : screenWidth * 0.55;
     final titleFontSize = isLargeScreen ? 25.0 : 20.0;
     final statFontSize = isLargeScreen ? 20.0 : 15.0;
-    final tempValueFontSize = isLargeScreen ? 20.0 : 16.0;
 
     return Card(
       margin: EdgeInsets.all(cardMargin),
@@ -61,65 +59,32 @@ class _ThermometerCardState extends State<ThermometerCard> {
           color: cardBackgroundColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Container(
-          padding: EdgeInsets.all(cardPadding),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              if (isLargeScreen) {
-                return Column(
-                  children: [
-                    Expanded(
-                      flex: 40,
-                      child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentTemp,
-                          minValue: gaugeMin,
-                          maxValue: gaugeMax,
-                          unit: activeUnit,
-                          currentValueFontSize: tempValueFontSize),
-                    ),
-                    Expanded(
-                      flex: 60,
-                      child: Instrumentstats(
-                        titleFontSize: titleFontSize,
-                        statFontSize: statFontSize,
-                        maxValue: maxTemp,
-                        minValue: minTemp,
-                        avgValue: avgTemp,
-                        unit: activeUnit,
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return Row(
-                  children: [
-                    Expanded(
-                      flex: screenWidth < 500 ? 40 : 35,
-                      child: Instrumentstats(
-                        titleFontSize: titleFontSize,
-                        statFontSize: statFontSize,
-                        maxValue: maxTemp,
-                        minValue: minTemp,
-                        avgValue: avgTemp,
-                        unit: activeUnit,
-                      ),
-                    ),
-                    Expanded(
-                      flex: screenWidth < 500 ? 60 : 65,
-                      child: GaugeWidget(
-                          gaugeSize: gaugeSize,
-                          currentValue: currentTemp,
-                          minValue: gaugeMin,
-                          maxValue: gaugeMax,
-                          unit: activeUnit,
-                          currentValueFontSize: tempValueFontSize),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
+        padding: EdgeInsets.all(cardPadding),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: InstrumentGauge(
+                  size: gaugeSize,
+                  currentValue: currentTemp,
+                  minValue: gaugeMin,
+                  maxValue: gaugeMax,
+                  interval: gaugeInterval,
+                  unit: activeUnit,
+                  decimalPlaces: 1,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Instrumentstats(
+              titleFontSize: titleFontSize,
+              statFontSize: statFontSize,
+              maxValue: maxTemp,
+              minValue: minTemp,
+              avgValue: avgTemp,
+              unit: activeUnit,
+            ),
+          ],
         ),
       ),
     );
