@@ -1,14 +1,15 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
-
+import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/settings_config_provider.dart';
-import 'package:usb_serial/usb_serial.dart';
-
 import 'package:pslab/others/science_lab_common.dart';
+
+import 'package:pslab/src/rust/api/simple.dart' as rust_api;
 
 class BoardStateProvider extends ChangeNotifier {
   late SettingsConfigProvider configProvider;
@@ -26,6 +27,10 @@ class BoardStateProvider extends ChangeNotifier {
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
+  static const EventChannel _androidUsbEventChannel =
+      EventChannel('io.pslab/usb_events');
+  Timer? _desktopHotplugTimer;
+
   BoardStateProvider() {
     scienceLabCommon = getIt.get<ScienceLabCommon>();
     configProvider = SettingsConfigProvider();
@@ -42,31 +47,18 @@ class BoardStateProvider extends ChangeNotifier {
     }
     _isProcessing = false;
 
-    if (configProvider.config.autoStart) {
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-        UsbSerial.usbEventStream?.listen(
-          (UsbEvent usbEvent) async {
-            if (usbEvent.event == UsbEvent.ACTION_USB_ATTACHED) {
-              if (_isProcessing) return;
-              _isProcessing = true;
-              if (!scienceLabCommon.isConnected() &&
-                  await attemptToConnectPSLab()) {
-                pslabIsConnected = await scienceLabCommon.openDevice();
-                await setPSLabVersionIDs();
-                await fetchFirmwareVersion();
-                _isProcessing = false;
-              }
-            } else if (usbEvent.event == UsbEvent.ACTION_USB_DETACHED &&
-                !scienceLabCommon.isWiFiConnected()) {
-              scienceLabCommon.setConnected(false);
-              pslabIsConnected = false;
-              pslabVersionID = 'Not Connected';
-              notifyListeners();
-            }
-          },
-        );
+    if (configProvider.config.autoStart && !kIsWeb) {
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        _androidUsbEventChannel
+            .receiveBroadcastStream()
+            .listen(_handleUsbEvent);
+      } else if (defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.macOS ||
+          defaultTargetPlatform == TargetPlatform.linux) {
+        _startDesktopMonitor();
       }
     }
+
 
     Connectivity()
         .onConnectivityChanged
@@ -78,6 +70,38 @@ class BoardStateProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  void _startDesktopMonitor() {
+    bool wasConnected = false;
+    _desktopHotplugTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      bool isConnected = rust_api.checkDesktopDevicePresent();
+
+      if (isConnected && !wasConnected) {
+        _handleUsbEvent("ATTACHED");
+      } else if (!isConnected && wasConnected) {
+        _handleUsbEvent("DETACHED");
+      }
+      wasConnected = isConnected;
+    });
+  }
+
+  Future<void> _handleUsbEvent(dynamic event) async {
+    if (event == "ATTACHED") {
+      if (_isProcessing) return;
+      _isProcessing = true;
+      if (!scienceLabCommon.isConnected() && await attemptToConnectPSLab()) {
+        pslabIsConnected = await scienceLabCommon.openDevice();
+        await setPSLabVersionIDs();
+        await fetchFirmwareVersion();
+        _isProcessing = false;
+      }
+    } else if (event == "DETACHED" && !scienceLabCommon.isWiFiConnected()) {
+      scienceLabCommon.setConnected(false);
+      pslabIsConnected = false;
+      pslabVersionID = 'Not Connected';
+      notifyListeners();
+    }
   }
 
   Future<void> initializeWiFi() async {
@@ -119,5 +143,11 @@ class BoardStateProvider extends ChangeNotifier {
       }
     }
     return false;
+  }
+
+  @override
+  void dispose() {
+    _desktopHotplugTimer?.cancel();
+    super.dispose();
   }
 }
