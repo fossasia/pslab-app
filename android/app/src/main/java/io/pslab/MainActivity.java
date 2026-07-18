@@ -104,10 +104,11 @@ public class MainActivity extends FlutterActivity implements SensorEventListener
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     String action = intent.getAction();
-                    if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-                        if (usbEventSink != null) usbEventSink.success("ATTACHED");
-                    } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                        if (usbEventSink != null) usbEventSink.success("DETACHED");
+
+                    if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action) && usbEventSink != null) {
+                        usbEventSink.success("ATTACHED");
+                    } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action) && usbEventSink != null) {
+                        usbEventSink.success("DETACHED");
                     }
                 }
             };
