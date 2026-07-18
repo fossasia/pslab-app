@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `setup_cp210x`
+// These functions are ignored because they are not marked as `pub`: `setup_device`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `EP_IN`, `EP_OUT`, `INTERFACE_ID`, `TX_QUEUE`, `USB_HANDLE`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `deref`, `deref`, `deref`, `deref`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`
 
@@ -25,6 +25,11 @@ void setDtr({required bool state}) =>
 void setRts({required bool state}) =>
     RustLib.instance.api.crateApiSimpleSetRts(state: state);
 
+/// Pushes raw stream incoming data bytes directly into high-speed WASM memory.
+/// Piped via Dart's JS stream context to safely execute without thread locks.
+void pushWebData({required List<int> data}) =>
+    RustLib.instance.api.crateApiSimplePushWebData(data: data);
+
 void writeData({required List<int> data}) =>
     RustLib.instance.api.crateApiSimpleWriteData(data: data);
 
@@ -32,6 +37,9 @@ Future<Uint8List> readData(
         {required int bytesToRead, required int timeoutMs}) =>
     RustLib.instance.api
         .crateApiSimpleReadData(bytesToRead: bytesToRead, timeoutMs: timeoutMs);
+
+Uint8List readWebData({required int bytesToRead}) =>
+    RustLib.instance.api.crateApiSimpleReadWebData(bytesToRead: bytesToRead);
 
 void closeUsb() => RustLib.instance.api.crateApiSimpleCloseUsb();
 

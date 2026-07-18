@@ -152,6 +152,9 @@ class PacketHandler {
 
   Future<int> read(Uint8List dest, int bytesToRead) async {
     int numBytesRead = await _commonRead(bytesToRead);
+    if (numBytesRead == 0) {
+      return 0;
+    }
     for (int i = 0; i < bytesToRead; i++) {
       dest[i] = _buffer[i];
     }

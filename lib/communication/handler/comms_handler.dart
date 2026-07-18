@@ -128,7 +128,7 @@ class PSLabCommunicationHandler implements CommunicationHandler {
         logger.d("Received chunk: $receivedData");
 
         if (readNow == 0) {
-          logger.e("Read Error: $bytesToBeReadTemp");
+          logger.w("No signal on wire. Returning 0 bytes.");
           return numBytesRead;
         } else {
           int readLength = readNow.clamp(0, bytesToBeReadTemp);

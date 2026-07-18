@@ -46,7 +46,6 @@ dependencies:
   geolocator: ^14.0.3
   wakelock_plus: ^1.6.1
   image: ^4.9.1
-  serial: ^0.0.7+1
   web: ^1.1.1
   mp_audio_stream: ^0.2.2
   ffi: ^2.2.0

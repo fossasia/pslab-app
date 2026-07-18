@@ -59,7 +59,6 @@ class BoardStateProvider extends ChangeNotifier {
       }
     }
 
-
     Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> results) {

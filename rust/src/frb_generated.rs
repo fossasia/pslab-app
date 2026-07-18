@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1549604498;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 484396750;
 
 // Section: executor
 
@@ -178,6 +178,38 @@ fn wire__crate__api__simple__init_desktop_impl(
         },
     )
 }
+fn wire__crate__api__simple__push_web_data_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "push_web_data",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_data = <Vec<u8>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok({
+                    crate::api::simple::push_web_data(api_data);
+                })?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__simple__read_data_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -212,6 +244,37 @@ fn wire__crate__api__simple__read_data_impl(
                     Ok(output_ok)
                 })())
             }
+        },
+    )
+}
+fn wire__crate__api__simple__read_web_data_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "read_web_data",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_bytes_to_read = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok =
+                    Result::<_, ()>::Ok(crate::api::simple::read_web_data(api_bytes_to_read))?;
+                Ok(output_ok)
+            })())
         },
     )
 }
@@ -425,7 +488,7 @@ fn pde_ffi_dispatcher_primary_impl(
     match func_id {
         3 => wire__crate__api__simple__init_android_impl(port, ptr, rust_vec_len, data_len),
         4 => wire__crate__api__simple__init_desktop_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__simple__read_data_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__simple__read_data_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -442,10 +505,12 @@ fn pde_ffi_dispatcher_sync_impl(
             wire__crate__api__simple__check_desktop_device_present_impl(ptr, rust_vec_len, data_len)
         }
         2 => wire__crate__api__simple__close_usb_impl(ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__simple__set_baud_rate_impl(ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__simple__set_dtr_impl(ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__simple__set_rts_impl(ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__simple__write_data_impl(ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__simple__push_web_data_impl(ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__simple__read_web_data_impl(ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__simple__set_baud_rate_impl(ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__simple__set_dtr_impl(ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__simple__set_rts_impl(ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__simple__write_data_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
