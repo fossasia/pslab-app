@@ -17,7 +17,7 @@ dependencies:
 
   cupertino_icons: ^1.0.9
   flutter_svg: ^2.3.0
-  google_fonts: ^8.1.0
+  google_fonts: ^8.2.0
   fl_chart: ^1.2.0
   provider: ^6.1.5
   get_it: ^9.2.1
@@ -26,7 +26,7 @@ dependencies:
   logger: ^2.7.0
   url_launcher: ^6.3.2
   font_awesome_flutter: ^11.0.0
-  package_info_plus: ^10.2.0
+  package_info_plus: ^10.2.1
   sensors_plus: ^7.1.0
   sleek_circular_slider: ^2.1.0
   gauge_indicator: ^0.6.0
@@ -36,7 +36,7 @@ dependencies:
   vibration: ^3.2.0
   shared_preferences: ^2.5.5
   csv: ^8.0.0
-  share_plus: ^13.2.0
+  share_plus: ^13.2.1
   path_provider: ^2.1.6
   file_picker: ^12.0.0-beta.7
   flutter_screenutil: ^5.9.3
