@@ -5,7 +5,6 @@ import 'package:pslab/communication/handler/io_router.dart'
     if (dart.library.js_interop) 'package:pslab/communication/handler/web_router.dart';
 
 import 'package:pslab/communication/science_lab.dart';
-import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/science_lab_common.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/sht21_provider.dart';
@@ -16,7 +15,6 @@ void setupLocator() {
   getIt.registerLazySingleton<CommunicationHandler>(
       () => getCommunicationHandler());
 
-  getIt.registerLazySingleton<SocketClient>(() => SocketClient());
   getIt.registerLazySingleton<ScienceLabCommon>(
       () => ScienceLabCommon(getIt.get<CommunicationHandler>()));
   getIt.registerLazySingleton<ScienceLab>(

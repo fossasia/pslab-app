@@ -86,16 +86,30 @@ class BoardStateProvider extends ChangeNotifier {
   }
 
   Future<void> _handleUsbEvent(dynamic event) async {
-    if (event == "ATTACHED") {
+    final String eventStr = event.toString();
+
+    final bool isAttached = eventStr == "ATTACHED" ||
+        eventStr == "android.hardware.usb.action.USB_DEVICE_ATTACHED";
+    final bool isDetached = eventStr == "DETACHED" ||
+        eventStr == "android.hardware.usb.action.USB_DEVICE_DETACHED";
+
+    if (isAttached) {
       if (_isProcessing) return;
       _isProcessing = true;
-      if (!scienceLabCommon.isConnected() && await attemptToConnectPSLab()) {
-        pslabIsConnected = await scienceLabCommon.openDevice();
-        await setPSLabVersionIDs();
-        await fetchFirmwareVersion();
+
+      try {
+        if (!scienceLabCommon.isConnected() && await attemptToConnectPSLab()) {
+          pslabIsConnected = await scienceLabCommon.openDevice();
+          await setPSLabVersionIDs();
+          await fetchFirmwareVersion();
+        }
+      } catch (e) {
+        logger.e("Error auto-connecting on USB Attach: $e");
+      } finally {
         _isProcessing = false;
+        notifyListeners();
       }
-    } else if (event == "DETACHED" && !scienceLabCommon.isWiFiConnected()) {
+    } else if (isDetached && !scienceLabCommon.isWiFiConnected()) {
       scienceLabCommon.setConnected(false);
       pslabIsConnected = false;
       pslabVersionID = 'Not Connected';
@@ -135,6 +149,7 @@ class BoardStateProvider extends ChangeNotifier {
   Future<bool> attemptToConnectPSLab() async {
     if (scienceLabCommon.isConnected()) {
       logger.d("Device Connected Successfully");
+      return true;
     } else {
       await scienceLabCommon.initialize();
       if (scienceLabCommon.isDeviceFound()) {

@@ -68,7 +68,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => 484396750;
+  int get rustContentHash => -1863366139;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -100,6 +100,15 @@ abstract class RustLibApi extends BaseApi {
   void crateApiSimpleSetDtr({required bool state});
 
   void crateApiSimpleSetRts({required bool state});
+
+  void crateApiSimpleWifiConnect({required String host, required int port});
+
+  void crateApiSimpleWifiDisconnect();
+
+  Future<Uint8List> crateApiSimpleWifiRead(
+      {required int bytesToRead, required int timeoutMs});
+
+  void crateApiSimpleWifiWrite({required List<int> data});
 
   void crateApiSimpleWriteData({required List<int> data});
 }
@@ -348,12 +357,108 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  void crateApiSimpleWifiConnect({required String host, required int port}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(host, serializer);
+        sse_encode_u_16(port, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateApiSimpleWifiConnectConstMeta,
+      argValues: [host, port],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleWifiConnectConstMeta => const TaskConstMeta(
+        debugName: "wifi_connect",
+        argNames: ["host", "port"],
+      );
+
+  @override
+  void crateApiSimpleWifiDisconnect() {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSimpleWifiDisconnectConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleWifiDisconnectConstMeta =>
+      const TaskConstMeta(
+        debugName: "wifi_disconnect",
+        argNames: [],
+      );
+
+  @override
+  Future<Uint8List> crateApiSimpleWifiRead(
+      {required int bytesToRead, required int timeoutMs}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_u_32(bytesToRead, serializer);
+        sse_encode_u_32(timeoutMs, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 13, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_prim_u_8_strict,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiSimpleWifiReadConstMeta,
+      argValues: [bytesToRead, timeoutMs],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleWifiReadConstMeta => const TaskConstMeta(
+        debugName: "wifi_read",
+        argNames: ["bytesToRead", "timeoutMs"],
+      );
+
+  @override
+  void crateApiSimpleWifiWrite({required List<int> data}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_list_prim_u_8_loose(data, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateApiSimpleWifiWriteConstMeta,
+      argValues: [data],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiSimpleWifiWriteConstMeta => const TaskConstMeta(
+        debugName: "wifi_write",
+        argNames: ["data"],
+      );
+
+  @override
   void crateApiSimpleWriteData({required List<int> data}) {
     return handler.executeSync(SyncTask(
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_list_prim_u_8_loose(data, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
