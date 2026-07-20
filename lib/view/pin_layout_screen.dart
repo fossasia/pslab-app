@@ -470,36 +470,43 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
             ),
           ),
           Expanded(
-            child: Center(
-              child: _colorMapPixels == null
-                  ? CircularProgressIndicator(color: primaryRed)
-                  : InteractiveViewer(
-                      minScale: 1.0,
-                      maxScale: 6.0,
-                      child: GestureDetector(
-                        onTapUp: _handleTap,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              _currentLayoutImagePath,
-                              key: _imageKey,
-                              fit: BoxFit.contain,
-                              gaplessPlayback: true,
+            child: _colorMapPixels == null
+                ? Center(child: CircularProgressIndicator(color: primaryRed))
+                : ClipRect(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: InteractiveViewer(
+                        clipBehavior: Clip.none,
+                        minScale: 1.0,
+                        maxScale: 6.0,
+                        child: Center(
+                          child: GestureDetector(
+                            onTapUp: _handleTap,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  _currentLayoutImagePath,
+                                  key: _imageKey,
+                                  fit: BoxFit.contain,
+                                  gaplessPlayback: true,
+                                ),
+                                Opacity(
+                                  opacity: 0.6,
+                                  child: Image.asset(
+                                    _currentColormapImagePath,
+                                    fit: BoxFit.contain,
+                                    gaplessPlayback: true,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Opacity(
-                              opacity: 0.6,
-                              child: Image.asset(
-                                _currentColormapImagePath,
-                                fit: BoxFit.contain,
-                                gaplessPlayback: true,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-            ),
+                  ),
           ),
         ],
       ),

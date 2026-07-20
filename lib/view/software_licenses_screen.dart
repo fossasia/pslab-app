@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/oss_licenses.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SoftwareLicensesScreen extends StatelessWidget {
   const SoftwareLicensesScreen({super.key});
@@ -140,7 +141,27 @@ class MiscOssLicenseSingle extends StatelessWidget {
                         color: Colors.blue,
                         decoration: TextDecoration.underline),
                   ),
-                  onTap: () => launchUrlString(package.homepage!),
+                  onTap: () async {
+                    final uri = Uri.tryParse(package.homepage!);
+                    if (uri == null) {
+                      logger.e(
+                        'Invalid URL: ${package.homepage}',
+                      );
+                      return;
+                    }
+                    if (await canLaunchUrl(uri)) {
+                      final launched = await launchUrl(uri);
+                      if (!launched) {
+                        logger.e(
+                          'launchUrl returned false for ${package.homepage} after canLaunchUrl succeeded',
+                        );
+                      }
+                    } else {
+                      logger.e(
+                        'Could not launch ${package.homepage}',
+                      );
+                    }
+                  },
                 ),
               ),
             ],
