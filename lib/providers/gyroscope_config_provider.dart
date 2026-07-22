@@ -63,6 +63,18 @@ class GyroscopeConfigProvider extends ChangeNotifier {
     _saveConfigToPrefs();
   }
 
+  void updateActiveSensor(String activeSensor) {
+    _config = _config.copyWith(activeSensor: activeSensor);
+    notifyListeners();
+    _saveConfigToPrefs();
+  }
+
+  void updateAutoScale(bool autoScale) {
+    _config = _config.copyWith(autoScale: autoScale);
+    notifyListeners();
+    _saveConfigToPrefs();
+  }
+
   void resetToDefaults() {
     _config = const GyroscopeConfig();
     notifyListeners();

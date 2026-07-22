@@ -29,30 +29,47 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
   late AccelerometerStateProvider _provider;
   late AccelerometerConfigProvider _configProvider;
 
+  String? _lastActiveSensor;
+
   @override
   void initState() {
     super.initState();
     _provider = AccelerometerStateProvider();
     _configProvider = AccelerometerConfigProvider();
+
     _provider.onPlaybackEnd = () {
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
       }
     };
+
+    _configProvider.addListener(_handleConfigChange);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         if (widget.playbackData != null) {
           _provider.startPlayback(widget.playbackData!);
         } else {
           _provider.setConfigProvider(_configProvider);
-          _provider.initializeSensors();
         }
       }
     });
   }
 
+  void _handleConfigChange() {
+    if (!mounted || widget.playbackData != null) return;
+
+    final currentSensor = _configProvider.config.activeSensor;
+
+    if (_lastActiveSensor != currentSensor) {
+      _lastActiveSensor = currentSensor;
+      _provider.initializeSensors();
+    }
+  }
+
   @override
   void dispose() {
+    _configProvider.removeListener(_handleConfigChange);
     _provider.disposeSensors();
     _provider.dispose();
     super.dispose();
@@ -205,12 +222,6 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
               body: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    // Each card needs ~150dp minimum to render its compact
-                    // header + a usable chart. Three cards = ~450dp. If the
-                    // available height falls below that, switch to screen-
-                    // level vertical scrolling with a fixed per-card height
-                    // so nothing overflows. Above the threshold we keep the
-                    // current Expanded layout so cards fill the screen.
                     const double kPerCardMin = 150.0;
                     const double kPerCardScrollHeight = 220.0;
                     final double available = constraints.maxHeight;

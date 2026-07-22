@@ -45,6 +45,20 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
     super.dispose();
   }
 
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: snackBarContentColor),
+        ),
+        backgroundColor: snackBarBackgroundColor,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,20 +115,15 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                           '${provider.config.updatePeriod} ${appLocalizations.ms}',
                       controller: _updatePeriodController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final intValue = int.tryParse(value);
                         if (intValue != null &&
-                            intValue >= 100 &&
+                            intValue >= 20 &&
                             intValue <= 1000) {
                           provider.updateUpdatePeriod(intValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.updatePeriodErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.updatePeriodErrorMessage);
                         }
                       },
                       hint: appLocalizations.accelerometerUpdatePeriodHint,
@@ -125,20 +134,15 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                           '${provider.config.highLimit} ${appLocalizations.meterPerSecondSquared}',
                       controller: _highLimitController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final intValue = int.tryParse(value);
                         if (intValue != null &&
-                            intValue >= 10 &&
+                            intValue >= 0 &&
                             intValue <= 200) {
                           provider.updateHighLimit(intValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.highLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.highLimitErrorMessage);
                         }
                       },
                       hint: appLocalizations.accelerometerHighLimitHint,
@@ -149,20 +153,15 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                           '${provider.config.lowLimit} ${appLocalizations.meterPerSecondSquared}',
                       controller: _lowLimitController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final intValue = int.tryParse(value);
                         if (intValue != null &&
-                            intValue >= 10 &&
+                            intValue >= 0 &&
                             intValue <= 200) {
                           provider.updateLowLimit(intValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.lowLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.lowLimitErrorMessage);
                         }
                       },
                       hint: appLocalizations.accelerometerLowLimitHint,
@@ -175,6 +174,7 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                             value: 'In-built Sensor',
                             displayName: appLocalizations.inBuiltSensor),
                         ConfigOption(value: 'MPU6050', displayName: 'MPU6050'),
+                        ConfigOption(value: 'MPU925X', displayName: 'MPU925X'),
                       ],
                       onChanged: (value) {
                         provider.updateActiveSensor(value);
@@ -185,23 +185,26 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
                       value: provider.config.sensorGain.toString(),
                       controller: _sensorGainController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final doubleValue = double.tryParse(value);
                         if (doubleValue != null &&
                             doubleValue >= 0 &&
                             doubleValue <= 100) {
                           provider.updateSensorGain(doubleValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.sensorGainErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.sensorGainErrorMessage);
                         }
                       },
                       hint: appLocalizations.sensorGainHint,
+                    ),
+                    ConfigCheckboxItem(
+                      title: appLocalizations.autoScaleGraph,
+                      subtitle: appLocalizations.autoScaleDescription,
+                      value: provider.config.autoScale,
+                      onChanged: (value) {
+                        provider.updateAutoScale(value);
+                      },
                     ),
                     ConfigCheckboxItem(
                       title: appLocalizations.locationData,
