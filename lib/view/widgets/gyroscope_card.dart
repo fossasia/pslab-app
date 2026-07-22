@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -138,12 +139,16 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
     TitleMeta meta, {
     required double fontSize,
   }) {
+    final String label = meta.formattedValue.contains('.')
+        ? meta.formattedValue.split('.').first
+        : meta.formattedValue;
+
     return SideTitleWidget(
       meta: meta,
       child: Text(
-        meta.formattedValue,
+        label,
         maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+        overflow: TextOverflow.visible,
         style: TextStyle(
           color: chartTextColor,
           fontSize: fontSize,
@@ -157,10 +162,36 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
     required int dataLength,
     required double width,
     required double scale,
+    required double minVal,
+    required double maxVal,
+    required bool autoScale,
+    required double manualHighLimit,
+    required double manualLowLimit,
   }) {
     final double safeMaxX =
         dataLength <= 1 ? 50 : (dataLength > 50 ? 50 : dataLength.toDouble());
     final List<FlSpot> safeSpots = spots.isEmpty ? [const FlSpot(0, 0)] : spots;
+
+    double yMaxLimit;
+    double yMinLimit;
+    double yTickInterval;
+
+    if (autoScale) {
+      double maxAmplitude = max(minVal.abs(), maxVal.abs());
+      yMaxLimit = maxAmplitude * 1.25;
+      if (yMaxLimit < 5.0) yMaxLimit = 5.0;
+      yMinLimit = -yMaxLimit;
+      yTickInterval = (yMaxLimit / 2).ceilToDouble();
+      if (yTickInterval == 0) yTickInterval = 1.0;
+    } else {
+      yMaxLimit = manualHighLimit;
+      yMinLimit = -manualLowLimit;
+
+      double range = yMaxLimit - yMinLimit;
+      if (range <= 0) range = 20.0;
+      yTickInterval = (range / 4).ceilToDouble();
+      if (yTickInterval <= 0) yTickInterval = 1.0;
+    }
 
     final bool showTopTitle = width >= _kTinyWidth;
     final bool showLeftTickLabels = width >= _kMicroWidth;
@@ -175,16 +206,19 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
         showTopTitle ? (15.0 * scale).clamp(9.0, 17.0).toDouble() : 0.0;
     final double leftAxisNameSize =
         (12.0 * widthFactor).clamp(9.0, 14.0).toDouble();
+
     final double reservedSize = !showLeftTickLabels
         ? 4.0
         : sparseTicks
-            ? (tickFontSize * 2.0 + 4.0).clamp(16.0, 22.0).toDouble()
-            : (tickFontSize * 2.2 + 4.0).clamp(18.0, 26.0).toDouble();
+            ? (tickFontSize * 2.0 + 4.0).clamp(20.0, 28.0).toDouble()
+            : (tickFontSize * 2.2 + 4.0).clamp(22.0, 30.0).toDouble();
+
     final double lineBarWidth = (2.0 * scale).clamp(1.0, 2.2);
-    final double leftPadding = (1.5 * scale).clamp(0.0, 2.0);
-    final double rightPadding = (6.0 * scale).clamp(2.0, 8.0);
-    final double topPadding = (3.0 * scale).clamp(1.5, 5.0);
-    final double bottomPadding = (5.0 * scale).clamp(2.0, 7.0);
+
+    final double leftPadding = (0.0 * scale).clamp(0.0, 2.0);
+    final double rightPadding = (16.0 * scale).clamp(12.0, 20.0);
+    final double topPadding = (6.0 * scale).clamp(10.0, 16.0);
+    final double bottomPadding = (18.0 * scale).clamp(8.0, 16.0);
 
     return ClipRect(
       child: Padding(
@@ -200,15 +234,15 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
               backgroundColor: Colors.black,
               minX: 0,
               maxX: safeMaxX,
-              minY: -20,
-              maxY: 20,
-              clipData: const FlClipData.all(),
+              minY: yMinLimit,
+              maxY: yMaxLimit,
+              clipData: const FlClipData.none(),
               gridData: FlGridData(
                 show: true,
                 drawHorizontalLine: true,
                 drawVerticalLine: true,
                 horizontalInterval: tickInterval,
-                verticalInterval: 10,
+                verticalInterval: yTickInterval,
               ),
               borderData: FlBorderData(
                 show: true,
@@ -257,7 +291,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                   sideTitles: SideTitles(
                     reservedSize: reservedSize,
                     showTitles: showLeftTickLabels,
-                    interval: tickInterval,
+                    interval: yTickInterval,
                     getTitlesWidget: (value, meta) =>
                         _sideTitleWidget(meta, fontSize: tickFontSize),
                   ),
@@ -297,11 +331,18 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
         'assets/images/phone_${widget.axis.toLowerCase()}_axis.png';
     final String axisLabel = appLocalizations.gyroscopeAxisLabel;
 
+    final bool autoScale = provider.configProvider?.config.autoScale ?? true;
+    final double highLimit =
+        provider.configProvider?.config.highLimit.toDouble() ?? 20.0;
+    final double lowLimit =
+        provider.configProvider?.config.lowLimit.toDouble() ?? 20.0;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final double width = constraints.maxWidth;
         final bool boundedHeight = constraints.maxHeight.isFinite;
-        final double targetHeight = (width * 0.55).clamp(140.0, 300.0);
+
+        final double targetHeight = (width * 0.58).clamp(145.0, 300.0);
 
         final double widthScale = width / _kBaselineWidth;
 
@@ -350,7 +391,8 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
             (effectiveHeight - estimatedHeaderBase).clamp(0.0, effectiveHeight);
 
         double chartMinHeight =
-            (effectiveHeight * 0.55).clamp(80.0, 220.0).toDouble();
+            (effectiveHeight * 0.58).clamp(85.0, 220.0).toDouble();
+
         if (chartMinHeight > availableForChart) {
           chartMinHeight = availableForChart;
         }
@@ -422,6 +464,11 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
                             dataLength: dataLength,
                             width: width,
                             scale: scale,
+                            minVal: minVal,
+                            maxVal: maxVal,
+                            autoScale: autoScale,
+                            manualHighLimit: highLimit,
+                            manualLowLimit: lowLimit,
                           ),
                         ),
                       ),

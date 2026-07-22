@@ -44,6 +44,20 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
     super.dispose();
   }
 
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: snackBarContentColor),
+        ),
+        backgroundColor: snackBarBackgroundColor,
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,10 +92,7 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
         backgroundColor: primaryRed,
         title: Text(
           appLocalizations.gyroscopeConfigurations,
-          style: TextStyle(
-            color: appBarContentColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: appBarContentColor, fontSize: 15),
         ),
       ),
       body: SafeArea(
@@ -99,20 +110,15 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
                           '${provider.config.updatePeriod} ${appLocalizations.ms}',
                       controller: _updatePeriodController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final intValue = int.tryParse(value);
                         if (intValue != null &&
-                            intValue >= 100 &&
+                            intValue >= 20 &&
                             intValue <= 2000) {
                           provider.updateUpdatePeriod(intValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.updatePeriodErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.updatePeriodErrorMessage);
                         }
                       },
                       hint: appLocalizations.baroUpdatePeriodHint,
@@ -123,20 +129,15 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
                           '${provider.config.highLimit} ${appLocalizations.gyroscopeAxisLabel}',
                       controller: _highLimitController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final intValue = int.tryParse(value);
                         if (intValue != null &&
                             intValue >= 0 &&
                             intValue <= 1000) {
                           provider.updateHighLimit(intValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.highLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.highLimitErrorMessage);
                         }
                       },
                       hint: appLocalizations.gyroscopeHighLimitHint,
@@ -147,46 +148,58 @@ class _GyroscopeConfigScreenState extends State<GyroscopeConfigScreen> {
                           '${provider.config.lowLimit} ${appLocalizations.gyroscopeAxisLabel}',
                       controller: _lowLimitController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final intValue = int.tryParse(value);
                         if (intValue != null &&
                             intValue >= 0 &&
                             intValue <= 1000) {
                           provider.updateLowLimit(intValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.lowLimitErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.lowLimitErrorMessage);
                         }
                       },
                       hint: appLocalizations.gyroscopeLowLimitHint,
+                    ),
+                    ConfigDropdownItem(
+                      title: appLocalizations.activeSensor,
+                      selectedValue: provider.config.activeSensor,
+                      options: [
+                        ConfigOption(
+                            value: 'In-built Sensor',
+                            displayName: appLocalizations.inBuiltSensor),
+                        ConfigOption(value: 'MPU6050', displayName: 'MPU6050'),
+                        ConfigOption(value: 'MPU925X', displayName: 'MPU925X'),
+                      ],
+                      onChanged: (value) {
+                        provider.updateActiveSensor(value);
+                      },
                     ),
                     ConfigInputItem(
                       title: appLocalizations.sensorGain,
                       value: provider.config.sensorGain.toString(),
                       controller: _sensorGainController,
                       onChanged: (value) {
+                        if (value.isEmpty) return;
                         final doubleValue = double.tryParse(value);
                         if (doubleValue != null &&
                             doubleValue >= 0 &&
                             doubleValue <= 100) {
                           provider.updateSensorGain(doubleValue);
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                  appLocalizations.sensorGainErrorMessage,
-                                  style: TextStyle(color: snackBarContentColor),
-                                ),
-                                backgroundColor: snackBarBackgroundColor),
-                          );
+                          _showErrorSnackbar(
+                              appLocalizations.sensorGainErrorMessage);
                         }
                       },
                       hint: appLocalizations.sensorGainHint,
+                    ),
+                    ConfigCheckboxItem(
+                      title: appLocalizations.autoScaleGraph,
+                      subtitle: appLocalizations.autoScaleDescription,
+                      value: provider.config.autoScale,
+                      onChanged: (value) {
+                        provider.updateAutoScale(value);
+                      },
                     ),
                     ConfigCheckboxItem(
                       title: appLocalizations.locationData,
