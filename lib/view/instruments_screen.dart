@@ -113,13 +113,12 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           appLocalizations.thermometerDesc, '/thermometer'),
       _InstrumentData(appLocalizations.roboticArm,
           appLocalizations.roboticArmDesc, '/roboticArm'),
+      _InstrumentData(appLocalizations.dustSensor,
+          appLocalizations.dustSensorDesc, '/dustsensor'),
       _InstrumentData(appLocalizations.gasSensor,
           appLocalizations.gasSensorDesc, '/gassensor'),
-
-      // _InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensorDesc, '/dustsensor'),
       _InstrumentData(appLocalizations.soundMeter,
           appLocalizations.soundMeterDesc, '/soundmeter'),
-
       _InstrumentData(
           'OLED Display',
           'Draw shapes & render text on an external OLED display.',

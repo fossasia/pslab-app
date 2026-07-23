@@ -29,6 +29,7 @@ List<String> instrumentIcons = [
   'assets/icons/thermometer_logo.png',
   'assets/icons/robotic_arm.png',
   'assets/icons/tile_icon_gas.png', // Gas Sensor
+  'assets/icons/tile_icon_gas.png',
   'assets/icons/tile_icon_gas.png', // Sound Meter
   'assets/icons/tile_icon_oled_screen.png',
 ];
@@ -48,6 +49,7 @@ List<String> instrumentNames = [
   appLocalizations.thermometer.toLowerCase(),
   appLocalizations.roboticArmTitle.toLowerCase(),
   appLocalizations.gasSensor.toLowerCase(),
+  appLocalizations.dustSensor.toLowerCase(),
   appLocalizations.soundMeter.toLowerCase(),
   appLocalizations.oledDisplayTitle.toLowerCase(),
 ];
