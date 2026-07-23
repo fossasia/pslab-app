@@ -538,20 +538,23 @@ class OledDisplayProvider extends ChangeNotifier {
     frameBuffer = List.filled(1024, 0);
     roadOffset += (gameSpeed * dt * 6.0);
     for (int y = 0; y < 64; y++) {
-      if ((y + roadOffset.toInt()) % 24 < 12)
+      if ((y + roadOffset.toInt()) % 24 < 12) {
         _alterPixel(frameBuffer, 64, y, true);
+      }
     }
     _drawLine(frameBuffer, 45, 0, 0, 64, true);
     _drawLine(frameBuffer, 83, 0, 128, 64, true);
 
     int bounceOffset = (math.sin(_tickCounter * 2.0) * 1.5).round();
     double currentCarY = carY + bounceOffset;
-    if (math.Random().nextBool())
+    if (math.Random().nextBool()) {
       _alterPixel(
           frameBuffer, carX.toInt() + 2, currentCarY.toInt() + 13, true);
-    if (math.Random().nextBool())
+    }
+    if (math.Random().nextBool()) {
       _alterPixel(
           frameBuffer, carX.toInt() + 9, currentCarY.toInt() + 13, true);
+    }
 
     for (var ob in obstacles) {
       _drawRotatedSprite(ob.x, ob.y, enemyCarSprite, 0.0);
@@ -609,8 +612,9 @@ class OledDisplayProvider extends ChangeNotifier {
     frameBuffer = List.filled(1024, 0);
     roadOffset += (gameSpeed * dt * 4.0);
     for (int x = 0; x < 128; x++) {
-      if ((x + roadOffset.toInt()) % 12 < 6)
+      if ((x + roadOffset.toInt()) % 12 < 6) {
         _alterPixel(frameBuffer, x, 56, true);
+      }
     }
     for (var ob in obstacles) {
       _drawSprite(ob.x.toInt(), ob.y.toInt(), cactusSprite, false);
