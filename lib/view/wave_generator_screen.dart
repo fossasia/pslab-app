@@ -314,6 +314,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                   PopupMenuButton<String>(
                     color: primaryRed,
                     icon: const Icon(Icons.play_arrow, color: Colors.white),
+                    tooltip: appLocalizations.selectInstrument,
                     onSelected: (value) {
                       if (value == appLocalizations.oscilloscope) {
                         if (getIt.get<ScienceLab>().isConnected()) {
@@ -398,6 +399,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                   ),
                   IconButton(
                     icon: Icon(Icons.save, color: Colors.white),
+                    tooltip: appLocalizations.saveData,
                     onPressed: () async {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(

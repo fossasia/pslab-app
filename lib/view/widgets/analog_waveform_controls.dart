@@ -174,6 +174,7 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                     Expanded(
                       flex: 12,
                       child: IconButton(
+                        tooltip: appLocalizations.sine,
                         style: TextButton.styleFrom(
                           backgroundColor: waveGeneratorStateProvider
                                               .waveGeneratorConstants.wave[
@@ -203,6 +204,7 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                     Expanded(
                       flex: 12,
                       child: IconButton(
+                        tooltip: appLocalizations.triangular,
                         style: TextButton.styleFrom(
                           backgroundColor: waveGeneratorStateProvider
                                               .waveGeneratorConstants.wave[
@@ -232,6 +234,7 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                     Expanded(
                       flex: 12,
                       child: IconButton(
+                        tooltip: appLocalizations.sawtooth,
                         style: TextButton.styleFrom(
                           backgroundColor: waveGeneratorStateProvider
                                               .waveGeneratorConstants.wave[

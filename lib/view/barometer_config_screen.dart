@@ -55,6 +55,7 @@ class _BarometerConfigScreenState extends State<BarometerConfigScreen> {
         leading: Builder(
           builder: (context) {
             return IconButton(
+              tooltip: appLocalizations.back,
               onPressed: () {
                 if (Navigator.canPop(context)) {
                   Navigator.pop(context);

@@ -738,6 +738,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                 '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
                             isThreeLine: true,
                             trailing: PopupMenuButton<String>(
+                              tooltip: appLocalizations.options,
                               icon: const Icon(Icons.more_vert,
                                   color: Colors.black),
                               onSelected: (value) async {

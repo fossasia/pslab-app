@@ -336,6 +336,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                               child: IconButton.filled(
                                 icon: const Icon(Icons.arrow_drop_up),
                                 iconSize: 36,
+                                tooltip: appLocalizations.increaseValue,
                                 color: scaffoldBackgroundColor,
                                 onPressed: () async {
                                   await onValueChanged(value + provider.step);
@@ -353,6 +354,7 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
                               width: 55,
                               child: IconButton.filled(
                                 icon: const Icon(Icons.arrow_drop_down),
+                                tooltip: appLocalizations.decreaseValue,
                                 iconSize: 36,
                                 color: scaffoldBackgroundColor,
                                 onPressed: () async {

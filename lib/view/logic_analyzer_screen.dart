@@ -459,6 +459,7 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
                     : [
                         IconButton(
                           icon: Icon(Icons.save, color: Colors.white),
+                          tooltip: appLocalizations.saveData,
                           onPressed: () async {
                             if (!getIt.get<ScienceLab>().isConnected()) {
                               if (context.mounted) {

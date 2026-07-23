@@ -221,6 +221,7 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                   child: IconButton.filled(
                     padding: EdgeInsets.zero,
                     icon: Icon(Icons.chevron_left),
+                    tooltip: appLocalizations.decreaseValue,
                     onPressed: () async {
                       if (provider.propSelected != null) {
                         await provider.decrementValue();
@@ -286,6 +287,7 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                   width: 30,
                   child: IconButton.filled(
                     padding: EdgeInsets.zero,
+                    tooltip: appLocalizations.increaseValue,
                     icon: Icon(Icons.chevron_right),
                     onPressed: () async {
                       if (provider.propSelected != null) {

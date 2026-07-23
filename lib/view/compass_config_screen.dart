@@ -30,6 +30,7 @@ class _CompassConfigScreenState extends State<CompassConfigScreen> {
         ),
         leading: Builder(builder: (context) {
           return IconButton(
+            tooltip: appLocalizations.back,
             onPressed: () {
               if (Navigator.canPop(context) &&
                   ModalRoute.of(context)?.settings.name == '/compass') {

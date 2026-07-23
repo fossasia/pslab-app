@@ -46,6 +46,7 @@ class _SoundMeterConfigScreenState extends State<SoundMeterConfigScreen> {
         ),
         leading: Builder(builder: (context) {
           return IconButton(
+            tooltip: appLocalizations.back,
             onPressed: () {
               Navigator.maybePop(context);
             },

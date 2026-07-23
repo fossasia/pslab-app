@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
-
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import '../../theme/colors.dart';
 import '../pin_layout_screen.dart';
 import 'navigation_drawer.dart';
@@ -39,6 +40,7 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold>
     with SingleTickerProviderStateMixin {
   bool _isSearching = false;
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   final TextEditingController _searchController = TextEditingController();
   late AnimationController _animationController;
 
@@ -102,6 +104,7 @@ class _MainScaffoldState extends State<MainScaffold>
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
+            tooltip: appLocalizations.openMenu,
             iconSize: iconGlyph,
             visualDensity: VisualDensity.compact,
             padding: EdgeInsets.symmetric(horizontal: btnHPad),
@@ -163,6 +166,7 @@ class _MainScaffoldState extends State<MainScaffold>
             ? [
                 IconButton(
                   iconSize: iconGlyph,
+                  tooltip: appLocalizations.clearSearch,
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.symmetric(horizontal: btnHPad),
                   constraints: BoxConstraints(
@@ -186,6 +190,7 @@ class _MainScaffoldState extends State<MainScaffold>
             : [
                 if (widget.showSearch)
                   IconButton(
+                    tooltip: appLocalizations.search,
                     icon: Icon(
                       Icons.search,
                       color: appBarContentColor,
@@ -202,6 +207,11 @@ class _MainScaffoldState extends State<MainScaffold>
                 Consumer<BoardStateProvider>(
                   builder: (context, provider, _) {
                     return IconButton(
+                      tooltip: provider.pslabIsConnected
+                          ? (provider.scienceLabCommon.isWiFiConnected()
+                              ? appLocalizations.wifiConnected
+                              : appLocalizations.usbConnected)
+                          : appLocalizations.connectDevice,
                       icon: Image.asset(
                         provider.pslabIsConnected
                             ? (provider.scienceLabCommon.isWiFiConnected()

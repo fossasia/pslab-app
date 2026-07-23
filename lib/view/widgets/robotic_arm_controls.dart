@@ -69,6 +69,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                     bottom: -2,
                     right: 0,
                     child: IconButton(
+                      tooltip: appLocalizations.close,
                       icon: Icon(Icons.close, color: primaryRed),
                       onPressed: () {
                         Navigator.pop(context);
