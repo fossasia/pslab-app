@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,19 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
   static const double _kCompactWidth = 320.0;
   static const double _kTinyWidth = 260.0;
   static const double _kMicroWidth = 220.0;
+
+  IconData _fallbackIcon() {
+    switch (widget.axis.toLowerCase()) {
+      case 'x':
+        return Icons.swap_horiz;
+      case 'y':
+        return Icons.swap_vert;
+      case 'z':
+        return Icons.import_export;
+      default:
+        return Icons.swap_horiz;
+    }
+  }
 
   Widget _buildTopInfoRow({
     required String axisImage,
@@ -78,6 +92,21 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
       width: imageSize,
       height: imageSize,
       fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          width: imageSize,
+          height: imageSize,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            _fallbackIcon(),
+            color: widget.color,
+            size: imageSize * 0.6,
+          ),
+        );
+      },
     );
 
     return Row(
@@ -129,10 +158,36 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     required int dataLength,
     required double width,
     required double scale,
+    required double minVal,
+    required double maxVal,
+    required bool autoScale,
+    required double manualHighLimit,
+    required double manualLowLimit,
   }) {
     final double safeMaxX =
         dataLength <= 1 ? 50 : (dataLength > 50 ? 50 : dataLength.toDouble());
     final List<FlSpot> safeSpots = spots.isEmpty ? [const FlSpot(0, 0)] : spots;
+
+    double yMaxLimit;
+    double yMinLimit;
+    double yTickInterval;
+
+    if (autoScale) {
+      double maxAmplitude = max(minVal.abs(), maxVal.abs());
+      yMaxLimit = maxAmplitude * 1.25;
+      if (yMaxLimit < 5.0) yMaxLimit = 5.0;
+      yMinLimit = -yMaxLimit;
+      yTickInterval = (yMaxLimit / 2).ceilToDouble();
+      if (yTickInterval == 0) yTickInterval = 1.0;
+    } else {
+      yMaxLimit = manualHighLimit;
+      yMinLimit = -manualLowLimit;
+
+      double range = yMaxLimit - yMinLimit;
+      if (range <= 0) range = 20.0;
+      yTickInterval = (range / 4).ceilToDouble();
+      if (yTickInterval <= 0) yTickInterval = 1.0;
+    }
 
     final bool showTopTitle = width >= _kTinyWidth;
     final bool showLeftTickLabels = width >= _kMicroWidth;
@@ -147,16 +202,19 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
         showTopTitle ? (15.0 * scale).clamp(9.0, 17.0).toDouble() : 0.0;
     final double leftAxisNameSize =
         (12.0 * widthFactor).clamp(9.0, 14.0).toDouble();
+
     final double reservedSize = !showLeftTickLabels
         ? 4.0
         : sparseTicks
-            ? (tickFontSize * 2.0 + 4.0).clamp(16.0, 22.0).toDouble()
-            : (tickFontSize * 2.2 + 4.0).clamp(18.0, 26.0).toDouble();
+            ? (tickFontSize * 2.8 + 6.0).clamp(24.0, 36.0).toDouble()
+            : (tickFontSize * 3.0 + 6.0).clamp(28.0, 42.0).toDouble();
+
     final double lineBarWidth = (2.0 * scale).clamp(1.0, 2.2);
-    final double leftPadding = (1.5 * scale).clamp(0.0, 2.0);
-    final double rightPadding = (6.0 * scale).clamp(2.0, 8.0);
-    final double topPadding = (3.0 * scale).clamp(1.5, 5.0);
-    final double bottomPadding = (5.0 * scale).clamp(2.0, 7.0);
+
+    final double leftPadding = (0.0 * scale).clamp(0.0, 2.0);
+    final double rightPadding = (16.0 * scale).clamp(12.0, 20.0);
+    final double topPadding = (6.0 * scale).clamp(10.0, 16.0);
+    final double bottomPadding = (18.0 * scale).clamp(8.0, 16.0);
 
     return ClipRect(
       child: Padding(
@@ -172,15 +230,15 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
               backgroundColor: Colors.black,
               minX: 0,
               maxX: safeMaxX,
-              minY: -20,
-              maxY: 20,
-              clipData: const FlClipData.all(),
+              minY: yMinLimit,
+              maxY: yMaxLimit,
+              clipData: const FlClipData.none(),
               gridData: FlGridData(
                 show: true,
                 drawHorizontalLine: true,
                 drawVerticalLine: true,
                 horizontalInterval: tickInterval,
-                verticalInterval: 10,
+                verticalInterval: yTickInterval,
               ),
               borderData: FlBorderData(
                 show: true,
@@ -229,7 +287,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                   sideTitles: SideTitles(
                     reservedSize: reservedSize,
                     showTitles: showLeftTickLabels,
-                    interval: tickInterval,
+                    interval: yTickInterval,
                     getTitlesWidget: (value, meta) =>
                         _sideTitleWidget(meta, fontSize: tickFontSize),
                   ),
@@ -269,11 +327,18 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     final String axisImage = 'assets/images/phone_${widget.axis}_axis.png';
     final String axisLabel = appLocalizations.accelerationAxisLabel;
 
+    final bool autoScale = provider.configProvider?.config.autoScale ?? true;
+    final double highLimit =
+        provider.configProvider?.config.highLimit.toDouble() ?? 20.0;
+    final double lowLimit =
+        provider.configProvider?.config.lowLimit.toDouble() ?? 20.0;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final double width = constraints.maxWidth;
         final bool boundedHeight = constraints.maxHeight.isFinite;
-        final double targetHeight = (width * 0.55).clamp(140.0, 300.0);
+
+        final double targetHeight = (width * 0.58).clamp(145.0, 300.0);
 
         final double widthScale = width / _kBaselineWidth;
 
@@ -322,7 +387,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
             (effectiveHeight - estimatedHeaderBase).clamp(0.0, effectiveHeight);
 
         double chartMinHeight =
-            (effectiveHeight * 0.55).clamp(80.0, 220.0).toDouble();
+            (effectiveHeight * 0.58).clamp(85.0, 220.0).toDouble();
         if (chartMinHeight > availableForChart) {
           chartMinHeight = availableForChart;
         }
@@ -394,6 +459,11 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
                             dataLength: dataLength,
                             width: width,
                             scale: scale,
+                            minVal: minVal,
+                            maxVal: maxVal,
+                            autoScale: autoScale,
+                            manualHighLimit: highLimit,
+                            manualLowLimit: lowLimit,
                           ),
                         ),
                       ),

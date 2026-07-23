@@ -59,7 +59,6 @@ class OledDisplayProvider extends ChangeNotifier {
     'hexagon',
     'star',
     'ellipse',
-    'diamond',
     'pentagon',
     'cross',
     'arrow',
@@ -319,9 +318,6 @@ class OledDisplayProvider extends ChangeNotifier {
         case 'ellipse':
           _drawEllipse(shapePreviewBuffer, _startX!, _startY!, x, y);
           break;
-        case 'diamond':
-          _drawDiamond(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
         case 'cross':
           _drawCross(shapePreviewBuffer, _startX!, _startY!, x, y);
           break;
@@ -477,15 +473,6 @@ class OledDisplayProvider extends ChangeNotifier {
     _drawLine(buffer, pts[3].x, pts[3].y, pts[0].x, pts[0].y, true);
   }
 
-  void _drawDiamond(List<int> buffer, int x1, int y1, int x2, int y2) {
-    int midX = (x1 + x2) ~/ 2;
-    int midY = (y1 + y2) ~/ 2;
-    _drawLine(buffer, midX, y1, x2, midY, true);
-    _drawLine(buffer, x2, midY, midX, y2, true);
-    _drawLine(buffer, midX, y2, x1, midY, true);
-    _drawLine(buffer, x1, midY, midX, y1, true);
-  }
-
   void _drawCross(List<int> buffer, int x1, int y1, int x2, int y2) {
     int midX = (x1 + x2) ~/ 2;
     int midY = (y1 + y2) ~/ 2;
@@ -622,15 +609,30 @@ class OledDisplayProvider extends ChangeNotifier {
   static List<List<int>> _decodeAndProcessGif(Uint8List fileBytes) {
     img.Image? gifImage = img.decodeGif(fileBytes);
     List<List<int>> frames = [];
+
     if (gifImage != null && gifImage.frames.isNotEmpty) {
-      for (img.Image frame in gifImage.frames) {
-        img.Image resized = img.copyResize(frame, width: 128, height: 64);
+      for (int i = 0; i < gifImage.frames.length; i++) {
+        img.Image frame = gifImage.frames[i];
+
+        double scale = math.max(128 / frame.width, 64 / frame.height);
+        int newWidth = (frame.width * scale).round();
+        int newHeight = (frame.height * scale).round();
+
+        img.Image scaled =
+            img.copyResize(frame, width: newWidth, height: newHeight);
+
+        int cropX = (newWidth - 128) ~/ 2;
+        int cropY = (newHeight - 64) ~/ 2;
+        img.Image cropped =
+            img.copyCrop(scaled, x: cropX, y: cropY, width: 128, height: 64);
+
         List<int> oledBuffer = List.filled(1024, 0);
         for (int y = 0; y < 64; y++) {
           for (int x = 0; x < 128; x++) {
-            img.Pixel p = resized.getPixel(x, y);
+            img.Pixel p = cropped.getPixel(x, y);
             num luminance = p.r * 0.299 + p.g * 0.587 + p.b * 0.114;
-            if (luminance > 128) {
+
+            if (luminance > 128 && x < 127 && y < 63) {
               oledBuffer[((y ~/ 8) * 128) + x] |= (1 << (y % 8));
             }
           }
