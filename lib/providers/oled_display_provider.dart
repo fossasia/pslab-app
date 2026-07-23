@@ -59,7 +59,6 @@ class OledDisplayProvider extends ChangeNotifier {
   final bool _isPlayingBack = false;
   bool get isPlayingBack => _isPlayingBack;
 
-
   bool isGameRunning = false;
   bool isGameOver = false;
   bool isGameWon = false;
@@ -79,11 +78,9 @@ class OledDisplayProvider extends ChangeNotifier {
   double carX = 57.0;
   final double carY = 47.0;
 
-
   double dinoY = 44.0;
   double dinoVelocity = 0.0;
   bool isJumping = false;
-
 
   final List<List<int>> playerCarSprite = [
     [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
@@ -321,8 +318,9 @@ class OledDisplayProvider extends ChangeNotifier {
     OledModel model = OledModel.sh1106_128x64;
     if (selectedModelString.contains('SSD1306 128x32')) {
       model = OledModel.ssd1306_128x32;
-    } else if (selectedModelString.contains('SSD1306 128x64')){
-      model = OledModel.ssd1306_128x64;}
+    } else if (selectedModelString.contains('SSD1306 128x64')) {
+      model = OledModel.ssd1306_128x64;
+    }
     try {
       _display = await OLED.create(_i2c!, _scienceLab!, model);
       _isDirty = true;
@@ -612,7 +610,6 @@ class OledDisplayProvider extends ChangeNotifier {
   }
 
   void _drawGameOverScreen() {
-
     frameBuffer = List.filled(1024, 0);
     _drawRect(frameBuffer, 28, 20, 100, 44);
     _drawRect(frameBuffer, 30, 22, 98, 42);
@@ -625,7 +622,6 @@ class OledDisplayProvider extends ChangeNotifier {
     _drawRect(frameBuffer, 7, 7, 121, 57);
     _drawSprite(60, 28, trophySprite, false);
   }
-
 
   void _alterPixel(List<int> buffer, int x, int y, bool isDraw) {
     if (x < 0 || x >= 128 || y < 0 || y >= 64) return;
@@ -860,7 +856,6 @@ class OledDisplayProvider extends ChangeNotifier {
       }
     }
   }
-
 
   void _saveState() {
     _undoStack.add(List.from(frameBuffer));

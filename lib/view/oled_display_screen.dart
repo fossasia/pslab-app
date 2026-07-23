@@ -213,7 +213,6 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 8),
-
                                 Center(
                                   child: ConstrainedBox(
                                     constraints:
@@ -232,8 +231,7 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
                                         ],
                                       ),
                                       child: AspectRatio(
-                                        aspectRatio: 128 /
-                                            64,
+                                        aspectRatio: 128 / 64,
                                         child: LayoutBuilder(
                                           builder: (context, constraints) {
                                             double dynamicScale =
