@@ -11,10 +11,13 @@ Repository for the PSLab Android App for performing experiments with the [Pocket
 
 This repository holds the Android App for performing experiments with [PSLab](https://pslab.io/). PSLab is a tiny pocket science lab that provides an array of equipment for doing science and engineering experiments. It can function like an oscilloscope, waveform generator, frequency counter, programmable voltage and current source and also as a data logger. Our website is at https://pslab.io.
 
-Sign up for the latest updates and test new features early by joining our beta program [here](https://play.google.com/apps/testing/io.pslab).
+## Download
 
-<a href="https://play.google.com/store/apps/details?id=io.pslab"><img alt="Get it on Google Play" height="80" src="/docs/images/playstore_badge.png"></a>
-<a href="https://f-droid.org/app/io.pslab"><img alt="Get it on F-Droid" height="80" src="/docs/images/fdroid_badge.png"></a>
+The PSLab app is available for **Android**, **iOS**, **Windows**, **macOS**, **Linux**, and **Web**.
+
+For download links and installation instructions for all platforms, see the [PSLab Application documentation](https://docs.pslab.io/application/Readme.html).
+
+Sign up for the latest updates and test new features early by joining our [beta program](https://play.google.com/apps/testing/io.pslab).
 
 ## Buy
 
