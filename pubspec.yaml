@@ -31,7 +31,7 @@ dependencies:
   sleek_circular_slider: ^2.1.0
   gauge_indicator: ^0.6.0
   light: ^5.0.0
-  connectivity_plus: ^7.2.0
+  connectivity_plus: ^7.3.0
   carousel_slider: ^5.1.1
   vibration: ^3.2.0
   shared_preferences: ^2.5.5
@@ -44,7 +44,7 @@ dependencies:
   flutter_map: ^8.3.0
   latlong2: ^0.10.1
   geolocator: ^14.0.3
-  wakelock_plus: ^1.6.1
+  wakelock_plus: ^1.7.0
   image: ^4.9.1
   web: ^1.1.1
   mp_audio_stream: ^0.2.2
