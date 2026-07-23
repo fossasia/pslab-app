@@ -505,6 +505,19 @@ class OledDisplayProvider extends ChangeNotifier {
   void _tickRacing(double dt) {
     _tickCounter += dt;
     score += (gameSpeed * dt).toInt();
+
+    if (score >= targetScore) {
+      score = targetScore;
+      isGameWon = true;
+      isGameRunning = false;
+      _runPhysics = false;
+      _runHardware = false;
+      _drawGameWonScreen();
+      _flushBufferToHardware(List.from(frameBuffer));
+      notifyListeners();
+      return;
+    }
+
     gameSpeed += 0.003 * dt;
     carX = (carX + steeringDirection * (15.0 * dt)).clamp(25.0, 91.0);
     double carAngle = steeringDirection * 0.25;
@@ -525,23 +538,20 @@ class OledDisplayProvider extends ChangeNotifier {
     frameBuffer = List.filled(1024, 0);
     roadOffset += (gameSpeed * dt * 6.0);
     for (int y = 0; y < 64; y++) {
-      if ((y + roadOffset.toInt()) % 24 < 12) {
+      if ((y + roadOffset.toInt()) % 24 < 12)
         _alterPixel(frameBuffer, 64, y, true);
-      }
     }
     _drawLine(frameBuffer, 45, 0, 0, 64, true);
     _drawLine(frameBuffer, 83, 0, 128, 64, true);
 
     int bounceOffset = (math.sin(_tickCounter * 2.0) * 1.5).round();
     double currentCarY = carY + bounceOffset;
-    if (math.Random().nextBool()) {
+    if (math.Random().nextBool())
       _alterPixel(
           frameBuffer, carX.toInt() + 2, currentCarY.toInt() + 13, true);
-    }
-    if (math.Random().nextBool()) {
+    if (math.Random().nextBool())
       _alterPixel(
           frameBuffer, carX.toInt() + 9, currentCarY.toInt() + 13, true);
-    }
 
     for (var ob in obstacles) {
       _drawRotatedSprite(ob.x, ob.y, enemyCarSprite, 0.0);
@@ -552,6 +562,7 @@ class OledDisplayProvider extends ChangeNotifier {
       if ((carX + 2 < ob.x + 10 && carX + 10 > ob.x + 2) &&
           (currentCarY + 2 < ob.y + 12 && currentCarY + 12 > ob.y + 2)) {
         isGameOver = true;
+        isGameRunning = false;
       }
     }
 
@@ -562,6 +573,19 @@ class OledDisplayProvider extends ChangeNotifier {
   void _tickDino(double dt) {
     _tickCounter += dt;
     score += (gameSpeed * dt).toInt();
+
+    if (score >= targetScore) {
+      score = targetScore;
+      isGameWon = true;
+      isGameRunning = false;
+      _runPhysics = false;
+      _runHardware = false;
+      _drawGameWonScreen();
+      _flushBufferToHardware(List.from(frameBuffer));
+      notifyListeners();
+      return;
+    }
+
     gameSpeed += 0.002 * dt;
     dinoVelocity += 1.2 * dt;
     dinoY += dinoVelocity * dt;
@@ -585,9 +609,8 @@ class OledDisplayProvider extends ChangeNotifier {
     frameBuffer = List.filled(1024, 0);
     roadOffset += (gameSpeed * dt * 4.0);
     for (int x = 0; x < 128; x++) {
-      if ((x + roadOffset.toInt()) % 12 < 6) {
+      if ((x + roadOffset.toInt()) % 12 < 6)
         _alterPixel(frameBuffer, x, 56, true);
-      }
     }
     for (var ob in obstacles) {
       _drawSprite(ob.x.toInt(), ob.y.toInt(), cactusSprite, false);
@@ -602,6 +625,7 @@ class OledDisplayProvider extends ChangeNotifier {
       if ((20 + 2 < ob.x + 4 && 20 + 10 > ob.x + 2) &&
           (dinoY + 2 < ob.y + 6 && dinoY + 10 > ob.y + 2)) {
         isGameOver = true;
+        isGameRunning = false;
       }
     }
 
@@ -969,7 +993,6 @@ class OledDisplayProvider extends ChangeNotifier {
     _startY = null;
   }
 
-  // --- IMPORT / EXPORT DATA ---
   List<List<dynamic>> generateExportData() {
     final now = DateTime.now();
     final bufferHex =
