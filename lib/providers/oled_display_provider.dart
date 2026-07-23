@@ -14,6 +14,8 @@ import '../others/oled_display.dart';
 import '../l10n/app_localizations.dart';
 import 'locator.dart';
 
+enum GameModeType { racing, dino }
+
 class OledDisplayProvider extends ChangeNotifier {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   static const String lTag = "OLED_Provider";
@@ -39,9 +41,16 @@ class OledDisplayProvider extends ChangeNotifier {
   bool _isDirty = false;
   Timer? _streamTimer;
 
-  bool isLiveMode = true;
+  bool _runPhysics = false;
+  bool _runHardware = false;
 
+  bool isLiveMode = true;
   bool isGifPlaying = false;
+
+  bool isGameMode = false;
+  GameModeType selectedGameType = GameModeType.racing;
+  double baseSpeedMultiplier = 1.0;
+
   List<List<int>> _gifFrames = [];
   int _currentGifFrame = 0;
 
@@ -50,39 +59,254 @@ class OledDisplayProvider extends ChangeNotifier {
   final bool _isPlayingBack = false;
   bool get isPlayingBack => _isPlayingBack;
 
-  final List<String> _shapeTools = [
-    'line',
-    'rect',
-    'circle',
-    'semi_circle',
-    'triangle',
-    'hexagon',
-    'star',
-    'ellipse',
-    'diamond',
-    'pentagon',
-    'cross',
-    'arrow',
-    'check',
-    'heart',
-    'grid'
+
+  bool isGameRunning = false;
+  bool isGameOver = false;
+  bool isGameWon = false;
+  int score = 0;
+  final int targetScore = 4000;
+  double gameSpeed = 1.0;
+
+  double _tickCounter = 0.0;
+  double _spawnCooldown = 0.0;
+  final Stopwatch _gameClock = Stopwatch();
+  int _lastTickTime = 0;
+
+  List<math.Point<double>> obstacles = [];
+  double steeringDirection = 0.0;
+
+  double roadOffset = 0.0;
+  double carX = 57.0;
+  final double carY = 47.0;
+
+
+  double dinoY = 44.0;
+  double dinoVelocity = 0.0;
+  bool isJumping = false;
+
+
+  final List<List<int>> playerCarSprite = [
+    [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+    [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0],
+    [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+    [1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+  ];
+  final List<List<int>> enemyCarSprite = [
+    [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+    [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+    [1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+  ];
+  final List<List<int>> dinoSprite = [
+    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+    [1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+    [1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+    [0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0],
+    [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0]
+  ];
+  final List<List<int>> cactusSprite = [
+    [0, 0, 1, 1, 0, 0],
+    [0, 0, 1, 1, 0, 0],
+    [1, 0, 1, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1, 0],
+    [0, 0, 1, 1, 0, 0],
+    [0, 0, 1, 1, 0, 0],
+    [0, 0, 1, 1, 0, 0]
+  ];
+  final List<List<int>> trophySprite = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1, 1, 0],
+    [0, 0, 1, 1, 1, 1, 1, 0, 0],
+    [0, 0, 0, 1, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 0, 0, 0],
+    [0, 0, 1, 1, 1, 1, 1, 0, 0]
   ];
 
-  Future<void> initializeDisplay({
-    required Function(String) onError,
-    required I2C? i2c,
-    required ScienceLab? scienceLab,
-    String selectedModelString = 'SH1106 128x64',
-  }) async {
+  final Map<String, List<List<int>>> retroFont = {
+    '0': [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 1, 1]
+    ],
+    '1': [
+      [0, 1, 0],
+      [1, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [1, 1, 1]
+    ],
+    '2': [
+      [1, 1, 1],
+      [0, 0, 1],
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 1, 1]
+    ],
+    '3': [
+      [1, 1, 1],
+      [0, 0, 1],
+      [1, 1, 1],
+      [0, 0, 1],
+      [1, 1, 1]
+    ],
+    '4': [
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [0, 0, 1],
+      [0, 0, 1]
+    ],
+    '5': [
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 1, 1],
+      [0, 0, 1],
+      [1, 1, 1]
+    ],
+    '6': [
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1]
+    ],
+    '7': [
+      [1, 1, 1],
+      [0, 0, 1],
+      [0, 0, 1],
+      [0, 0, 1],
+      [0, 0, 1]
+    ],
+    '8': [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1]
+    ],
+    '9': [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [0, 0, 1],
+      [1, 1, 1]
+    ],
+    '/': [
+      [0, 0, 1],
+      [0, 1, 0],
+      [0, 1, 0],
+      [1, 0, 0],
+      [1, 0, 0]
+    ],
+    'C': [
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 0, 0],
+      [1, 0, 0],
+      [1, 1, 1]
+    ],
+    'R': [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 1, 0],
+      [1, 0, 1]
+    ],
+    'A': [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1]
+    ],
+    'S': [
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 1, 1],
+      [0, 0, 1],
+      [1, 1, 1]
+    ],
+    'H': [
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1]
+    ],
+    'E': [
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 1, 1],
+      [1, 0, 0],
+      [1, 1, 1]
+    ],
+    'O': [
+      [1, 1, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 0, 1],
+      [1, 1, 1]
+    ],
+  };
+
+  void setGameSpeed(double speed) {
+    baseSpeedMultiplier = speed;
+    notifyListeners();
+  }
+
+  void setSteeringDirection(double direction) {
+    steeringDirection = direction;
+  }
+
+  void jumpDino() {
+    if (!isGameOver && !isGameWon) {
+      if (selectedGameType == GameModeType.dino && !isJumping) {
+        dinoVelocity = -7.5;
+        isJumping = true;
+      }
+    }
+  }
+
+  Future<void> initializeDisplay(
+      {required Function(String) onError,
+      required I2C? i2c,
+      required ScienceLab? scienceLab,
+      String selectedModelString = 'SH1106 128x64'}) async {
     try {
       _i2c = i2c;
       _scienceLab = scienceLab;
-
       if (_i2c == null || _scienceLab == null || !_scienceLab!.isConnected()) {
         onError(appLocalizations.pslabNotConnected);
         return;
       }
-
       await changeModel(selectedModelString);
       _startLiveStream();
     } catch (e) {
@@ -90,72 +314,18 @@ class OledDisplayProvider extends ChangeNotifier {
     }
   }
 
-  List<List<dynamic>> generateExportData() {
-    final now = DateTime.now();
-    final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
-    final bufferHex =
-        frameBuffer.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-
-    return [
-      ['Timestamp', 'DateTime', 'FrameBufferHex'],
-      [now.millisecondsSinceEpoch.toString(), dateFormat.format(now), bufferHex]
-    ];
-  }
-
-  Future<void> loadImportedData(List<List<dynamic>> data) async {
-    try {
-      String? foundHex;
-      for (var row in data) {
-        for (var cell in row) {
-          String cellStr = cell.toString();
-          if (cellStr.length == 2048) {
-            foundHex = cellStr;
-            break;
-          }
-        }
-        if (foundHex != null) break;
-      }
-
-      if (foundHex != null) {
-        _saveState();
-        List<int> loadedBuffer = List.filled(1024, 0);
-        for (int i = 0; i < 1024; i++) {
-          loadedBuffer[i] =
-              int.parse(foundHex.substring(i * 2, i * 2 + 2), radix: 16);
-        }
-        frameBuffer = loadedBuffer;
-        _isDirty = true;
-        notifyListeners();
-
-        logger.d("[$lTag] Successfully loaded canvas data!");
-        if (isLiveMode) await syncManual();
-      } else {
-        logger.e(
-            "[$lTag] Error: No valid 2048-char hex string found in the CSV data.");
-      }
-    } catch (e) {
-      logger.e("[$lTag] Error parsing imported OLED data: $e");
-    }
-  }
-
   Future<void> changeModel(String selectedModelString) async {
     if (_i2c == null || _scienceLab == null) return;
-
     _isHardwareBusy = true;
     notifyListeners();
-
     OledModel model = OledModel.sh1106_128x64;
     if (selectedModelString.contains('SSD1306 128x32')) {
       model = OledModel.ssd1306_128x32;
-    } else if (selectedModelString.contains('SSD1306 128x64')) {
-      model = OledModel.ssd1306_128x64;
-    }
-
+    } else if (selectedModelString.contains('SSD1306 128x64')){
+      model = OledModel.ssd1306_128x64;}
     try {
       _display = await OLED.create(_i2c!, _scienceLab!, model);
       _isDirty = true;
-    } catch (e) {
-      logger.e("[$lTag] Failed to change model: $e");
     } finally {
       _isHardwareBusy = false;
       notifyListeners();
@@ -170,11 +340,12 @@ class OledDisplayProvider extends ChangeNotifier {
 
   void _startLiveStream() {
     _streamTimer?.cancel();
-    _streamTimer = Timer.periodic(const Duration(milliseconds: 100), (_) async {
+    _streamTimer = Timer.periodic(const Duration(milliseconds: 40), (_) async {
       if (isLiveMode &&
           _isDirty &&
           !_isHardwareBusy &&
           !isGifPlaying &&
+          !isGameMode &&
           _display != null) {
         await _flushBufferToHardware();
       }
@@ -186,29 +357,29 @@ class OledDisplayProvider extends ChangeNotifier {
     await _flushBufferToHardware();
   }
 
-  Future<void> _flushBufferToHardware() async {
+  Future<void> _flushBufferToHardware([List<int>? bufferOverride]) async {
+    if (_isHardwareBusy) return;
     _isHardwareBusy = true;
     _isDirty = false;
-    notifyListeners();
-
     try {
-      List<int> merged = List.filled(1024, 0);
-      for (int i = 0; i < 1024; i++) {
-        merged[i] =
-            frameBuffer[i] | shapePreviewBuffer[i] | textPreviewBuffer[i];
+      if (!isGameMode) {
+        List<int> merged = List.filled(1024, 0);
+        for (int i = 0; i < 1024; i++) {
+          merged[i] =
+              frameBuffer[i] | shapePreviewBuffer[i] | textPreviewBuffer[i];
+        }
+        await _display!.sendFrameBuffer(merged);
+      } else {
+        await _display!.sendFrameBuffer(bufferOverride ?? frameBuffer);
       }
-      await _display!.sendFrameBuffer(merged);
     } catch (e) {
       _isDirty = true;
     } finally {
       _isHardwareBusy = false;
-      notifyListeners();
     }
   }
 
   Future<void> clearHardware() async {
-    if (_isHardwareBusy) return;
-
     _saveState();
     frameBuffer = List.filled(1024, 0);
     shapePreviewBuffer = List.filled(1024, 0);
@@ -216,165 +387,260 @@ class OledDisplayProvider extends ChangeNotifier {
     _isDirty = true;
     notifyListeners();
 
-    if (_display == null) return;
-
-    _isHardwareBusy = true;
-    notifyListeners();
-
-    try {
-      await _display!.clearDisplay();
-      _isDirty = false;
-    } catch (e) {
-      logger.e("[$lTag] Clear error: $e");
-    } finally {
-      _isHardwareBusy = false;
-      notifyListeners();
+    if (_display != null && !_isHardwareBusy) {
+      await _flushBufferToHardware();
     }
   }
 
-  void _saveState() {
-    _undoStack.add(List.from(frameBuffer));
-    if (_undoStack.length > 20) _undoStack.removeAt(0);
+  void toggleGameMode() {
+    isGameMode = !isGameMode;
+    _undoStack.clear();
     _redoStack.clear();
-  }
 
-  void undo() {
-    if (_undoStack.isEmpty) return;
-    _redoStack.add(List.from(frameBuffer));
-    frameBuffer = List.from(_undoStack.removeLast());
-    _isDirty = true;
-    notifyListeners();
-  }
-
-  void redo() {
-    if (_redoStack.isEmpty) return;
-    _undoStack.add(List.from(frameBuffer));
-    frameBuffer = List.from(_redoStack.removeLast());
-    _isDirty = true;
-    notifyListeners();
-  }
-
-  void clearPreviews() {
-    shapePreviewBuffer = List.filled(1024, 0);
-    textPreviewBuffer = List.filled(1024, 0);
-    _isDirty = true;
-    notifyListeners();
-  }
-
-  void setTool(String tool) {
-    activeTool = tool;
-    notifyListeners();
-  }
-
-  void handlePanStart(int x, int y) {
-    _saveState();
-    _startX = x;
-    _startY = y;
-    _lastX = x;
-    _lastY = y;
-    if (activeTool == 'draw' || activeTool == 'erase') {
-      _alterPixel(frameBuffer, x, y, activeTool == 'draw');
-    }
-  }
-
-  void handlePanUpdate(int x, int y) {
-    if (_startX == null || _startY == null) return;
-
-    if (activeTool == 'draw' || activeTool == 'erase') {
-      _drawLine(frameBuffer, _lastX!, _lastY!, x, y, activeTool == 'draw');
-      _lastX = x;
-      _lastY = y;
+    if (!isGameMode) {
+      stopGame();
+      clearHardware();
     } else {
-      shapePreviewBuffer = List.filled(1024, 0);
-      int radius = math
-          .sqrt(math.pow(x - _startX!, 2) + math.pow(y - _startY!, 2))
-          .round();
-
-      switch (activeTool) {
-        case 'line':
-          _drawLine(shapePreviewBuffer, _startX!, _startY!, x, y, true);
-          break;
-        case 'rect':
-          _drawRect(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'circle':
-          _drawCircle(shapePreviewBuffer, _startX!, _startY!, radius);
-          break;
-        case 'semi_circle':
-          _drawCircle(shapePreviewBuffer, _startX!, _startY!, radius,
-              semi: true);
-          break;
-        case 'triangle':
-          _drawTriangle(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'hexagon':
-          _drawPolygon(shapePreviewBuffer, _startX!, _startY!, radius, 6);
-          break;
-        case 'pentagon':
-          _drawPolygon(shapePreviewBuffer, _startX!, _startY!, radius, 5);
-          break;
-        case 'star':
-          _drawStar(shapePreviewBuffer, _startX!, _startY!, radius);
-          break;
-        case 'ellipse':
-          _drawEllipse(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'diamond':
-          _drawDiamond(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'cross':
-          _drawCross(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'arrow':
-          _drawArrow(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'check':
-          _drawCheck(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'heart':
-          _drawHeart(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-        case 'grid':
-          _drawGrid(shapePreviewBuffer, _startX!, _startY!, x, y);
-          break;
-      }
-      _isDirty = true;
+      clearHardware();
       notifyListeners();
     }
   }
 
-  void handlePanEnd() {
-    if (_shapeTools.contains(activeTool)) {
-      for (int i = 0; i < 1024; i++) {
-        frameBuffer[i] |= shapePreviewBuffer[i];
-      }
-      shapePreviewBuffer = List.filled(1024, 0);
-      _isDirty = true;
-      notifyListeners();
-    }
-    _startX = null;
-    _startY = null;
+  void switchGame(GameModeType type) {
+    if (isGameRunning) stopGame();
+    selectedGameType = type;
+    isGameOver = false;
+    isGameWon = false;
+    clearHardware();
+    notifyListeners();
   }
+
+  void startGame() {
+    stopGif();
+    isGameRunning = true;
+    isGameOver = false;
+    isGameWon = false;
+    score = 0;
+    _tickCounter = 0.0;
+    _spawnCooldown = 0.0;
+    roadOffset = 0.0;
+    obstacles.clear();
+    steeringDirection = 0.0;
+
+    gameSpeed = selectedGameType == GameModeType.racing ? 1.0 : 1.5;
+    carX = 57.0;
+    dinoY = 32.0;
+    dinoVelocity = 0.0;
+    isJumping = false;
+
+    _runPhysics = true;
+    _runHardware = true;
+    _gameClock.reset();
+    _gameClock.start();
+    _lastTickTime = 0;
+    _physicsLoop();
+    _hardwareLoop();
+  }
+
+  void stopGame() {
+    isGameRunning = false;
+    _runPhysics = false;
+    _runHardware = false;
+    _gameClock.stop();
+    notifyListeners();
+  }
+
+  List<int> get displayBuffer {
+    if (isGameMode) return frameBuffer;
+    List<int> merged = List.filled(1024, 0);
+    for (int i = 0; i < 1024; i++) {
+      merged[i] = frameBuffer[i] | shapePreviewBuffer[i] | textPreviewBuffer[i];
+    }
+    return merged;
+  }
+
+  Future<void> _physicsLoop() async {
+    while (_runPhysics) {
+      int now = _gameClock.elapsedMilliseconds;
+      double dt =
+          ((now - _lastTickTime) / 30.0).clamp(0.1, 3.0) * baseSpeedMultiplier;
+      _lastTickTime = now;
+
+      if (!isGameOver && !isGameWon) {
+        if (selectedGameType == GameModeType.racing) {
+          _tickRacing(dt);
+        } else if (selectedGameType == GameModeType.dino) {
+          _tickDino(dt);
+        }
+      } else {
+        _runPhysics = false;
+        _runHardware = false;
+
+        if (isGameWon) {
+          _drawGameWonScreen();
+        } else if (isGameOver) {
+          _drawGameOverScreen();
+        }
+
+        notifyListeners();
+
+        while (_isHardwareBusy) {
+          await Future.delayed(const Duration(milliseconds: 10));
+        }
+        await _flushBufferToHardware(List.from(frameBuffer));
+      }
+      await Future.delayed(const Duration(milliseconds: 16));
+    }
+  }
+
+  Future<void> _hardwareLoop() async {
+    while (_runHardware) {
+      if (!_isHardwareBusy && _display != null && !isGameOver && !isGameWon) {
+        await _flushBufferToHardware(List.from(frameBuffer));
+        await Future.delayed(const Duration(milliseconds: 40));
+      } else {
+        await Future.delayed(const Duration(milliseconds: 10));
+      }
+    }
+  }
+
+  void _tickRacing(double dt) {
+    _tickCounter += dt;
+    score += (gameSpeed * dt).toInt();
+    gameSpeed += 0.003 * dt;
+    carX = (carX + steeringDirection * (15.0 * dt)).clamp(25.0, 91.0);
+    double carAngle = steeringDirection * 0.25;
+
+    for (int i = obstacles.length - 1; i >= 0; i--) {
+      obstacles[i] =
+          math.Point(obstacles[i].x, obstacles[i].y + (gameSpeed * dt * 1.5));
+      if (obstacles[i].y > 64) obstacles.removeAt(i);
+    }
+
+    if ((_spawnCooldown -= dt) <= 0 &&
+        math.Random().nextInt(100) < (6 * dt).toInt().clamp(1, 100)) {
+      obstacles
+          .add(math.Point([38.0, 58.0, 78.0][math.Random().nextInt(3)], -16.0));
+      _spawnCooldown = (45.0 / gameSpeed);
+    }
+
+    frameBuffer = List.filled(1024, 0);
+    roadOffset += (gameSpeed * dt * 6.0);
+    for (int y = 0; y < 64; y++) {
+      if ((y + roadOffset.toInt()) % 24 < 12) {
+        _alterPixel(frameBuffer, 64, y, true);
+      }
+    }
+    _drawLine(frameBuffer, 45, 0, 0, 64, true);
+    _drawLine(frameBuffer, 83, 0, 128, 64, true);
+
+    int bounceOffset = (math.sin(_tickCounter * 2.0) * 1.5).round();
+    double currentCarY = carY + bounceOffset;
+    if (math.Random().nextBool()) {
+      _alterPixel(
+          frameBuffer, carX.toInt() + 2, currentCarY.toInt() + 13, true);
+    }
+    if (math.Random().nextBool()) {
+      _alterPixel(
+          frameBuffer, carX.toInt() + 9, currentCarY.toInt() + 13, true);
+    }
+
+    for (var ob in obstacles) {
+      _drawRotatedSprite(ob.x, ob.y, enemyCarSprite, 0.0);
+    }
+    _drawRotatedSprite(carX, currentCarY, playerCarSprite, carAngle);
+
+    for (var ob in obstacles) {
+      if ((carX + 2 < ob.x + 10 && carX + 10 > ob.x + 2) &&
+          (currentCarY + 2 < ob.y + 12 && currentCarY + 12 > ob.y + 2)) {
+        isGameOver = true;
+      }
+    }
+
+    _drawText(score.toString(), 4, 4);
+    notifyListeners();
+  }
+
+  void _tickDino(double dt) {
+    _tickCounter += dt;
+    score += (gameSpeed * dt).toInt();
+    gameSpeed += 0.002 * dt;
+    dinoVelocity += 1.2 * dt;
+    dinoY += dinoVelocity * dt;
+    if (dinoY >= 44.0) {
+      dinoY = 44.0;
+      dinoVelocity = 0.0;
+      isJumping = false;
+    }
+
+    for (int i = obstacles.length - 1; i >= 0; i--) {
+      obstacles[i] =
+          math.Point(obstacles[i].x - (gameSpeed * dt), obstacles[i].y);
+      if (obstacles[i].x < -10) obstacles.removeAt(i);
+    }
+    if ((_spawnCooldown -= dt) <= 0 &&
+        math.Random().nextInt(100) < (6 * dt).toInt().clamp(1, 100)) {
+      obstacles.add(math.Point(128.0, 48.0));
+      _spawnCooldown = (60.0 / gameSpeed);
+    }
+
+    frameBuffer = List.filled(1024, 0);
+    roadOffset += (gameSpeed * dt * 4.0);
+    for (int x = 0; x < 128; x++) {
+      if ((x + roadOffset.toInt()) % 12 < 6) {
+        _alterPixel(frameBuffer, x, 56, true);
+      }
+    }
+    for (var ob in obstacles) {
+      _drawSprite(ob.x.toInt(), ob.y.toInt(), cactusSprite, false);
+    }
+
+    int drawY = (!isJumping && (_tickCounter.toInt() % 6 < 3))
+        ? dinoY.toInt() - 1
+        : dinoY.toInt();
+    _drawSprite(20, drawY, dinoSprite, false);
+
+    for (var ob in obstacles) {
+      if ((20 + 2 < ob.x + 4 && 20 + 10 > ob.x + 2) &&
+          (dinoY + 2 < ob.y + 6 && dinoY + 10 > ob.y + 2)) {
+        isGameOver = true;
+      }
+    }
+
+    _drawText(score.toString(), 4, 4);
+    notifyListeners();
+  }
+
+  void _drawGameOverScreen() {
+
+    frameBuffer = List.filled(1024, 0);
+    _drawRect(frameBuffer, 28, 20, 100, 44);
+    _drawRect(frameBuffer, 30, 22, 98, 42);
+    _drawText("CRASH", 54, 28);
+  }
+
+  void _drawGameWonScreen() {
+    frameBuffer = List.filled(1024, 0);
+    _drawRect(frameBuffer, 5, 5, 123, 59);
+    _drawRect(frameBuffer, 7, 7, 121, 57);
+    _drawSprite(60, 28, trophySprite, false);
+  }
+
 
   void _alterPixel(List<int> buffer, int x, int y, bool isDraw) {
     if (x < 0 || x >= 128 || y < 0 || y >= 64) return;
     int index = ((y ~/ 8) * 128) + x;
-    int bit = y % 8;
     if (isDraw) {
-      buffer[index] |= (1 << bit);
+      buffer[index] |= (1 << (y % 8));
     } else {
-      buffer[index] &= ~(1 << bit);
+      buffer[index] &= ~(1 << (y % 8));
     }
-    _isDirty = true;
-    notifyListeners();
   }
 
   void _drawLine(
       List<int> buffer, int x0, int y0, int x1, int y1, bool isDraw) {
-    int dx = (x1 - x0).abs();
-    int sx = x0 < x1 ? 1 : -1;
-    int dy = -(y1 - y0).abs();
-    int sy = y0 < y1 ? 1 : -1;
+    int dx = (x1 - x0).abs(), sx = x0 < x1 ? 1 : -1;
+    int dy = -(y1 - y0).abs(), sy = y0 < y1 ? 1 : -1;
     int err = dx + dy;
     while (true) {
       _alterPixel(buffer, x0, y0, isDraw);
@@ -400,8 +666,7 @@ class OledDisplayProvider extends ChangeNotifier {
 
   void _drawCircle(List<int> buffer, int xc, int yc, int r,
       {bool semi = false}) {
-    int x = 0, y = r;
-    int d = 3 - 2 * r;
+    int x = 0, y = r, d = 3 - 2 * r;
     while (y >= x) {
       if (!semi) {
         _alterPixel(buffer, xc + x, yc + y, true);
@@ -421,9 +686,7 @@ class OledDisplayProvider extends ChangeNotifier {
         d = d + 4 * x + 6;
       }
     }
-    if (semi) {
-      _drawLine(buffer, xc - r, yc, xc + r, yc, true);
-    }
+    if (semi) _drawLine(buffer, xc - r, yc, xc + r, yc, true);
   }
 
   void _drawEllipse(List<int> buffer, int x1, int y1, int x2, int y2) {
@@ -556,6 +819,207 @@ class OledDisplayProvider extends ChangeNotifier {
     }
   }
 
+  void _drawRotatedSprite(
+      double x, double y, List<List<int>> sprite, double angle) {
+    int h = sprite.length, w = sprite[0].length;
+    double cx = w / 2.0,
+        cy = h / 2.0,
+        cosA = math.cos(angle),
+        sinA = math.sin(angle);
+    for (int r = 0; r < h; r++) {
+      for (int c = 0; c < w; c++) {
+        if (sprite[r][c] == 1) {
+          double dx = c - cx, dy = r - cy;
+          _alterPixel(frameBuffer, (x + cx + dx * cosA - dy * sinA).round(),
+              (y + cy + dx * sinA + dy * cosA).round(), true);
+        }
+      }
+    }
+  }
+
+  void _drawSprite(int x, int y, List<List<int>> sprite, bool flipY) {
+    for (int r = 0; r < sprite.length; r++) {
+      for (int c = 0; c < sprite[r].length; c++) {
+        if (sprite[r][c] == 1) {
+          _alterPixel(frameBuffer, x + c,
+              flipY ? (y + sprite.length - 1 - r) : (y + r), true);
+        }
+      }
+    }
+  }
+
+  void _drawText(String text, int x, int y) {
+    int cursorX = x;
+    for (int i = 0; i < text.length; i++) {
+      String char = text[i];
+      if (retroFont.containsKey(char)) {
+        _drawSprite(cursorX, y, retroFont[char]!, false);
+        cursorX += 4;
+      } else if (char == ' ') {
+        cursorX += 4;
+      }
+    }
+  }
+
+
+  void _saveState() {
+    _undoStack.add(List.from(frameBuffer));
+    if (_undoStack.length > 20) _undoStack.removeAt(0);
+    _redoStack.clear();
+  }
+
+  void undo() {
+    if (_undoStack.isEmpty) return;
+    _redoStack.add(List.from(frameBuffer));
+    frameBuffer = List.from(_undoStack.removeLast());
+    _isDirty = true;
+    notifyListeners();
+  }
+
+  void redo() {
+    if (_redoStack.isEmpty) return;
+    _undoStack.add(List.from(frameBuffer));
+    frameBuffer = List.from(_redoStack.removeLast());
+    _isDirty = true;
+    notifyListeners();
+  }
+
+  void clearPreviews() {
+    shapePreviewBuffer = List.filled(1024, 0);
+    textPreviewBuffer = List.filled(1024, 0);
+    _isDirty = true;
+    notifyListeners();
+  }
+
+  void setTool(String tool) {
+    activeTool = tool;
+    notifyListeners();
+  }
+
+  void handlePanStart(int x, int y) {
+    if (isGameMode) return;
+    _saveState();
+    _startX = x;
+    _startY = y;
+    _lastX = x;
+    _lastY = y;
+    if (activeTool == 'draw' || activeTool == 'erase') {
+      _alterPixel(frameBuffer, x, y, activeTool == 'draw');
+      _isDirty = true;
+      notifyListeners();
+    }
+  }
+
+  void handlePanUpdate(int x, int y) {
+    if (isGameMode || _startX == null || _startY == null) return;
+
+    if (activeTool == 'draw' || activeTool == 'erase') {
+      _drawLine(frameBuffer, _lastX!, _lastY!, x, y, activeTool == 'draw');
+      _lastX = x;
+      _lastY = y;
+      _isDirty = true;
+      notifyListeners();
+    } else {
+      shapePreviewBuffer = List.filled(1024, 0);
+      int radius = math
+          .sqrt(math.pow(x - _startX!, 2) + math.pow(y - _startY!, 2))
+          .round();
+
+      if (activeTool == 'line') {
+        _drawLine(shapePreviewBuffer, _startX!, _startY!, x, y, true);
+      } else if (activeTool == 'rect') {
+        _drawRect(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'circle') {
+        _drawCircle(shapePreviewBuffer, _startX!, _startY!, radius);
+      } else if (activeTool == 'semi_circle') {
+        _drawCircle(shapePreviewBuffer, _startX!, _startY!, radius, semi: true);
+      } else if (activeTool == 'triangle') {
+        _drawTriangle(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'hexagon') {
+        _drawPolygon(shapePreviewBuffer, _startX!, _startY!, radius, 6);
+      } else if (activeTool == 'pentagon') {
+        _drawPolygon(shapePreviewBuffer, _startX!, _startY!, radius, 5);
+      } else if (activeTool == 'star') {
+        _drawStar(shapePreviewBuffer, _startX!, _startY!, radius);
+      } else if (activeTool == 'ellipse') {
+        _drawEllipse(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'diamond') {
+        _drawDiamond(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'cross') {
+        _drawCross(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'arrow') {
+        _drawArrow(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'check') {
+        _drawCheck(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'heart') {
+        _drawHeart(shapePreviewBuffer, _startX!, _startY!, x, y);
+      } else if (activeTool == 'grid') {
+        _drawGrid(shapePreviewBuffer, _startX!, _startY!, x, y);
+      }
+
+      _isDirty = true;
+      notifyListeners();
+    }
+  }
+
+  void handlePanEnd() {
+    if (isGameMode) return;
+    for (int i = 0; i < 1024; i++) {
+      frameBuffer[i] |= shapePreviewBuffer[i];
+    }
+    shapePreviewBuffer = List.filled(1024, 0);
+    _isDirty = true;
+    notifyListeners();
+    _startX = null;
+    _startY = null;
+  }
+
+  // --- IMPORT / EXPORT DATA ---
+  List<List<dynamic>> generateExportData() {
+    final now = DateTime.now();
+    final bufferHex =
+        frameBuffer.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    return [
+      ['Timestamp', 'DateTime', 'FrameBufferHex'],
+      [
+        now.millisecondsSinceEpoch.toString(),
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(now),
+        bufferHex
+      ]
+    ];
+  }
+
+  Future<void> loadImportedData(List<List<dynamic>> data) async {
+    try {
+      String? foundHex;
+      for (var row in data) {
+        for (var cell in row) {
+          String cellStr = cell.toString();
+          if (cellStr.length == 2048) {
+            foundHex = cellStr;
+            break;
+          }
+        }
+        if (foundHex != null) break;
+      }
+
+      if (foundHex != null) {
+        _saveState();
+        List<int> loadedBuffer = List.filled(1024, 0);
+        for (int i = 0; i < 1024; i++) {
+          loadedBuffer[i] =
+              int.parse(foundHex.substring(i * 2, i * 2 + 2), radix: 16);
+        }
+        frameBuffer = loadedBuffer;
+        _isDirty = true;
+        notifyListeners();
+        if (isLiveMode) await syncManual();
+      }
+    } catch (e) {
+      logger.e("[$lTag] Error parsing imported OLED data: $e");
+    }
+  }
+
   Future<void> renderTextToPreview(String text) async {
     if (text.isEmpty) {
       textPreviewBuffer = List.filled(1024, 0);
@@ -563,45 +1027,30 @@ class OledDisplayProvider extends ChangeNotifier {
       notifyListeners();
       return;
     }
-
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder, const Rect.fromLTWH(0, 0, 128, 64));
-
     final paint = Paint()..color = Colors.black;
     canvas.drawRect(const Rect.fromLTWH(0, 0, 128, 64), paint);
-
     final textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          height: 1.0,
-        ),
-      ),
-      textDirection: ui.TextDirection.ltr,
-    );
-
+        text: TextSpan(
+            text: text,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 16, height: 1.0)),
+        textDirection: ui.TextDirection.ltr);
     textPainter.layout(maxWidth: 128);
     textPainter.paint(canvas, const Offset(0, 0));
-
     final picture = recorder.endRecording();
     final image = await picture.toImage(128, 64);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
-
     if (byteData == null) return;
-
     List<int> newBuffer = List.filled(1024, 0);
     for (int y = 0; y < 64; y++) {
       for (int x = 0; x < 128; x++) {
         int offset = (y * 128 + x) * 4;
         int r = byteData.getUint8(offset);
-        if (r > 127) {
-          newBuffer[((y ~/ 8) * 128) + x] |= (1 << (y % 8));
-        }
+        if (r > 127) newBuffer[((y ~/ 8) * 128) + x] |= (1 << (y % 8));
       }
     }
-
     textPreviewBuffer = newBuffer;
     _isDirty = true;
     notifyListeners();
@@ -610,7 +1059,6 @@ class OledDisplayProvider extends ChangeNotifier {
   void renderTextToCanvas(String text) {
     if (text.isEmpty) return;
     _saveState();
-
     for (int i = 0; i < 1024; i++) {
       frameBuffer[i] |= textPreviewBuffer[i];
     }
@@ -644,21 +1092,14 @@ class OledDisplayProvider extends ChangeNotifier {
   Future<void> _playGifLoop() async {
     while (isGifPlaying) {
       DateTime startTime = DateTime.now();
-
       frameBuffer = _gifFrames[_currentGifFrame];
       _isDirty = true;
       notifyListeners();
-
       await _flushBufferToHardware();
-
       if (!isGifPlaying) break;
-
-      _currentGifFrame++;
-      if (_currentGifFrame >= _gifFrames.length) _currentGifFrame = 0;
-
+      if (++_currentGifFrame >= _gifFrames.length) _currentGifFrame = 0;
       int elapsed = DateTime.now().difference(startTime).inMilliseconds;
-      int remaining = 100 - elapsed;
-
+      int remaining = 50 - elapsed;
       if (remaining > 0) {
         await Future.delayed(Duration(milliseconds: remaining));
       } else {
@@ -673,14 +1114,11 @@ class OledDisplayProvider extends ChangeNotifier {
       final XFile? pickedFile =
           await picker.pickImage(source: ImageSource.gallery);
       if (pickedFile == null) return;
-
       stopGif();
       _isHardwareBusy = true;
       notifyListeners();
-
       Uint8List fileBytes = await pickedFile.readAsBytes();
       _gifFrames = await compute(_decodeAndProcessGif, fileBytes);
-
       if (_gifFrames.isNotEmpty) {
         _currentGifFrame = 0;
         isGifPlaying = true;
@@ -696,7 +1134,6 @@ class OledDisplayProvider extends ChangeNotifier {
   }
 
   void stopGif() {
-    if (!isGifPlaying) return;
     isGifPlaying = false;
     notifyListeners();
   }
@@ -711,18 +1148,11 @@ class OledDisplayProvider extends ChangeNotifier {
     }
   }
 
-  void clearLocalCanvas() {
-    _saveState();
-    frameBuffer = List.filled(1024, 0);
-    shapePreviewBuffer = List.filled(1024, 0);
-    textPreviewBuffer = List.filled(1024, 0);
-    _isDirty = true;
-    notifyListeners();
-  }
-
   @override
   void dispose() {
     _streamTimer?.cancel();
+    _runPhysics = false;
+    _runHardware = false;
     isGifPlaying = false;
     super.dispose();
   }
