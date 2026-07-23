@@ -806,6 +806,9 @@
     "liveRender": "Live Render",
     "snapshotSaved": "Canvas Snapshot Saved to Logs!",
     "airQuality" : "Air Quality",
+    "mpu925x" : "MPU925X",
+    "angle" : "Angle",
+    "magnetometer" : "Magnetometer",
     "autoScaleGraph" : "Auto-Scale Graph",
     "autoScaleDescription" : "Dynamically scale the chart axes to fit the data"
 }

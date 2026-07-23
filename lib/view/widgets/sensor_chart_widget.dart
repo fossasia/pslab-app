@@ -13,6 +13,13 @@ class SensorChartWidget extends StatelessWidget {
   final String? xAxisLabel;
   final List<ChartDataPoint> data;
   final Color lineColor;
+
+  final List<ChartDataPoint>? data2;
+  final Color? lineColor2;
+  final List<ChartDataPoint>? data3;
+  final Color? lineColor3;
+  final List<String>? legendLabels;
+
   final Color? backgroundColor;
   final double? minY;
   final double? maxY;
@@ -25,6 +32,7 @@ class SensorChartWidget extends StatelessWidget {
   final String? unit;
   final int? maxDataPoints;
   final Widget? customNoDataWidget;
+
   const SensorChartWidget({
     super.key,
     required this.title,
@@ -32,6 +40,11 @@ class SensorChartWidget extends StatelessWidget {
     required this.data,
     this.xAxisLabel = 'Time (s)',
     this.lineColor = chartLineColor,
+    this.data2,
+    this.lineColor2,
+    this.data3,
+    this.lineColor3,
+    this.legendLabels,
     this.backgroundColor,
     this.minY,
     this.maxY,
@@ -45,14 +58,25 @@ class SensorChartWidget extends StatelessWidget {
     this.maxDataPoints,
     this.customNoDataWidget,
   });
-  List<ChartDataPoint> get _validData {
-    return data.where((point) {
+
+  List<ChartDataPoint> _getValidData(List<ChartDataPoint>? input) {
+    if (input == null) return [];
+    return input.where((point) {
       return point.x.isFinite &&
           point.y.isFinite &&
           !point.x.isNaN &&
           !point.y.isNaN;
     }).toList();
   }
+
+  List<ChartDataPoint> get _validData1 => _getValidData(data);
+  List<ChartDataPoint> get _validData2 => _getValidData(data2);
+  List<ChartDataPoint> get _validData3 => _getValidData(data3);
+
+  bool get _hasAnyData =>
+      _validData1.isNotEmpty ||
+      _validData2.isNotEmpty ||
+      _validData3.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -78,20 +102,58 @@ class SensorChartWidget extends StatelessWidget {
           topRight: Radius.zero,
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                color: chartTextColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+          Text(
+            title,
+            style: TextStyle(
+              color: chartTextColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
           ),
+          if (legendLabels != null && legendLabels!.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                _buildLegendItem(legendLabels![0], lineColor),
+                if (legendLabels!.length > 1 && data2 != null) ...[
+                  const SizedBox(width: 16),
+                  _buildLegendItem(
+                      legendLabels![1], lineColor2 ?? Colors.green),
+                ],
+                if (legendLabels!.length > 2 && data3 != null) ...[
+                  const SizedBox(width: 16),
+                  _buildLegendItem(legendLabels![2], lineColor3 ?? Colors.red),
+                ],
+              ],
+            ),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _buildLegendItem(String label, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: TextStyle(
+            color: chartTextColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 
@@ -107,7 +169,7 @@ class SensorChartWidget extends StatelessWidget {
           bottomRight: Radius.zero,
         ),
       ),
-      child: _validData.isEmpty ? _buildNoDataView() : _buildLineChart(),
+      child: !_hasAnyData ? _buildNoDataView() : _buildLineChart(),
     );
   }
 
@@ -131,9 +193,6 @@ class SensorChartWidget extends StatelessWidget {
   }
 
   Widget _buildLineChart() {
-    if (_validData.isEmpty) {
-      return _buildNoDataView();
-    }
     return Stack(
       children: [
         _buildAxisLabels(),
@@ -170,30 +229,12 @@ class SensorChartWidget extends StatelessWidget {
               minY: _getMinY(),
               maxY: _getMaxY(),
               lineBarsData: [
-                LineChartBarData(
-                  spots: _validData
-                      .map((point) => FlSpot(point.x, point.y))
-                      .toList(),
-                  isCurved: isCurved,
-                  color: lineColor,
-                  barWidth: lineWidth,
-                  isStrokeCapRound: true,
-                  dotData: FlDotData(
-                    show: showDots,
-                    getDotPainter: (spot, percent, barData, index) {
-                      return FlDotCirclePainter(
-                        radius: 2,
-                        color: lineColor,
-                        strokeWidth: 1,
-                        strokeColor: chartTextColor,
-                      );
-                    },
-                  ),
-                  belowBarData: BarAreaData(
-                    show: false,
-                    color: lineColor.withAlpha(26),
-                  ),
-                ),
+                if (_validData1.isNotEmpty)
+                  _buildBarData(_validData1, lineColor),
+                if (_validData2.isNotEmpty)
+                  _buildBarData(_validData2, lineColor2 ?? Colors.green),
+                if (_validData3.isNotEmpty)
+                  _buildBarData(_validData3, lineColor3 ?? Colors.red),
               ],
               lineTouchData: LineTouchData(
                 enabled: true,
@@ -203,15 +244,14 @@ class SensorChartWidget extends StatelessWidget {
                       final yValue = spot.y.isFinite
                           ? spot.y.toStringAsFixed(2)
                           : appLocalizations.notAvailable;
-                      final xValue = spot.x.isFinite
-                          ? spot.x.toStringAsFixed(1)
-                          : appLocalizations.notAvailable;
+
+                      // Using the bar's color to match the tooltip text to the line
                       return LineTooltipItem(
-                        '$yAxisLabel: $yValue${unit ?? ''}\n${appLocalizations.time}: $xValue',
+                        '$yValue${unit ?? ''}',
                         TextStyle(
-                          color: chartTextColor,
+                          color: spot.bar.color ?? chartTextColor,
                           fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       );
                     }).toList();
@@ -222,6 +262,31 @@ class SensorChartWidget extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  LineChartBarData _buildBarData(List<ChartDataPoint> validData, Color color) {
+    return LineChartBarData(
+      spots: validData.map((point) => FlSpot(point.x, point.y)).toList(),
+      isCurved: isCurved,
+      color: color,
+      barWidth: lineWidth,
+      isStrokeCapRound: true,
+      dotData: FlDotData(
+        show: showDots,
+        getDotPainter: (spot, percent, barData, index) {
+          return FlDotCirclePainter(
+            radius: 2,
+            color: color,
+            strokeWidth: 1,
+            strokeColor: chartTextColor,
+          );
+        },
+      ),
+      belowBarData: BarAreaData(
+        show: false,
+        color: color.withAlpha(26),
+      ),
     );
   }
 
@@ -275,47 +340,33 @@ class SensorChartWidget extends StatelessWidget {
             ),
           ),
         ),
-        if (_validData.isNotEmpty)
-          Positioned(
-            top: 12,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: lineColor.withAlpha(230),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                '${_validData.last.y.toStringAsFixed(2)}${unit ?? ''}',
-                style: TextStyle(
-                  color: chartTextColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }
 
   double _getMinX() {
     if (minX != null) return minX!;
-    if (_validData.isEmpty) return 0;
-    return _validData.first.x;
+    if (!_hasAnyData) return 0;
+    final allX =
+        [..._validData1, ..._validData2, ..._validData3].map((e) => e.x);
+    return allX.reduce((a, b) => a < b ? a : b);
   }
 
   double _getMaxX() {
     if (maxX != null) return maxX!;
-    if (_validData.isEmpty) return 10;
-    return _validData.last.x;
+    if (!_hasAnyData) return 10;
+    final allX =
+        [..._validData1, ..._validData2, ..._validData3].map((e) => e.x);
+    return allX.reduce((a, b) => a > b ? a : b);
   }
 
   double _getMinY() {
     if (minY != null) return minY!;
-    if (_validData.isEmpty) return 0;
-    final values = _validData.map((e) => e.y).toList();
-    final dataMin = values.reduce((a, b) => a < b ? a : b);
+    if (!_hasAnyData) return 0;
+    final allY = [..._validData1, ..._validData2, ..._validData3]
+        .map((e) => e.y)
+        .toList();
+    final dataMin = allY.reduce((a, b) => a < b ? a : b);
     final range = _getDataRange();
     final result = dataMin - (range * 0.1);
     return result.isFinite ? result : 0;
@@ -323,19 +374,23 @@ class SensorChartWidget extends StatelessWidget {
 
   double _getMaxY() {
     if (maxY != null) return maxY!;
-    if (_validData.isEmpty) return 100;
-    final values = _validData.map((e) => e.y).toList();
-    final dataMax = values.reduce((a, b) => a > b ? a : b);
+    if (!_hasAnyData) return 100;
+    final allY = [..._validData1, ..._validData2, ..._validData3]
+        .map((e) => e.y)
+        .toList();
+    final dataMax = allY.reduce((a, b) => a > b ? a : b);
     final range = _getDataRange();
     final result = dataMax + (range * 0.1);
     return result.isFinite ? result : 100;
   }
 
   double _getDataRange() {
-    if (_validData.isEmpty) return 1;
-    final values = _validData.map((e) => e.y).toList();
-    final dataMin = values.reduce((a, b) => a < b ? a : b);
-    final dataMax = values.reduce((a, b) => a > b ? a : b);
+    if (!_hasAnyData) return 1;
+    final allY = [..._validData1, ..._validData2, ..._validData3]
+        .map((e) => e.y)
+        .toList();
+    final dataMin = allY.reduce((a, b) => a < b ? a : b);
+    final dataMax = allY.reduce((a, b) => a > b ? a : b);
     final range = dataMax - dataMin;
     if (!range.isFinite || range <= 0) {
       return dataMax.abs().isFinite ? dataMax.abs() : 1;
