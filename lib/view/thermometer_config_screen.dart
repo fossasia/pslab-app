@@ -49,6 +49,7 @@ class _ThermometerConfigScreenState extends State<ThermometerConfigScreen> {
         ),
         leading: Builder(builder: (context) {
           return IconButton(
+            tooltip: appLocalizations.back,
             onPressed: () {
               Navigator.maybePop(context);
             },

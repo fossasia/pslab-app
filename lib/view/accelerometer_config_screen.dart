@@ -72,6 +72,7 @@ class _AccelerometerConfigScreenState extends State<AccelerometerConfigScreen> {
         ),
         leading: Builder(builder: (context) {
           return IconButton(
+            tooltip: appLocalizations.back,
             onPressed: () {
               if (Navigator.canPop(context) &&
                   ModalRoute.of(context)?.settings.name == '/accelerometer') {

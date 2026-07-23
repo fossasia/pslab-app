@@ -182,6 +182,9 @@ class _OledControlPanelState extends State<OledControlPanel> {
                     border: Border.all(color: Colors.grey.shade300, width: 1.2),
                   ),
                   child: IconButton(
+                    tooltip: provider.isGameRunning
+                        ? appLocalizations.pauseGame
+                        : appLocalizations.startGame,
                     padding: EdgeInsets.zero,
                     icon: Icon(
                       provider.isGameRunning
@@ -289,6 +292,7 @@ class _OledControlPanelState extends State<OledControlPanel> {
               suffixIconConstraints:
                   const BoxConstraints(minWidth: 40, minHeight: 40),
               suffixIcon: IconButton(
+                tooltip: appLocalizations.send,
                 icon: Icon(Icons.send_rounded,
                     color: provider.isGifPlaying ? Colors.black26 : primaryRed,
                     size: 22),

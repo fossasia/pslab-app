@@ -73,6 +73,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove, size: 18),
+                      tooltip: appLocalizations.decreaseValue,
                       padding: EdgeInsets.zero,
                       onPressed: () => updateValue(
                           (double.tryParse(controller.text) ?? 0) - 1),
@@ -110,6 +111,7 @@ class _AngleInputTopDialogState extends State<AngleInputTopDialog> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.add, size: 18),
+                      tooltip: appLocalizations.increaseValue,
                       padding: EdgeInsets.zero,
                       onPressed: () => updateValue(
                           (double.tryParse(controller.text) ?? 0) + 1),

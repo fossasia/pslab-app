@@ -114,6 +114,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
             title: Text(appLocalizations.automatedMeasurements),
             secondary: IconButton(
                 icon: Icon(Icons.info_outline),
+                tooltip: appLocalizations.info,
                 onPressed: () {
                   showDialog<void>(
                     context: context,
@@ -475,27 +476,30 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                     ),
                   ),
                   actions: [
-                    TextButton(
-                      onPressed: () {
-                        if ((((provider.isCH1Selected ||
-                                        provider.isCH2Selected ||
-                                        provider.isCH3Selected ||
-                                        provider.isMICSelected) &&
-                                    getIt<ScienceLab>().isConnected()) ||
-                                provider.isInBuiltMICSelected) &&
-                            !provider.autoScale()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(appLocalizations.noSignal),
-                            ),
-                          );
-                        }
-                      },
-                      child: Text(appLocalizations.autoScale,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          )),
+                    Tooltip(
+                      message: appLocalizations.autoScale,
+                      child: TextButton(
+                        onPressed: () {
+                          if ((((provider.isCH1Selected ||
+                                          provider.isCH2Selected ||
+                                          provider.isCH3Selected ||
+                                          provider.isMICSelected) &&
+                                      getIt<ScienceLab>().isConnected()) ||
+                                  provider.isInBuiltMICSelected) &&
+                              !provider.autoScale()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(appLocalizations.noSignal),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(appLocalizations.autoScale,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            )),
+                      ),
                     ),
                     if (widget.playbackData != null &&
                         _playbackMetadata != null &&
@@ -518,6 +522,9 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                     Icons.play_arrow,
                                     color: Colors.white,
                                   ),
+                            tooltip: provider.isRunning
+                                ? appLocalizations.pause
+                                : appLocalizations.play,
                             onPressed: () {
                               if (provider.isRunning) {
                                 provider.isRunning = false;

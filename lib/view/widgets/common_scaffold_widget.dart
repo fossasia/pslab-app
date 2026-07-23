@@ -109,6 +109,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
       responsiveActions.add(
         IconButton(
           onPressed: widget.onGuidePressed,
+          tooltip: appLocalizations.showGuide,
           icon: Icon(
             Icons.info,
             color: appBarContentColor,
@@ -121,6 +122,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
       responsiveActions.add(
         IconButton(
           onPressed: widget.onOptionsPressed,
+          tooltip: appLocalizations.options,
           icon: Icon(
             Icons.more_vert,
             color: appBarContentColor,
@@ -172,6 +174,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
               children: [
                 IconButton(
                   padding: EdgeInsets.zero,
+                  tooltip: appLocalizations.back,
                   constraints:
                       const BoxConstraints(minWidth: 32, minHeight: 32),
                   onPressed: () {
