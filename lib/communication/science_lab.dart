@@ -6,7 +6,6 @@ import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/packet_handler.dart';
 import 'package:pslab/communication/peripherals/dac_channel.dart';
-import 'package:pslab/communication/socket_client.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/providers/locator.dart';
@@ -41,14 +40,12 @@ class ScienceLab {
   static final double capacitorDischargeVoltage = 0.01 * 3.3;
 
   late CommunicationHandler mCommunicationHandler;
-  late SocketClient mSocketClient;
   late PacketHandler mPacketHandler;
   late CommandsProto mCommandsProto;
   late AnalogConstants mAnalogConstants;
 
   ScienceLab(CommunicationHandler communicationHandler) {
     mCommunicationHandler = communicationHandler;
-    mSocketClient = getIt.get<SocketClient>();
     mCommandsProto = CommandsProto();
     mAnalogConstants = AnalogConstants();
   }
@@ -69,7 +66,7 @@ class ScienceLab {
 
   Future<void> connectWiFi() async {
     try {
-      await mSocketClient.openConnection("192.168.4.1", 80);
+      await mCommunicationHandler.open();
       mPacketHandler = PacketHandler(500, mCommunicationHandler);
     } catch (e) {
       logger.e(e);
@@ -80,7 +77,7 @@ class ScienceLab {
   }
 
   bool isConnected() {
-    return (mSocketClient.isConnected() || mCommunicationHandler.isConnected());
+    return mCommunicationHandler.isConnected();
   }
 
   bool isDeviceFound() {

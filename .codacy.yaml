@@ -1,0 +1,4 @@
+exclude_paths:
+  - 'rust_builder/**'
+  - 'cargokit/**'
+  - 'lib/src/rust/**'
