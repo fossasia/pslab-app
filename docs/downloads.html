@@ -277,19 +277,46 @@
 
         const section = document.createElement("section");
         section.className = "group";
-        const hint = PLATFORM_HINT[platform] || "";
-        section.innerHTML = `<h2>${platform}</h2>${hint ? `<p class="hint">${hint}</p>` : ""}`;
+
+        const heading = document.createElement("h2");
+        heading.textContent = platform;
+        section.appendChild(heading);
+
+        const hintText = PLATFORM_HINT[platform] || "";
+        if (hintText) {
+          const hint = document.createElement("p");
+          hint.className = "hint";
+          hint.textContent = hintText;
+          section.appendChild(hint);
+        }
+
         const list = document.createElement("ul");
 
         for (const file of items.sort((a, b) => a.name.localeCompare(b.name))) {
           const li = document.createElement("li");
-          li.innerHTML = `
-            <div class="meta">
-              <div class="name">${file.name}</div>
-              <div class="size">${formatSize(file.size)}</div>
-            </div>
-            <a class="download" href="${RAW}${encodeURIComponent(file.name)}" download>Download</a>
-          `;
+
+          const meta = document.createElement("div");
+          meta.className = "meta";
+
+          const name = document.createElement("div");
+          name.className = "name";
+          name.textContent = file.name;
+
+          const size = document.createElement("div");
+          size.className = "size";
+          size.textContent = formatSize(file.size);
+
+          meta.appendChild(name);
+          meta.appendChild(size);
+
+          const link = document.createElement("a");
+          link.className = "download";
+          link.href = `${RAW}${encodeURIComponent(file.name)}`;
+          link.setAttribute("download", "");
+          link.textContent = "Download";
+
+          li.appendChild(meta);
+          li.appendChild(link);
           list.appendChild(li);
         }
 

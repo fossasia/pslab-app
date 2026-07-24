@@ -16,7 +16,7 @@ This repository holds the Android App for performing experiments with [PSLab](ht
 The PSLab app is available for **Android**, **iOS**, **Windows**, **macOS**, **Linux**, and **Web**.
 
 - Store listings and install guides: [PSLab Application documentation](https://docs.pslab.io/application/Readme.html)
-- Development builds (direct downloads): [Download page](https://cdn.jsdelivr.net/gh/fossasia/pslab-app@main/docs/downloads.html)
+- Development builds (direct downloads): [Download page](https://cdn.jsdelivr.net/gh/fossasia/pslab-app@app/index.html)
 
 Sign up for the latest updates and test new features early by joining our [beta program](https://play.google.com/apps/testing/io.pslab).
 
