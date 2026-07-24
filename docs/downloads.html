@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PSLab App Downloads</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-top: #1a0a0a;
+      --bg-mid: #3d1212;
+      --bg-bottom: #f3ece8;
+      --surface: rgba(255, 252, 250, 0.92);
+      --text: #1c1212;
+      --muted: #6b5555;
+      --line: rgba(120, 60, 60, 0.18);
+      --accent: #c62828;
+      --accent-deep: #8e1b1b;
+      --glow: rgba(198, 40, 40, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Sora", sans-serif;
+      color: var(--text);
+      line-height: 1.55;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, var(--glow), transparent 55%),
+        linear-gradient(165deg, var(--bg-top) 0%, var(--bg-mid) 28%, #8a3030 48%, var(--bg-bottom) 72%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 70%);
+    }
+
+    main {
+      position: relative;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 20px 72px;
+    }
+
+    .brand {
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.6rem, 8vw, 4rem);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      color: #fff7f5;
+      margin: 0 0 12px;
+      text-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand span {
+      display: block;
+      font-size: 0.38em;
+      letter-spacing: 0.18em;
+      font-weight: 500;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+
+    .lede {
+      max-width: 34rem;
+      margin: 0 0 36px;
+      color: rgba(255, 244, 240, 0.82);
+      font-size: 1.05rem;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 18px;
+      padding: 10px 6px 6px;
+      box-shadow: 0 24px 60px rgba(40, 10, 10, 0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .status {
+      margin: 8px 14px 14px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #fff4d6;
+      border: 1px solid #e6c76a;
+      color: var(--text);
+    }
+
+    .status.error {
+      background: #fde8e6;
+      border-color: #ef9a9a;
+    }
+
+    .group {
+      padding: 18px 18px 8px;
+    }
+
+    .group + .group {
+      border-top: 1px solid var(--line);
+    }
+
+    .group h2 {
+      margin: 0 0 4px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .group .hint {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 12px;
+      border-radius: 12px;
+      transition: background 0.15s ease;
+    }
+
+    li:hover {
+      background: rgba(198, 40, 40, 0.06);
+    }
+
+    .meta { min-width: 0; }
+
+    .name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      word-break: break-all;
+    }
+
+    .size {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 2px;
+    }
+
+    a.download {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 108px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #d32f2f 0%, var(--accent-deep) 100%);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+
+    a.download:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    a.download:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 560px) {
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      a.download {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="brand"><span>Pocket Science Lab</span>PSLab</h1>
+    <p class="lede">
+      Development builds for every platform — one click to download.
+    </p>
+
+    <div class="panel">
+      <div id="status" class="status">Loading available builds…</div>
+      <div id="downloads"></div>
+    </div>
+
+  </main>
+  <script>
+    const REPO = "fossasia/pslab-app";
+    const BRANCH = "app";
+    const API = `https://api.github.com/repos/${REPO}/contents/?ref=${BRANCH}`;
+    const RAW = `https://github.com/${REPO}/raw/${BRANCH}/`;
+    const ARTIFACT_EXT = /\.(apk|aab|ipa|exe|deb|rpm|dmg|zip)$/i;
+
+    const PLATFORM_HINT = {
+      Android: "Install on a phone or emulator",
+      iOS: "For Apple devices / tooling",
+      Windows: "Run the installer on Windows",
+      macOS: "Open the disk image on a Mac",
+      Linux: "Install the package for your distro",
+      Web: "Unzip and serve locally or host static files",
+      Other: ""
+    };
+
+    function platformFor(name) {
+      const lower = name.toLowerCase();
+      if (lower.endsWith(".exe")) return "Windows";
+      if (lower.endsWith(".dmg")) return "macOS";
+      if (lower.endsWith(".deb") || lower.endsWith(".rpm")) return "Linux";
+      if (lower.endsWith(".apk") || lower.endsWith(".aab")) return "Android";
+      if (lower.endsWith(".ipa")) return "iOS";
+      if (lower.endsWith(".zip")) return "Web";
+      return "Other";
+    }
+
+    function formatSize(bytes) {
+      if (typeof bytes !== "number" || bytes <= 0) return "";
+      const units = ["B", "KB", "MB", "GB"];
+      let size = bytes;
+      let unit = 0;
+      while (size >= 1024 && unit < units.length - 1) {
+        size /= 1024;
+        unit += 1;
+      }
+      return `${size.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`;
+    }
+
+    function render(files) {
+      const status = document.getElementById("status");
+      const root = document.getElementById("downloads");
+      root.innerHTML = "";
+
+      if (!files.length) {
+        status.className = "status error";
+        status.textContent = "No downloadable build artifacts were found on the app branch.";
+        return;
+      }
+
+      status.remove();
+
+      const groups = {};
+      for (const file of files) {
+        const platform = platformFor(file.name);
+        (groups[platform] ||= []).push(file);
+      }
+
+      const order = ["Windows", "Android", "iOS", "macOS", "Linux", "Web", "Other"];
+      for (const platform of order) {
+        const items = groups[platform];
+        if (!items) continue;
+
+        const section = document.createElement("section");
+        section.className = "group";
+
+        const heading = document.createElement("h2");
+        heading.textContent = platform;
+        section.appendChild(heading);
+
+        const hintText = PLATFORM_HINT[platform] || "";
+        if (hintText) {
+          const hint = document.createElement("p");
+          hint.className = "hint";
+          hint.textContent = hintText;
+          section.appendChild(hint);
+        }
+
+        const list = document.createElement("ul");
+
+        for (const file of items.sort((a, b) => a.name.localeCompare(b.name))) {
+          const li = document.createElement("li");
+
+          const meta = document.createElement("div");
+          meta.className = "meta";
+
+          const name = document.createElement("div");
+          name.className = "name";
+          name.textContent = file.name;
+
+          const size = document.createElement("div");
+          size.className = "size";
+          size.textContent = formatSize(file.size);
+
+          meta.appendChild(name);
+          meta.appendChild(size);
+
+          const link = document.createElement("a");
+          link.className = "download";
+          link.href = `${RAW}${encodeURIComponent(file.name)}`;
+          link.setAttribute("download", "");
+          link.textContent = "Download";
+
+          li.appendChild(meta);
+          li.appendChild(link);
+          list.appendChild(li);
+        }
+
+        section.appendChild(list);
+        root.appendChild(section);
+      }
+    }
+
+    fetch(API)
+      .then((response) => {
+        if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
+        return response.json();
+      })
+      .then((items) => {
+        const files = (Array.isArray(items) ? items : [])
+          .filter((item) => item.type === "file" && ARTIFACT_EXT.test(item.name));
+        render(files);
+      })
+      .catch((error) => {
+        const status = document.getElementById("status");
+        status.className = "status error";
+        status.textContent = `Could not load builds: ${error.message}`;
+      });
+  </script>
+</body>
+</html>
