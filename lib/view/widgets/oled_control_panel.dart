@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oled_display_provider.dart';
+import 'package:flutter/services.dart';
 
 class OledControlPanel extends StatefulWidget {
   const OledControlPanel({super.key});
@@ -13,14 +14,59 @@ class OledControlPanel extends StatefulWidget {
 
 class _OledControlPanelState extends State<OledControlPanel> {
   final TextEditingController _textController = TextEditingController();
+  final FocusNode _keyboardFocus = FocusNode();
   static const Color primaryRed = Colors.red;
 
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _keyboardFocus.requestFocus();
+    });
+  }
+
+  @override
   void dispose() {
+    _keyboardFocus.dispose();
     _textController.dispose();
     super.dispose();
+  }
+
+  void _handleKey(
+    KeyEvent event,
+    OledDisplayProvider provider,
+  ) {
+    if (provider.selectedGameType == GameModeType.racing) {
+      final isDown = event is KeyDownEvent;
+      final isUp = event is KeyUpEvent;
+
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft ||
+          event.logicalKey == LogicalKeyboardKey.keyA) {
+        if (isDown) {
+          provider.setSteeringDirection(-1.0);
+        } else if (isUp) {
+          provider.setSteeringDirection(0.0);
+        }
+      }
+
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
+          event.logicalKey == LogicalKeyboardKey.keyD) {
+        if (isDown) {
+          provider.setSteeringDirection(1.0);
+        } else if (isUp) {
+          provider.setSteeringDirection(0.0);
+        }
+      }
+    } else {
+      if (event.logicalKey == LogicalKeyboardKey.space) {
+        if (event is KeyDownEvent) {
+          provider.jumpDino();
+        }
+      }
+    }
   }
 
   Widget _buildToolButton(IconData icon, String toolId, Color primaryColor,
@@ -129,150 +175,162 @@ class _OledControlPanelState extends State<OledControlPanel> {
     final provider = context.watch<OledDisplayProvider>();
 
     if (provider.isGameMode) {
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black12),
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return Focus(
+          autofocus: true,
+          focusNode: _keyboardFocus,
+          onKeyEvent: (node, event) {
+            _handleKey(event, provider);
+            return KeyEventResult.handled;
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.black12),
+            ),
+            child: Column(
               children: [
-                Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.shade300, width: 1.2),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<GameModeType>(
-                      value: provider.selectedGameType,
-                      icon:
-                          const Icon(Icons.arrow_drop_down, color: primaryRed),
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border:
+                            Border.all(color: Colors.grey.shade300, width: 1.2),
                       ),
-                      items: const [
-                        DropdownMenuItem(
-                            value: GameModeType.racing, child: Text("Racer")),
-                        DropdownMenuItem(
-                            value: GameModeType.dino, child: Text("Dino")),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          provider.switchGame(val);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey.shade300, width: 1.2),
-                  ),
-                  child: IconButton(
-                    tooltip: provider.isGameRunning
-                        ? appLocalizations.pauseGame
-                        : appLocalizations.startGame,
-                    padding: EdgeInsets.zero,
-                    icon: Icon(
-                      provider.isGameRunning
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      color: Colors.black87,
-                      size: 24,
-                    ),
-                    onPressed: () {
-                      if (provider.isGameRunning) {
-                        provider.stopGame();
-                      } else {
-                        provider.startGame();
-                      }
-                    },
-                  ),
-                ),
-                Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey.shade300, width: 1.2),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<double>(
-                      value: provider.baseSpeedMultiplier,
-                      icon: const Padding(
-                        padding: EdgeInsets.only(left: 4.0),
-                        child: Icon(Icons.speed_rounded,
-                            color: primaryRed, size: 18),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<GameModeType>(
+                          value: provider.selectedGameType,
+                          icon: const Icon(Icons.arrow_drop_down,
+                              color: primaryRed),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                                value: GameModeType.racing,
+                                child: Text("Racer")),
+                            DropdownMenuItem(
+                                value: GameModeType.dino, child: Text("Dino")),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              provider.switchGame(val);
+                            }
+                          },
+                        ),
                       ),
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 0.5, child: Text("0.5x")),
-                        DropdownMenuItem(value: 1.0, child: Text("1.0x")),
-                        DropdownMenuItem(value: 1.5, child: Text("1.5x")),
-                        DropdownMenuItem(value: 2.0, child: Text("2.0x")),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          provider.setGameSpeed(val);
-                        }
-                      },
                     ),
-                  ),
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border:
+                            Border.all(color: Colors.grey.shade300, width: 1.2),
+                      ),
+                      child: IconButton(
+                        tooltip: provider.isGameRunning
+                            ? appLocalizations.pauseGame
+                            : appLocalizations.startGame,
+                        padding: EdgeInsets.zero,
+                        icon: Icon(
+                          provider.isGameRunning
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: Colors.black87,
+                          size: 24,
+                        ),
+                        onPressed: () {
+                          _keyboardFocus.requestFocus();
+                          if (provider.isGameRunning) {
+                            provider.stopGame();
+                          } else {
+                            provider.startGame();
+                          }
+                        },
+                      ),
+                    ),
+                    Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border:
+                            Border.all(color: Colors.grey.shade300, width: 1.2),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<double>(
+                          value: provider.baseSpeedMultiplier,
+                          icon: const Padding(
+                            padding: EdgeInsets.only(left: 4.0),
+                            child: Icon(Icons.speed_rounded,
+                                color: primaryRed, size: 18),
+                          ),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: 0.5, child: Text("0.5x")),
+                            DropdownMenuItem(value: 1.0, child: Text("1.0x")),
+                            DropdownMenuItem(value: 1.5, child: Text("1.5x")),
+                            DropdownMenuItem(value: 2.0, child: Text("2.0x")),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              provider.setGameSpeed(val);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 24),
+                if (provider.selectedGameType == GameModeType.racing)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildGameBtn(
+                          icon: Icons.keyboard_arrow_left_rounded,
+                          color: primaryRed,
+                          onDown: () => provider.setSteeringDirection(-1.0),
+                          onUp: () => provider.setSteeringDirection(0.0)),
+                      const SizedBox(width: 32),
+                      _buildGameBtn(
+                          icon: Icons.keyboard_arrow_right_rounded,
+                          color: primaryRed,
+                          onDown: () => provider.setSteeringDirection(1.0),
+                          onUp: () => provider.setSteeringDirection(0.0)),
+                    ],
+                  )
+                else
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildGameBtn(
+                          label: "JUMP",
+                          width: 120,
+                          height: 42,
+                          color: primaryRed,
+                          onDown: () => provider.jumpDino(),
+                          onUp: () {}),
+                    ],
+                  ),
               ],
             ),
-            const SizedBox(height: 24),
-            if (provider.selectedGameType == GameModeType.racing)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildGameBtn(
-                      icon: Icons.keyboard_arrow_left_rounded,
-                      color: primaryRed,
-                      onDown: () => provider.setSteeringDirection(-1.0),
-                      onUp: () => provider.setSteeringDirection(0.0)),
-                  const SizedBox(width: 32),
-                  _buildGameBtn(
-                      icon: Icons.keyboard_arrow_right_rounded,
-                      color: primaryRed,
-                      onDown: () => provider.setSteeringDirection(1.0),
-                      onUp: () => provider.setSteeringDirection(0.0)),
-                ],
-              )
-            else
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildGameBtn(
-                      label: "JUMP",
-                      width: 120,
-                      height: 42,
-                      color: primaryRed,
-                      onDown: () => provider.jumpDino(),
-                      onUp: () {}),
-                ],
-              ),
-          ],
-        ),
-      );
+          ));
     } else {
       return Column(
         children: [
