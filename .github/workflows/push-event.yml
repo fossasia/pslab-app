@@ -376,8 +376,10 @@ EOF
                 *.apk|*.aab|*.ipa|*.exe|*.deb|*.rpm|*.dmg|*.zip) ;;
                 *) continue ;;
               esac
+              escaped_name=$(printf '%s' "$file" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g')
+              encoded_name=$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=""))' "$file")
               printf '    <li><span class="name">%s</span><a href="%s/%s" download>Download</a></li>\n' \
-                "$file" "$raw_base" "$file"
+                "$escaped_name" "$raw_base" "$encoded_name"
             done
             cat <<'EOF'
   </ul>
