@@ -8,6 +8,8 @@
     <true/>
     <key>com.apple.security.device.usb</key>
     <true/>
+    <key>com.apple.security.device.serial</key>
+    <true/>
     <key>com.apple.security.network.server</key>
     <true/>
     <key>com.apple.security.personal-information.location</key>
