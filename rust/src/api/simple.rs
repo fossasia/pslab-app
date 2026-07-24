@@ -3,10 +3,14 @@ use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
 use std::collections::VecDeque;
 use std::sync::Mutex;
+
+#[cfg(target_os = "android")]
+use std::sync::{mpsc, Arc};
+#[cfg(target_os = "android")]
+use std::thread;
+
 #[cfg(not(target_family = "wasm"))]
 use std::time::Duration;
-
-
 #[cfg(not(target_family = "wasm"))]
 use std::io::{Read, Write};
 #[cfg(not(target_family = "wasm"))]
@@ -17,18 +21,13 @@ lazy_static! {
     static ref WIFI_STREAM: Mutex<Option<TcpStream>> = Mutex::new(None);
 }
 
-
-#[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+#[cfg(target_os = "android")]
 use rusb::{
     request_type, DeviceHandle, Direction, GlobalContext, Recipient, RequestType, TransferType,
     UsbContext,
 };
-#[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
-use std::sync::{mpsc, Arc};
-#[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
-use std::thread;
 
-#[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+#[cfg(target_os = "android")]
 lazy_static! {
     static ref TX_QUEUE: Mutex<Option<mpsc::Sender<Vec<u8>>>> = Mutex::new(None);
     static ref USB_HANDLE: Mutex<Option<Arc<DeviceHandle<GlobalContext>>>> = Mutex::new(None);
@@ -37,6 +36,10 @@ lazy_static! {
     static ref INTERFACE_ID: Mutex<u8> = Mutex::new(0);
 }
 
+#[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+lazy_static! {
+    static ref SERIAL_PORT: Mutex<Option<Box<dyn serialport::SerialPort>>> = Mutex::new(None);
+}
 
 #[cfg(target_family = "wasm")]
 lazy_static! {
@@ -44,15 +47,37 @@ lazy_static! {
 }
 
 
-
 pub fn init_desktop(vid: u16, pid: u16) -> Result<()> {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     {
-        let handle = rusb::open_device_with_vid_pid(vid, pid)
-            .ok_or_else(|| anyhow!("Device not found or permission denied"))?;
-        setup_device(handle)
+        let ports = serialport::available_ports().map_err(|e| anyhow!("Failed to list ports: {}", e))?;
+        let mut target_port_name = None;
+
+        for p in ports {
+            if let serialport::SerialPortType::UsbPort(info) = p.port_type {
+                if info.vid == vid && info.pid == pid {
+                    target_port_name = Some(p.port_name);
+                    break;
+                }
+            }
+        }
+
+        let port_name = target_port_name.ok_or_else(|| anyhow!("PSLab device not found on COM/Serial ports. Check drivers."))?;
+
+        let mut port = serialport::new(port_name, 1_000_000)
+            .timeout(Duration::from_millis(100))
+            .open()
+            .map_err(|e| anyhow!("Failed to open Serial port: {}", e))?;
+
+        port.write_data_terminal_ready(true).unwrap_or(());
+        let _ = port.clear(serialport::ClearBuffer::All);
+
+        *SERIAL_PORT.lock().unwrap() = Some(port);
+
+        Ok(())
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         let _ = (vid, pid);
         Err(anyhow!("Desktop USB initialization not supported on this platform"))
@@ -84,7 +109,7 @@ pub fn init_android(fd: i32) -> Result<()> {
     }
 }
 
-#[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+#[cfg(target_os = "android")]
 fn setup_device(handle: DeviceHandle<GlobalContext>) -> Result<()> {
     let device = handle.device();
     let desc = device
@@ -187,7 +212,7 @@ fn setup_device(handle: DeviceHandle<GlobalContext>) -> Result<()> {
 
 #[frb(sync)]
 pub fn set_baud_rate(baud_rate: u32) -> Result<()> {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(target_os = "android")]
     {
         if let Some(handle) = USB_HANDLE.lock().unwrap().as_ref() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
@@ -195,37 +220,20 @@ pub fn set_baud_rate(baud_rate: u32) -> Result<()> {
             let is_v5_mcp2200 = desc.vendor_id() == 1240 && desc.product_id() == 223;
 
             if is_v5_mcp2200 {
-                let req_type =
-                    request_type(Direction::Out, RequestType::Class, Recipient::Interface);
+                let req_type = request_type(Direction::Out, RequestType::Class, Recipient::Interface);
                 let mut line_coding = vec![];
                 line_coding.extend_from_slice(&baud_rate.to_le_bytes());
                 line_coding.push(0x00);
                 line_coding.push(0x00);
                 line_coding.push(0x08);
 
-                handle
-                    .write_control(
-                        req_type,
-                        0x20,
-                        0,
-                        interface_num as u16,
-                        &line_coding,
-                        Duration::from_millis(100),
-                    )
+                handle.write_control(req_type, 0x20, 0, interface_num as u16, &line_coding, Duration::from_millis(100))
                     .map_err(|e| anyhow!("Failed to set V5 Baud Rate: {}", e))?;
             } else {
                 let req_type = request_type(Direction::Out, RequestType::Vendor, Recipient::Device);
                 let baud_bytes = baud_rate.to_le_bytes();
 
-                handle
-                    .write_control(
-                        req_type,
-                        0x1E,
-                        0,
-                        interface_num as u16,
-                        &baud_bytes,
-                        Duration::from_millis(100),
-                    )
+                handle.write_control(req_type, 0x1E, 0, interface_num as u16, &baud_bytes, Duration::from_millis(100))
                     .map_err(|e| anyhow!("Failed to set V6 Baud Rate: {}", e))?;
             }
             Ok(())
@@ -233,7 +241,18 @@ pub fn set_baud_rate(baud_rate: u32) -> Result<()> {
             Err(anyhow!("USB Not Connected"))
         }
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
+            port.set_baud_rate(baud_rate).map_err(|e| anyhow!("Failed to set baud rate: {}", e))?;
+            Ok(())
+        } else {
+            Err(anyhow!("USB Not Connected"))
+        }
+    }
+
+    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         let _ = baud_rate;
         Ok(())
@@ -242,7 +261,7 @@ pub fn set_baud_rate(baud_rate: u32) -> Result<()> {
 
 #[frb(sync)]
 pub fn set_dtr(state: bool) -> Result<()> {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(target_os = "android")]
     {
         if let Some(handle) = USB_HANDLE.lock().unwrap().as_ref() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
@@ -250,35 +269,31 @@ pub fn set_dtr(state: bool) -> Result<()> {
             let is_v5_mcp2200 = desc.vendor_id() == 1240;
 
             if is_v5_mcp2200 {
-                let req_type =
-                    request_type(Direction::Out, RequestType::Class, Recipient::Interface);
+                let req_type = request_type(Direction::Out, RequestType::Class, Recipient::Interface);
                 let val = if state { 0x01 } else { 0x00 };
-                let _ = handle.write_control(
-                    req_type,
-                    0x22,
-                    val,
-                    interface_num as u16,
-                    &[],
-                    Duration::from_millis(100),
-                );
+                let _ = handle.write_control(req_type, 0x22, val, interface_num as u16, &[], Duration::from_millis(100));
             } else {
                 let req_type = request_type(Direction::Out, RequestType::Vendor, Recipient::Device);
                 let val = if state { 0x0101 } else { 0x0100 };
-                let _ = handle.write_control(
-                    req_type,
-                    0x07,
-                    val,
-                    interface_num as u16,
-                    &[],
-                    Duration::from_millis(100),
-                );
+                let _ = handle.write_control(req_type, 0x07, val, interface_num as u16, &[], Duration::from_millis(100));
             }
             Ok(())
         } else {
             Err(anyhow!("USB Not Connected"))
         }
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
+            port.write_data_terminal_ready(state).map_err(|e| anyhow!("Failed to set DTR: {}", e))?;
+            Ok(())
+        } else {
+            Err(anyhow!("USB Not Connected"))
+        }
+    }
+
+    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         let _ = state;
         Ok(())
@@ -287,7 +302,7 @@ pub fn set_dtr(state: bool) -> Result<()> {
 
 #[frb(sync)]
 pub fn set_rts(state: bool) -> Result<()> {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(target_os = "android")]
     {
         if let Some(handle) = USB_HANDLE.lock().unwrap().as_ref() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
@@ -295,35 +310,31 @@ pub fn set_rts(state: bool) -> Result<()> {
             let is_v5_mcp2200 = desc.vendor_id() == 1240;
 
             if is_v5_mcp2200 {
-                let req_type =
-                    request_type(Direction::Out, RequestType::Class, Recipient::Interface);
+                let req_type = request_type(Direction::Out, RequestType::Class, Recipient::Interface);
                 let val = if state { 0x03 } else { 0x00 };
-                let _ = handle.write_control(
-                    req_type,
-                    0x22,
-                    val,
-                    interface_num as u16,
-                    &[],
-                    Duration::from_millis(100),
-                );
+                let _ = handle.write_control(req_type, 0x22, val, interface_num as u16, &[], Duration::from_millis(100));
             } else {
                 let req_type = request_type(Direction::Out, RequestType::Vendor, Recipient::Device);
                 let val = if state { 0x0202 } else { 0x0200 };
-                let _ = handle.write_control(
-                    req_type,
-                    0x07,
-                    val,
-                    interface_num as u16,
-                    &[],
-                    Duration::from_millis(100),
-                );
+                let _ = handle.write_control(req_type, 0x07, val, interface_num as u16, &[], Duration::from_millis(100));
             }
             Ok(())
         } else {
             Err(anyhow!("USB Not Connected"))
         }
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
+            port.write_request_to_send(state).map_err(|e| anyhow!("Failed to set RTS: {}", e))?;
+            Ok(())
+        } else {
+            Err(anyhow!("USB Not Connected"))
+        }
+    }
+
+    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         let _ = state;
         Ok(())
@@ -332,20 +343,29 @@ pub fn set_rts(state: bool) -> Result<()> {
 
 #[frb(sync)]
 pub fn write_data(data: Vec<u8>) {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(target_os = "android")]
     {
         if let Some(tx) = TX_QUEUE.lock().unwrap().as_ref() {
             let _ = tx.send(data);
         }
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
+            let _ = port.clear(serialport::ClearBuffer::Input);
+
+            let _ = port.write_all(&data);
+            let _ = port.flush();
+        }
+    }
+    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         let _ = data;
     }
 }
 
 pub fn read_data(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(target_os = "android")]
     {
         let handle_opt = USB_HANDLE.lock().unwrap().clone();
         let ep_in = *EP_IN.lock().unwrap();
@@ -363,7 +383,28 @@ pub fn read_data(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
             vec![]
         }
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
+            let mut buf = vec![0u8; bytes_to_read as usize];
+
+
+            port.set_timeout(Duration::from_millis(timeout_ms as u64)).unwrap_or(());
+
+            match port.read(&mut buf) {
+                Ok(len) => {
+                    buf.truncate(len);
+                    buf
+                }
+                Err(_) => vec![],
+            }
+        } else {
+            vec![]
+        }
+    }
+
+    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         let _ = (bytes_to_read, timeout_ms);
         vec![]
@@ -372,33 +413,25 @@ pub fn read_data(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
 
 #[frb(sync)]
 pub fn close_usb() {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(target_os = "android")]
     {
         *TX_QUEUE.lock().unwrap() = None;
         if let Some(handle) = USB_HANDLE.lock().unwrap().take() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
             let req_type = request_type(Direction::Out, RequestType::Vendor, Recipient::Device);
 
-            let _ = handle.write_control(
-                req_type,
-                0x00,
-                0x0000,
-                interface_num as u16,
-                &[],
-                Duration::from_millis(100),
-            );
-            let _ = handle.write_control(
-                req_type,
-                0x12,
-                0x000F,
-                interface_num as u16,
-                &[],
-                Duration::from_millis(100),
-            );
+            let _ = handle.write_control(req_type, 0x00, 0x0000, interface_num as u16, &[], Duration::from_millis(100));
+            let _ = handle.write_control(req_type, 0x12, 0x000F, interface_num as u16, &[], Duration::from_millis(100));
             let _ = handle.release_interface(interface_num);
         }
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        *SERIAL_PORT.lock().unwrap() = None;
+    }
+
+    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
 
     }
@@ -406,13 +439,13 @@ pub fn close_usb() {
 
 #[frb(sync)]
 pub fn check_desktop_device_present() -> bool {
-    #[cfg(any(target_os = "android", target_os = "windows", target_os = "linux"))]
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     {
-        if let Ok(devices) = rusb::devices() {
-            for device in devices.iter() {
-                if let Ok(desc) = device.device_descriptor() {
-                    if (desc.vendor_id() == 0x10C4 && desc.product_id() == 0xEA60)
-                        || (desc.vendor_id() == 1240 && desc.product_id() == 223)
+        if let Ok(ports) = serialport::available_ports() {
+            for p in ports {
+                if let serialport::SerialPortType::UsbPort(info) = p.port_type {
+                    if (info.vid == 0x10C4 && info.pid == 0xEA60)
+                        || (info.vid == 1240 && info.pid == 223)
                     {
                         return true;
                     }
@@ -421,7 +454,8 @@ pub fn check_desktop_device_present() -> bool {
         }
         false
     }
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux")))]
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         false
     }
@@ -436,7 +470,6 @@ pub fn wifi_connect(host: String, port: u16) -> Result<()> {
 
         let stream = TcpStream::connect(&addr)
             .map_err(|e| anyhow!("Failed to connect to Wi-Fi socket: {}", e))?;
-
 
         stream.set_nodelay(true).unwrap_or(());
 
@@ -514,7 +547,7 @@ pub fn wifi_disconnect() {
     }
     #[cfg(target_family = "wasm")]
     {
-    
+
     }
 }
 
