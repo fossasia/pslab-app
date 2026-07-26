@@ -51,6 +51,7 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
           _provider.startPlayback(widget.playbackData!);
         } else {
           _provider.setConfigProvider(_configProvider);
+          _provider.initializeSensors();
         }
       }
     });

@@ -50,6 +50,7 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
           _provider.startPlayback(widget.playbackData!);
         } else {
           _provider.setConfigProvider(_configProvider);
+          _provider.initializeSensors();
         }
       }
     });

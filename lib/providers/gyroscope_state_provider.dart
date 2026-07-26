@@ -11,7 +11,7 @@ import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/communication/sensors/mpu6050.dart';
 import 'package:pslab/providers/locator.dart';
-// import 'package:pslab/communication/sensors/mpu925x.dart'; // TODO: Uncomment when merged
+import 'package:pslab/communication/sensors/mpu925x.dart';
 
 class GyroscopeProvider extends ChangeNotifier {
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
@@ -20,7 +20,7 @@ class GyroscopeProvider extends ChangeNotifier {
   int _debugLogCounter = 0;
 
   MPU6050? _mpu6050;
-  // MPU925X? _mpu925x; // TODO: Uncomment when merged
+  MPU925X? _mpu925x;
 
   final List<double> _xData = [];
   final List<double> _yData = [];
@@ -170,7 +170,7 @@ class GyroscopeProvider extends ChangeNotifier {
           _mpu6050 = await MPU6050.create(i2c, scienceLab);
           logger.i("MPU6050 Instance created successfully!");
         } else if (selectedSensor == 'MPU925X') {
-          // _mpu925x = await MPU925X.create(i2c, scienceLab);
+          _mpu925x = await MPU925X.create(i2c, scienceLab);
         }
 
         int period = _configProvider?.config.updatePeriod ?? 1000;
@@ -198,7 +198,7 @@ class GyroscopeProvider extends ChangeNotifier {
       if (selectedSensor == 'MPU6050' && _mpu6050 != null) {
         rawData = await _mpu6050!.getRawData();
       } else if (selectedSensor == 'MPU925X') {
-        // rawData = await _mpu925x!.getRawData();
+        rawData = await _mpu925x!.getRawData();
       } else {
         return;
       }
