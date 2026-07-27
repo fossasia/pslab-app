@@ -51,16 +51,8 @@ runs:
         for vf in build/linux/*/release/bundle/data/flutter_assets/version.json \
                   build/linux/*/release/bundle/share/pslab/flutter_assets/version.json; do
           [ -f "$vf" ] || continue
-          python3 -c "
-import json
-path = '''$vf'''
-with open(path) as f:
-    data = json.load(f)
-data['version'] = '''${{ inputs.VERSION_NAME }}'''
-data['build_number'] = '''${{ inputs.VERSION_CODE }}'''
-with open(path, 'w') as f:
-    json.dump(data, f)
-"
+          python3 -c "import json,sys; p,v,b=sys.argv[1:4]; d=json.load(open(p)); d['version']=v; d['build_number']=b; json.dump(d, open(p,'w'))" \
+            "$vf" "${{ inputs.VERSION_NAME }}" "${{ inputs.VERSION_CODE }}"
         done
 
     - name: Install fpm
