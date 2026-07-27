@@ -31,7 +31,27 @@ runs:
       run: |
         flutter config --enable-linux-desktop
         source linux/prep.sh
-        flutter build linux --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
+        # Flutter ignores --build-name/--build-number on Linux (flutter/flutter#152236).
+        # Bake the CI version into pubspec.yaml so version.json / PackageInfo are correct.
+        sed -i "s/^version: .*/version: ${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}/" pubspec.yaml
+        flutter build linux --release \
+          --build-name ${{ inputs.VERSION_NAME }} \
+          --build-number ${{ inputs.VERSION_CODE }}
+        # Ensure the bundled version.json matches even if Flutter still ignores the flags.
+        for vf in build/linux/*/release/bundle/data/flutter_assets/version.json \
+                  build/linux/*/release/bundle/share/pslab/flutter_assets/version.json; do
+          [ -f "$vf" ] || continue
+          python3 -c "
+import json
+path = '''$vf'''
+with open(path) as f:
+    data = json.load(f)
+data['version'] = '''${{ inputs.VERSION_NAME }}'''
+data['build_number'] = '''${{ inputs.VERSION_CODE }}'''
+with open(path, 'w') as f:
+    json.dump(data, f)
+"
+        done
 
     - name: Install fpm
       shell: bash
