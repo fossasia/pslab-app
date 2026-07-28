@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:pslab/theme/colors.dart';
+
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
-import 'package:pslab/view/logged_data_chart_screen.dart';
 import 'package:pslab/view/logic_analyzer_screen.dart';
 import 'package:pslab/view/luxmeter_screen.dart';
 import 'package:pslab/view/map_screen.dart';
@@ -17,26 +17,28 @@ import 'package:pslab/view/power_source_screen.dart';
 import 'package:pslab/view/soundmeter_screen.dart';
 import 'package:pslab/view/wave_generator_screen.dart';
 import 'package:pslab/view/gas_sensor_screen.dart';
+import 'package:pslab/view/thermometer_screen.dart';
+import 'package:pslab/view/robotic_arm_screen.dart';
+import 'package:pslab/view/accelerometer_screen.dart';
+import 'package:pslab/view/compass_screen.dart';
+import 'package:pslab/view/oled_display_screen.dart';
+
 import '../l10n/app_localizations.dart';
 import '../others/data_service.dart';
 import '../providers/locator.dart';
-import 'accelerometer_screen.dart';
-import 'compass_screen.dart';
-import 'package:pslab/view/thermometer_screen.dart';
-import 'package:pslab/view/robotic_arm_screen.dart';
-
-import 'oled_display_screen.dart';
+import 'logged_data_chart_screen.dart';
 
 class LoggedDataScreen extends StatefulWidget {
   final List<String> instrumentNames;
   final String appBarName;
   final List<String> instrumentIcons;
 
-  const LoggedDataScreen(
-      {super.key,
-      required this.instrumentNames,
-      required this.appBarName,
-      required this.instrumentIcons});
+  const LoggedDataScreen({
+    super.key,
+    required this.instrumentNames,
+    required this.appBarName,
+    required this.instrumentIcons,
+  });
 
   @override
   State<LoggedDataScreen> createState() => _LoggedDataScreenState();
@@ -92,7 +94,6 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
 
         await HomeWidget.saveWidgetData<String>(
             'logs_json_key', jsonEncode(widgetListData));
-
         await HomeWidget.updateWidget(androidName: 'widget.WidgetReceiver');
       } catch (_) {}
     }
@@ -107,9 +108,6 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       _filterLogs(_searchController.text);
     }
   }
-
-  GlobalKey _keyFor(String path) =>
-      _itemKeys.putIfAbsent(path, () => GlobalKey());
 
   void _ensureSelectedVisible() {
     if (_selectedIndex < 0 || _selectedIndex >= _filteredFiles.length) return;
@@ -194,7 +192,6 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     final currentName = extensionIndex != -1
         ? fullFileName.substring(0, extensionIndex)
         : fullFileName;
-
     final extension =
         extensionIndex != -1 ? fullFileName.substring(extensionIndex) : '';
 
@@ -224,7 +221,6 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: primaryRed),
                   ),
-                  // Display the dynamic extension (.csv, .txt, .json)
                   suffixText: extension,
                 ),
                 onSubmitted: (value) => Navigator.of(context).pop(value),
@@ -251,8 +247,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       },
     );
 
-    if (newName == null || newName.trim().isEmpty) return;
-    if (newName.trim() == currentName) return;
+    if (newName == null ||
+        newName.trim().isEmpty ||
+        newName.trim() == currentName) return;
 
     final newPath = await _dataService.renameFile(file.path, newName);
     if (!mounted) return;
@@ -281,9 +278,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   }
 
   Future<void> _deleteAllFiles() async {
-    if (_isLoading) {
-      return;
-    }
+    if (_isLoading) return;
     if (_allFiles.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -324,77 +319,31 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
-  Map<String, dynamic> _getChartConfig(String instrumentName) {
-    switch (instrumentName.toLowerCase()) {
-      case 'luxmeter':
-        return {
-          'xAxisLabel': appLocalizations.timeAxisLabel,
-          'yAxisLabel': appLocalizations.lx,
-          'xDataColumnIndex': 0,
-          'yDataColumnIndex': 2,
-        };
-      case 'sound meter':
-        return {
-          'xAxisLabel': appLocalizations.timeAxisLabel,
-          'yAxisLabel': appLocalizations.db,
-          'xDataColumnIndex': 0,
-          'yDataColumnIndex': 2,
-        };
-      case 'barometer':
-        return {
-          'xAxisLabel': appLocalizations.timeAxisLabel,
-          'yAxisLabel': appLocalizations.atm,
-          'xDataColumnIndex': 0,
-          'yDataColumnIndex': 2,
-        };
-      case 'gas sensor':
-        return {
-          'xAxisLabel': appLocalizations.timeAxisLabel,
-          'yAxisLabel': 'Value',
-          'xDataColumnIndex': 0,
-          'yDataColumnIndex': 2,
-        };
-      default:
-        return {
-          'xAxisLabel': appLocalizations.timeAxisLabel,
-          'yAxisLabel': 'Value',
-          'xDataColumnIndex': 0,
-          'yDataColumnIndex': 2,
-        };
-    }
-  }
-
+  // >>> FIXED ROUTING <<<
   Future<void> _openFile(File file, String instrumentName) async {
-    if (instrumentName.toLowerCase() == 'oscilloscope' ||
-        instrumentName.toLowerCase() ==
-            appLocalizations.logicAnalyzer.toLowerCase()) {
+    // Only route the Logic Analyzer to Playback by default.
+    // Oscilloscope and Wave Generator must go to the Scientific Report.
+    if (instrumentName.toLowerCase() ==
+        appLocalizations.logicAnalyzer.toLowerCase()) {
       return _playFile(file, instrumentName);
     }
+
     final data = await _dataService.readDataFromFile(file);
     if (mounted) {
       if (instrumentName.toLowerCase() == 'robotic arm') {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => RoboticArmScreen(
-              importedData: data,
-            ),
-          ),
+              builder: (_) => RoboticArmScreen(importedData: data)),
         );
-        return;
       } else {
-        final config = _getChartConfig(instrumentName);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => LoggedDataChartScreen(
-              data: data,
               fileName: file.path.split('/').last,
-              xAxisLabel: config['xAxisLabel'],
-              yAxisLabel: config['yAxisLabel'],
-              xDataColumnIndex: config['xDataColumnIndex'],
-              yDataColumnIndex: config['yDataColumnIndex'],
               instrumentName: instrumentName,
+              data: data,
             ),
           ),
         );
@@ -405,126 +354,96 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   Future<void> _playFile(File file, String instrumentName) async {
     final data = await _dataService.readDataFromFile(file);
     if (data.isNotEmpty && mounted) {
-      switch (instrumentName) {
+      switch (instrumentName.toLowerCase()) {
         case 'sound meter':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SoundMeterScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SoundMeterScreen(playbackData: data)));
           break;
         case 'thermometer':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ThermometerScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ThermometerScreen(playbackData: data)));
           break;
         case 'barometer':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BarometerScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => BarometerScreen(playbackData: data)));
           break;
         case 'gyroscope':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GyroscopeScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GyroscopeScreen(playbackData: data)));
           break;
         case 'power source':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PowerSourceScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PowerSourceScreen(playbackData: data)));
           break;
         case 'luxmeter':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LuxMeterScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LuxMeterScreen(playbackData: data)));
           break;
         case 'wave generator':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => WaveGeneratorScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      WaveGeneratorScreen(playbackData: data)));
           break;
         case 'oscilloscope':
           final recordingName = file.uri.pathSegments.last;
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OscilloscopeScreen(
-                playbackData: data,
-                playbackName: recordingName,
-              ),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => OscilloscopeScreen(
+                      playbackData: data, playbackName: recordingName)));
           break;
         case 'multimeter':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MultimeterScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MultimeterScreen(playbackData: data)));
           break;
         case 'logic analyzer':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LogicAnalyzerScreen(
-                playbackData: data,
-                fileName: file.uri.pathSegments.last,
-              ),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LogicAnalyzerScreen(
+                      playbackData: data,
+                      fileName: file.uri.pathSegments.last)));
           break;
         case 'accelerometer':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AccelerometerScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      AccelerometerScreen(playbackData: data)));
           break;
         case 'compass':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CompassScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CompassScreen(playbackData: data)));
           break;
         case 'oled display':
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => OledDisplayScreen(
-                  importedData: data,
-                ),
-              ));
+                  builder: (context) => OledDisplayScreen(importedData: data)));
           break;
         case 'gas sensor':
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GasSensorScreen(playbackData: data),
-            ),
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GasSensorScreen(playbackData: data)));
           break;
       }
     }
@@ -536,18 +455,13 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       if (instrumentName.toLowerCase() == 'robotic arm') {
         Navigator.pop(context, data);
       } else {
-        final config = _getChartConfig(instrumentName);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => LoggedDataChartScreen(
-              data: data,
               fileName: 'Imported Log',
-              xAxisLabel: config['xAxisLabel'],
-              yAxisLabel: config['yAxisLabel'],
-              xDataColumnIndex: config['xDataColumnIndex'],
-              yDataColumnIndex: config['yDataColumnIndex'],
               instrumentName: instrumentName,
+              data: data,
             ),
           ),
         );
@@ -711,171 +625,163 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                             DateFormat.yMMMd().add_jm().format(stat.modified);
                         final bool selected = index == _selectedIndex;
 
-                        return Card(
-                          key: _keyFor(file.path),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          color: selected
-                              ? primaryRed.withValues(alpha: 0.08)
-                              : Theme.of(context).colorScheme.surface,
-                          margin:
-                              const EdgeInsets.only(left: 8, right: 8, top: 8),
-                          child: ListTile(
-                            onTap: () {
-                              setState(() => _selectedIndex = index);
-                              _openFile(file, instrumentName);
-                            },
-                            leading: Image.asset(
-                              widget.instrumentIcons[widget.instrumentNames
-                                  .indexOf(instrumentName)],
-                              color: primaryRed,
+                        // >>> FIXED LIST TILE UI (No more RenderFlex/InkWell errors) <<<
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          child: Material(
+                            color: selected
+                                ? primaryRed.withValues(alpha: 0.08)
+                                : Theme.of(context).colorScheme.surface,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                  color: selected
+                                      ? primaryRed
+                                      : Colors.grey.shade300,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(4),
                             ),
-                            title: Text(fileName,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-                            subtitle: Text(
-                                '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
-                            isThreeLine: true,
-                            trailing: PopupMenuButton<String>(
-                              tooltip: appLocalizations.options,
-                              icon: const Icon(Icons.more_vert,
-                                  color: Colors.black),
-                              onSelected: (value) async {
-                                if (value == appLocalizations.play) {
-                                  _playFile(file, instrumentName);
-                                } else if (value == appLocalizations.location) {
-                                  final data =
-                                      await _dataService.readDataFromFile(file);
-                                  if (!context.mounted) return;
-                                  double latitude = 0;
-                                  double longitude = 0;
-                                  if (data[data.length - 1]
-                                          [data[data.length - 1].length - 2]
-                                      is double) {
-                                    latitude = data[data.length - 1]
-                                            [data[data.length - 1].length - 2]
-                                        .toDouble();
-                                    longitude = data[data.length - 1]
-                                            [data[data.length - 1].length - 1]
-                                        .toDouble();
-                                  }
-                                  if (latitude == 0 && longitude == 0) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          appLocalizations
-                                              .noLocationDataAvailable,
-                                          style: TextStyle(
-                                              color: snackBarContentColor),
-                                        ),
-                                        backgroundColor:
-                                            snackBarBackgroundColor,
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MapScreen(
-                                        latitude: latitude,
-                                        longitude: longitude,
-                                      ),
-                                    ),
-                                  );
-                                } else if (value == appLocalizations.share) {
-                                  _dataService.shareFile(file.path);
-                                } else if (value == appLocalizations.rename) {
-                                  _renameFile(file);
-                                } else if (value == appLocalizations.delete) {
-                                  _deleteFile(file.path);
-                                }
+                            child: InkWell(
+                              onTap: () {
+                                setState(() => _selectedIndex = index);
+                                _openFile(file, instrumentName);
                               },
-                              itemBuilder: (BuildContext context) => [
-                                if (playableInstruments
-                                    .contains(instrumentName))
-                                  PopupMenuItem<String>(
-                                    value: appLocalizations.play,
-                                    child: ListTile(
-                                      dense: true,
-                                      leading: Icon(
-                                        Icons.play_arrow,
-                                        color: primaryRed,
-                                      ),
-                                      title: Text(
-                                        appLocalizations.play,
-                                        style: TextStyle(
-                                          color: Colors.black,
+                              child: ListTile(
+                                leading: Image.asset(
+                                  widget.instrumentIcons[widget.instrumentNames
+                                      .indexOf(instrumentName)],
+                                  color: primaryRed,
+                                ),
+                                title: Text(fileName,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                                subtitle: Text(
+                                    '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
+                                isThreeLine: true,
+                                trailing: PopupMenuButton<String>(
+                                  tooltip: appLocalizations.options,
+                                  icon: const Icon(Icons.more_vert,
+                                      color: Colors.black),
+                                  onSelected: (value) async {
+                                    if (value == appLocalizations.play) {
+                                      _playFile(file, instrumentName);
+                                    } else if (value ==
+                                        appLocalizations.location) {
+                                      final data = await _dataService
+                                          .readDataFromFile(file);
+                                      if (!context.mounted) return;
+                                      double latitude = 0;
+                                      double longitude = 0;
+                                      if (data[data.length - 1]
+                                              [data[data.length - 1].length - 2]
+                                          is double) {
+                                        latitude = data[data.length - 1][
+                                                data[data.length - 1].length -
+                                                    2]
+                                            .toDouble();
+                                        longitude = data[data.length - 1][
+                                                data[data.length - 1].length -
+                                                    1]
+                                            .toDouble();
+                                      }
+                                      if (latitude == 0 && longitude == 0) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              appLocalizations
+                                                  .noLocationDataAvailable,
+                                              style: TextStyle(
+                                                  color: snackBarContentColor),
+                                            ),
+                                            backgroundColor:
+                                                snackBarBackgroundColor,
+                                          ),
+                                        );
+                                        return;
+                                      }
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MapScreen(
+                                            latitude: latitude,
+                                            longitude: longitude,
+                                          ),
+                                        ),
+                                      );
+                                    } else if (value ==
+                                        appLocalizations.share) {
+                                      _dataService.shareFile(file.path);
+                                    } else if (value ==
+                                        appLocalizations.rename) {
+                                      _renameFile(file);
+                                    } else if (value ==
+                                        appLocalizations.delete) {
+                                      _deleteFile(file.path);
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) => [
+                                    if (playableInstruments
+                                        .contains(instrumentName.toLowerCase()))
+                                      PopupMenuItem<String>(
+                                        value: appLocalizations.play,
+                                        child: ListTile(
+                                          dense: true,
+                                          leading: Icon(Icons.play_arrow,
+                                              color: primaryRed),
+                                          title: Text(appLocalizations.play,
+                                              style: const TextStyle(
+                                                  color: Colors.black)),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                PopupMenuItem<String>(
-                                  value: appLocalizations.location,
-                                  child: ListTile(
-                                    dense: true,
-                                    leading: Icon(
-                                      Icons.map,
-                                      color: primaryRed,
-                                    ),
-                                    title: Text(
-                                      appLocalizations.location,
-                                      style: TextStyle(
-                                        color: Colors.black,
+                                    PopupMenuItem<String>(
+                                      value: appLocalizations.location,
+                                      child: ListTile(
+                                        dense: true,
+                                        leading:
+                                            Icon(Icons.map, color: primaryRed),
+                                        title: Text(appLocalizations.location,
+                                            style: const TextStyle(
+                                                color: Colors.black)),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                PopupMenuItem<String>(
-                                  value: appLocalizations.share,
-                                  child: ListTile(
-                                    dense: true,
-                                    leading: Icon(
-                                      Icons.share,
-                                      color: primaryRed,
-                                    ),
-                                    title: Text(
-                                      appLocalizations.share,
-                                      style: TextStyle(
-                                        color: Colors.black,
+                                    PopupMenuItem<String>(
+                                      value: appLocalizations.share,
+                                      child: ListTile(
+                                        dense: true,
+                                        leading: Icon(Icons.share,
+                                            color: primaryRed),
+                                        title: Text(appLocalizations.share,
+                                            style: const TextStyle(
+                                                color: Colors.black)),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                PopupMenuItem<String>(
-                                  value: appLocalizations.rename,
-                                  child: ListTile(
-                                    dense: true,
-                                    leading: Icon(
-                                      Icons.drive_file_rename_outline,
-                                      color: primaryRed,
-                                    ),
-                                    title: Text(
-                                      appLocalizations.rename,
-                                      style: TextStyle(
-                                        color: Colors.black,
+                                    PopupMenuItem<String>(
+                                      value: appLocalizations.rename,
+                                      child: ListTile(
+                                        dense: true,
+                                        leading: Icon(
+                                            Icons.drive_file_rename_outline,
+                                            color: primaryRed),
+                                        title: Text(appLocalizations.rename,
+                                            style: const TextStyle(
+                                                color: Colors.black)),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                PopupMenuItem<String>(
-                                  value: appLocalizations.delete,
-                                  child: ListTile(
-                                    dense: true,
-                                    leading: Icon(
-                                      Icons.delete,
-                                      color: primaryRed,
-                                    ),
-                                    title: Text(
-                                      appLocalizations.delete,
-                                      style: TextStyle(
-                                        color: Colors.black,
+                                    PopupMenuItem<String>(
+                                      value: appLocalizations.delete,
+                                      child: ListTile(
+                                        dense: true,
+                                        leading: Icon(Icons.delete,
+                                            color: primaryRed),
+                                        title: Text(appLocalizations.delete,
+                                            style: const TextStyle(
+                                                color: Colors.black)),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         );
