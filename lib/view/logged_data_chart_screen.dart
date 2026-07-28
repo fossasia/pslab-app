@@ -243,7 +243,6 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                       color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
-
                 if (analyzedData.isEmpty) ...[
                   const Center(
                     child: Padding(
