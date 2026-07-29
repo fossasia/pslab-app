@@ -37,6 +37,9 @@ jobs:
     name: Common Build
     needs: changes
     runs-on: ubuntu-latest
+    outputs:
+      VERSION_NAME: ${{ steps.flutter-version.outputs.VERSION_NAME }}
+      VERSION_CODE: ${{ steps.flutter-version.outputs.VERSION_CODE }}
     steps:
       - uses: actions/checkout@v7
         if: needs.changes.outputs.is_code == 'true'
@@ -44,6 +47,19 @@ jobs:
       - name: Common Workflow
         if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/common
+
+      - name: Read current version
+        if: needs.changes.outputs.is_code == 'true'
+        id: flutter-version
+        run: |
+          # Use the version branch (same source as push builds) without bumping,
+          # so Linux .deb/.rpm artifacts are not named with the default 1.0.0.
+          git clone --depth=1 --branch=version \
+            https://github.com/${{ github.event.pull_request.base.repo.full_name }} version
+          read -r version_name < version/versionName.txt
+          read -r version_code < version/versionCode.txt
+          echo "VERSION_NAME=$version_name" >> $GITHUB_OUTPUT
+          echo "VERSION_CODE=$version_code" >> $GITHUB_OUTPUT
 
       - name: Save PR number
         if: needs.changes.outputs.is_code == 'true'
@@ -212,6 +228,9 @@ jobs:
       - name: Linux Workflow
         if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/linux
+        with:
+          VERSION_NAME: ${{ needs.common.outputs.VERSION_NAME }}
+          VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
 
       - name: Non-Code Change
         if: needs.changes.outputs.is_code != 'true'
@@ -228,6 +247,9 @@ jobs:
       - name: Linux ARM64 Workflow
         if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/linux-arm64
+        with:
+          VERSION_NAME: ${{ needs.common.outputs.VERSION_NAME }}
+          VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
 
       - name: Non-Code Change
         if: needs.changes.outputs.is_code != 'true'
