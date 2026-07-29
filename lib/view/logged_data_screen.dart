@@ -249,7 +249,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
 
     if (newName == null ||
         newName.trim().isEmpty ||
-        newName.trim() == currentName) return;
+        newName.trim() == currentName) {
+      return;
+    }
 
     final newPath = await _dataService.renameFile(file.path, newName);
     if (!mounted) return;
@@ -319,10 +321,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
-  // >>> FIXED ROUTING <<<
   Future<void> _openFile(File file, String instrumentName) async {
-    // Only route the Logic Analyzer to Playback by default.
-    // Oscilloscope and Wave Generator must go to the Scientific Report.
     if (instrumentName.toLowerCase() ==
         appLocalizations.logicAnalyzer.toLowerCase()) {
       return _playFile(file, instrumentName);
@@ -624,8 +623,6 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                         final formattedDate =
                             DateFormat.yMMMd().add_jm().format(stat.modified);
                         final bool selected = index == _selectedIndex;
-
-                        // >>> FIXED LIST TILE UI (No more RenderFlex/InkWell errors) <<<
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),

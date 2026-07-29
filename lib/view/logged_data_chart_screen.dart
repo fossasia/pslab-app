@@ -2,6 +2,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pdf/pdf.dart';
@@ -30,9 +32,11 @@ class LoggedDataChartScreen extends StatefulWidget {
 }
 
 class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   Map<String, InstrumentSeries> analyzedData = {};
   int sampleCount = 0;
-  String logTime = 'Unknown';
+  String? logTime;
   String cleanFileName = '';
 
   final GlobalKey _printKey = GlobalKey();
@@ -67,9 +71,9 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
   Future<void> _exportToPdf() async {
     try {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Generating PDF Document...'),
-          duration: Duration(seconds: 1),
+        SnackBar(
+          content: Text(appLocalizations.generatingPdfDocument),
+          duration: const Duration(seconds: 1),
         ),
       );
 
@@ -102,13 +106,13 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
         await Printing.sharePdf(
           bytes: await pdf.save(),
           filename:
-              '${widget.instrumentName.replaceAll(" ", "_")}_Chart_Report.pdf',
+              '${widget.instrumentName.replaceAll(" ", "_")}_${appLocalizations.chartReportPdf}',
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to export PDF: $e')),
+          SnackBar(content: Text('${appLocalizations.failedToExportPdf}: $e')),
         );
       }
     }
@@ -122,19 +126,19 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
         inst == 'multimeter') {
       return [
         SpecificMetricText(
-            label: 'PEAK-TO-PEAK',
+            label: appLocalizations.peakToPeak,
             value: series.peakToPeak.toStringAsFixed(2),
             unit: 'V'),
         SpecificMetricText(
-            label: 'RMS VOLTAGE',
+            label: appLocalizations.rmsVoltage,
             value: series.rms.toStringAsFixed(3),
             unit: 'V'),
         SpecificMetricText(
-            label: 'NOISE (σ)',
+            label: appLocalizations.noiseSigma,
             value: series.stdDev.toStringAsFixed(3),
             unit: 'V'),
         SpecificMetricText(
-            label: 'INTEGRAL',
+            label: appLocalizations.integral,
             value: series.integral.toStringAsFixed(2),
             unit: 'Vs'),
       ];
@@ -143,55 +147,57 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
         inst == 'compass') {
       return [
         SpecificMetricText(
-            label: 'VIBRATION (σ)',
+            label: appLocalizations.vibrationSigma,
             value: series.stdDev.toStringAsFixed(3),
             unit: ''),
         SpecificMetricText(
-            label: 'TOTAL RANGE',
+            label: appLocalizations.totalRange,
             value: series.peakToPeak.toStringAsFixed(2),
             unit: ''),
         SpecificMetricText(
-            label: 'RMS MAGNITUDE',
+            label: appLocalizations.rmsMagnitude,
             value: series.rms.toStringAsFixed(2),
             unit: ''),
         SpecificMetricText(
-            label: 'INTEGRAL',
+            label: appLocalizations.integral,
             value: series.integral.toStringAsFixed(2),
             unit: ''),
       ];
     } else if (inst == 'sound meter') {
       return [
         SpecificMetricText(
-            label: 'EQUIVALENT (RMS)',
+            label: appLocalizations.equivalentRms,
             value: series.rms.toStringAsFixed(1),
             unit: 'dB'),
         SpecificMetricText(
-            label: 'DYNAMIC RANGE',
+            label: appLocalizations.dynamicRange,
             value: series.peakToPeak.toStringAsFixed(1),
             unit: 'dB'),
         SpecificMetricText(
-            label: 'VARIANCE (σ)',
+            label: appLocalizations.varianceSigma,
             value: series.stdDev.toStringAsFixed(2),
             unit: ''),
         SpecificMetricText(
-            label: 'TOTAL AREA',
+            label: appLocalizations.totalArea,
             value: series.integral.toStringAsFixed(1),
             unit: ''),
       ];
     } else {
       return [
         SpecificMetricText(
-            label: 'TOTAL RANGE',
+            label: appLocalizations.totalRange,
             value: series.peakToPeak.toStringAsFixed(2),
             unit: ''),
         SpecificMetricText(
-            label: 'RMS VALUE', value: series.rms.toStringAsFixed(2), unit: ''),
+            label: appLocalizations.rmsValue,
+            value: series.rms.toStringAsFixed(2),
+            unit: ''),
         SpecificMetricText(
-            label: 'DEVIATION (σ)',
+            label: appLocalizations.deviationSigma,
             value: series.stdDev.toStringAsFixed(2),
             unit: ''),
         SpecificMetricText(
-            label: 'INTEGRAL (∫)',
+            label: appLocalizations.integralSymbol,
             value: series.integral.toStringAsFixed(1),
             unit: ''),
       ];
@@ -200,12 +206,14 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final displayLogTime = logTime ?? appLocalizations.unknownTime;
+
     return CommonScaffold(
-      title: 'LOGGED DATA CHART',
+      title: appLocalizations.loggedDataChart,
       actions: [
         IconButton(
           icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-          tooltip: 'Export to PDF',
+          tooltip: appLocalizations.exportToPdf,
           onPressed: _exportToPdf,
         ),
       ],
@@ -236,7 +244,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Logged: $logTime  |  Samples: $sampleCount',
+                  '${appLocalizations.logged}: $displayLogTime  |  ${appLocalizations.samples}: $sampleCount',
                   style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -244,13 +252,13 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                 ),
                 const SizedBox(height: 24),
                 if (analyzedData.isEmpty) ...[
-                  const Center(
+                  Center(
                     child: Padding(
-                      padding: EdgeInsets.all(48.0),
+                      padding: const EdgeInsets.all(48.0),
                       child: Text(
-                        "No visualization data available.",
+                        appLocalizations.noVisualizationData,
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: Colors.grey),
                       ),
                     ),
                   )
@@ -274,29 +282,31 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ReportGroupBox(
-            title: '${series.name} - SIGNAL TREND (CHART)',
+            title: '${series.name} - ${appLocalizations.signalTrendChart}',
             child: MinimalSparkline(spots: series.spots),
           ),
           ReportGroupBox(
-            title: '${series.name} - BASE METRICS',
+            title: '${series.name} - ${appLocalizations.baseMetrics}',
             child: Wrap(
               alignment: WrapAlignment.spaceEvenly,
               spacing: 16,
               runSpacing: 16,
               children: [
                 UniversalStatText(
-                    label: 'MEAN (μ)', value: series.mean.toStringAsFixed(2)),
+                    label: appLocalizations.meanMu,
+                    value: series.mean.toStringAsFixed(2)),
                 UniversalStatText(
-                    label: 'MAXIMUM',
+                    label: appLocalizations.maximum,
                     value: series.max.toStringAsFixed(2),
                     isHighlight: true),
                 UniversalStatText(
-                    label: 'MINIMUM', value: series.min.toStringAsFixed(2)),
+                    label: appLocalizations.minimum,
+                    value: series.min.toStringAsFixed(2)),
               ],
             ),
           ),
           ReportGroupBox(
-            title: '${series.name} - SPECIFIC METRICS',
+            title: '${series.name} - ${appLocalizations.specificMetrics}',
             child: Wrap(
               spacing: 16,
               runSpacing: 16,
@@ -309,7 +319,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
             ),
           ),
           ReportGroupBox(
-            title: '${series.name} - SIGNAL DISTRIBUTION',
+            title: '${series.name} - ${appLocalizations.signalDistribution}',
             child: Column(
               children: [
                 Row(
@@ -318,9 +328,9 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                     Expanded(
                       child: Column(
                         children: [
-                          const Text(
-                            'AMPLITUDE ZONES',
-                            style: TextStyle(
+                          Text(
+                            appLocalizations.amplitudeZones,
+                            style: const TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black54),
@@ -338,9 +348,9 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                     Expanded(
                       child: Column(
                         children: [
-                          const Text(
-                            'FREQUENCY SPREAD',
-                            style: TextStyle(
+                          Text(
+                            appLocalizations.frequencySpread,
+                            style: const TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black54),
@@ -360,11 +370,11 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _legendDot(Colors.blue.shade400, 'Low'),
+                    _legendDot(Colors.blue.shade400, appLocalizations.low),
                     const SizedBox(width: 12),
-                    _legendDot(Colors.grey.shade400, 'Mid'),
+                    _legendDot(Colors.grey.shade400, appLocalizations.mid),
                     const SizedBox(width: 12),
-                    _legendDot(primaryRed, 'High'),
+                    _legendDot(primaryRed, appLocalizations.high),
                   ],
                 )
               ],

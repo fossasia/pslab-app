@@ -249,62 +249,228 @@ class DistributionHistogram extends StatelessWidget {
   final List<double> rawValues;
   final double min;
   final double max;
+  final int binCount;
 
-  const DistributionHistogram(
-      {super.key,
-      required this.rawValues,
-      required this.min,
-      required this.max});
+  const DistributionHistogram({
+    super.key,
+    required this.rawValues,
+    required this.min,
+    required this.max,
+    this.binCount = 5,
+  });
+
+  List<int> _computeBins() {
+    if (rawValues.isEmpty || min >= max) {
+      return List.filled(binCount, 0);
+    }
+
+    final bins = List<int>.filled(binCount, 0);
+    final range = max - min;
+
+    for (final value in rawValues) {
+      int binIndex = ((value - min) / range * binCount).floor();
+      if (binIndex >= binCount) binIndex = binCount - 1;
+      if (binIndex < 0) binIndex = 0;
+      bins[binIndex]++;
+    }
+
+    return bins;
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (rawValues.isEmpty) return const SizedBox();
-
-    const int bucketCount = 10;
-    List<int> buckets = List.filled(bucketCount, 0);
-    double range = max - min == 0 ? 1 : max - min;
-
-    int maxFreq = 0;
-    for (double val in rawValues) {
-      int index = ((val - min) / range * (bucketCount - 1)).floor();
-      if (index >= bucketCount) index = bucketCount - 1;
-      if (index < 0) index = 0;
-      buckets[index]++;
-      if (buckets[index] > maxFreq) maxFreq = buckets[index];
-    }
-
-    List<BarChartGroupData> barGroups = [];
-    for (int i = 0; i < bucketCount; i++) {
-      barGroups.add(
-        BarChartGroupData(
-          x: i,
-          barRods: [
-            BarChartRodData(
-              toY: buckets[i].toDouble(),
-              color: Colors.white,
-              borderSide: const BorderSide(color: Colors.black87, width: 1.5),
-              width: 10,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(2)),
-            ),
-          ],
-        ),
-      );
-    }
+    final bins = _computeBins();
+    final maxCount = bins.isEmpty ? 0 : bins.reduce((a, b) => a > b ? a : b);
 
     return SizedBox(
-      height: 120,
+      height: 110,
       width: double.infinity,
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceBetween,
-          maxY: maxFreq * 1.1,
-          gridData: const FlGridData(show: false),
-          titlesData: const FlTitlesData(show: false),
-          borderData: FlBorderData(show: false),
-          barGroups: barGroups,
+      child: CustomPaint(
+        painter: _HistogramWithAxesPainter(
+          bins: bins,
+          minVal: min,
+          maxVal: max,
+          maxCount: maxCount,
+          barColor: Colors.grey.shade700,
+          axisColor: Colors.black54,
         ),
       ),
     );
+  }
+}
+
+class _HistogramWithAxesPainter extends CustomPainter {
+  final List<int> bins;
+  final double minVal;
+  final double maxVal;
+  final int maxCount;
+  final Color barColor;
+  final Color axisColor;
+
+  _HistogramWithAxesPainter({
+    required this.bins,
+    required this.minVal,
+    required this.maxVal,
+    required this.maxCount,
+    required this.barColor,
+    required this.axisColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const double leftMargin = 26.0;
+    const double bottomMargin = 18.0;
+    const double topMargin = 6.0;
+    const double rightMargin = 6.0;
+
+    final chartWidth = size.width - leftMargin - rightMargin;
+    final chartHeight = size.height - topMargin - bottomMargin;
+
+    if (chartWidth <= 0 || chartHeight <= 0) return;
+
+    final axisPaint = Paint()
+      ..color = axisColor
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    final barPaint = Paint()
+      ..color = barColor
+      ..style = PaintingStyle.fill;
+
+    canvas.drawLine(
+      Offset(leftMargin, topMargin),
+      Offset(leftMargin, topMargin + chartHeight),
+      axisPaint,
+    );
+
+    canvas.drawLine(
+      Offset(leftMargin, topMargin + chartHeight),
+      Offset(leftMargin + chartWidth, topMargin + chartHeight),
+      axisPaint,
+    );
+
+    if (bins.isNotEmpty && maxCount > 0) {
+      final barWidth = chartWidth / bins.length;
+      final gap = barWidth * 0.12;
+
+      for (int i = 0; i < bins.length; i++) {
+        final count = bins[i];
+        final barHeight = (count / maxCount) * chartHeight;
+
+        final left = leftMargin + (i * barWidth) + (gap / 2);
+        final top = topMargin + chartHeight - barHeight;
+        final right = leftMargin + ((i + 1) * barWidth) - (gap / 2);
+        final bottom = topMargin + chartHeight;
+
+        if (barHeight > 0) {
+          final rect = RRect.fromRectAndRadius(
+            Rect.fromLTRB(left, top, right, bottom),
+            const Radius.circular(2),
+          );
+          canvas.drawRRect(rect, barPaint);
+        }
+      }
+    }
+
+    _drawText(
+      canvas,
+      text: '$maxCount',
+      offset: Offset(0, topMargin - 4),
+      width: leftMargin - 4,
+      align: TextAlign.right,
+    );
+
+    _drawText(
+      canvas,
+      text: '0',
+      offset: Offset(0, topMargin + chartHeight - 8),
+      width: leftMargin - 4,
+      align: TextAlign.right,
+    );
+
+    canvas.drawLine(
+      Offset(leftMargin - 3, topMargin),
+      Offset(leftMargin, topMargin),
+      axisPaint,
+    );
+    canvas.drawLine(
+      Offset(leftMargin - 3, topMargin + chartHeight),
+      Offset(leftMargin, topMargin + chartHeight),
+      axisPaint,
+    );
+
+    final midVal = (minVal + maxVal) / 2;
+    _drawText(
+      canvas,
+      text: minVal.toStringAsFixed(1),
+      offset: Offset(leftMargin, topMargin + chartHeight + 3),
+      width: chartWidth / 3,
+      align: TextAlign.left,
+    );
+
+    _drawText(
+      canvas,
+      text: midVal.toStringAsFixed(1),
+      offset: Offset(
+          leftMargin + (chartWidth / 2) - 20, topMargin + chartHeight + 3),
+      width: 40,
+      align: TextAlign.center,
+    );
+
+    _drawText(
+      canvas,
+      text: maxVal.toStringAsFixed(1),
+      offset: Offset(leftMargin + chartWidth - (chartWidth / 3),
+          topMargin + chartHeight + 3),
+      width: chartWidth / 3,
+      align: TextAlign.right,
+    );
+
+    canvas.drawLine(
+      Offset(leftMargin, topMargin + chartHeight),
+      Offset(leftMargin, topMargin + chartHeight + 3),
+      axisPaint,
+    );
+    canvas.drawLine(
+      Offset(leftMargin + (chartWidth / 2), topMargin + chartHeight),
+      Offset(leftMargin + (chartWidth / 2), topMargin + chartHeight + 3),
+      axisPaint,
+    );
+    canvas.drawLine(
+      Offset(leftMargin + chartWidth, topMargin + chartHeight),
+      Offset(leftMargin + chartWidth, topMargin + chartHeight + 3),
+      axisPaint,
+    );
+  }
+
+  void _drawText(
+    Canvas canvas, {
+    required String text,
+    required Offset offset,
+    required double width,
+    required TextAlign align,
+  }) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          fontSize: 8.5,
+          color: axisColor,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textAlign: align,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: width, maxWidth: width);
+
+    textPainter.paint(canvas, offset);
+  }
+
+  @override
+  bool shouldRepaint(covariant _HistogramWithAxesPainter oldDelegate) {
+    return oldDelegate.bins != bins ||
+        oldDelegate.minVal != minVal ||
+        oldDelegate.maxVal != maxVal ||
+        oldDelegate.maxCount != maxCount;
   }
 }
