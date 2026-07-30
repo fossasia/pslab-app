@@ -79,12 +79,6 @@ android {
     buildFeatures {
         compose true
     }
-    lint {
-        checkDependencies false
-        checkReleaseBuilds true
-        abortOnError false
-        disable 'EasterEgg', 'StopShip'
-    }
 }
 
 dependencies {
