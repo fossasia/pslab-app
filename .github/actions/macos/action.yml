@@ -33,7 +33,10 @@ runs:
         VERSION_CODE: ${{ inputs.VERSION_CODE }}
       run: |
         flutter config --enable-macos-desktop
-        flutter build macos --build-name $VERSION_NAME --build-number $VERSION_CODE
+        # Keep PackageInfo / DMG name aligned with CI version inputs.
+        sed -i '' "s/^version: .*/version: ${VERSION_NAME}+${VERSION_CODE}/" pubspec.yaml || \
+          sed -i "s/^version: .*/version: ${VERSION_NAME}+${VERSION_CODE}/" pubspec.yaml
+        flutter build macos --build-name "$VERSION_NAME" --build-number "$VERSION_CODE"
     
     - name: Package into dmg
       shell: bash

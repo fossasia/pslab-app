@@ -196,6 +196,9 @@ jobs:
       - name: Web App Workflow
         if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/web
+        with:
+          VERSION_NAME: ${{ needs.common.outputs.VERSION_NAME }}
+          VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
 
       - name: Non-Code Change
         if: needs.changes.outputs.is_code != 'true'
@@ -212,6 +215,9 @@ jobs:
       - name: Windows Workflow
         if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/windows
+        with:
+          VERSION_NAME: ${{ needs.common.outputs.VERSION_NAME }}
+          VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
 
       - name: Non-Code Change
         if: needs.changes.outputs.is_code != 'true'
@@ -272,6 +278,9 @@ jobs:
       - name: macOS Workflow
         if: needs.changes.outputs.is_code == 'true'
         uses: ./.github/actions/macos
+        with:
+          VERSION_NAME: ${{ needs.common.outputs.VERSION_NAME }}
+          VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
 
       - name: Non-Code Change
         if: needs.changes.outputs.is_code != 'true'
