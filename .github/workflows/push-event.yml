@@ -341,6 +341,9 @@ jobs:
             mv "$file" "pslab-$branch-${file#*-}"
           done
 
+          echo "Generating download page"
+          bash ../scripts/generate-app-download-page.sh "${{ github.repository }}" .
+
           git checkout --orphan temporary
           git add --all .
 
