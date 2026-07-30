@@ -253,6 +253,10 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       InstrumentHeading(text: appLocalizations.xyPlot),
       InstrumentBulletPoint(text: appLocalizations.xyPlotBulletPoint1),
       InstrumentImage(imagePath: widget.xyPlotView),
+      const InstrumentCompatibilitySection(
+        phonePartial: true,
+        pslabRequired: true,
+      ),
     ];
   }
 

@@ -95,6 +95,11 @@ class _ThermometerScreenState extends State<ThermometerScreen> {
       InstrumentIntroText(
         text: appLocalizations.thermometerIntro,
       ),
+      InstrumentCompatibilitySection(
+        phoneSupported: true,
+        pslabOptionalSensor: true,
+        note: appLocalizations.thermometerCompatNote,
+      ),
     ];
   }
 

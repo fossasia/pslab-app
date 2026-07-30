@@ -139,6 +139,9 @@ class _PowerSourceScreenState extends State<PowerSourceScreen> {
       InstrumentBulletPoint(text: appLocalizations.powerSourceBulletPoint2),
       InstrumentBulletPoint(text: appLocalizations.powerSourceBulletPoint3),
       InstrumentBulletPoint(text: appLocalizations.powerSourceBulletPoint4),
+      const InstrumentCompatibilitySection(
+        pslabRequired: true,
+      ),
     ];
   }
 

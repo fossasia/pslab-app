@@ -99,6 +99,9 @@ class _GyroscopeScreenState extends State<GyroscopeScreen> {
       InstrumentIntroText(
         text: appLocalizations.gyroscopeDesc,
       ),
+      const InstrumentCompatibilitySection(
+        phoneSupported: true,
+      ),
     ];
   }
 

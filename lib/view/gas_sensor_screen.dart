@@ -99,6 +99,10 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
       const InstrumentImage(imagePath: imagePath),
       const SizedBox(height: 16),
       InstrumentIntroText(text: appLocalizations.gasSensorGuideWarning),
+      InstrumentCompatibilitySection(
+        pslabRequired: true,
+        note: appLocalizations.gasSensorCompatNote,
+      ),
     ];
   }
 

@@ -52,6 +52,9 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
       InstrumentIntroText(
         text: appLocalizations.soundMeterDesc,
       ),
+      const InstrumentCompatibilitySection(
+        phoneSupported: true,
+      ),
     ];
   }
 

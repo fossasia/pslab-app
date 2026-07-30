@@ -83,6 +83,9 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
       InstrumentBulletPoint(text: appLocalizations.pwmBulletPoint2),
       InstrumentBulletPoint(text: appLocalizations.pwmBulletPoint3),
       InstrumentBulletPoint(text: appLocalizations.pwmBulletPoint4),
+      const InstrumentCompatibilitySection(
+        pslabRequired: true,
+      ),
     ];
   }
 

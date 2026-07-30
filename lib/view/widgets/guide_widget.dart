@@ -450,3 +450,64 @@ class InstrumentImage extends StatelessWidget {
     );
   }
 }
+
+/// Shared footer for instrument guides describing phone vs PSLab V5/V6 support.
+class InstrumentCompatibilitySection extends StatelessWidget {
+  /// Built-in phone sensors can drive this instrument.
+  final bool phoneSupported;
+
+  /// Phone support is limited (e.g. oscilloscope MIC only).
+  final bool phonePartial;
+
+  /// Instrument requires a connected PSLab board.
+  final bool pslabRequired;
+
+  /// Phone works alone; PSLab V5/V6 optional with an external sensor.
+  final bool pslabOptionalSensor;
+
+  /// Extra instrument-specific compatibility note.
+  final String? note;
+
+  const InstrumentCompatibilitySection({
+    super.key,
+    this.phoneSupported = false,
+    this.phonePartial = false,
+    this.pslabRequired = false,
+    this.pslabOptionalSensor = false,
+    this.note,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = getIt.get<AppLocalizations>();
+
+    final String phoneLine;
+    if (phonePartial) {
+      phoneLine = l10n.guideCompatPhonePartialMic;
+    } else if (phoneSupported) {
+      phoneLine = l10n.guideCompatPhoneSupported;
+    } else {
+      phoneLine = l10n.guideCompatPhoneNotSupported;
+    }
+
+    final String pslabLine;
+    if (pslabRequired) {
+      pslabLine = l10n.guideCompatPslabV5V6;
+    } else if (pslabOptionalSensor) {
+      pslabLine = l10n.guideCompatPslabOptionalSensor;
+    } else {
+      pslabLine = l10n.guideCompatPslabNotRequired;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InstrumentHeading(text: l10n.guideCompatibilityHeading),
+        InstrumentBulletPoint(text: phoneLine),
+        InstrumentBulletPoint(text: pslabLine),
+        if (note != null && note!.isNotEmpty)
+          InstrumentBulletPoint(text: note!),
+      ],
+    );
+  }
+}

@@ -121,6 +121,10 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
       InstrumentIntroText(text: appLocalizations.oledDisplayIntro),
       const InstrumentImage(imagePath: 'assets/images/oled_display.png'),
       InstrumentIntroText(text: appLocalizations.oledDisplayConnection),
+      InstrumentCompatibilitySection(
+        pslabRequired: true,
+        note: appLocalizations.oledCompatNote,
+      ),
     ];
   }
 

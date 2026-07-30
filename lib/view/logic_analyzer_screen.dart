@@ -127,6 +127,9 @@ class _LogicAnalyzerScreenState extends State<LogicAnalyzerScreen> {
       InstrumentBulletPoint(
         text: appLocalizations.logicAnalyzerMeasurementBulletPoint3,
       ),
+      const InstrumentCompatibilitySection(
+        pslabRequired: true,
+      ),
     ];
   }
 

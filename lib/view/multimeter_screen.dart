@@ -119,6 +119,9 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
       InstrumentBulletPoint(
         text: appLocalizations.frequencyPulseBulletPoint3,
       ),
+      const InstrumentCompatibilitySection(
+        pslabRequired: true,
+      ),
     ];
   }
 

@@ -64,6 +64,11 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
         text: appLocalizations.luxMeterBulletPoint1,
       ),
       InstrumentBulletPoint(text: appLocalizations.luxMeterBulletPoint2),
+      InstrumentCompatibilitySection(
+        phoneSupported: true,
+        pslabOptionalSensor: true,
+        note: appLocalizations.luxMeterCompatNote,
+      ),
     ];
   }
 

@@ -122,6 +122,11 @@ class _BarometerScreenState extends State<BarometerScreen> {
         text: appLocalizations.baroMeterBulletPoint3,
       ),
       InstrumentBulletPoint(text: appLocalizations.baroMeterBulletPoint4),
+      InstrumentCompatibilitySection(
+        phoneSupported: true,
+        pslabOptionalSensor: true,
+        note: appLocalizations.barometerCompatNote,
+      ),
     ];
   }
 

@@ -185,6 +185,11 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
       InstrumentIntroText(
         text: appLocalizations.compassGuideImageCaption,
       ),
+      InstrumentCompatibilitySection(
+        phoneSupported: true,
+        pslabOptionalSensor: true,
+        note: appLocalizations.compassCompatNote,
+      ),
     ];
   }
 

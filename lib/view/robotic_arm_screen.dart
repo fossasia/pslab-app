@@ -86,6 +86,10 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
       InstrumentIntroText(
         text: appLocalizations.roboticArmConnection,
       ),
+      InstrumentCompatibilitySection(
+        pslabRequired: true,
+        note: appLocalizations.roboticArmCompatNote,
+      ),
     ];
   }
 

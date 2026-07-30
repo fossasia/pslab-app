@@ -107,6 +107,9 @@ class _AccelerometerScreenState extends State<AccelerometerScreen> {
       InstrumentBulletPoint(text: appLocalizations.accelerometerBulletPoint3),
       InstrumentIntroText(text: appLocalizations.accelerometerDesc),
       InstrumentIntroText(text: appLocalizations.accelerometerNote),
+      const InstrumentCompatibilitySection(
+        phoneSupported: true,
+      ),
     ];
   }
 
