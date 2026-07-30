@@ -28,8 +28,8 @@ runs:
     - name: Set up Java
       uses: actions/setup-java@v5
       with:
-        java-version: 17
-        distribution: 'adopt'
+        java-version: 21
+        distribution: 'temurin'
         cache: 'gradle'
 
     - name: Set up Flutter
