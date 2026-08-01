@@ -484,7 +484,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       await _dataService.saveDataFile(instrumentName, newName, data, format);
 
       await _loadFiles();
-
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
