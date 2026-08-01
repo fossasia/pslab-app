@@ -66,9 +66,10 @@ class DataService {
       final file = File('${directory.path}/$finalFileName');
 
       String fileContent;
-      if (format == 'JSON') {
+      String upperFormat = format.toUpperCase();
+      if (upperFormat == 'JSON') {
         fileContent = jsonEncode(data);
-      } else if (format == 'TXT') {
+      } else if (upperFormat == 'TXT') {
         final codec = csv.Csv(fieldDelimiter: '\t');
         fileContent = codec.encode(data);
       } else {
@@ -228,10 +229,24 @@ class DataService {
           detectedInstrument = data[0][0].toString().toLowerCase().trim();
         }
 
-        final matchedInstrument = allowedInstruments.cast<String?>().firstWhere(
-              (inst) => inst!.toLowerCase() == detectedInstrument,
-              orElse: () => null,
-            );
+        String? matchedInstrument =
+            allowedInstruments.cast<String?>().firstWhere(
+                  (inst) => inst!.toLowerCase() == detectedInstrument,
+                  orElse: () => null,
+                );
+
+        if (matchedInstrument == null && data.length > 1) {
+          final fileHeaders =
+              data[1].map((e) => e.toString().toLowerCase().trim()).toList();
+          for (String allowedInst in allowedInstruments) {
+            if (_verifyInstrumentHeaders(allowedInst, fileHeaders)) {
+              matchedInstrument = allowedInst;
+              logger.i(
+                  'Matched instrument "$matchedInstrument" via header fallback.');
+              break;
+            }
+          }
+        }
 
         if (matchedInstrument == null) {
           logger.w(
@@ -239,8 +254,8 @@ class DataService {
           return (<List<dynamic>>[], detectedInstrument, fileName);
         }
 
-        if (!_isValidFormat(data, detectedInstrument)) {
-          logger.w('File format validation failed for $detectedInstrument.');
+        if (!_isValidFormat(data, matchedInstrument)) {
+          logger.w('File format validation failed for $matchedInstrument.');
           return (<List<dynamic>>[], matchedInstrument, fileName);
         }
 
@@ -408,8 +423,34 @@ class DataService {
 
       if (extension == 'json') {
         final content = await file.readAsString();
-        final decoded = jsonDecode(content) as List<dynamic>;
-        return decoded.map((e) => (e as List<dynamic>).toList()).toList();
+
+        try {
+          final decoded = jsonDecode(content) as List<dynamic>;
+
+          return decoded.map((row) {
+            return (row as List<dynamic>).map((cell) {
+              if (cell is String) {
+                return num.tryParse(cell) ?? cell;
+              }
+              return cell;
+            }).toList();
+          }).toList();
+        } catch (e) {
+          logger.w(
+              'JSON parse failed. Falling back to CSV parser for corrupted file. Error: $e');
+
+          final codec = csv.Csv(dynamicTyping: true);
+          final lines = const LineSplitter().convert(content);
+          final List<List<dynamic>> rows = [];
+
+          for (final line in lines) {
+            final parsedRow = codec.decode(line);
+            if (parsedRow.isNotEmpty) {
+              rows.add(parsedRow.first);
+            }
+          }
+          return rows;
+        }
       } else {
         final lines = file
             .openRead()
@@ -424,7 +465,6 @@ class DataService {
 
         await for (final line in lines) {
           final parsedRow = codec.decode(line);
-
           if (parsedRow.isNotEmpty) {
             rows.add(parsedRow.first);
           }
