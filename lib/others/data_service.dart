@@ -201,8 +201,11 @@ class DataService {
     }
   }
 
-  Future<List<List<dynamic>>?> pickAndReadFile() async {
+  Future<(List<List<dynamic>>, String, String)?> pickAndReadFile(
+      List<String> allowedInstruments) async {
     try {
+      logger.i(
+          'Opening file picker. Allowed instruments count: ${allowedInstruments.length}');
       final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['csv', 'txt', 'json'],
@@ -210,12 +213,193 @@ class DataService {
 
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
-        return await readDataFromFile(file);
+        final fileName = result.files.single.name;
+        logger.i('File selected: ${file.path}');
+
+        final data = await readDataFromFile(file);
+
+        if (data.length < 2) {
+          logger.w('Validation Failed: Imported file has insufficient rows.');
+          return (<List<dynamic>>[], '', fileName);
+        }
+
+        String detectedInstrument = '';
+        if (data[0].isNotEmpty) {
+          detectedInstrument = data[0][0].toString().toLowerCase().trim();
+        }
+
+        final matchedInstrument = allowedInstruments.cast<String?>().firstWhere(
+              (inst) => inst!.toLowerCase() == detectedInstrument,
+              orElse: () => null,
+            );
+
+        if (matchedInstrument == null) {
+          logger.w(
+              'Validation Failed: "$detectedInstrument" is not allowed here.');
+          return (<List<dynamic>>[], detectedInstrument, fileName);
+        }
+
+        if (!_isValidFormat(data, detectedInstrument)) {
+          logger.w('File format validation failed for $detectedInstrument.');
+          return (<List<dynamic>>[], matchedInstrument, fileName);
+        }
+
+        return (data, matchedInstrument, fileName);
       }
     } catch (e) {
       logger.e('${appLocalizations.csvPickingError}: $e');
     }
     return null;
+  }
+
+  bool _isValidFormat(List<List<dynamic>> data, String detectedInstrument) {
+    int headerIndex = 1;
+
+    if (data.length <= headerIndex) {
+      logger.w('Validation Failed: No data found after headers.');
+      return false;
+    }
+    final headers = data[headerIndex]
+        .map((e) => e.toString().toLowerCase().trim())
+        .toList();
+    logger.i('Extracted file headers: $headers');
+
+    bool hasRequiredColumns =
+        _verifyInstrumentHeaders(detectedInstrument, headers);
+    if (!hasRequiredColumns) return false;
+
+    int expectedColumnCount = data[headerIndex].length;
+    logger.i('Expecting all data rows to have $expectedColumnCount columns.');
+
+    for (int i = headerIndex + 1; i < data.length; i++) {
+      if (data[i].isEmpty) continue;
+
+      if (data[i].length != expectedColumnCount) {
+        logger.w(
+            'Validation Failed at Row $i: Column mismatch. Expected $expectedColumnCount, got ${data[i].length}.');
+        logger.w('Problematic Row Data: ${data[i]}');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool _verifyInstrumentHeaders(String instrument, List<String> fileHeaders) {
+    final Map<String, List<String>> requiredColumns = {
+      appLocalizations.accelerometer.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readingsx',
+        'readingsy',
+        'readingsz'
+      ],
+      appLocalizations.barometer.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'pressure',
+        'altitude'
+      ],
+      appLocalizations.compass.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'bx',
+        'by',
+        'bz',
+        'degree'
+      ],
+      appLocalizations.gasSensor.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readings',
+        'active gas'
+      ],
+      appLocalizations.gyroscope.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readingsx',
+        'readingsy',
+        'readingsz'
+      ],
+      appLocalizations.logicAnalyzer.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readings',
+        'maxy',
+        'miny',
+        'channels',
+        'edges'
+      ],
+      appLocalizations.luxMeter.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readings'
+      ],
+      appLocalizations.multimeter.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'mode',
+        'reading',
+        'unit'
+      ],
+      appLocalizations.oledDisplayTitle.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'framebufferhex'
+      ],
+      appLocalizations.oscilloscope.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readings',
+        'channels',
+        'xaxisscale',
+        'yaxisscale'
+      ],
+      appLocalizations.powerSource.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'pv1',
+        'pv2',
+        'pv3',
+        'pcs'
+      ],
+      appLocalizations.roboticArmTitle.toLowerCase(): [
+        'timestamp',
+        'servo1',
+        'servo2',
+        'servo3',
+        'servo4',
+        'datetime'
+      ],
+      appLocalizations.soundMeter.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readings'
+      ],
+      appLocalizations.thermometer.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'readings'
+      ],
+      appLocalizations.waveGenerator.toLowerCase(): [
+        'timestamp',
+        'datetime',
+        'waveform data'
+      ],
+    };
+
+    final required = requiredColumns[instrument.toLowerCase()];
+
+    if (required == null) return true;
+    for (String col in required) {
+      if (!fileHeaders.any((header) => header == col)) {
+        logger
+            .w('Missing required column "$col" for instrument "$instrument".');
+        return false;
+      }
+    }
+
+    return true;
   }
 
   Future<List<List<dynamic>>> readDataFromFile(File file) async {

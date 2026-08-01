@@ -448,23 +448,52 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     }
   }
 
-  Future<void> _pickAndImportFile(String instrumentName) async {
-    final data = await _dataService.pickAndReadFile();
-    if (data != null && mounted) {
-      if (instrumentName.toLowerCase() == 'robotic arm') {
-        Navigator.pop(context, data);
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoggedDataChartScreen(
-              fileName: 'Imported Log',
-              instrumentName: instrumentName,
-              data: data,
-            ),
+  Future<void> _pickAndImportFile() async {
+    final result = await _dataService.pickAndReadFile(widget.instrumentNames);
+
+    if (result != null && mounted) {
+      final data = result.$1;
+      final instrumentName = result.$2;
+      final originalFileName = result.$3;
+
+      if (data.isEmpty) {
+        String errorMsg = instrumentName.isEmpty
+            ? 'Invalid file format. Could not detect a valid PSLab log.'
+            : 'Invalid log format or unsupported instrument: $instrumentName';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(errorMsg, style: TextStyle(color: snackBarContentColor)),
+            backgroundColor: snackBarBackgroundColor,
           ),
         );
+        return;
       }
+
+      String format = 'csv';
+      if (originalFileName.toLowerCase().endsWith('.txt')) format = 'txt';
+      if (originalFileName.toLowerCase().endsWith('.json')) format = 'json';
+
+      String newName = originalFileName;
+      int extIndex = newName.lastIndexOf('.');
+      if (extIndex != -1) {
+        newName = newName.substring(0, extIndex);
+      }
+
+      await _dataService.saveDataFile(instrumentName, newName, data, format);
+
+      await _loadFiles();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Successfully imported into $instrumentName',
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
     }
   }
 
@@ -478,11 +507,10 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
         0,
       ),
       items: [
-        if (widget.instrumentNames.length == 1)
-          PopupMenuItem(
-            value: 'import_log',
-            child: Text(appLocalizations.importLog),
-          ),
+        PopupMenuItem(
+          value: 'import_log',
+          child: Text(appLocalizations.importLog),
+        ),
         PopupMenuItem(
           value: 'delete_all',
           child: Text(appLocalizations.deleteAllData),
@@ -492,7 +520,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       if (value != null) {
         switch (value) {
           case 'import_log':
-            _pickAndImportFile(widget.instrumentNames.first);
+            _pickAndImportFile();
             break;
           case 'delete_all':
             _deleteAllFiles();
