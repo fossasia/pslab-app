@@ -312,6 +312,8 @@
     "ch1": "CH1",
     "noSignal": "No signal found.",
     "autoScale": "AUTO",
+    "stackedMode": "Stacked mode",
+    "stackedModeInfo": "Show each channel in its own vertical pane instead of overlapping on one plot.",
     "automatedMeasurements": "Automated Measurements",
     "luxMeterTitle": "Lux Meter",
     "builtIn": "Built-In",

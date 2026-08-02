@@ -68,6 +68,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late bool isTriggered;
   late bool isFourierTransformSelected;
   late bool isXYPlotSelected;
+  /// When true, each enabled channel is drawn in its own vertical pane
+  /// instead of overlapping on a single plot (desktop-friendly view).
+  late bool isStackedMode;
   late bool sineFit;
   late bool squareFit;
   late String triggerChannel;
@@ -189,6 +192,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     isTriggered = false;
     isFourierTransformSelected = false;
     isXYPlotSelected = false;
+    isStackedMode = false;
     _monitor = true;
     _isRecording = false;
     isRunning = true;
@@ -1214,6 +1218,47 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     } else {
       return false;
     }
+  }
+
+  void setStackedMode(bool value) {
+    isStackedMode = value;
+    notifyListeners();
+  }
+
+  /// Active channel names for stacked panes (selection and/or live data).
+  List<String> stackedChannelNames() {
+    final names = <String>[];
+    if (dataParamsChannels.isNotEmpty) {
+      for (final name in dataParamsChannels) {
+        if (!names.contains(name)) names.add(name);
+      }
+      return names;
+    }
+    if (isCH1Selected) names.add('CH1');
+    if (isCH2Selected) names.add('CH2');
+    if (isCH3Selected) names.add('CH3');
+    if (isMICSelected || isInBuiltMICSelected) names.add('MIC');
+    if (names.isEmpty) names.add('CH1');
+    return names;
+  }
+
+  List<LineChartBarData> createPlotForChannel(String channelName) {
+    final index = dataParamsChannels.indexOf(channelName);
+    final plots = <LineChartBarData>[];
+    if (index >= 0 && index < dataEntries.length) {
+      plots.add(
+        LineChartBarData(
+          spots: dataEntries[index],
+          isCurved: true,
+          color: colors[index % colors.length],
+          barWidth: 1,
+          dotData: const FlDotData(
+            show: false,
+          ),
+        ),
+      );
+    }
+    return plots;
   }
 
   List<LineChartBarData> createPlots() {

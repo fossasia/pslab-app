@@ -144,6 +144,40 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
             },
           ),
         ),
+        PopupMenuItem<CheckboxListTile>(
+          child: CheckboxListTile(
+            title: Text(appLocalizations.stackedMode),
+            secondary: IconButton(
+                icon: Icon(Icons.info_outline),
+                tooltip: appLocalizations.info,
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(appLocalizations.stackedMode),
+                        content: Text(appLocalizations.stackedModeInfo),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(appLocalizations.ok),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }),
+            value: _provider.isStackedMode,
+            onChanged: (bool? newValue) {
+              setState(() {
+                _provider.setStackedMode(newValue ?? false);
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ),
       ],
       elevation: 8,
     ).then((value) {
