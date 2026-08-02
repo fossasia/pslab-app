@@ -41,6 +41,11 @@ class OscilloscopeScreen extends StatefulWidget {
 }
 
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
+  /// Fixed height for the bottom controls panel (channel/timebase/etc.).
+  /// Avoids stretching on tall windows and overlapping controls on short ones
+  /// (see fossasia/pslab-app#3461).
+  static const double _controlsPanelHeight = 180;
+
   late OscilloscopeStateProvider _provider;
   late OscilloscopeConfigProvider? _configProvider;
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
@@ -435,11 +440,6 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                               Column(
                                                 children: [
                                                   Expanded(
-                                                    flex:
-                                                        constraints.maxHeight <
-                                                                600
-                                                            ? 68
-                                                            : 80,
                                                     child: Container(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -449,12 +449,9 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                                           const OscilloscopeGraph(),
                                                     ),
                                                   ),
-                                                  Expanded(
-                                                    flex:
-                                                        constraints.maxHeight <
-                                                                600
-                                                            ? 32
-                                                            : 20,
+                                                  SizedBox(
+                                                    height:
+                                                        _controlsPanelHeight,
                                                     child: Selector<
                                                         OscilloscopeStateProvider,
                                                         int>(
