@@ -119,8 +119,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
           show: true,
           drawHorizontalLine: true,
           drawVerticalLine: true,
-          horizontalInterval:
-              provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+          horizontalInterval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
           verticalInterval:
               provider.oscilloscopeAxesScale.getTimebaseInterval(),
           getDrawingHorizontalLine: (value) {
@@ -226,8 +225,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
           show: true,
           drawHorizontalLine: true,
           drawVerticalLine: true,
-          horizontalInterval:
-              provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+          horizontalInterval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
           verticalInterval:
               provider.oscilloscopeAxesScale.getTimebaseInterval(),
           getDrawingHorizontalLine: (value) {
@@ -277,7 +275,8 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
         for (int i = 0; i < channels.length; i++)
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: i == channels.length - 1 ? 0 : 2),
+              padding:
+                  EdgeInsets.only(bottom: i == channels.length - 1 ? 0 : 2),
               child: _buildStackedChannelChart(
                 provider,
                 channelName: channels[i],

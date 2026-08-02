@@ -68,6 +68,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late bool isTriggered;
   late bool isFourierTransformSelected;
   late bool isXYPlotSelected;
+
   /// When true, each enabled channel is drawn in its own vertical pane
   /// instead of overlapping on a single plot (desktop-friendly view).
   late bool isStackedMode;
