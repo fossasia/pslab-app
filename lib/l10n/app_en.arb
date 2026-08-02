@@ -315,6 +315,7 @@
     "stackedMode": "Stacked mode",
     "stackedModeInfo": "Show each channel in its own vertical pane instead of overlapping on one plot.",
     "automatedMeasurements": "Automated Measurements",
+    "bufferOverlayMode": "Buffer overlay mode",
     "luxMeterTitle": "Lux Meter",
     "builtIn": "Built-In",
     "lx": "lx",

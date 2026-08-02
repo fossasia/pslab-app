@@ -783,7 +783,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
       if (_configProvider.config.bufferOverlayEnabled &&
           dataEntries.isNotEmpty) {
-        _waveformBuffer.insert(0, dataEntries);
+        _waveformBuffer.insert(
+          0,
+          dataEntries.map((spots) => List<FlSpot>.from(spots)).toList(),
+        );
         final maxSize = _configProvider.config.bufferSize;
         if (_waveformBuffer.length > maxSize) {
           _waveformBuffer.removeRange(maxSize, _waveformBuffer.length);

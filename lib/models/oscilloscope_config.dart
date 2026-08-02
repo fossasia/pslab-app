@@ -1,4 +1,6 @@
 class OscilloscopeConfig {
+  static const int defaultBufferSize = 5;
+
   final bool includeLocationData;
   final bool bufferOverlayEnabled;
   final int bufferSize;
@@ -6,7 +8,7 @@ class OscilloscopeConfig {
   const OscilloscopeConfig({
     this.includeLocationData = true,
     this.bufferOverlayEnabled = false,
-    this.bufferSize = 5,
+    this.bufferSize = defaultBufferSize,
   });
 
   OscilloscopeConfig copyWith({
@@ -33,7 +35,7 @@ class OscilloscopeConfig {
     return OscilloscopeConfig(
       includeLocationData: json['includeLocationData'] ?? true,
       bufferOverlayEnabled: json['bufferOverlayEnabled'] ?? false,
-      bufferSize: json['bufferSize'] ?? 5,
+      bufferSize: json['bufferSize'] ?? defaultBufferSize,
     );
   }
 }
