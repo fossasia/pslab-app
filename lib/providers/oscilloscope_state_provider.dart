@@ -150,6 +150,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late String xyPlotAxis1;
   late String xyPlotAxis2;
   late List<List<FlSpot>> dataEntries;
+  final List<List<List<FlSpot>>> _waveformBuffer = [];
   late List<List<FlSpot>> dataEntriesXYPlot;
   late List<List<FlSpot>> dataEntriesCurveFit;
   late List<String> dataParamsChannels;
@@ -780,6 +781,17 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         }
       }
 
+      if (_configProvider.config.bufferOverlayEnabled &&
+          dataEntries.isNotEmpty) {
+        _waveformBuffer.insert(0, dataEntries);
+        final maxSize = _configProvider.config.bufferSize;
+        if (_waveformBuffer.length > maxSize) {
+          _waveformBuffer.removeRange(maxSize, _waveformBuffer.length);
+        }
+      } else {
+        _waveformBuffer.clear();
+      }
+
       dataEntries = List.from(entries);
       dataEntriesCurveFit = List.from(curveFitEntries);
       dataParamsChannels = List.from(paramsChannels);
@@ -1265,6 +1277,27 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   List<LineChartBarData> createPlots() {
     List<Color> curveFitColors = [Colors.yellow];
     List<LineChartBarData> plots = [];
+
+    if (_configProvider.config.bufferOverlayEnabled) {
+      for (int b = 0; b < _waveformBuffer.length; b++) {
+        final age = b + 1;
+        final opacity =
+            (1.0 - (age / (_waveformBuffer.length + 1))).clamp(0.1, 0.6);
+        plots.addAll(
+          List<LineChartBarData>.generate(
+            _waveformBuffer[b].length,
+            (index) => LineChartBarData(
+              spots: _waveformBuffer[b][index],
+              isCurved: true,
+              color: colors[index % colors.length].withValues(alpha: opacity),
+              barWidth: 1,
+              dotData: const FlDotData(show: false),
+            ),
+          ),
+        );
+      }
+    }
+
     plots.addAll(
       List<LineChartBarData>.generate(
         dataEntries.length,

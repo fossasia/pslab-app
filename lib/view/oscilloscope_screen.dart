@@ -117,6 +117,16 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
         ),
         PopupMenuItem<CheckboxListTile>(
           child: CheckboxListTile(
+            title: Text('Buffer overlay mode'),
+            value: _configProvider?.config.bufferOverlayEnabled ?? false,
+            onChanged: (bool? newValue) {
+              _configProvider?.updateBufferOverlayEnabled(newValue ?? false);
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        PopupMenuItem<CheckboxListTile>(
+          child: CheckboxListTile(
             title: Text(appLocalizations.automatedMeasurements),
             secondary: IconButton(
                 icon: Icon(Icons.info_outline),

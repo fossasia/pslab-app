@@ -39,6 +39,18 @@ class OscilloscopeConfigProvider extends ChangeNotifier {
     _saveConfigToPrefs();
   }
 
+  void updateBufferOverlayEnabled(bool enabled) {
+    _config = _config.copyWith(bufferOverlayEnabled: enabled);
+    notifyListeners();
+    _saveConfigToPrefs();
+  }
+
+  void updateBufferSize(int size) {
+    _config = _config.copyWith(bufferSize: size);
+    notifyListeners();
+    _saveConfigToPrefs();
+  }
+
   void resetToDefaults() {
     _config = const OscilloscopeConfig();
     notifyListeners();
