@@ -41,10 +41,11 @@ class OscilloscopeScreen extends StatefulWidget {
 }
 
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
-  /// Fixed height for the bottom controls panel (channel/timebase/etc.).
-  /// Avoids stretching on tall windows and overlapping controls on short ones
-  /// (see fossasia/pslab-app#3461).
-  static const double _controlsPanelHeight = 180;
+  /// Approx. content height for the bottom controls (two rows of
+  /// checkbox + dropdown). Same for Channel / Timebase / Data Analysis / XY
+  /// Plot. Not true wrap-content yet: those tabs use Stack + Positioned, so
+  /// they need an explicit height (see fossasia/pslab-app#3461 / #3468).
+  static const double _controlsContentHeight = 120;
 
   late OscilloscopeStateProvider _provider;
   late OscilloscopeConfigProvider? _configProvider;
@@ -450,8 +451,15 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                                     ),
                                                   ),
                                                   SizedBox(
+                                                    // Cap so phones keep most of
+                                                    // the screen for the graph.
                                                     height:
-                                                        _controlsPanelHeight,
+                                                        _controlsContentHeight
+                                                            .clamp(
+                                                      0,
+                                                      constraints.maxHeight *
+                                                          0.35,
+                                                    ),
                                                     child: Selector<
                                                         OscilloscopeStateProvider,
                                                         int>(
