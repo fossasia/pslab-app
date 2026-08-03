@@ -70,4 +70,3 @@ app.*.map.json
 
 # Generated app localizations files
 /lib/l10n/app_localizations*
-android/build/
