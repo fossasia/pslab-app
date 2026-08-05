@@ -34,13 +34,92 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
     ];
   }
 
+  Widget _buildChannelRow(
+      String title, bool isSelected, Function(bool?) onChanged,
+      [String? staticRange]) {
+    return SizedBox(
+      height: 36,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Transform.scale(
+            scale: 0.9,
+            child: Checkbox(
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+              activeColor: checkBoxActiveColor,
+              value: isSelected,
+              onChanged: onChanged,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            staticRange != null && staticRange.isNotEmpty
+                ? '$title ($staticRange)'
+                : title,
+            style: TextStyle(
+              color: oscilloscopeOptionLabelColor,
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              fontStyle: FontStyle.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMicRadio(
+      String title, bool isSelected, Function(bool?) onChanged) {
+    return SizedBox(
+      height: 36,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Transform.scale(
+            scale: 0.9,
+            child: RadioGroup<bool>(
+              groupValue: isSelected,
+              onChanged: onChanged,
+              child: Radio<bool>(
+                activeColor: radioButtonActiveColor,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity:
+                    const VisualDensity(horizontal: -4, vertical: -4),
+                value: true,
+                toggleable: true,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            title,
+            style: TextStyle(
+              color: oscilloscopeOptionLabelColor,
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     OscilloscopeStateProvider oscilloscopeStateProvider =
         Provider.of<OscilloscopeStateProvider>(context, listen: false);
+
+    String currentGlobalRange =
+        yAxisRanges[oscilloscopeStateProvider.oscillscopeRangeSelection];
+
     return Stack(
       children: [
         Container(
+          height: 90,
+          width: double.infinity,
           margin: const EdgeInsets.only(top: 8, bottom: 5),
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: primaryRed),
@@ -49,293 +128,182 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
           child: Stack(
             children: [
               Positioned(
-                top: -4,
-                left: 4,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: oscilloscopeStateProvider.isCH1Selected,
-                      activeColor: checkBoxActiveColor,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          oscilloscopeStateProvider.setChannelSelected(
-                              'CH1', value ?? false);
-                        });
-                      },
-                    ),
-                    Text(
-                      appLocalizations.ch1,
-                      style: TextStyle(
-                        color: oscilloscopeOptionLabelColor,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14.5,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Text(
-                        appLocalizations.range,
-                        style: const TextStyle(
-                          color: Color(0xFF424242),
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14.5,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: DropdownMenu<String>(
-                        initialSelection: yAxisRanges[oscilloscopeStateProvider
-                            .oscillscopeRangeSelection],
-                        width: 140,
-                        dropdownMenuEntries: yAxisRanges.map(
-                          (String value) {
-                            return DropdownMenuEntry<String>(
-                              label: value,
-                              value: value,
-                            );
-                          },
-                        ).toList(),
-                        inputDecorationTheme: const InputDecorationTheme(
-                          border: InputBorder.none,
-                        ),
-                        textStyle: TextStyle(
-                            color: oscilloscopeOptionLabelColor,
-                            fontSize: 14.5),
-                        onSelected: (String? value) {
-                          switch (yAxisRanges.indexOf(value!)) {
-                            case 0:
-                              oscilloscopeStateProvider.setYAxisScale(16);
-                              break;
-                            case 1:
-                              oscilloscopeStateProvider.setYAxisScale(8);
-                              break;
-                            case 2:
-                              oscilloscopeStateProvider.setYAxisScale(4);
-                              break;
-                            case 3:
-                              oscilloscopeStateProvider.setYAxisScale(3);
-                              break;
-                            case 4:
-                              oscilloscopeStateProvider.setYAxisScale(2);
-                              break;
-                            case 5:
-                              oscilloscopeStateProvider.setYAxisScale(1.5);
-                              break;
-                            case 6:
-                              oscilloscopeStateProvider.setYAxisScale(1);
-                              break;
-                            case 7:
-                              oscilloscopeStateProvider.setYAxisScale(0.5);
-                              break;
-                            case 8:
-                              oscilloscopeStateProvider.setYAxisScale(160);
-                              break;
-                            default:
-                              oscilloscopeStateProvider.setYAxisScale(16);
-                              break;
-                          }
-                          oscilloscopeStateProvider.oscillscopeRangeSelection =
-                              yAxisRanges.indexOf(value);
-                        },
-                      ),
-                    ),
-                  ],
+                top: 4,
+                left: 8,
+                child: _buildChannelRow(
+                  appLocalizations.ch1,
+                  oscilloscopeStateProvider.isCH1Selected,
+                  (value) => setState(() => oscilloscopeStateProvider
+                      .setChannelSelected('CH1', value ?? false)),
+                  '+/- 16V',
                 ),
               ),
               Positioned(
-                left: 4,
-                bottom: 2,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: oscilloscopeStateProvider.isCH2Selected,
-                      activeColor: checkBoxActiveColor,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          oscilloscopeStateProvider.setChannelSelected(
-                              'CH2', value ?? false);
-                        });
-                      },
-                    ),
-                    Text(
-                      appLocalizations.ch2,
-                      style: TextStyle(
-                        color: oscilloscopeOptionLabelColor,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14.5,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Text(
-                        appLocalizations.range,
-                        style: const TextStyle(
-                          color: Color(0xFF424242),
-                          fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14.5,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: SizedBox(
-                        width: 120,
-                        child: Text(
-                          appLocalizations.rangeValue,
-                          style: TextStyle(
-                            color: oscilloscopeOptionLabelColor,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                bottom: 4,
+                left: 8,
+                child: _buildChannelRow(
+                  appLocalizations.ch2,
+                  oscilloscopeStateProvider.isCH2Selected,
+                  (value) => setState(() => oscilloscopeStateProvider
+                      .setChannelSelected('CH2', value ?? false)),
+                  '+/- 16V',
                 ),
               ),
               Positioned(
                 top: 4,
-                right: 8,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: oscilloscopeStateProvider.isCH3Selected,
-                      activeColor: checkBoxActiveColor,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          oscilloscopeStateProvider.setChannelSelected(
-                              'CH3', value ?? false);
-                        });
-                      },
-                    ),
-                    Text(
-                      appLocalizations.ch3Range,
-                      style: TextStyle(
-                        color: oscilloscopeOptionLabelColor,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14.5,
-                      ),
-                    ),
-                  ],
+                left: 165,
+                child: _buildChannelRow(
+                  "CH3",
+                  oscilloscopeStateProvider.isCH3Selected,
+                  (value) => setState(() => oscilloscopeStateProvider
+                      .setChannelSelected('CH3', value ?? false)),
+                  '+/- 3.3V',
                 ),
               ),
               Positioned(
-                bottom: 2,
+                bottom: 4,
+                left: 168,
+                child: SizedBox(
+                  height: 36,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        appLocalizations.rangeScale,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Transform.translate(
+                        offset: const Offset(0, -8),
+                        child: DropdownMenu<String>(
+                          width: 135,
+                          initialSelection: currentGlobalRange,
+                          dropdownMenuEntries: yAxisRanges.map((String value) {
+                            return DropdownMenuEntry<String>(
+                              label: value,
+                              value: value,
+                            );
+                          }).toList(),
+                          inputDecorationTheme: const InputDecorationTheme(
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          textStyle: TextStyle(
+                            color: oscilloscopeOptionLabelColor,
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          onSelected: (String? value) {
+                            if (value == null) return;
+                            int index = yAxisRanges.indexOf(value);
+                            setState(() {
+                              oscilloscopeStateProvider
+                                  .oscillscopeRangeSelection = index;
+                              switch (index) {
+                                case 0:
+                                  oscilloscopeStateProvider.setYAxisScale(16);
+                                  break;
+                                case 1:
+                                  oscilloscopeStateProvider.setYAxisScale(8);
+                                  break;
+                                case 2:
+                                  oscilloscopeStateProvider.setYAxisScale(4);
+                                  break;
+                                case 3:
+                                  oscilloscopeStateProvider.setYAxisScale(3);
+                                  break;
+                                case 4:
+                                  oscilloscopeStateProvider.setYAxisScale(2);
+                                  break;
+                                case 5:
+                                  oscilloscopeStateProvider.setYAxisScale(1.5);
+                                  break;
+                                case 6:
+                                  oscilloscopeStateProvider.setYAxisScale(1);
+                                  break;
+                                case 7:
+                                  oscilloscopeStateProvider.setYAxisScale(0.5);
+                                  break;
+                                case 8:
+                                  oscilloscopeStateProvider.setYAxisScale(160);
+                                  break;
+                                default:
+                                  oscilloscopeStateProvider.setYAxisScale(16);
+                                  break;
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 4,
+                bottom: 4,
                 right: 8,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    RadioGroup(
-                      groupValue:
-                          oscilloscopeStateProvider.isInBuiltMICSelected,
-                      onChanged: (bool? value) async {
+                    _buildMicRadio(
+                      appLocalizations.inBuiltMic,
+                      oscilloscopeStateProvider.isInBuiltMICSelected,
+                      (value) async {
                         if (value == true) {
                           final AppPermissionStatus status =
                               await PSLabPermissions.request(
                                   AppPermission.microphone);
-
                           if (status != AppPermissionStatus.granted) {
-                            logger.e(
-                                "Microphone permission was denied or permanently blocked.");
+                            logger.e("Microphone permission was denied.");
                             return;
                           }
                         }
-                        setState(
-                          () {
-                            if (value == null) {
-                              oscilloscopeStateProvider.isInBuiltMICSelected =
-                                  false;
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  false;
-                              oscilloscopeStateProvider.setTimebaseDivisions(8);
-                              oscilloscopeStateProvider
-                                  .removeChannelData('MIC');
-                            } else {
-                              if (value == true) {
-                                oscilloscopeStateProvider
-                                    .setTimebaseDivisions(6);
-                              } else {
-                                oscilloscopeStateProvider
-                                    .setTimebaseDivisions(8);
-                              }
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  true;
-                              oscilloscopeStateProvider.isInBuiltMICSelected =
-                                  value;
-                              oscilloscopeStateProvider.isMICSelected = !value;
-                            }
-                          },
-                        );
+                        setState(() {
+                          if (value == null || !value) {
+                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                                false;
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                false;
+                            oscilloscopeStateProvider.setTimebaseDivisions(8);
+                            oscilloscopeStateProvider.removeChannelData('MIC');
+                          } else {
+                            oscilloscopeStateProvider.setTimebaseDivisions(6);
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                true;
+                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                                true;
+                            oscilloscopeStateProvider.isMICSelected = false;
+                          }
+                        });
                       },
-                      child: Radio<bool>(
-                        activeColor: radioButtonActiveColor,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: true,
-                        toggleable: true,
-                      ),
                     ),
-                    Text(
-                      appLocalizations.inBuiltMic,
-                      style: TextStyle(
-                        color: oscilloscopeOptionLabelColor,
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.normal,
-                      ),
-                    ),
-                    RadioGroup(
-                      groupValue: oscilloscopeStateProvider.isMICSelected,
-                      onChanged: (bool? value) {
-                        setState(
-                          () {
-                            if (value == null) {
-                              oscilloscopeStateProvider.isMICSelected = false;
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  false;
-                              oscilloscopeStateProvider
-                                  .removeChannelData('MIC');
-                            } else {
-                              oscilloscopeStateProvider.isAudioInputSelected =
-                                  true;
-                              oscilloscopeStateProvider.isMICSelected = value;
-                              oscilloscopeStateProvider.isInBuiltMICSelected =
-                                  !value;
-                            }
-                          },
-                        );
-                      },
-                      child: Radio<bool>(
-                        activeColor: radioButtonActiveColor,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: true,
-                        toggleable: true,
-                      ),
-                    ),
-                    Text(
+                    _buildMicRadio(
                       appLocalizations.pslabMic,
-                      style: TextStyle(
-                        color: oscilloscopeOptionLabelColor,
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.normal,
-                      ),
+                      oscilloscopeStateProvider.isMICSelected,
+                      (value) {
+                        setState(() {
+                          if (value == null || !value) {
+                            oscilloscopeStateProvider.isMICSelected = false;
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                false;
+                            oscilloscopeStateProvider.removeChannelData('MIC');
+                          } else {
+                            oscilloscopeStateProvider.isAudioInputSelected =
+                                true;
+                            oscilloscopeStateProvider.isMICSelected = true;
+                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                                false;
+                          }
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -350,15 +318,14 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
           child: Align(
             alignment: Alignment.center,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(color: oscilloscopeOptionTitleBoxColor),
               child: Text(
                 appLocalizations.channels,
                 style: TextStyle(
                   color: oscilloscopeOptionTitleColor,
-                  fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontSize: 12,
                 ),
               ),
             ),

@@ -41,11 +41,7 @@ class OscilloscopeScreen extends StatefulWidget {
 }
 
 class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
-  /// Approx. content height for the bottom controls (two rows of
-  /// checkbox + dropdown). Same for Channel / Timebase / Data Analysis / XY
-  /// Plot. Not true wrap-content yet: those tabs use Stack + Positioned, so
-  /// they need an explicit height (see fossasia/pslab-app#3461 / #3468).
-  static const double _controlsContentHeight = 120;
+  static const double _controlsContentHeight = 95;
 
   late OscilloscopeStateProvider _provider;
   late OscilloscopeConfigProvider? _configProvider;
@@ -413,10 +409,9 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                         child: Container(
                                           margin:
                                               const EdgeInsets.only(right: 5),
-                                          padding:
-                                              const EdgeInsets.only(bottom: 20),
+                                          padding: EdgeInsets.zero,
                                           color: Colors.black,
-                                          child: OscilloscopeGraph(),
+                                          child: const OscilloscopeGraph(),
                                         ),
                                       ),
                                       _PlaybackControlBar(
@@ -452,17 +447,13 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                                 children: [
                                                   Expanded(
                                                     child: Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              bottom: 20),
+                                                      padding: EdgeInsets.zero,
                                                       color: Colors.black,
                                                       child:
                                                           const OscilloscopeGraph(),
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                    // Cap so phones keep most of
-                                                    // the screen for the graph.
                                                     height:
                                                         _controlsContentHeight
                                                             .clamp(

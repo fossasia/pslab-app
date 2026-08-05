@@ -877,5 +877,6 @@
     "frequencySpread": "FREQUENCY SPREAD",
     "low": "Low",
     "mid": "Mid",
-    "high": "High"
+    "high": "High",
+    "rangeScale" : "Range :"
 }
