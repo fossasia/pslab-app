@@ -14,6 +14,13 @@ class OscilloscopeGraph extends StatefulWidget {
 }
 
 class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
+  final List<Color> plotColors = [
+    Colors.cyan,
+    Colors.green,
+    Colors.white,
+    Colors.purpleAccent
+  ];
+
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,
@@ -50,115 +57,168 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
         : provider.oscilloscopeAxesScale.xAxisScale / 1000;
   }
 
+  Widget _buildLegend(OscilloscopeStateProvider provider) {
+    if (provider.dataParamsChannels.isEmpty) return const SizedBox.shrink();
+
+    return Wrap(
+      spacing: 16.0,
+      runSpacing: 4.0,
+      alignment: WrapAlignment.end,
+      children: List.generate(provider.dataParamsChannels.length, (index) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 14,
+              height: 3,
+              color: plotColors[index % plotColors.length],
+            ),
+            const SizedBox(width: 8),
+            Text(
+              provider.dataParamsChannels[index],
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+      }),
+    );
+  }
+
   Widget _buildOverlayChart(OscilloscopeStateProvider provider) {
-    return LineChart(
-      LineChartData(
-        backgroundColor: chartBackgroundColor,
-        lineTouchData: LineTouchData(
-          enabled: !provider.isPlayingBack,
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          topTitles: AxisTitles(
-            axisNameWidget: Text(
-              provider.isFourierTransformSelected
-                  ? 'Frequency (Hz)'
-                  : (provider.oscilloscopeAxesScale.xAxisScale == 875
-                      ? 'Time (\u00b5s)'
-                      : 'Time (ms)'),
-              style: TextStyle(
-                fontSize: 10,
-                color: chartTextColor,
-                fontWeight: FontWeight.bold,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: LineChart(
+            LineChartData(
+              backgroundColor: chartBackgroundColor,
+              lineTouchData: LineTouchData(
+                enabled: !provider.isPlayingBack,
               ),
-            ),
-            sideTitles: SideTitles(
-              maxIncluded: false,
-              interval: provider.oscilloscopeAxesScale.getTimebaseInterval(),
-              reservedSize: 20,
-              showTitles: true,
-              getTitlesWidget: topTitleWidgets,
-            ),
-          ),
-          bottomTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          leftTitles: AxisTitles(
-            axisNameWidget: Text(
-              provider.isFourierTransformSelected ? 'Magnitude (V)' : 'CH1 (V)',
-              style: TextStyle(
-                fontSize: 10,
-                color: chartTextColor,
-                fontWeight: FontWeight.bold,
+              titlesData: FlTitlesData(
+                show: true,
+                topTitles: AxisTitles(
+                  axisNameWidget: Text(
+                    provider.isFourierTransformSelected
+                        ? 'Frequency (Hz)'
+                        : (provider.oscilloscopeAxesScale.xAxisScale == 875
+                            ? 'Time (\u00b5s)'
+                            : 'Time (ms)'),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: chartTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  sideTitles: SideTitles(
+                    maxIncluded: false,
+                    interval:
+                        provider.oscilloscopeAxesScale.getTimebaseInterval(),
+                    reservedSize: 20,
+                    showTitles: true,
+                    getTitlesWidget: topTitleWidgets,
+                  ),
+                ),
+                bottomTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles: AxisTitles(
+                  axisNameWidget: Text(
+                    provider.isFourierTransformSelected
+                        ? 'Magnitude (V)'
+                        : '(V)',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: chartTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  sideTitles: SideTitles(
+                    interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+                    reservedSize: 30,
+                    showTitles: true,
+                    getTitlesWidget: sideTitleWidgets,
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  axisNameWidget: Text(
+                    provider.isFourierTransformSelected
+                        ? 'Magnitude (V)'
+                        : '(V)',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: chartTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  sideTitles: SideTitles(
+                    interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+                    reservedSize: 30,
+                    showTitles: true,
+                    getTitlesWidget: sideTitleWidgets,
+                  ),
+                ),
               ),
-            ),
-            sideTitles: SideTitles(
-              interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-              reservedSize: 30,
-              showTitles: true,
-              getTitlesWidget: sideTitleWidgets,
-            ),
-          ),
-          rightTitles: AxisTitles(
-            axisNameWidget: Text(
-              provider.isFourierTransformSelected ? 'Magnitude (V)' : 'CH2 (V)',
-              style: TextStyle(
-                fontSize: 10,
-                color: chartTextColor,
-                fontWeight: FontWeight.bold,
+              gridData: FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: true,
+                horizontalInterval:
+                    provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+                verticalInterval:
+                    provider.oscilloscopeAxesScale.getTimebaseInterval(),
+                getDrawingHorizontalLine: (value) {
+                  return const FlLine(
+                    color: Color.fromARGB(50, 255, 255, 255),
+                    strokeWidth: 1,
+                  );
+                },
+                getDrawingVerticalLine: (value) {
+                  return const FlLine(
+                    color: Color.fromARGB(50, 255, 255, 255),
+                    strokeWidth: 1,
+                  );
+                },
               ),
-            ),
-            sideTitles: SideTitles(
-              interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-              reservedSize: 30,
-              showTitles: true,
-              getTitlesWidget: sideTitleWidgets,
-            ),
-          ),
-        ),
-        gridData: FlGridData(
-          show: true,
-          drawHorizontalLine: true,
-          drawVerticalLine: true,
-          horizontalInterval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-          verticalInterval:
-              provider.oscilloscopeAxesScale.getTimebaseInterval(),
-          getDrawingHorizontalLine: (value) {
-            return const FlLine(
-              color: Color.fromARGB(50, 255, 255, 255),
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return const FlLine(
-              color: Color.fromARGB(50, 255, 255, 255),
-              strokeWidth: 1,
-            );
-          },
-        ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border(
-            bottom: BorderSide(
-              color: chartBorderColor,
-            ),
-            left: BorderSide(
-              color: chartBorderColor,
-            ),
-            top: BorderSide(
-              color: chartBorderColor,
-            ),
-            right: BorderSide(
-              color: chartBorderColor,
+              borderData: FlBorderData(
+                show: true,
+                border: Border(
+                  bottom: BorderSide(
+                    color: chartBorderColor,
+                  ),
+                  left: BorderSide(
+                    color: chartBorderColor,
+                  ),
+                  top: BorderSide(
+                    color: chartBorderColor,
+                  ),
+                  right: BorderSide(
+                    color: chartBorderColor,
+                  ),
+                ),
+              ),
+              maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
+              minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
+              maxX: _maxX(provider),
+              minX: 0,
+              clipData: const FlClipData.all(),
+              lineBarsData: provider.createPlots(),
             ),
           ),
         ),
-        maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
-        minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
-        maxX: _maxX(provider),
-        minX: 0,
-        clipData: const FlClipData.all(),
-        lineBarsData: provider.createPlots(),
-      ),
+        SizedBox(
+          height: 24,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4.0, right: 35.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildLegend(provider),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -284,6 +344,16 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
               ),
             ),
           ),
+        SizedBox(
+          height: 24,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4.0, right: 35.0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildLegend(provider),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -299,10 +369,14 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
         }
         if (provider.isStackedMode) {
           return SizedBox(
+            width: double.infinity,
+            height: double.infinity,
             child: _buildStackedCharts(provider),
           );
         }
         return SizedBox(
+          width: double.infinity,
+          height: double.infinity,
           child: _buildOverlayChart(provider),
         );
       },
