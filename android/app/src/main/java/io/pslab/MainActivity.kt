@@ -39,8 +39,8 @@ class MainActivity : FlutterActivity(), SensorEventListener {
         private const val PERMISSION_CHANNEL = "io.pslab/permissions"
         private const val USB_CHANNEL = "usb_serial"
         private const val USB_EVENT_STREAM = "io.pslab/usb_events"
-        private const val ACTION_USB_PERMISSION = "com.pslab.USB_PERMISSION"
-        private const val TAG = "MainActivity"
+        internal const val ACTION_USB_PERMISSION = "com.pslab.USB_PERMISSION"
+        internal const val TAG = "MainActivity"
         private const val PERMISSION_REQ_CODE = 1001
 
         internal const val STATUS_GRANTED = "granted"
@@ -228,6 +228,7 @@ class MainActivity : FlutterActivity(), SensorEventListener {
     }
 }
 
+
 private fun MainActivity.registerUsbHardwareReceiver() {
     if (usbHardwareReceiver == null) {
         usbHardwareReceiver = object : BroadcastReceiver() {
@@ -322,7 +323,7 @@ private fun MainActivity.requestUsbPermission(usbManager: UsbManager, device: Us
         flags = PendingIntent.FLAG_MUTABLE
     }
 
-    val intent = Intent("com.pslab.USB_PERMISSION").apply {
+    val intent = Intent(MainActivity.ACTION_USB_PERMISSION).apply {
         `package` = packageName
     }
     val permissionIntent = PendingIntent.getBroadcast(this, 0, intent, flags)
@@ -338,7 +339,7 @@ private fun MainActivity.requestUsbPermission(usbManager: UsbManager, device: Us
         }
     }
 
-    val filter = IntentFilter("com.pslab.USB_PERMISSION")
+    val filter = IntentFilter(MainActivity.ACTION_USB_PERMISSION)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         registerReceiver(usbReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
     } else {
@@ -367,7 +368,7 @@ private fun Context.getPermissionStatusString(permission: String): String {
 
 private fun MainActivity.startTemperatureUpdates(): Boolean {
     if (temperatureSensor == null || sensorManager == null) {
-        Log.e("MainActivity", "Temperature sensor not available")
+        Log.e(MainActivity.TAG, "Temperature sensor not available")
         return false
     }
 
@@ -380,14 +381,14 @@ private fun MainActivity.startTemperatureUpdates(): Boolean {
 
         if (registered) {
             isListening = true
-            Log.d("MainActivity", "Temperature sensor listener registered")
+            Log.d(MainActivity.TAG, "Temperature sensor listener registered")
             if (currentTemperature != 0.0f && temperatureEventSink != null) {
-                Log.d("MainActivity", "Sending initial temperature to Flutter: $currentTemperature")
+                Log.d(MainActivity.TAG, "Sending initial temperature to Flutter: $currentTemperature")
                 temperatureEventSink?.success(currentTemperature.toDouble())
             }
             return true
         } else {
-            Log.e("MainActivity", "Failed to register temperature sensor listener")
+            Log.e(MainActivity.TAG, "Failed to register temperature sensor listener")
             return false
         }
     }
@@ -398,7 +399,7 @@ private fun MainActivity.stopTemperatureUpdates() {
     if (isListening && sensorManager != null) {
         sensorManager?.unregisterListener(this, temperatureSensor)
         isListening = false
-        Log.d("MainActivity", "Temperature sensor listener unregistered")
+        Log.d(MainActivity.TAG, "Temperature sensor listener unregistered")
     }
 }
 
