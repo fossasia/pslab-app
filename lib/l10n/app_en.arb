@@ -304,7 +304,7 @@
     "back": "Back",
     "nextTab": "Next tab",
     "pslabMic": "PSLab MIC",
-    "inBuiltMic": "In-Built MIC",
+    "builtinMic": "Built-In MIC",
     "ch3Range": "CH3 (+/- 3.3V)",
     "rangeValue": "+/-16V",
     "range": "Range",

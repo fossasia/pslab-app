@@ -529,7 +529,7 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
                                           provider.isCH3Selected ||
                                           provider.isMICSelected) &&
                                       getIt<ScienceLab>().isConnected()) ||
-                                  provider.isInBuiltMICSelected) &&
+                                  provider.isBuiltInMICSelected) &&
                               !provider.autoScale()) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

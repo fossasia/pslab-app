@@ -62,7 +62,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late bool isCH2Selected;
   late bool isCH3Selected;
   late bool isMICSelected;
-  late bool isInBuiltMICSelected;
+  late bool isBuiltInMICSelected;
   late bool isAudioInputSelected;
   late bool isTriggerSelected;
   late bool isTriggered;
@@ -188,7 +188,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     isCH2Selected = false;
     isCH3Selected = false;
     isMICSelected = false;
-    isInBuiltMICSelected = false;
+    isBuiltInMICSelected = false;
     isAudioInputSelected = false;
     isTriggerSelected = false;
     isTriggered = false;
@@ -351,7 +351,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         _isProcessing = true;
 
         if (isRunning) {
-          if (isInBuiltMICSelected && !_audioJack.isListening()) {
+          if (isBuiltInMICSelected && !_audioJack.isListening()) {
             await _audioJack.initialize();
             await _audioJack.start();
           }
@@ -376,7 +376,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                 channels.add('CH3');
               }
             }
-            if (isAudioInputSelected && isInBuiltMICSelected ||
+            if (isAudioInputSelected && isBuiltInMICSelected ||
                 (_scienceLab.isConnected() && isMICSelected)) {
               channels.add('MIC');
             }
@@ -395,7 +395,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
               dataEntries = [];
             }
           }
-          if (!isInBuiltMICSelected && _audioJack.isListening()) {
+          if (!isBuiltInMICSelected && _audioJack.isListening()) {
             await _audioJack.close();
           }
         }
@@ -460,7 +460,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     List<String> paramsChannels = channels;
     String? channel;
 
-    if (isInBuiltMICSelected) {
+    if (isBuiltInMICSelected) {
       noOfChannels--;
     }
 
@@ -641,7 +641,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         if (mA > _maxAmp) _maxAmp = mA;
       }
 
-      if (isInBuiltMICSelected) {
+      if (isBuiltInMICSelected) {
         noOfChannels++;
         isTriggered = false;
         entries.add([]);
@@ -1048,7 +1048,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   Future<bool> startRecording() async {
-    if (!_scienceLab.isConnected() && !isInBuiltMICSelected) {
+    if (!_scienceLab.isConnected() && !isBuiltInMICSelected) {
       return false;
     }
     if (_configProvider.config.includeLocationData) {
@@ -1108,7 +1108,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         if (isCH1Selected) 'CH1',
         if (isCH2Selected) 'CH2',
         if (isCH3Selected) 'CH3',
-        if (isMICSelected || isInBuiltMICSelected) 'MIC',
+        if (isMICSelected || isBuiltInMICSelected) 'MIC',
       ]);
     }
     final frameCount = _recordedData.isNotEmpty ? _recordedData.length - 1 : 0;
@@ -1253,7 +1253,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (isCH1Selected) names.add('CH1');
     if (isCH2Selected) names.add('CH2');
     if (isCH3Selected) names.add('CH3');
-    if (isMICSelected || isInBuiltMICSelected) names.add('MIC');
+    if (isMICSelected || isBuiltInMICSelected) names.add('MIC');
     if (names.isEmpty) names.add('CH1');
     return names;
   }
