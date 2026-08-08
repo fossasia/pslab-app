@@ -458,6 +458,7 @@
     "soundmeterConfig": "साउंड मीटर सेटिंग्स",
     "barometerConfig": "बैरोमीटर सेटिंग्स",
     "baroUpdatePeriodHint": "वो टाइम इंटरवल बताएं जिस पर डेटा अपडेट होगा (100 ms से 2000 ms)",
+    "gasUpdatePeriodHint": "वो टाइम इंटरवल बताएं जिस पर डेटा अपडेट होगा (100 ms से 5000 ms)",
     "barometerHighLimitHint": "रिकॉर्ड करने के लिए atm की मैक्स लिमिट बताएं (0 atm से 1.10 atm)",
     "gyroscopeConfigurations": "जायरोस्कोप सेटिंग्स",
     "gyroscopeHighLimitHint": "रिकॉर्ड करने के लिए एंगुलर वेलोसिटी की मैक्स लिमिट बताएं (0 rad/s से 1000 rad/s)",

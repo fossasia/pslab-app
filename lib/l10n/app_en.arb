@@ -485,6 +485,7 @@
     "soundmeterConfig": "Soundmeter Configurations",
     "barometerConfig": "Barometer Configurations",
     "baroUpdatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 2000 ms)",
+    "gasUpdatePeriodHint": "Please provide time interval at which data will be updated (100 ms to 5000 ms)",
     "barometerHighLimitHint": "Please provide the maximum limit of atm value to be recorded (0 atm to 1.10 atm)",
     "gyroscopeConfigurations": "Gyroscope Configurations",
     "gyroscopeHighLimitHint": "Please provide the maximum limit of angular velocity value to be recorded (0 rad/s to 1000 rad/s)",
