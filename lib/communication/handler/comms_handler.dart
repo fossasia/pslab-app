@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/others/logger_service.dart';
@@ -29,7 +30,9 @@ class PSLabCommunicationHandler implements CommunicationHandler {
 
   @override
   Future<void> initialize() async {
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      deviceFound = false;
+    } else if (Platform.isAndroid) {
       deviceFound = true;
     } else {
       deviceFound = rust_api.checkDesktopDevicePresent();
@@ -46,6 +49,10 @@ class PSLabCommunicationHandler implements CommunicationHandler {
   Future<void> open() async {
     if (!deviceFound) {
       throw Exception("Device not connected");
+    }
+
+    if (kIsWeb) {
+      throw Exception("Native USB not supported on Web. Use WebCommsHandler.");
     }
 
     rust_api.closeUsb();
@@ -68,7 +75,8 @@ class PSLabCommunicationHandler implements CommunicationHandler {
           await rust_api.initDesktop(vid: board.vid, pid: board.pid);
         }
 
-        logger.i(" Connected to PSLab ${board.version} hardware.");
+        logger.d(
+            "Port opened for ${board.version} chip. Waiting for PSLab handshake...");
         boardConnected = true;
         break;
       } catch (e) {
@@ -96,6 +104,8 @@ class PSLabCommunicationHandler implements CommunicationHandler {
 
   @override
   bool isDeviceFound() {
+    if (kIsWeb) return false;
+
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       return rust_api.checkDesktopDevicePresent();
     }

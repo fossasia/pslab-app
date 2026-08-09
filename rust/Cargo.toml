@@ -11,6 +11,10 @@ flutter_rust_bridge = "=2.12.0"
 anyhow = "1.0.75"
 lazy_static = "1.4.0"
 
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+tungstenite = "0.20.1"
+url = "2.4.0"
+
 [target.'cfg(target_os = "android")'.dependencies]
 rusb = "0.9.4"
 
