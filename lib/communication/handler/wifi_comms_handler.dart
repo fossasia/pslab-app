@@ -33,7 +33,7 @@ class WifiCommsHandler implements CommunicationHandler {
     logger.d("Connecting to $host on port $targetPort...");
 
     if (kIsWeb) {
-      final wsUrl = Uri.parse('ws://$host:$targetPort');
+      final wsUrl = Uri.parse('ws' '://$host:$targetPort');
 
       try {
         rust_api.readWebData(bytesToRead: 999999);

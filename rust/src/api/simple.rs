@@ -472,7 +472,7 @@ pub fn wifi_connect(host: String, port: u16, use_websocket: bool) -> Result<()> 
         *IS_USING_WS.lock().unwrap() = use_websocket;
 
         if use_websocket {
-            let ws_url = format!("ws://{}:{}", host, port);
+           let ws_url = format!("{}{}:{}", "ws://", host, port);
             let (socket, _) = connect(url::Url::parse(&ws_url)?)
                 .map_err(|e| anyhow!("WebSocket connection failed: {}", e))?;
 
