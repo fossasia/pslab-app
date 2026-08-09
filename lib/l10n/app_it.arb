@@ -458,6 +458,7 @@
     "soundmeterConfig": "Configurazioni Fonometro",
     "barometerConfig": "Configurazioni Barometro",
     "baroUpdatePeriodHint": "Fornisci l'intervallo di tempo in cui i dati verranno aggiornati (da 100 ms a 2000 ms)",
+    "gasUpdatePeriodHint": "Fornisci l'intervallo di tempo in cui i dati verranno aggiornati (da 100 ms a 5000 ms)",
     "barometerHighLimitHint": "Inserisci il limite massimo del valore atm da registrare (da 0 atm a 1.10 atm)",
     "gyroscopeConfigurations": "Configurazioni Giroscopio",
     "gyroscopeHighLimitHint": "Inserisci il limite massimo del valore della velocità angolare da registrare (da 0 rad/s a 1000 rad/s)",

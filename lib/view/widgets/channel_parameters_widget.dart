@@ -254,8 +254,8 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildMicRadio(
-                      appLocalizations.inBuiltMic,
-                      oscilloscopeStateProvider.isInBuiltMICSelected,
+                      appLocalizations.builtinMic,
+                      oscilloscopeStateProvider.isBuiltInMICSelected,
                       (value) async {
                         if (value == true) {
                           final AppPermissionStatus status =
@@ -268,7 +268,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                         }
                         setState(() {
                           if (value == null || !value) {
-                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                            oscilloscopeStateProvider.isBuiltInMICSelected =
                                 false;
                             oscilloscopeStateProvider.isAudioInputSelected =
                                 false;
@@ -278,7 +278,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                             oscilloscopeStateProvider.setTimebaseDivisions(6);
                             oscilloscopeStateProvider.isAudioInputSelected =
                                 true;
-                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                            oscilloscopeStateProvider.isBuiltInMICSelected =
                                 true;
                             oscilloscopeStateProvider.isMICSelected = false;
                           }
@@ -299,7 +299,7 @@ class _ChannelParametersState extends State<ChannelParametersWidget> {
                             oscilloscopeStateProvider.isAudioInputSelected =
                                 true;
                             oscilloscopeStateProvider.isMICSelected = true;
-                            oscilloscopeStateProvider.isInBuiltMICSelected =
+                            oscilloscopeStateProvider.isBuiltInMICSelected =
                                 false;
                           }
                         });

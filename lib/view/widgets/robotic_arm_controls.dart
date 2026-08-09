@@ -266,8 +266,6 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                                     },
                                                     child: Text(
                                                       appLocalizations.clear,
-                                                      style: TextStyle(
-                                                          color: Colors.black),
                                                     ),
                                                   ),
                                                 ],
@@ -280,7 +278,7 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                       foregroundColor:
                                           hasValues ? primaryRed : Colors.black,
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 4),
+                                          horizontal: 12, vertical: 12),
                                       textStyle: const TextStyle(fontSize: 11),
                                       minimumSize: Size.zero,
                                       tapTargetSize:
@@ -298,23 +296,16 @@ class _RoboticArmControlsState extends State<RoboticArmControls> {
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.refresh,
                                           size: 14,
-                                          color: hasValues
-                                              ? primaryRed
-                                              : Colors.black,
                                         ),
-                                        SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.009),
+                                        const SizedBox(width: 4),
                                         Text(
                                           appLocalizations.clear,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ],
                                     ),

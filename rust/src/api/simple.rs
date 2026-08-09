@@ -15,8 +15,11 @@ use std::time::Duration;
 use std::io::{Read, Write};
 #[cfg(not(target_family = "wasm"))]
 use std::net::TcpStream;
+
 #[cfg(not(target_family = "wasm"))]
-use tungstenite::{connect, stream::MaybeTlsStream, Message, WebSocket};
+lazy_static! {
+    static ref WIFI_STREAM: Mutex<Option<TcpStream>> = Mutex::new(None);
+}
 
 #[cfg(target_os = "android")]
 use rusb::{
@@ -38,17 +41,11 @@ lazy_static! {
     static ref SERIAL_PORT: Mutex<Option<Box<dyn serialport::SerialPort>>> = Mutex::new(None);
 }
 
-#[cfg(not(target_family = "wasm"))]
-lazy_static! {
-    static ref WIFI_TCP_STREAM: Mutex<Option<TcpStream>> = Mutex::new(None);
-    static ref WIFI_WS_STREAM: Mutex<Option<WebSocket<MaybeTlsStream<TcpStream>>>> = Mutex::new(None);
-    static ref IS_USING_WS: Mutex<bool> = Mutex::new(false);
-}
-
 #[cfg(target_family = "wasm")]
 lazy_static! {
     static ref WEB_RX_BUFFER: Mutex<VecDeque<u8>> = Mutex::new(VecDeque::new());
 }
+
 
 pub fn init_desktop(vid: u16, pid: u16) -> Result<()> {
     #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
@@ -392,6 +389,7 @@ pub fn read_data(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
         if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
             let mut buf = vec![0u8; bytes_to_read as usize];
 
+
             port.set_timeout(Duration::from_millis(timeout_ms as u64)).unwrap_or(());
 
             match port.read(&mut buf) {
@@ -463,88 +461,59 @@ pub fn check_desktop_device_present() -> bool {
     }
 }
 
+
 #[frb(sync)]
-pub fn wifi_connect(host: String, port: u16, use_websocket: bool) -> Result<()> {
+pub fn wifi_connect(host: String, port: u16) -> Result<()> {
     #[cfg(not(target_family = "wasm"))]
     {
-        wifi_disconnect();
+        let addr = format!("{}:{}", host, port);
 
-        *IS_USING_WS.lock().unwrap() = use_websocket;
+        let stream = TcpStream::connect(&addr)
+            .map_err(|e| anyhow!("Failed to connect to Wi-Fi socket: {}", e))?;
 
-        if use_websocket {
-           let ws_url = format!("{}{}:{}", "ws://", host, port);
-            let (socket, _) = connect(url::Url::parse(&ws_url)?)
-                .map_err(|e| anyhow!("WebSocket connection failed: {}", e))?;
+        stream.set_nodelay(true).unwrap_or(());
 
-            *WIFI_WS_STREAM.lock().unwrap() = Some(socket);
-        } else {
-            let addr = format!("{}:{}", host, port);
-            let stream = TcpStream::connect(&addr)
-                .map_err(|e| anyhow!("TCP connection failed: {}", e))?;
-
-            stream.set_nodelay(true).unwrap_or(());
-            *WIFI_TCP_STREAM.lock().unwrap() = Some(stream);
-        }
+        *WIFI_STREAM.lock().unwrap() = Some(stream);
         Ok(())
     }
-
     #[cfg(target_family = "wasm")]
     {
-        let _ = (host, port, use_websocket);
-
-        Ok(())
+        let _ = (host, port);
+        Err(anyhow!("Raw TCP Sockets are not supported in WebAssembly"))
     }
 }
 
 pub fn wifi_read(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
     #[cfg(not(target_family = "wasm"))]
     {
-        let is_ws = *IS_USING_WS.lock().unwrap();
-        let timeout = Duration::from_millis(timeout_ms as u64);
+        if let Some(stream) = WIFI_STREAM.lock().unwrap().as_mut() {
 
-        if is_ws {
-            if let Some(socket) = WIFI_WS_STREAM.lock().unwrap().as_mut() {
-                if let MaybeTlsStream::Plain(s) = socket.get_mut() {
-                    s.set_read_timeout(Some(timeout)).unwrap_or(());
-                }
+            stream
+                .set_read_timeout(Some(Duration::from_millis(timeout_ms as u64)))
+                .unwrap_or(());
 
-                match socket.read() {
-                    Ok(Message::Binary(mut data)) => {
-                        data.truncate(bytes_to_read as usize);
-                        return data;
-                    },
-                    _ => return vec![],
+            let mut buffer = vec![0; bytes_to_read as usize];
+            let mut total_read = 0;
+
+
+            while total_read < bytes_to_read as usize {
+                match stream.read(&mut buffer[total_read..]) {
+                    Ok(0) => break,
+                    Ok(n) => total_read += n,
+                    Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => break,
+                    Err(_) => break,
                 }
             }
+            buffer.truncate(total_read);
+            buffer
         } else {
-            if let Some(stream) = WIFI_TCP_STREAM.lock().unwrap().as_mut() {
-                stream.set_read_timeout(Some(timeout)).unwrap_or(());
-
-                let mut buffer = vec![0; bytes_to_read as usize];
-                let mut total_read = 0;
-
-                while total_read < bytes_to_read as usize {
-                    match stream.read(&mut buffer[total_read..]) {
-                        Ok(0) => break,
-                        Ok(n) => total_read += n,
-                        Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => break,
-                        Err(_) => break,
-                    }
-                }
-                buffer.truncate(total_read);
-                return buffer;
-            }
+            vec![]
         }
-        vec![]
     }
-
     #[cfg(target_family = "wasm")]
     {
-
-        let _read_val = bytes_to_read;
-        let _timeout_val = timeout_ms;
-
-        read_web_data(bytes_to_read)
+        let _ = (bytes_to_read, timeout_ms);
+        vec![]
     }
 }
 
@@ -552,31 +521,19 @@ pub fn wifi_read(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
 pub fn wifi_write(data: Vec<u8>) -> Result<()> {
     #[cfg(not(target_family = "wasm"))]
     {
-        let is_ws = *IS_USING_WS.lock().unwrap();
-
-        if is_ws {
-            if let Some(socket) = WIFI_WS_STREAM.lock().unwrap().as_mut() {
-                socket.write_message(Message::Binary(data))
-                    .map_err(|e| anyhow!("WebSocket write failed: {}", e))?;
-                Ok(())
-            } else {
-                Err(anyhow!("WebSocket not connected"))
-            }
+        if let Some(stream) = WIFI_STREAM.lock().unwrap().as_mut() {
+            stream
+                .write_all(&data)
+                .map_err(|e| anyhow!("Wi-Fi write failed: {}", e))?;
+            Ok(())
         } else {
-            if let Some(stream) = WIFI_TCP_STREAM.lock().unwrap().as_mut() {
-                stream.write_all(&data)
-                    .map_err(|e| anyhow!("TCP write failed: {}", e))?;
-                Ok(())
-            } else {
-                Err(anyhow!("TCP not connected"))
-            }
+            Err(anyhow!("Wi-Fi not connected"))
         }
     }
-
     #[cfg(target_family = "wasm")]
     {
         let _ = data;
-        Err(anyhow!("On WASM, Dart handles the WebSocket writes directly."))
+        Err(anyhow!("Raw TCP Sockets are not supported"))
     }
 }
 
@@ -584,19 +541,13 @@ pub fn wifi_write(data: Vec<u8>) -> Result<()> {
 pub fn wifi_disconnect() {
     #[cfg(not(target_family = "wasm"))]
     {
-        if let Some(mut socket) = WIFI_WS_STREAM.lock().unwrap().take() {
-            let _ = socket.close(None);
-        }
-        if let Some(stream) = WIFI_TCP_STREAM.lock().unwrap().take() {
+        if let Some(stream) = WIFI_STREAM.lock().unwrap().take() {
             let _ = stream.shutdown(std::net::Shutdown::Both);
         }
     }
-
     #[cfg(target_family = "wasm")]
     {
-        if let Ok(mut buffer) = WEB_RX_BUFFER.lock() {
-            buffer.clear();
-        }
+
     }
 }
 
