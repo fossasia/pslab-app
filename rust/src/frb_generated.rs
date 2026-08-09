@@ -397,10 +397,12 @@ fn wire__crate__api__simple__wifi_connect_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_host = <String>::sse_decode(&mut deserializer);
             let api_port = <u16>::sse_decode(&mut deserializer);
+            let api_use_websocket = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
                 (move || {
-                    let output_ok = crate::api::simple::wifi_connect(api_host, api_port)?;
+                    let output_ok =
+                        crate::api::simple::wifi_connect(api_host, api_port, api_use_websocket)?;
                     Ok(output_ok)
                 })(),
             )

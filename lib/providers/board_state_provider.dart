@@ -8,6 +8,7 @@ import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/settings_config_provider.dart';
 import 'package:pslab/others/science_lab_common.dart';
+import 'package:pslab/communication/handler/wifi_comms_handler.dart';
 
 import 'package:pslab/src/rust/api/simple.dart' as rust_api;
 
@@ -25,6 +26,9 @@ class BoardStateProvider extends ChangeNotifier {
   int pslabFirmwareVersion = 0;
   bool _isProcessing = false;
 
+  String wifiHost = '192.168.4.1';
+  bool useWebSockets = true;
+
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
   static const EventChannel _androidUsbEventChannel =
@@ -36,14 +40,25 @@ class BoardStateProvider extends ChangeNotifier {
     configProvider = SettingsConfigProvider();
   }
 
+  void setWifiHost(String host) {
+    wifiHost = host;
+    notifyListeners();
+  }
+
+  void setUseWebSockets(bool useWs) {
+    useWebSockets = useWs;
+    notifyListeners();
+  }
+
   Future<void> initialize() async {
     if (_isProcessing) return;
     _isProcessing = true;
     if (!scienceLabCommon.isConnected()) {
       await scienceLabCommon.initialize();
-      pslabIsConnected = await scienceLabCommon.openDevice();
-      await setPSLabVersionIDs();
-      await fetchFirmwareVersion();
+      bool portOpened = await scienceLabCommon.openDevice();
+      if (portOpened) {
+        await _validateHandshake();
+      }
     }
     _isProcessing = false;
 
@@ -64,9 +79,7 @@ class BoardStateProvider extends ChangeNotifier {
         .listen((List<ConnectivityResult> results) {
       if (results.contains(ConnectivityResult.none)) {
         scienceLabCommon.setWiFiConnected(false);
-        pslabIsConnected = false;
-        pslabVersionID = 'Not Connected';
-        notifyListeners();
+        _resetConnectionState();
       }
     });
   }
@@ -99,9 +112,10 @@ class BoardStateProvider extends ChangeNotifier {
 
       try {
         if (!scienceLabCommon.isConnected() && await attemptToConnectPSLab()) {
-          pslabIsConnected = await scienceLabCommon.openDevice();
-          await setPSLabVersionIDs();
-          await fetchFirmwareVersion();
+          bool portOpened = await scienceLabCommon.openDevice();
+          if (portOpened) {
+            await _validateHandshake();
+          }
         }
       } catch (e) {
         logger.e("Error auto-connecting on USB Attach: $e");
@@ -110,29 +124,71 @@ class BoardStateProvider extends ChangeNotifier {
         notifyListeners();
       }
     } else if (isDetached && !scienceLabCommon.isWiFiConnected()) {
-      scienceLabCommon.setConnected(false);
-      pslabIsConnected = false;
-      pslabVersionID = 'Not Connected';
-      notifyListeners();
+      _resetConnectionState();
     }
   }
 
   Future<void> initializeWiFi() async {
     if (!pslabIsConnected) {
-      pslabIsConnected = await scienceLabCommon.openWiFiDevice();
-      await setPSLabVersionIDs();
-      await fetchFirmwareVersion();
+      if (ScienceLabCommon.communicationHandler is! WifiCommsHandler) {
+        ScienceLabCommon.communicationHandler = WifiCommsHandler(
+          host: wifiHost,
+        );
+        (ScienceLabCommon.communicationHandler as WifiCommsHandler)
+            .useWebSockets = useWebSockets;
+
+        scienceLabCommon.getScienceLab().mCommunicationHandler =
+            ScienceLabCommon.communicationHandler;
+      } else {
+        final handler =
+            ScienceLabCommon.communicationHandler as WifiCommsHandler;
+        handler.useWebSockets = useWebSockets;
+      }
+
+      bool portOpened = await scienceLabCommon.openWiFiDevice();
+      if (portOpened) {
+        await _validateHandshake();
+      }
     }
   }
 
-  Future<void> setPSLabVersionIDs() async {
-    pslabVersionID = await getIt.get<ScienceLab>().getVersion();
-    if (pslabVersionID == pslabVersionIDV6) {
-      pslabVersion = 6;
-    } else if (pslabVersionID == pslabVersionIDV5) {
-      pslabVersion = 5;
+  Future<void> _validateHandshake() async {
+    await setPSLabVersionIDs();
+
+    if (pslabVersion == 0 || pslabVersionID == 'Not Connected') {
+      logger.w(
+          "Port opened, but device failed the Version Handshake. Rejecting generic device.");
+      _resetConnectionState();
+    } else {
+      logger.i("Handshake successful: $pslabVersionID");
+      pslabIsConnected = true;
+      await fetchFirmwareVersion();
     }
     notifyListeners();
+  }
+
+  void _resetConnectionState() {
+    scienceLabCommon.setConnected(false);
+    pslabIsConnected = false;
+    pslabVersionID = 'Not Connected';
+    pslabVersion = 0;
+    pslabFirmwareVersion = 0;
+    notifyListeners();
+  }
+
+  Future<void> setPSLabVersionIDs() async {
+    String rawVersion = await getIt.get<ScienceLab>().getVersion();
+
+    if (rawVersion == pslabVersionIDV6) {
+      pslabVersionID = pslabVersionIDV6;
+      pslabVersion = 6;
+    } else if (rawVersion == pslabVersionIDV5) {
+      pslabVersionID = pslabVersionIDV5;
+      pslabVersion = 5;
+    } else {
+      pslabVersionID = 'Not Connected';
+      pslabVersion = 0;
+    }
   }
 
   Future<void> fetchFirmwareVersion() async {
@@ -143,7 +199,6 @@ class BoardStateProvider extends ChangeNotifier {
     if (pslabFirmwareVersion < 3 && pslabFirmwareVersion != 0) {
       legacyFirmwareNotifier.value = "LegacyFirmwareDetected";
     }
-    notifyListeners();
   }
 
   Future<bool> attemptToConnectPSLab() async {
