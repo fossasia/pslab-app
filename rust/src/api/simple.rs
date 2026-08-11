@@ -1,10 +1,8 @@
 use anyhow::{anyhow, Result};
 use flutter_rust_bridge::frb;
 use lazy_static::lazy_static;
-use std::sync::Mutex;
-
-#[cfg(target_family = "wasm")]
 use std::collections::VecDeque;
+use std::sync::Mutex;
 
 #[cfg(target_os = "android")]
 use std::sync::{mpsc, Arc};
@@ -16,7 +14,7 @@ use std::time::Duration;
 #[cfg(not(target_family = "wasm"))]
 use std::io::{Read, Write};
 #[cfg(not(target_family = "wasm"))]
-use std::net::{TcpStream, ToSocketAddrs};
+use std::net::TcpStream;
 #[cfg(not(target_family = "wasm"))]
 use tungstenite::{connect, stream::MaybeTlsStream, Message, WebSocket};
 
@@ -465,6 +463,7 @@ pub fn check_desktop_device_present() -> bool {
     }
 }
 
+#[frb(sync)]
 pub fn wifi_connect(host: String, port: u16, use_websocket: bool) -> Result<()> {
     #[cfg(not(target_family = "wasm"))]
     {
@@ -473,35 +472,17 @@ pub fn wifi_connect(host: String, port: u16, use_websocket: bool) -> Result<()> 
         *IS_USING_WS.lock().unwrap() = use_websocket;
 
         if use_websocket {
-            let protocol = "ws";
-            let ws_url = format!("{}://{}:{}", protocol, host, port);
-
-            let (mut socket, _) = connect(url::Url::parse(&ws_url)?)
+           let ws_url = format!("{}{}:{}", "ws://", host, port);
+            let (socket, _) = connect(url::Url::parse(&ws_url)?)
                 .map_err(|e| anyhow!("WebSocket connection failed: {}", e))?;
-
-            if let MaybeTlsStream::Plain(s) = socket.get_mut() {
-                s.set_nonblocking(true).unwrap_or(());
-            }
 
             *WIFI_WS_STREAM.lock().unwrap() = Some(socket);
         } else {
             let addr = format!("{}:{}", host, port);
-
-            let socket_addrs: Vec<_> = addr
-                .to_socket_addrs()
-                .map_err(|e| anyhow!("Invalid address: {}", e))?
-                .collect();
-
-            if socket_addrs.is_empty() {
-                return Err(anyhow!("Could not resolve PSLab address"));
-            }
-
-            let stream = TcpStream::connect_timeout(&socket_addrs[0], std::time::Duration::from_secs(3))
+            let stream = TcpStream::connect(&addr)
                 .map_err(|e| anyhow!("TCP connection failed: {}", e))?;
 
             stream.set_nodelay(true).unwrap_or(());
-            stream.set_nonblocking(true).unwrap_or(());
-
             *WIFI_TCP_STREAM.lock().unwrap() = Some(stream);
         }
         Ok(())
@@ -510,6 +491,7 @@ pub fn wifi_connect(host: String, port: u16, use_websocket: bool) -> Result<()> 
     #[cfg(target_family = "wasm")]
     {
         let _ = (host, port, use_websocket);
+
         Ok(())
     }
 }
@@ -518,9 +500,14 @@ pub fn wifi_read(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
     #[cfg(not(target_family = "wasm"))]
     {
         let is_ws = *IS_USING_WS.lock().unwrap();
+        let timeout = Duration::from_millis(timeout_ms as u64);
 
         if is_ws {
             if let Some(socket) = WIFI_WS_STREAM.lock().unwrap().as_mut() {
+                if let MaybeTlsStream::Plain(s) = socket.get_mut() {
+                    s.set_read_timeout(Some(timeout)).unwrap_or(());
+                }
+
                 match socket.read() {
                     Ok(Message::Binary(mut data)) => {
                         data.truncate(bytes_to_read as usize);
@@ -531,6 +518,8 @@ pub fn wifi_read(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
             }
         } else {
             if let Some(stream) = WIFI_TCP_STREAM.lock().unwrap().as_mut() {
+                stream.set_read_timeout(Some(timeout)).unwrap_or(());
+
                 let mut buffer = vec![0; bytes_to_read as usize];
                 let mut total_read = 0;
 
@@ -551,8 +540,10 @@ pub fn wifi_read(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
 
     #[cfg(target_family = "wasm")]
     {
+
         let _read_val = bytes_to_read;
         let _timeout_val = timeout_ms;
+
         read_web_data(bytes_to_read)
     }
 }

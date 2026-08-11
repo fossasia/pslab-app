@@ -88,7 +88,7 @@ class _GasSensorConfigScreenState extends State<GasSensorConfigScreen> {
                               );
                             }
                           },
-                          hint: appLocalizations.gasUpdatePeriodHint,
+                          hint: appLocalizations.stopGif,
                         ),
                         ConfigCheckboxItem(
                           title: appLocalizations.locationData,
