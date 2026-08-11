@@ -19,11 +19,21 @@ runs:
         cache: true
         flutter-version-file: pubspec.yaml
     
+    - name: Add WebAssembly to Rust
+      shell: bash
+      run: |
+        rustup target add wasm32-unknown-unknown
+        cargo install flutter_rust_bridge_codegen
+
+    - name: Compile Rust for Web
+      shell: bash
+      run: flutter_rust_bridge_codegen generate
+    
     - name: Build Web App
       shell: bash
       run: |
         flutter config --enable-web
-        flutter build web --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
+        flutter build web --wasm --build-name ${{ inputs.VERSION_NAME }} --build-number ${{ inputs.VERSION_CODE }}
     
     - name: Create Web Archive
       shell: bash
@@ -36,3 +46,4 @@ runs:
       with:
         name: pslab-web-app-${{ inputs.VERSION_NAME }}
         path: build/pslab-web-app-${{ inputs.VERSION_NAME }}.zip
+        
