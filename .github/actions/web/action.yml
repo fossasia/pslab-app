@@ -18,7 +18,7 @@ runs:
       with:
         cache: true
         flutter-version-file: pubspec.yaml
-        
+
     - name: Install System Dependencies
       shell: bash
       run: |
@@ -32,9 +32,12 @@ runs:
         cargo install cargo-expand
         cargo install flutter_rust_bridge_codegen
 
+    # ADDED: build-web command here!
     - name: Compile Rust for Web
       shell: bash
-      run: flutter_rust_bridge_codegen generate
+      run: |
+        flutter_rust_bridge_codegen generate
+        flutter_rust_bridge_codegen build-web
     
     - name: Build Web App
       shell: bash
@@ -53,3 +56,4 @@ runs:
       with:
         name: pslab-web-app-${{ inputs.VERSION_NAME }}
         path: build/pslab-web-app-${{ inputs.VERSION_NAME }}.zip
+        
