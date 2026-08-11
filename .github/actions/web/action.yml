@@ -34,6 +34,8 @@ runs:
       shell: bash
       run: |
         rustup target add wasm32-unknown-unknown
+        rustup toolchain install nightly
+        rustup component add rust-src --toolchain nightly
         cargo install cargo-expand
         cargo install flutter_rust_bridge_codegen
 
