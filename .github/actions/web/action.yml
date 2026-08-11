@@ -24,6 +24,11 @@ runs:
       run: |
         sudo apt-get update
         sudo apt-get install -y pkg-config libudev-dev libusb-1.0-0-dev
+
+    - name: Install wasm-pack
+      uses: jetli/wasm-pack-action@v0.4.0
+      with:
+        version: 'latest'
     
     - name: Add WebAssembly to Rust
       shell: bash
@@ -32,7 +37,6 @@ runs:
         cargo install cargo-expand
         cargo install flutter_rust_bridge_codegen
 
-    # ADDED: build-web command here!
     - name: Compile Rust for Web
       shell: bash
       run: |
@@ -56,4 +60,3 @@ runs:
       with:
         name: pslab-web-app-${{ inputs.VERSION_NAME }}
         path: build/pslab-web-app-${{ inputs.VERSION_NAME }}.zip
-        
