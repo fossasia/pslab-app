@@ -18,11 +18,18 @@ runs:
       with:
         cache: true
         flutter-version-file: pubspec.yaml
+        
+    - name: Install System Dependencies
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pkg-config libudev-dev libusb-1.0-0-dev
     
     - name: Add WebAssembly to Rust
       shell: bash
       run: |
         rustup target add wasm32-unknown-unknown
+        cargo install cargo-expand
         cargo install flutter_rust_bridge_codegen
 
     - name: Compile Rust for Web
@@ -46,4 +53,3 @@ runs:
       with:
         name: pslab-web-app-${{ inputs.VERSION_NAME }}
         path: build/pslab-web-app-${{ inputs.VERSION_NAME }}.zip
-        
