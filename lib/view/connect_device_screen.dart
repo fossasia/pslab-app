@@ -99,7 +99,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
       _isConnectingWifi = true;
     });
 
-    _showSnackBar("${appLocalizations.connectingToWifi}");
+    _showSnackBar(appLocalizations.connectingToWifi);
 
     try {
       await provider.initializeWiFi();
