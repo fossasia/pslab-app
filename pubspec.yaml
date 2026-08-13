@@ -83,6 +83,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/images/guide_images/
 
 inno_bundle:
   id: b633ddbf-a022-4cbb-a459-4ba9fec0da51
