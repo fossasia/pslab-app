@@ -119,7 +119,8 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
   List<Widget> _getOledGuideContent() {
     return [
       InstrumentIntroText(text: appLocalizations.oledDisplayIntro),
-      const InstrumentImage(imagePath: 'assets/images/guide_images/oled_display_guide.png'),
+      const InstrumentImage(
+          imagePath: 'assets/images/guide_images/oled_display_guide.png'),
       InstrumentIntroText(text: appLocalizations.oledDisplayConnection),
       InstrumentCompatibilitySection(
         pslabRequired: true,
