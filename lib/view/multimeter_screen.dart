@@ -16,7 +16,8 @@ import 'package:pslab/view/widgets/multimeter_knob.dart';
 
 class MultimeterScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
-  final multimeterCircuit = 'assets/images/multimeter_circuit.png';
+  final multimeterCircuit =
+      'assets/images/guide_images/capacitance_resistor_multimeter_guide.png';
   final List<List<dynamic>>? playbackData;
   const MultimeterScreen({super.key, this.playbackData});
 

@@ -18,8 +18,10 @@ import 'package:pslab/view/widgets/wave_generator_graph.dart';
 import 'package:pslab/view/widgets/wave_generator_main_controls.dart';
 
 class WaveGeneratorScreen extends StatefulWidget {
-  final String sineWaveCircuit = 'assets/images/sin_wave_gen_circuit.png';
-  final String squareWaveCircuit = 'assets/images/square_wave_gen_circuit.png';
+  final String sineWaveCircuit =
+      'assets/images/guide_images/wave_gen_sine_and_saw_guide.png';
+  final String squareWaveCircuit =
+      'assets/images/guide_images/wave_gen_square.png';
   final String oscilloscopeIcon = 'assets/icons/icon_oscilloscope_white.png';
   final String logicAnalyzerIcon = 'assets/icons/icon_logic_analyzer_white.png';
   final List<List<dynamic>>? playbackData;

@@ -27,11 +27,9 @@ import '../providers/oscilloscope_state_provider.dart';
 class OscilloscopeScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
   final String oscilloscopeSchematic =
-      'assets/images/oscilloscope_schematic.png';
-  final String micSchematic = 'assets/images/mic_schematic.png';
-  final String timebaseView = 'assets/images/timebase_view.png';
-  final String dataAnalysisView = 'assets/images/data_analysis_view.png';
-  final String xyPlotView = 'assets/images/xy_plot_view.png';
+      'assets/images/guide_images/oscilloscope_sine_guide.png';
+  final String micSchematic =
+      'assets/images/guide_images/oscilloscope_mic_guide.png';
   final List<List<dynamic>>? playbackData;
   final String? playbackName;
   const OscilloscopeScreen({super.key, this.playbackData, this.playbackName});
@@ -291,14 +289,11 @@ class _OscilloscopeScreenState extends State<OscilloscopeScreen> {
       InstrumentBulletPoint(text: appLocalizations.timebaseBulletPoint1),
       InstrumentBulletPoint(text: appLocalizations.timebaseBulletPoint2),
       InstrumentBulletPoint(text: appLocalizations.timebaseBulletPoint3),
-      InstrumentImage(imagePath: widget.timebaseView),
       InstrumentHeading(text: appLocalizations.dataAnalysis),
       InstrumentBulletPoint(text: appLocalizations.dataAnalysisBulletPoint1),
       InstrumentBulletPoint(text: appLocalizations.dataAnalysisBulletPoint2),
-      InstrumentImage(imagePath: widget.dataAnalysisView),
       InstrumentHeading(text: appLocalizations.xyPlot),
       InstrumentBulletPoint(text: appLocalizations.xyPlotBulletPoint1),
-      InstrumentImage(imagePath: widget.xyPlotView),
       const InstrumentCompatibilitySection(
         phonePartial: true,
         pslabRequired: true,

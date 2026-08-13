@@ -39,7 +39,7 @@ class _BarometerScreenState extends State<BarometerScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late BarometerStateProvider _provider;
   bool _showGuide = false;
-  static const imagePath = 'assets/images/bmp180_schematic.png';
+  static const imagePath = 'assets/images/guide_images/i2_sensor_guides.png';
 
   I2C? _i2c;
   ScienceLab? _scienceLab;

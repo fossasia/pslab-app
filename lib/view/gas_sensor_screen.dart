@@ -36,7 +36,7 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
   late GasSensorConfigProvider _configProvider;
   bool _showGuide = false;
 
-  static const imagePath = 'assets/images/mq_135_gas_sensor.png';
+  static const imagePath = 'assets/images/guide_images/gas_sensor_guide.png';
 
   @override
   void initState() {

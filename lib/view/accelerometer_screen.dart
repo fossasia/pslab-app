@@ -25,7 +25,7 @@ class AccelerometerScreen extends StatefulWidget {
 class _AccelerometerScreenState extends State<AccelerometerScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _showGuide = false;
-  static const imagePath = 'assets/images/bh1750_schematic_.png';
+  static const imagePath = 'assets/images/guide_images/i2_sensor_guides.png';
   late AccelerometerStateProvider _provider;
   late AccelerometerConfigProvider _configProvider;
 

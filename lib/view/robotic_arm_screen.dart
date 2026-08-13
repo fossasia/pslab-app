@@ -30,7 +30,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
   late RoboticArmStateProvider provider;
   late List<String> servoLabels;
   bool _showGuide = false;
-  static const imagePath = 'assets/images/robotic_arm_guide.png';
+  static const imagePath = 'assets/images/guide_images/robotic_arm_guide.png';
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override

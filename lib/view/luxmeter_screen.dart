@@ -34,7 +34,7 @@ class _LuxMeterScreenState extends State<LuxMeterScreen> {
   late LuxMeterStateProvider _provider;
   late LuxMeterConfigProvider _configProvider;
   bool _showGuide = false;
-  static const imagePath = 'assets/images/bh1750_schematic_.png';
+  static const imagePath = 'assets/images/guide_images/i2_sensor_guides.png';
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   void _showInstrumentGuide() {

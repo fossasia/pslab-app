@@ -21,7 +21,8 @@ class LogicAnalyzerScreen extends StatefulWidget {
   const LogicAnalyzerScreen({super.key, this.playbackData, this.fileName});
   final List<List<dynamic>>? playbackData;
   final String? fileName;
-  final logicAnalyzerCircuit = 'assets/images/logic_analyzer_circuit.png';
+  final logicAnalyzerCircuit =
+      'assets/images/guide_images/logic_analyzer_guide.png';
 
   @override
   State<StatefulWidget> createState() => _LogicAnalyzerScreenState();

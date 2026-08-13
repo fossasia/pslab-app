@@ -17,7 +17,8 @@ import 'package:pslab/view/widgets/power_source_knob.dart';
 
 class PowerSourceScreen extends StatefulWidget {
   final String icRecord = 'assets/icons/ic_record_white.png';
-  final String powerSourceCircuit = 'assets/images/powersource_circuit.png';
+  final String powerSourceCircuit =
+      'assets/images/guide_images/power_source_guide.png';
   final List<List<dynamic>>? playbackData;
 
   const PowerSourceScreen({super.key, this.playbackData});
