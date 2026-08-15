@@ -6,8 +6,8 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `IS_USING_WS`, `SERIAL_PORT`, `WIFI_TCP_STREAM`, `WIFI_WS_STREAM`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `deref`, `deref`, `deref`, `initialize`, `initialize`, `initialize`, `initialize`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `SERIAL_PORT`, `WIFI_WS_RX_BUFFER`, `WIFI_WS_STREAM`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `deref`, `deref`, `initialize`, `initialize`, `initialize`
 
 Future<void> initDesktop({required int vid, required int pid}) =>
     RustLib.instance.api.crateApiSimpleInitDesktop(vid: vid, pid: pid);
@@ -37,12 +37,8 @@ void closeUsb() => RustLib.instance.api.crateApiSimpleCloseUsb();
 bool checkDesktopDevicePresent() =>
     RustLib.instance.api.crateApiSimpleCheckDesktopDevicePresent();
 
-void wifiConnect(
-        {required String host,
-        required int port,
-        required bool useWebsocket}) =>
-    RustLib.instance.api.crateApiSimpleWifiConnect(
-        host: host, port: port, useWebsocket: useWebsocket);
+void wifiConnect({required String host, required int port}) =>
+    RustLib.instance.api.crateApiSimpleWifiConnect(host: host, port: port);
 
 Future<Uint8List> wifiRead(
         {required int bytesToRead, required int timeoutMs}) =>

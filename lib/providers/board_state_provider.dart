@@ -27,7 +27,6 @@ class BoardStateProvider extends ChangeNotifier {
   bool _isProcessing = false;
 
   String wifiHost = '192.168.4.1';
-  bool useWebSockets = true;
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
@@ -42,11 +41,6 @@ class BoardStateProvider extends ChangeNotifier {
 
   void setWifiHost(String host) {
     wifiHost = host;
-    notifyListeners();
-  }
-
-  void setUseWebSockets(bool useWs) {
-    useWebSockets = useWs;
     notifyListeners();
   }
 
@@ -134,17 +128,9 @@ class BoardStateProvider extends ChangeNotifier {
         ScienceLabCommon.communicationHandler = WifiCommsHandler(
           host: wifiHost,
         );
-        (ScienceLabCommon.communicationHandler as WifiCommsHandler)
-            .useWebSockets = useWebSockets;
-
         scienceLabCommon.getScienceLab().mCommunicationHandler =
             ScienceLabCommon.communicationHandler;
-      } else {
-        final handler =
-            ScienceLabCommon.communicationHandler as WifiCommsHandler;
-        handler.useWebSockets = useWebSockets;
       }
-
       bool portOpened = await scienceLabCommon.openWiFiDevice();
       if (portOpened) {
         await _validateHandshake();

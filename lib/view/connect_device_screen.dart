@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
@@ -24,49 +23,13 @@ class ConnectDeviceScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeScreenState();
 }
 
-Widget _stepText(String text) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Padding(
-        padding: EdgeInsets.only(top: 2.0, right: 8.0),
-        child:
-            Icon(Icons.check_circle_outline, size: 16, color: Colors.black87),
-      ),
-      Expanded(
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 14,
-            height: 1.4,
-            color: Colors.black,
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
 class _HomeScreenState extends State<ConnectDeviceScreen> {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   bool _isConnectingWifi = false;
-  final TextEditingController _ipController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<BoardStateProvider>(context, listen: false);
-      _ipController.text = provider.wifiHost;
-
-      provider.setUseWebSockets(kIsWeb);
-    });
-  }
-
-  @override
-  void dispose() {
-    _ipController.dispose();
-    super.dispose();
   }
 
   void _showSnackBar(String message) {
@@ -93,7 +56,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
   }
 
   Future<void> _connectWifi(BoardStateProvider provider) async {
-    provider.setWifiHost(_ipController.text.trim());
+    provider.setWifiHost("192.168.4.1");
 
     setState(() {
       _isConnectingWifi = true;
@@ -107,8 +70,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
       if (!mounted) return;
 
       if (provider.pslabIsConnected) {
-        String protocol = provider.useWebSockets ? "WebSockets" : "TCP";
-        _showSnackBar("${appLocalizations.wifiConnectionSuccess} ($protocol)");
+        _showSnackBar("${appLocalizations.wifiConnectionSuccess} (WebSockets)");
       } else {
         _showSnackBar(appLocalizations.wifiConnectionFailed);
       }
@@ -131,6 +93,9 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
       title: appLocalizations.connectDevice,
       body: Consumer<BoardStateProvider>(
         builder: (context, provider, _) {
+          final bool isWifiConnected =
+              provider.scienceLabCommon.isWiFiConnected();
+
           return SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -144,237 +109,263 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Center(
-                            child: Image.asset(
-                              provider.pslabIsConnected
-                                  ? (provider.scienceLabCommon.isWiFiConnected()
-                                      ? ConnectDeviceScreen.iconWifiConnected
-                                      : ConnectDeviceScreen.iconUsbConnected)
-                                  : ConnectDeviceScreen.iconUsbDisconnected,
-                              width: 90,
-                              height: 90,
+                          if (provider.pslabIsConnected) ...[
+                            Center(
+                              child: Image.asset(
+                                isWifiConnected
+                                    ? ConnectDeviceScreen.iconWifiConnected
+                                    : ConnectDeviceScreen.iconUsbConnected,
+                                width: 90,
+                                height: 90,
+                              ),
                             ),
-                          ),
-                          Center(
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(vertical: 20),
-                              child: Text(
-                                provider.pslabIsConnected
-                                    ? '${appLocalizations.deviceConnected}\n\n${provider.pslabVersionID}'
-                                    : appLocalizations.noDeviceFound,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: usbConnectionColor,
-                                  fontWeight: FontWeight.bold,
+                            Center(
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Text(
+                                  '${appLocalizations.deviceConnected} via ${isWifiConnected ? "Wi-Fi" : "USB"}\n\nFirmware: ${provider.pslabVersionID}',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Visibility(
-                            visible: !provider.pslabIsConnected,
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border:
-                                    Border.all(color: primaryRed, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.05),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  )
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.cable,
-                                          color: primaryRed, size: 24),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          appLocalizations.stepsToConnectTitle,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                          ] else ...[
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 16.0),
+                                child: Text(
+                                  appLocalizations.noDeviceFound,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  const SizedBox(height: 16),
-                                  _stepText(
-                                      appLocalizations.step1ConnectMicroUsb),
-                                  const SizedBox(height: 12),
-                                  _stepText(appLocalizations.step2ConnectOtg),
-                                  const SizedBox(height: 12),
-                                  _stepText(appLocalizations.step3ConnectPhone),
-                                  const SizedBox(height: 12),
-                                  _stepText(
-                                      appLocalizations.step4ConnectWireless),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          Visibility(
-                            visible: !provider.pslabIsConnected,
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border:
-                                    Border.all(color: primaryRed, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.05),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  )
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Icon(Icons.wifi,
-                                          color: Colors.black, size: 24),
-                                      SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          "Wi-Fi Connection",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
+                            Stack(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.only(top: 12),
+                                  padding: const EdgeInsets.only(
+                                      top: 30, bottom: 20, left: 20, right: 20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: primaryRed, width: 1.5),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black
+                                            .withValues(alpha: 0.05),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      )
                                     ],
                                   ),
-                                  const SizedBox(height: 16),
-                                  TextField(
-                                    controller: _ipController,
-                                    style: const TextStyle(color: Colors.black),
-                                    decoration: InputDecoration(
-                                      labelText: 'IP Address',
-                                      labelStyle: const TextStyle(
-                                          color: Colors.black54),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.cable,
+                                              color: Colors.black87, size: 20),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            appLocalizations.usbTitle,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide(
-                                          color: Colors.grey.shade400,
-                                        ),
+                                      const SizedBox(height: 12),
+                                      _stepText(appLocalizations.usbStep1),
+                                      const SizedBox(height: 8),
+                                      _stepText(appLocalizations.usbStep2),
+                                      const SizedBox(height: 8),
+                                      _stepText(appLocalizations.usbStep3),
+                                      const SizedBox(height: 8),
+                                      _stepText(appLocalizations.usbStep4),
+                                      const SizedBox(height: 8),
+                                      _stepText(appLocalizations.usbStep5),
+                                      const SizedBox(height: 20),
+                                      const Divider(thickness: 1),
+                                      const SizedBox(height: 20),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.wifi,
+                                              color: Colors.black87, size: 20),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            appLocalizations.wifiTitle,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        borderSide: BorderSide(
-                                          color: primaryRed,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      isDense: true,
-                                      filled: true,
-                                      fillColor: Colors.grey.shade50,
-                                    ),
-                                    keyboardType:
-                                        const TextInputType.numberWithOptions(
-                                            decimal: true),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        backgroundColor: primaryRed,
-                                        foregroundColor: buttonForegroundColor,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 14),
-                                        elevation: 0,
-                                      ),
-                                      onPressed: _isConnectingWifi
-                                          ? null
-                                          : () => _connectWifi(provider),
-                                      child: _isConnectingWifi
-                                          ? const SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                color: Colors.white,
-                                              ),
-                                            )
-                                          : Text(
-                                              appLocalizations.wifi
-                                                  .toUpperCase(),
-                                              style: TextStyle(
-                                                color: buttonTextColor,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                letterSpacing: 1.2,
+                                      const SizedBox(height: 12),
+                                      _stepText(appLocalizations.wifiStep1),
+                                      const SizedBox(height: 8),
+                                      _stepText(appLocalizations.wifiStep2),
+                                      const SizedBox(height: 8),
+                                      _stepText(appLocalizations.wifiStep3),
+                                      const SizedBox(height: 8),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 2.0, right: 8.0),
+                                              child: Icon(
+                                                  Icons.check_circle_outline,
+                                                  size: 16,
+                                                  color: Colors.black87),
+                                            ),
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    height: 1.4,
+                                                    color: Colors.black,
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                        text: appLocalizations
+                                                            .wifiFlashingSetupCheck),
+                                                    WidgetSpan(
+                                                      alignment:
+                                                          PlaceholderAlignment
+                                                              .baseline,
+                                                      baseline: TextBaseline
+                                                          .alphabetic,
+                                                      child: InkWell(
+                                                        onTap: () async {
+                                                          final uri = Uri.parse(
+                                                              appLocalizations
+                                                                  .wifiFlashingSetupLinkUrl);
+                                                          if (await canLaunchUrl(
+                                                              uri)) {
+                                                            await launchUrl(
+                                                                uri);
+                                                          } else {
+                                                            logger.e(
+                                                                'Could not launch URL');
+                                                          }
+                                                        },
+                                                        child: Text(
+                                                          appLocalizations
+                                                              .wifiFlashingSetupLinkText,
+                                                          style: TextStyle(
+                                                            color: primaryRed,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const TextSpan(text: "."),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                              top: 35,
-                              left: 60,
-                              right: 60,
-                            ),
-                            child: Divider(color: dividerColor, height: 1),
-                          ),
-                          Center(
-                            child: Container(
-                              margin:
-                                  const EdgeInsets.only(top: 20, bottom: 10),
-                              padding: const EdgeInsets.all(10),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final uri =
-                                      Uri.parse(appLocalizations.pslabUrl);
-                                  if (await canLaunchUrl(uri)) {
-                                    await launchUrl(uri);
-                                  } else {
-                                    logger.e(
-                                      'Could not launch ${appLocalizations.pslabUrl}',
-                                    );
-                                  }
-                                },
-                                child: Text(
-                                  appLocalizations.whatIsPslab,
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    decorationThickness: 1.5,
-                                    decorationColor: primaryRed,
-                                    color: primaryRed,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      _stepText(appLocalizations.wifiStep4),
+                                      const SizedBox(height: 20),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            backgroundColor: primaryRed,
+                                            foregroundColor:
+                                                buttonForegroundColor,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12),
+                                            elevation: 0,
+                                          ),
+                                          onPressed: _isConnectingWifi
+                                              ? null
+                                              : () => _connectWifi(provider),
+                                          child: _isConnectingWifi
+                                              ? const SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              : Text(
+                                                  appLocalizations
+                                                      .connectWifiButton,
+                                                  style: TextStyle(
+                                                    color: buttonTextColor,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: 1.2,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  top: 1,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        appLocalizations.stepsToConnectTitle,
+                                        style: TextStyle(
+                                          color: primaryRed,
+                                          fontStyle: FontStyle.normal,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                          ]
                         ],
                       ),
                     ),
@@ -387,4 +378,27 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
       ),
     );
   }
+}
+
+Widget _stepText(String text) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Padding(
+        padding: EdgeInsets.only(top: 2.0, right: 8.0),
+        child:
+            Icon(Icons.check_circle_outline, size: 16, color: Colors.black87),
+      ),
+      Expanded(
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 14,
+            height: 1.4,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    ],
+  );
 }
