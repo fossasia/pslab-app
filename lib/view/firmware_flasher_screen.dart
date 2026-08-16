@@ -92,7 +92,8 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('https://api.github.com/repos/fossasia/pslab-firmware/releases/latest'),
+        Uri.parse(
+            'https://api.github.com/repos/fossasia/pslab-firmware/releases/latest'),
         headers: {'Accept': 'application/vnd.github.v3+json'},
       );
 
@@ -106,16 +107,15 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
         final assets = rawAssets
             .map((a) => GitHubAsset.fromJson(a))
             .where((a) =>
-        (a.name.endsWith('.zip') || a.name.endsWith('.hex')) &&
-            a.name.toLowerCase().contains('v6')
-        )
+                (a.name.endsWith('.zip') || a.name.endsWith('.hex')) &&
+                a.name.toLowerCase().contains('v6'))
             .toList();
 
         setState(() {
           _releaseAssets = assets;
           if (assets.isNotEmpty) {
             _selectedAsset = assets.firstWhere(
-                  (a) => a.name.contains('v6') && !a.name.contains('esp01'),
+              (a) => a.name.contains('v6') && !a.name.contains('esp01'),
               orElse: () => assets.first,
             );
           }
@@ -127,7 +127,8 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
         }
       } else {
         setState(() {
-          _statusText = "Failed to fetch release (Status: ${response.statusCode})";
+          _statusText =
+              "Failed to fetch release (Status: ${response.statusCode})";
         });
       }
     } catch (e) {
@@ -231,7 +232,8 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
     if (!_isDeviceConnected) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("PSLab not detected. Please plug it in and tap the refresh icon at the top right."),
+          content: Text(
+              "PSLab not detected. Please plug it in and tap the refresh icon at the top right."),
           backgroundColor: Colors.orange,
         ),
       );
@@ -240,7 +242,8 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
 
     if (_loadedHexContent == null || _loadedHexContent!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select or download firmware first.")),
+        const SnackBar(
+            content: Text("Please select or download firmware first.")),
       );
       return;
     }
@@ -254,7 +257,7 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
     try {
       _flashingSubscription?.cancel();
       _flashingSubscription = flashFirmware(hexStr: _loadedHexContent!).listen(
-            (state) {
+        (state) {
           if (!mounted) return;
           setState(() {
             if (state is FlashState_Connecting) {
@@ -270,7 +273,8 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
               _statusText = "Verifying On-Board Checksum...";
               _progress = 0.95;
             } else if (state is FlashState_Finished) {
-              _statusText = "Flashing Successful! Reset or power cycle the device.";
+              _statusText =
+                  "Flashing Successful! Reset or power cycle the device.";
               _progress = 1.0;
               _isFlashing = false;
             } else if (state is FlashState_Error) {
@@ -349,9 +353,9 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
           onPressed: _isFlashing
               ? null
               : () {
-            _checkDeviceConnection();
-            _fetchLatestGitHubRelease();
-          },
+                  _checkDeviceConnection();
+                  _fetchLatestGitHubRelease();
+                },
         ),
       ],
       body: Container(
@@ -364,9 +368,12 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: _isDeviceConnected ? Colors.green[50] : Colors.orange[50],
+                    color: _isDeviceConnected
+                        ? Colors.green[50]
+                        : Colors.orange[50],
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: _isDeviceConnected ? Colors.green : Colors.orange,
@@ -377,14 +384,17 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
                     children: [
                       Icon(
                         _isDeviceConnected ? Icons.usb : Icons.usb_off,
-                        color: _isDeviceConnected ? Colors.green : Colors.orange,
+                        color:
+                            _isDeviceConnected ? Colors.green : Colors.orange,
                         size: 16,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         _isDeviceConnected ? "Connected" : "Not Detected",
                         style: TextStyle(
-                          color: _isDeviceConnected ? Colors.green[800] : Colors.orange[800],
+                          color: _isDeviceConnected
+                              ? Colors.green[800]
+                              : Colors.orange[800],
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -402,11 +412,14 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
                     _StepText("1. Plug the PSLab board with USB"),
                     _StepText("2. Press and hold the 'BOOT' button"),
                     _StepText("3. Press the 'RESET' button"),
-                    _StepText("4. The 'Status' LED should start blinking, indicating bootloader mode"),
+                    _StepText(
+                        "4. The 'Status' LED should start blinking, indicating bootloader mode"),
                     _StepText("5. Release the 'BOOT' button"),
                     _StepText("6. Click on START FLASH below"),
-                    _StepText("7. After flashing is complete, reset or power cycle the device"),
-                    _StepText("8. Note: Only V6 and above is compatible for flashing"),
+                    _StepText(
+                        "7. After flashing is complete, reset or power cycle the device"),
+                    _StepText(
+                        "8. Note: Only V6 and above is compatible for flashing"),
                   ],
                 ),
               ),
@@ -437,10 +450,10 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
                       onSelectionChanged: _isFlashing
                           ? null
                           : (set) {
-                        setState(() {
-                          _selectedSource = set.first;
-                        });
-                      },
+                              setState(() {
+                                _selectedSource = set.first;
+                              });
+                            },
                     ),
                     const SizedBox(height: 16),
                     if (_selectedSource == FirmwareSource.github)
@@ -458,7 +471,10 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
                     if (_loadedFileName != null) ...[
                       Text(
                         "Target: $_loadedFileName",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Colors.black),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 12),
@@ -468,7 +484,9 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: _statusText.contains("Error") ? primaryRed : Colors.black,
+                        color: _statusText.contains("Error")
+                            ? primaryRed
+                            : Colors.black,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -488,7 +506,10 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         "${(_progress * 100).toInt()}%",
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                        style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey),
                       ),
                     ),
                   ],
@@ -500,19 +521,26 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
                   minimumSize: const Size(double.infinity, 54),
                   backgroundColor: primaryRed,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
                 ),
-                onPressed: (_isFlashing || _loadedHexContent == null) ? null : _startFlashing,
+                onPressed: (_isFlashing || _loadedHexContent == null)
+                    ? null
+                    : _startFlashing,
                 child: _isFlashing
                     ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                )
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2),
+                      )
                     : const Text(
-                  "START FLASH",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
-                ),
+                        "START FLASH",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1),
+                      ),
               ),
               const SizedBox(height: 24),
             ],
@@ -527,54 +555,66 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (_isLoadingRelease)
-          const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()))
+          const Center(
+              child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator()))
         else if (_releaseAssets.isEmpty)
-          const Text("No firmware release assets found.", textAlign: TextAlign.center)
+          const Text("No firmware release assets found.",
+              textAlign: TextAlign.center)
         else ...[
-            const Text("Select Hardware Variant:", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black)),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<GitHubAsset>(
-                  value: _selectedAsset,
-                  isExpanded: true,
-                  items: _releaseAssets.map((asset) {
-                    String label = asset.name;
-                    if (asset.name.contains('v6_esp01')) {
-                      label = "PSLab V6 (with ESP-01 Wi-Fi)";
-                    } else if (asset.name.contains('v6')) {
-                      label = "PSLab V6 (Standard)";
-                    }
-                    return DropdownMenuItem(value: asset, child: Text(label, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.black)));
-                  }).toList(),
-                  onChanged: _isFlashing
-                      ? null
-                      : (val) {
-                    setState(() {
-                      _selectedAsset = val;
-                      _loadedHexContent = null;
-                      _loadedFileName = null;
-                    });
-                    if (val != null) {
-                      _downloadAndPrepareAsset(val);
-                    }
-                  },
-                ),
+          const Text("Select Hardware Variant:",
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<GitHubAsset>(
+                value: _selectedAsset,
+                isExpanded: true,
+                items: _releaseAssets.map((asset) {
+                  String label = asset.name;
+                  if (asset.name.contains('v6_esp01')) {
+                    label = "PSLab V6 (with ESP-01 Wi-Fi)";
+                  } else if (asset.name.contains('v6')) {
+                    label = "PSLab V6 (Standard)";
+                  }
+                  return DropdownMenuItem(
+                      value: asset,
+                      child: Text(label,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: Colors.black)));
+                }).toList(),
+                onChanged: _isFlashing
+                    ? null
+                    : (val) {
+                        setState(() {
+                          _selectedAsset = val;
+                          _loadedHexContent = null;
+                          _loadedFileName = null;
+                        });
+                        if (val != null) {
+                          _downloadAndPrepareAsset(val);
+                        }
+                      },
               ),
             ),
-            const SizedBox(height: 12),
-            if (_selectedAsset != null && _loadedHexContent == null)
-              OutlinedButton.icon(
-                icon: const Icon(Icons.download),
-                label: const Text("Download HEX"),
-                onPressed: () => _downloadAndPrepareAsset(_selectedAsset!),
-              ),
-          ],
+          ),
+          const SizedBox(height: 12),
+          if (_selectedAsset != null && _loadedHexContent == null)
+            OutlinedButton.icon(
+              icon: const Icon(Icons.download),
+              label: const Text("Download HEX"),
+              onPressed: () => _downloadAndPrepareAsset(_selectedAsset!),
+            ),
+        ],
       ],
     );
   }
@@ -596,7 +636,8 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
             foregroundColor: primaryRed,
           ),
           icon: const Icon(Icons.folder_open),
-          label: const Text("BROWSE FILE", style: TextStyle(fontWeight: FontWeight.bold)),
+          label: const Text("BROWSE FILE",
+              style: TextStyle(fontWeight: FontWeight.bold)),
           onPressed: _isFlashing ? null : _pickLocalFile,
         ),
       ],
@@ -615,9 +656,15 @@ class _StepText extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("• ", style: TextStyle(color: primaryRed, fontWeight: FontWeight.bold, fontSize: 16)),
+          Text("• ",
+              style: TextStyle(
+                  color: primaryRed,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16)),
           Expanded(
-            child: Text(text, style: const TextStyle(fontSize: 13, height: 1.3, color: Colors.black)),
+            child: Text(text,
+                style: const TextStyle(
+                    fontSize: 13, height: 1.3, color: Colors.black)),
           ),
         ],
       ),
