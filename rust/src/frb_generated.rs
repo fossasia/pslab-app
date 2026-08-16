@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1863366139;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 411393436;
 
 // Section: executor
 
@@ -104,6 +104,46 @@ fn wire__crate__api__simple__close_usb_impl(
                 })?;
                 Ok(output_ok)
             })())
+        },
+    )
+}
+fn wire__crate__api__bootloader__flash_firmware_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "flash_firmware",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_hex_str = <String>::sse_decode(&mut deserializer);
+            let api_progress_sink = <StreamSink<
+                crate::api::bootloader::FlashState,
+                flutter_rust_bridge::for_generated::SseCodec,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, flutter_rust_bridge::for_generated::anyhow::Error>(
+                    (move || {
+                        let output_ok =
+                            crate::api::bootloader::flash_firmware(api_hex_str, api_progress_sink)?;
+                        Ok(output_ok)
+                    })(),
+                )
+            }
         },
     )
 }
@@ -553,6 +593,16 @@ impl SseDecode for flutter_rust_bridge::for_generated::anyhow::Error {
     }
 }
 
+impl SseDecode
+    for StreamSink<crate::api::bootloader::FlashState, flutter_rust_bridge::for_generated::SseCodec>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <String>::sse_decode(deserializer);
+        return StreamSink::deserialize(inner);
+    }
+}
+
 impl SseDecode for String {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -565,6 +615,42 @@ impl SseDecode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_u8().unwrap() != 0
+    }
+}
+
+impl SseDecode for crate::api::bootloader::FlashState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                return crate::api::bootloader::FlashState::Connecting;
+            }
+            1 => {
+                return crate::api::bootloader::FlashState::Erasing;
+            }
+            2 => {
+                let mut var_progressPercent = <i32>::sse_decode(deserializer);
+                return crate::api::bootloader::FlashState::Writing {
+                    progress_percent: var_progressPercent,
+                };
+            }
+            3 => {
+                return crate::api::bootloader::FlashState::Verifying;
+            }
+            4 => {
+                return crate::api::bootloader::FlashState::Finished;
+            }
+            5 => {
+                let mut var_message = <String>::sse_decode(deserializer);
+                return crate::api::bootloader::FlashState::Error {
+                    message: var_message,
+                };
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -622,11 +708,12 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        3 => wire__crate__api__simple__init_android_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__simple__init_desktop_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__simple__read_data_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__simple__wifi_connect_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__simple__wifi_read_impl(port, ptr, rust_vec_len, data_len),
+        3 => wire__crate__api__bootloader__flash_firmware_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__crate__api__simple__init_android_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__simple__init_desktop_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__simple__read_data_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__simple__wifi_connect_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__simple__wifi_read_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -643,24 +730,65 @@ fn pde_ffi_dispatcher_sync_impl(
             wire__crate__api__simple__check_desktop_device_present_impl(ptr, rust_vec_len, data_len)
         }
         2 => wire__crate__api__simple__close_usb_impl(ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__simple__push_web_data_impl(ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__simple__read_web_data_impl(ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__simple__set_baud_rate_impl(ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__simple__set_dtr_impl(ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__simple__set_rts_impl(ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__simple__wifi_disconnect_impl(ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__simple__wifi_write_impl(ptr, rust_vec_len, data_len),
-        15 => wire__crate__api__simple__write_data_impl(ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__simple__push_web_data_impl(ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__simple__read_web_data_impl(ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__simple__set_baud_rate_impl(ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__simple__set_dtr_impl(ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__simple__set_rts_impl(ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__simple__wifi_disconnect_impl(ptr, rust_vec_len, data_len),
+        15 => wire__crate__api__simple__wifi_write_impl(ptr, rust_vec_len, data_len),
+        16 => wire__crate__api__simple__write_data_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
 
 // Section: rust2dart
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::bootloader::FlashState {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::bootloader::FlashState::Connecting => [0.into_dart()].into_dart(),
+            crate::api::bootloader::FlashState::Erasing => [1.into_dart()].into_dart(),
+            crate::api::bootloader::FlashState::Writing { progress_percent } => {
+                [2.into_dart(), progress_percent.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::bootloader::FlashState::Verifying => [3.into_dart()].into_dart(),
+            crate::api::bootloader::FlashState::Finished => [4.into_dart()].into_dart(),
+            crate::api::bootloader::FlashState::Error { message } => {
+                [5.into_dart(), message.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::bootloader::FlashState
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::bootloader::FlashState>
+    for crate::api::bootloader::FlashState
+{
+    fn into_into_dart(self) -> crate::api::bootloader::FlashState {
+        self
+    }
+}
+
 impl SseEncode for flutter_rust_bridge::for_generated::anyhow::Error {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(format!("{:?}", self), serializer);
+    }
+}
+
+impl SseEncode
+    for StreamSink<crate::api::bootloader::FlashState, flutter_rust_bridge::for_generated::SseCodec>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        unimplemented!("")
     }
 }
 
@@ -675,6 +803,37 @@ impl SseEncode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_u8(self as _).unwrap();
+    }
+}
+
+impl SseEncode for crate::api::bootloader::FlashState {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::bootloader::FlashState::Connecting => {
+                <i32>::sse_encode(0, serializer);
+            }
+            crate::api::bootloader::FlashState::Erasing => {
+                <i32>::sse_encode(1, serializer);
+            }
+            crate::api::bootloader::FlashState::Writing { progress_percent } => {
+                <i32>::sse_encode(2, serializer);
+                <i32>::sse_encode(progress_percent, serializer);
+            }
+            crate::api::bootloader::FlashState::Verifying => {
+                <i32>::sse_encode(3, serializer);
+            }
+            crate::api::bootloader::FlashState::Finished => {
+                <i32>::sse_encode(4, serializer);
+            }
+            crate::api::bootloader::FlashState::Error { message } => {
+                <i32>::sse_encode(5, serializer);
+                <String>::sse_encode(message, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 

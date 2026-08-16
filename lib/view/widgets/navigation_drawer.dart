@@ -190,32 +190,34 @@ class _NavDrawerState extends State<NavDrawer> {
             ListTile(
               focusColor: listTileFocusColor,
               dense: true,
-              enabled: false,
               leading: Icon(
-                Icons.create_new_folder,
+                Icons.system_update_alt,
                 color:
                     widget.selectedIndex == 3 ? selectedMenuColor : menuColor,
               ),
               title: Text(
-                appLocalizations.configFileMenu,
+                "Firmware Update",
                 style: TextStyle(
                   color: widget.selectedIndex == 3
                       ? selectedMenuColor
-                      : optionDisabledColor,
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
               ),
-              trailing: Text(
-                appLocalizations.comingSoon,
-                style: TextStyle(
-                  color: optionDisabledColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
               onTap: () {
-                /**/
+                if (Navigator.canPop(context) &&
+                    ModalRoute.of(context)?.settings.name ==
+                        '/firmwareUpdate') {
+                  Navigator.popUntil(
+                      context, ModalRoute.withName('/firmwareUpdate'));
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/firmwareUpdate',
+                    (route) => route.isFirst,
+                  );
+                }
               },
             ),
             ListTile(

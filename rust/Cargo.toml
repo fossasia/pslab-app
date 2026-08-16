@@ -10,6 +10,8 @@ crate-type = ["cdylib", "staticlib"]
 flutter_rust_bridge = "=2.12.0"
 anyhow = "1.0.75"
 lazy_static = "1.4.0"
+ihex = "3.0"
+byteorder = "1.5"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 tungstenite = "0.20.1"

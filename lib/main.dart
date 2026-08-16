@@ -17,6 +17,7 @@ import 'package:pslab/view/accelerometer_screen.dart';
 import 'package:pslab/view/barometer_screen.dart';
 import 'package:pslab/view/connect_device_screen.dart';
 import 'package:pslab/view/faq_screen.dart';
+import 'package:pslab/view/firmware_flasher_screen.dart';
 import 'package:pslab/view/gas_sensor_screen.dart';
 import 'package:pslab/view/gyroscope_screen.dart';
 import 'package:pslab/view/instruments_screen.dart';
@@ -163,6 +164,8 @@ class MyApp extends StatelessWidget {
                     ),
                 '/oledDisplay': (context) =>
                     const _LocaleAware(child: OledDisplayScreen()),
+                '/firmwareUpdate': (context) =>
+                    const _LocaleAware(child: FirmwareFlasherScreen()),
               },
             );
           },
