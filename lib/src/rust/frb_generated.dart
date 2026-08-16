@@ -101,7 +101,8 @@ abstract class RustLibApi extends BaseApi {
 
   void crateApiSimpleSetRts({required bool state});
 
-  void crateApiSimpleWifiConnect({required String host, required int port});
+  Future<void> crateApiSimpleWifiConnect(
+      {required String host, required int port});
 
   void crateApiSimpleWifiDisconnect();
 
@@ -357,13 +358,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  void crateApiSimpleWifiConnect({required String host, required int port}) {
-    return handler.executeSync(SyncTask(
-      callFfi: () {
+  Future<void> crateApiSimpleWifiConnect(
+      {required String host, required int port}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(host, serializer);
         sse_encode_u_16(port, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 11, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,

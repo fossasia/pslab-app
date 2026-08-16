@@ -462,7 +462,6 @@ pub fn check_desktop_device_present() -> bool {
     }
 }
 
-#[frb(sync)]
 pub fn wifi_connect(host: String, port: u16) -> Result<()> {
     #[cfg(not(target_family = "wasm"))]
     {
@@ -471,9 +470,19 @@ pub fn wifi_connect(host: String, port: u16) -> Result<()> {
             buffer.clear();
         }
 
+        let server_addr = format!("{}:{}", host, port);
         let ws_url = format!("{}{}:{}", "ws://", host, port);
 
-        let (socket, _) = connect(url::Url::parse(&ws_url)?)
+        let addr: std::net::SocketAddr = server_addr.parse()
+            .map_err(|_| anyhow!("Invalid IP address format"))?;
+
+        let tcp_stream = std::net::TcpStream::connect_timeout(&addr, std::time::Duration::from_millis(3000))
+            .map_err(|e| anyhow!("Network unreachable or timed out: {}", e))?;
+        tcp_stream.set_nodelay(true).unwrap_or(());
+
+        let stream = tungstenite::stream::MaybeTlsStream::Plain(tcp_stream);
+
+        let (socket, _) = tungstenite::client::client(url::Url::parse(&ws_url)?, stream)
             .map_err(|e| anyhow!("WebSocket connection failed: {}", e))?;
 
         *WIFI_WS_STREAM.lock().unwrap() = Some(socket);
@@ -524,6 +533,11 @@ pub fn wifi_read(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
                         Ok(Message::Binary(data)) => {
                             if let Ok(mut buffer) = WIFI_WS_RX_BUFFER.lock() {
                                 buffer.extend(data);
+
+                                const MAX_RX_BUFFER: usize = 5_242_880;
+                                if buffer.len() > MAX_RX_BUFFER {
+                                    buffer.clear();
+                                }
                             }
                         },
                         Ok(Message::Ping(_)) | Ok(Message::Pong(_)) => continue,

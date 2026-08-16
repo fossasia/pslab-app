@@ -64,7 +64,7 @@ class WifiCommsHandler implements CommunicationHandler {
       }
     } else {
       try {
-        rust_api.wifiConnect(host: host, port: wsPort);
+        await rust_api.wifiConnect(host: host, port: wsPort);
         connected = true;
         logger.i("Connected via WebSockets");
       } catch (e) {

@@ -37,7 +37,7 @@ void closeUsb() => RustLib.instance.api.crateApiSimpleCloseUsb();
 bool checkDesktopDevicePresent() =>
     RustLib.instance.api.crateApiSimpleCheckDesktopDevicePresent();
 
-void wifiConnect({required String host, required int port}) =>
+Future<void> wifiConnect({required String host, required int port}) =>
     RustLib.instance.api.crateApiSimpleWifiConnect(host: host, port: port);
 
 Future<Uint8List> wifiRead(
