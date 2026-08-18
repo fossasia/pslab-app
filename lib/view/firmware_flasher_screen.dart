@@ -1,36 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:pslab/src/rust/api/bootloader.dart';
-import 'package:pslab/src/rust/api/simple.dart' as rust_api;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/theme/colors.dart';
 
+import 'package:pslab/communication/handler/base.dart';
+import 'package:pslab/communication/handler/router/platform_handler.dart';
+import '../others/web_firmware_flasher.dart';
+import '../others/native_firmware_flasher.dart';
+
 enum FirmwareSource { github, local }
-
-class GitHubAsset {
-  final String name;
-  final String downloadUrl;
-  final int size;
-
-  GitHubAsset({
-    required this.name,
-    required this.downloadUrl,
-    required this.size,
-  });
-
-  factory GitHubAsset.fromJson(Map<String, dynamic> json) {
-    return GitHubAsset(
-      name: json['name'] ?? '',
-      downloadUrl: json['browser_download_url'] ?? '',
-      size: json['size'] ?? 0,
-    );
-  }
-}
 
 class FirmwareFlasherScreen extends StatefulWidget {
   const FirmwareFlasherScreen({super.key});
@@ -40,119 +27,122 @@ class FirmwareFlasherScreen extends StatefulWidget {
 }
 
 class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   FirmwareSource _selectedSource = FirmwareSource.github;
 
-  bool _isDeviceConnected = false;
   bool _isFlashing = false;
   bool _isLoadingRelease = false;
   double _progress = 0.0;
-  String _statusText = "Ready";
 
-  StreamSubscription<FlashState>? _flashingSubscription;
+  String? _statusText;
 
-  List<GitHubAsset> _releaseAssets = [];
+  List<GitHubRelease> _releases = [];
+  GitHubRelease? _selectedRelease;
   GitHubAsset? _selectedAsset;
 
   String? _loadedHexContent;
   String? _loadedFileName;
 
+  CommunicationHandler? _platformHandler;
+  NativeFirmwareFlasher? _nativeFlasher;
+
   @override
   void initState() {
     super.initState();
-    _checkDeviceConnection();
-    _fetchLatestGitHubRelease();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchGitHubReleases();
+    });
   }
 
   @override
   void dispose() {
-    _flashingSubscription?.cancel();
+    _nativeFlasher?.dispose();
+    _platformHandler?.close();
     super.dispose();
   }
 
-  void _checkDeviceConnection() {
-    try {
-      final isPresent = rust_api.checkDesktopDevicePresent();
-      if (!mounted) return;
-      setState(() {
-        _isDeviceConnected = isPresent;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _isDeviceConnected = true;
-      });
-    }
+  void _showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message,
+            style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: isError ? Colors.redAccent : Colors.white)),
+        backgroundColor: Colors.black,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
   }
 
-  Future<void> _fetchLatestGitHubRelease() async {
+  Future<void> _fetchGitHubReleases() async {
     setState(() {
       _isLoadingRelease = true;
-      _statusText = "Fetching releases from GitHub...";
+      _statusText = appLocalizations.flasherStatusFetching;
     });
-
     try {
-      final response = await http.get(
-        Uri.parse(
-            'https://api.github.com/repos/fossasia/pslab-firmware/releases/latest'),
-        headers: {'Accept': 'application/vnd.github.v3+json'},
-      );
+      final url = Uri.parse(
+          'https://api.github.com/repos/fossasia/pslab-firmware/releases');
+      final response = await http.get(url).timeout(const Duration(seconds: 10));
 
       if (!mounted) return;
-
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final tagName = data['tag_name'] ?? 'Latest';
-        final List rawAssets = data['assets'] ?? [];
+        final List data = jsonDecode(response.body);
 
-        final assets = rawAssets
-            .map((a) => GitHubAsset.fromJson(a))
-            .where((a) =>
-                (a.name.endsWith('.zip') || a.name.endsWith('.hex')) &&
-                a.name.toLowerCase().contains('v6'))
+        final releases = data
+            .map((r) => GitHubRelease.fromJson(r as Map<String, dynamic>))
+            .where((r) => r.assets.isNotEmpty)
             .toList();
 
         setState(() {
-          _releaseAssets = assets;
-          if (assets.isNotEmpty) {
-            _selectedAsset = assets.firstWhere(
-              (a) => a.name.contains('v6') && !a.name.contains('esp01'),
-              orElse: () => assets.first,
-            );
+          _releases = releases;
+          if (releases.isNotEmpty) {
+            _selectedRelease = releases.first;
+            _selectedAsset = _selectedRelease!.assets.firstWhere(
+                (a) =>
+                    !a.name.toLowerCase().contains('esp01') &&
+                    !a.name.toLowerCase().contains('v5'),
+                orElse: () => _selectedRelease!.assets.first);
           }
-          _statusText = "Release $tagName loaded.";
+          _statusText = appLocalizations.flasherStatusReleasesLoaded;
         });
 
         if (_selectedAsset != null) {
           await _downloadAndPrepareAsset(_selectedAsset!);
         }
       } else {
-        setState(() {
-          _statusText =
-              "Failed to fetch release (Status: ${response.statusCode})";
-        });
+        setState(() => _statusText = appLocalizations.flasherStatusFetchFailed);
+      }
+    } on TimeoutException {
+      if (mounted) {
+        setState(
+            () => _statusText = appLocalizations.flasherStatusNetworkTimeout);
       }
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _statusText = "GitHub API Error: $e";
-      });
+      setState(() => _statusText = appLocalizations.flasherStatusNetworkError);
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingRelease = false;
-        });
-      }
+      if (mounted) setState(() => _isLoadingRelease = false);
     }
   }
 
   Future<void> _downloadAndPrepareAsset(GitHubAsset asset) async {
     setState(() {
       _isLoadingRelease = true;
-      _statusText = "Downloading ${asset.name}...";
+      _statusText =
+          "${appLocalizations.flasherStatusDownloading}${asset.name}...";
     });
-
     try {
-      final response = await http.get(Uri.parse(asset.downloadUrl));
+      Uri downloadUri = Uri.parse(asset.downloadUrl);
+      if (kIsWeb) {
+        downloadUri = Uri.parse(
+            'https://api.codetabs.com/v1/proxy/?quest=${asset.downloadUrl}');
+      }
+
+      final response =
+          await http.get(downloadUri).timeout(const Duration(seconds: 15));
+
       if (!mounted) return;
 
       if (response.statusCode == 200) {
@@ -162,147 +152,228 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
         } else if (asset.name.endsWith('.zip')) {
           final archive = ZipDecoder().decodeBytes(response.bodyBytes);
           ArchiveFile? hexFile;
-
           for (final file in archive) {
             if (file.isFile && file.name.endsWith('.hex')) {
               hexFile = file;
               break;
             }
           }
-
           if (hexFile != null) {
-            _loadedHexContent = utf8.decode(hexFile.content as List<int>);
+            final bytes = hexFile.content as List<int>;
+            _loadedHexContent = utf8.decode(bytes);
             _loadedFileName = "${asset.name} (${hexFile.name})";
           } else {
-            throw Exception("No .hex file found inside ${asset.name}");
+            throw Exception(appLocalizations.flasherStatusInvalidFirmware);
           }
         }
-
         setState(() {
-          _statusText = "Ready to flash: $_loadedFileName";
+          _statusText =
+              "${appLocalizations.flasherStatusReadyToFlash}$_loadedFileName";
           _progress = 0.0;
         });
       } else {
-        setState(() {
-          _statusText = "Download failed: ${response.statusCode}";
-        });
+        setState(
+            () => _statusText = appLocalizations.flasherStatusDownloadFailed);
+      }
+    } on TimeoutException {
+      if (mounted) {
+        setState(
+            () => _statusText = appLocalizations.flasherStatusDownloadTimeout);
       }
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _statusText = "Error preparing firmware: $e";
-      });
+      setState(
+          () => _statusText = appLocalizations.flasherStatusInvalidFirmware);
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingRelease = false;
-        });
-      }
+      if (mounted) setState(() => _isLoadingRelease = false);
     }
   }
 
   Future<void> _pickLocalFile() async {
     try {
-      final file = await FilePicker.pickFile(
-        type: FileType.custom,
-        allowedExtensions: ['hex'],
-      );
-
-      if (file != null && file.path != null) {
-        final hexFile = File(file.path!);
-        final content = await hexFile.readAsString();
-
-        if (!mounted) return;
-        setState(() {
-          _loadedHexContent = content;
-          _loadedFileName = file.name;
-          _statusText = "Selected local file: $_loadedFileName";
-          _progress = 0.0;
-        });
+      final platformFile = await FilePicker.pickFile(
+          type: FileType.custom, allowedExtensions: ['hex']);
+      if (platformFile != null) {
+        String? content;
+        if (kIsWeb) {
+          final bytes = await platformFile.readAsBytes();
+          content = utf8.decode(bytes);
+        } else {
+          if (platformFile.path != null) {
+            final hexFile = File(platformFile.path!);
+            content = await hexFile.readAsString();
+          }
+        }
+        if (content != null) {
+          if (!mounted) return;
+          setState(() {
+            _loadedHexContent = content;
+            _loadedFileName = platformFile.name;
+            _statusText =
+                "${appLocalizations.flasherStatusLocalFileSelected}$_loadedFileName";
+            _progress = 0.0;
+          });
+        }
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error picking file: $e")),
-      );
+      _showSnackBar(appLocalizations.flasherErrorLocalFileRead, isError: true);
     }
   }
 
   void _startFlashing() async {
-    if (!_isDeviceConnected) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              "PSLab not detected. Please plug it in and tap the refresh icon at the top right."),
-          backgroundColor: Colors.orange,
-        ),
-      );
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      _showSnackBar(appLocalizations.flasherErrorIOSNotSupported,
+          isError: true);
       return;
     }
 
     if (_loadedHexContent == null || _loadedHexContent!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("Please select or download firmware first.")),
-      );
+      _showSnackBar(appLocalizations.flasherErrorSelectFirmwareFirst,
+          isError: true);
       return;
     }
 
     setState(() {
       _isFlashing = true;
       _progress = 0.02;
-      _statusText = "Initializing bootloader...";
+      _statusText = appLocalizations.flasherStatusCheckingUSB;
     });
 
     try {
-      _flashingSubscription?.cancel();
-      _flashingSubscription = flashFirmware(hexStr: _loadedHexContent!).listen(
-        (state) {
-          if (!mounted) return;
-          setState(() {
-            if (state is FlashState_Connecting) {
-              _statusText = "Connecting at 460800 baud...";
-              _progress = 0.05;
-            } else if (state is FlashState_Erasing) {
-              _statusText = "Erasing Flash Memory...";
-              _progress = 0.20;
-            } else if (state is FlashState_Writing) {
-              _statusText = "Writing Flash: ${state.progressPercent}%";
-              _progress = 0.20 + (state.progressPercent / 100.0 * 0.70);
-            } else if (state is FlashState_Verifying) {
-              _statusText = "Verifying On-Board Checksum...";
-              _progress = 0.95;
-            } else if (state is FlashState_Finished) {
-              _statusText =
-                  "Flashing Successful! Reset or power cycle the device.";
-              _progress = 1.0;
-              _isFlashing = false;
-            } else if (state is FlashState_Error) {
-              _statusText = "Error: ${state.message}";
-              _isFlashing = false;
+      _platformHandler?.close();
+
+      _platformHandler = getPlatformHandler();
+      await _platformHandler!.initialize();
+
+      if (kIsWeb) {
+        setState(
+            () => _statusText = appLocalizations.flasherStatusSelectBoardPopup);
+        await _platformHandler!.open(overrideBaud: 460800);
+      } else {
+        if (!_platformHandler!.isDeviceFound()) {
+          throw Exception(appLocalizations.flasherErrorNoDeviceFound);
+        }
+        _nativeFlasher = NativeFirmwareFlasher(
+          handler: _platformHandler!,
+          onProgress: (prog, stat) {
+            if (mounted) {
+              setState(() {
+                _progress = prog;
+                _statusText = stat;
+              });
             }
-          });
-        },
-        onError: (err) {
-          if (!mounted) return;
-          setState(() {
-            _statusText = "Flashing failed: $err";
-            _isFlashing = false;
-          });
-        },
-      );
+          },
+          onSuccess: () {
+            if (mounted) {
+              setState(() {
+                _isFlashing = false;
+              });
+            }
+          },
+          onError: (err) {
+            if (mounted) {
+              setState(() {
+                _statusText = appLocalizations.flasherErrorFlashingInterrupted;
+                _isFlashing = false;
+              });
+            }
+          },
+        );
+        await _nativeFlasher!.preparePort();
+      }
     } catch (e) {
       if (!mounted) return;
+      _platformHandler?.close();
+      _showSnackBar(appLocalizations.flasherErrorNoPSLabDetected,
+          isError: true);
       setState(() {
-        _statusText = "Error starting flash: $e";
+        _statusText = appLocalizations.flasherStatusConnectionFailed;
         _isFlashing = false;
+        _progress = 0;
       });
+      return;
+    }
+
+    if (!mounted) return;
+
+    bool? readyToFlash = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(appLocalizations.flasherBootloaderTitle,
+              style: const TextStyle(
+                  color: Colors.red, fontWeight: FontWeight.bold)),
+          content: Text(appLocalizations.flasherBootloaderContent),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(appLocalizations.flasherBtnCancel,
+                    style: const TextStyle(color: Colors.grey))),
+            ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryRed, foregroundColor: Colors.white),
+                child: Text(appLocalizations.flasherBtnContinue,
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+          ],
+        );
+      },
+    );
+
+    if (readyToFlash != true) {
+      _platformHandler?.close();
+      setState(() {
+        _statusText = appLocalizations.flasherStatusCancelled;
+        _isFlashing = false;
+        _progress = 0;
+      });
+      return;
+    }
+
+    setState(() {
+      _statusText = appLocalizations.flasherStatusInitBootloader;
+    });
+
+    if (kIsWeb) {
+      try {
+        final webFlasher = WebFirmwareFlasher(
+          handler: _platformHandler!,
+          onProgress: (prog, stat) {
+            if (mounted) {
+              setState(() {
+                _progress = prog;
+                _statusText = stat;
+              });
+            }
+          },
+        );
+        await webFlasher.flashFirmware(_loadedHexContent!);
+        if (mounted) {
+          setState(() {
+            _statusText = appLocalizations.flasherStatusSuccess;
+            _progress = 1.0;
+            _isFlashing = false;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _statusText = appLocalizations.flasherStatusUSBLost;
+            _isFlashing = false;
+          });
+        }
+      } finally {
+        _platformHandler?.close();
+      }
+    } else {
+      _nativeFlasher!.startFlashing(_loadedHexContent!);
     }
   }
 
   Widget _buildOutlinedBox({required String title, required Widget child}) {
     const Color boxColor = Colors.white;
-
     return Stack(
       children: [
         Container(
@@ -310,10 +381,9 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
           margin: const EdgeInsets.only(top: 8),
           padding: const EdgeInsets.all(16).copyWith(top: 24),
           decoration: BoxDecoration(
-            color: boxColor,
-            border: Border.all(color: primaryRed, width: 1.5),
-            borderRadius: BorderRadius.circular(6),
-          ),
+              color: boxColor,
+              border: Border.all(color: primaryRed, width: 1.5),
+              borderRadius: BorderRadius.circular(6)),
           child: child,
         ),
         Positioned(
@@ -325,16 +395,12 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               decoration: const BoxDecoration(color: boxColor),
-              child: Text(
-                title.toUpperCase(),
-                style: TextStyle(
-                  color: primaryRed,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                ),
-              ),
+              child: Text(title.toUpperCase(),
+                  style: TextStyle(
+                      color: primaryRed,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      letterSpacing: 0.5)),
             ),
           ),
         ),
@@ -344,20 +410,10 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String currentStatus = _statusText ?? appLocalizations.flasherStatusReady;
+
     return CommonScaffold(
-      title: "Firmware Update",
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          tooltip: "Refresh Connection",
-          onPressed: _isFlashing
-              ? null
-              : () {
-                  _checkDeviceConnection();
-                  _fetchLatestGitHubRelease();
-                },
-        ),
-      ],
+      title: appLocalizations.flasherTitle,
       body: Container(
         color: Colors.white,
         child: SingleChildScrollView(
@@ -365,86 +421,39 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _isDeviceConnected
-                        ? Colors.green[50]
-                        : Colors.orange[50],
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _isDeviceConnected ? Colors.green : Colors.orange,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _isDeviceConnected ? Icons.usb : Icons.usb_off,
-                        color:
-                            _isDeviceConnected ? Colors.green : Colors.orange,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _isDeviceConnected ? "Connected" : "Not Detected",
-                        style: TextStyle(
-                          color: _isDeviceConnected
-                              ? Colors.green[800]
-                              : Colors.orange[800],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
               _buildOutlinedBox(
-                title: "Instructions",
-                child: const Column(
+                title: appLocalizations.flasherInstructionsTitle,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _StepText("1. Plug the PSLab board with USB"),
-                    _StepText("2. Press and hold the 'BOOT' button"),
-                    _StepText("3. Press the 'RESET' button"),
-                    _StepText(
-                        "4. The 'Status' LED should start blinking, indicating bootloader mode"),
-                    _StepText("5. Release the 'BOOT' button"),
-                    _StepText("6. Click on START FLASH below"),
-                    _StepText(
-                        "7. After flashing is complete, reset or power cycle the device"),
-                    _StepText(
-                        "8. Note: Only V6 and above is compatible for flashing"),
+                    _StepText(appLocalizations.flasherInstStep1),
+                    _StepText(appLocalizations.flasherInstStep2),
+                    _StepText(appLocalizations.flasherInstStep3),
+                    _StepText(appLocalizations.flasherInstStep4),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
               _buildOutlinedBox(
-                title: "Firmware Source",
+                title: appLocalizations.flasherSourceTitle,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SegmentedButton<FirmwareSource>(
+                      showSelectedIcon: false,
                       style: SegmentedButton.styleFrom(
-                        selectedBackgroundColor: Colors.red[50],
-                        selectedForegroundColor: primaryRed,
-                      ),
-                      segments: const [
+                          selectedBackgroundColor: Colors.red[50],
+                          selectedForegroundColor: primaryRed),
+                      segments: [
                         ButtonSegment(
-                          value: FirmwareSource.github,
-                          icon: Icon(Icons.cloud_download),
-                          label: Text("GitHub Releases"),
-                        ),
+                            value: FirmwareSource.github,
+                            icon:
+                                const FaIcon(FontAwesomeIcons.github, size: 18),
+                            label: Text(appLocalizations.flasherSourceGithub)),
                         ButtonSegment(
-                          value: FirmwareSource.local,
-                          icon: Icon(Icons.folder_open),
-                          label: Text("Local File"),
-                        ),
+                            value: FirmwareSource.local,
+                            icon: const Icon(Icons.folder_open),
+                            label: Text(appLocalizations.flasherSourceLocal)),
                       ],
                       selected: {_selectedSource},
                       onSelectionChanged: _isFlashing
@@ -465,82 +474,69 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
               ),
               const SizedBox(height: 16),
               _buildOutlinedBox(
-                title: "Flashing Status",
+                title: appLocalizations.flasherStatusTitle,
                 child: Column(
                   children: [
                     if (_loadedFileName != null) ...[
-                      Text(
-                        "Target: $_loadedFileName",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            color: Colors.black),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
+                      Text("${appLocalizations.flasherTarget}$_loadedFileName",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: Colors.black),
+                          textAlign: TextAlign.center),
+                      const SizedBox(height: 12)
                     ],
-                    Text(
-                      _statusText,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: _statusText.contains("Error")
-                            ? primaryRed
-                            : Colors.black,
-                      ),
-                    ),
+                    Text(currentStatus,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: currentStatus.contains("error") ||
+                                    currentStatus.contains("Failed") ||
+                                    currentStatus.contains("failed")
+                                ? primaryRed
+                                : Colors.black)),
                     const SizedBox(height: 12),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: _progress,
-                        minHeight: 12,
-                        backgroundColor: Colors.grey[200],
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          _progress == 1.0 ? Colors.green : Colors.redAccent,
-                        ),
-                      ),
-                    ),
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                            value: _progress,
+                            minHeight: 12,
+                            backgroundColor: Colors.grey[200],
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                _progress == 1.0
+                                    ? Colors.green
+                                    : Colors.redAccent))),
                     const SizedBox(height: 6),
                     Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        "${(_progress * 100).toInt()}%",
-                        style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                      ),
-                    ),
+                        alignment: Alignment.centerRight,
+                        child: Text("${(_progress * 100).toInt()}%",
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey))),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 54),
-                  backgroundColor: primaryRed,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6)),
-                ),
-                onPressed: (_isFlashing || _loadedHexContent == null)
-                    ? null
-                    : _startFlashing,
+                    minimumSize: const Size(double.infinity, 54),
+                    backgroundColor: primaryRed,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6))),
+                onPressed: _isFlashing ? null : _startFlashing,
                 child: _isFlashing
                     ? const SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
-                            color: Colors.white, strokeWidth: 2),
-                      )
-                    : const Text(
-                        "START FLASH",
-                        style: TextStyle(
+                            color: Colors.white, strokeWidth: 2))
+                    : Text(appLocalizations.flasherBtnStartFlash,
+                        style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1),
-                      ),
+                            letterSpacing: 1)),
               ),
               const SizedBox(height: 24),
             ],
@@ -559,12 +555,12 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
               child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: CircularProgressIndicator()))
-        else if (_releaseAssets.isEmpty)
-          const Text("No firmware release assets found.",
+        else if (_releases.isEmpty)
+          Text(appLocalizations.flasherNoReleaseFound,
               textAlign: TextAlign.center)
         else ...[
-          const Text("Select Hardware Variant:",
-              style: TextStyle(
+          Text(appLocalizations.flasherSelectVersion,
+              style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: Colors.black)),
@@ -572,48 +568,99 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(6),
-            ),
+                border: Border.all(color: Colors.grey.shade400),
+                borderRadius: BorderRadius.circular(6)),
             child: DropdownButtonHideUnderline(
-              child: DropdownButton<GitHubAsset>(
-                value: _selectedAsset,
+              child: DropdownButton<GitHubRelease>(
+                value: _selectedRelease,
                 isExpanded: true,
-                items: _releaseAssets.map((asset) {
-                  String label = asset.name;
-                  if (asset.name.contains('v6_esp01')) {
-                    label = "PSLab V6 (with ESP-01 Wi-Fi)";
-                  } else if (asset.name.contains('v6')) {
-                    label = "PSLab V6 (Standard)";
-                  }
+                items: _releases.map((release) {
                   return DropdownMenuItem(
-                      value: asset,
-                      child: Text(label,
-                          overflow: TextOverflow.ellipsis,
+                      value: release,
+                      child: Text(release.tagName,
                           style: const TextStyle(color: Colors.black)));
                 }).toList(),
                 onChanged: _isFlashing
                     ? null
                     : (val) {
                         setState(() {
-                          _selectedAsset = val;
+                          _selectedRelease = val;
+                          if (val != null && val.assets.isNotEmpty) {
+                            _selectedAsset = val.assets.firstWhere(
+                                (a) =>
+                                    !a.name.toLowerCase().contains('esp01') &&
+                                    !a.name.toLowerCase().contains('v5'),
+                                orElse: () => val.assets.first);
+                          } else {
+                            _selectedAsset = null;
+                          }
                           _loadedHexContent = null;
                           _loadedFileName = null;
                         });
-                        if (val != null) {
-                          _downloadAndPrepareAsset(val);
+                        if (_selectedAsset != null) {
+                          _downloadAndPrepareAsset(_selectedAsset!);
                         }
                       },
               ),
             ),
           ),
+          const SizedBox(height: 16),
+          Text(appLocalizations.flasherSelectVariant,
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          const SizedBox(height: 8),
+          if (_selectedRelease != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade400),
+                  borderRadius: BorderRadius.circular(6)),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<GitHubAsset>(
+                  value: _selectedAsset,
+                  isExpanded: true,
+                  items: _selectedRelease!.assets.map((asset) {
+                    String label = asset.name;
+                    String nameLower = asset.name.toLowerCase();
+
+                    if (nameLower.contains('esp01')) {
+                      label =
+                          "${appLocalizations.flasherVariantESP}${asset.name}";
+                    } else if (nameLower.contains('v5')) {
+                      label =
+                          "${appLocalizations.flasherVariantLegacy}${asset.name}";
+                    } else {
+                      label =
+                          "${appLocalizations.flasherVariantStandard}${asset.name}";
+                    }
+
+                    return DropdownMenuItem(
+                        value: asset,
+                        child: Text(label,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.black)));
+                  }).toList(),
+                  onChanged: _isFlashing
+                      ? null
+                      : (val) {
+                          setState(() {
+                            _selectedAsset = val;
+                            _loadedHexContent = null;
+                            _loadedFileName = null;
+                          });
+                          if (val != null) _downloadAndPrepareAsset(val);
+                        },
+                ),
+              ),
+            ),
           const SizedBox(height: 12),
           if (_selectedAsset != null && _loadedHexContent == null)
             OutlinedButton.icon(
-              icon: const Icon(Icons.download),
-              label: const Text("Download HEX"),
-              onPressed: () => _downloadAndPrepareAsset(_selectedAsset!),
-            ),
+                icon: const Icon(Icons.download),
+                label: Text(appLocalizations.flasherBtnDownloadHex),
+                onPressed: () => _downloadAndPrepareAsset(_selectedAsset!)),
         ],
       ],
     );
@@ -623,21 +670,18 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          "Select a pre-compiled .hex file from device storage.",
-          style: TextStyle(fontSize: 13, color: Colors.black),
-          textAlign: TextAlign.center,
-        ),
+        Text(appLocalizations.flasherLocalFileDesc,
+            style: const TextStyle(fontSize: 13, color: Colors.black),
+            textAlign: TextAlign.center),
         const SizedBox(height: 16),
         OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            side: BorderSide(color: primaryRed),
-            foregroundColor: primaryRed,
-          ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              side: BorderSide(color: primaryRed),
+              foregroundColor: primaryRed),
           icon: const Icon(Icons.folder_open),
-          label: const Text("BROWSE FILE",
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          label: Text(appLocalizations.flasherBtnBrowseFile,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           onPressed: _isFlashing ? null : _pickLocalFile,
         ),
       ],
@@ -645,29 +689,61 @@ class _FirmwareFlasherScreenState extends State<FirmwareFlasherScreen> {
   }
 }
 
+class GitHubAsset {
+  final String name;
+  final String downloadUrl;
+  final int size;
+
+  GitHubAsset(
+      {required this.name, required this.downloadUrl, required this.size});
+
+  factory GitHubAsset.fromJson(Map<String, dynamic> json) {
+    return GitHubAsset(
+      name: json['name'] ?? '',
+      downloadUrl: json['browser_download_url'] ?? '',
+      size: json['size'] ?? 0,
+    );
+  }
+}
+
+class GitHubRelease {
+  final String tagName;
+  final List<GitHubAsset> assets;
+
+  GitHubRelease({required this.tagName, required this.assets});
+
+  factory GitHubRelease.fromJson(Map<String, dynamic> json) {
+    final List rawAssets = json['assets'] ?? [];
+
+    final assets = rawAssets
+        .map((a) => GitHubAsset.fromJson(a))
+        .where((a) => a.name.endsWith('.zip') || a.name.endsWith('.hex'))
+        .toList();
+
+    return GitHubRelease(
+      tagName: json['tag_name'] ?? 'Unknown',
+      assets: assets,
+    );
+  }
+}
+
 class _StepText extends StatelessWidget {
   final String text;
   const _StepText(this.text);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        padding: const EdgeInsets.only(bottom: 6.0),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text("• ",
               style: TextStyle(
                   color: primaryRed,
                   fontWeight: FontWeight.bold,
                   fontSize: 16)),
           Expanded(
-            child: Text(text,
-                style: const TextStyle(
-                    fontSize: 13, height: 1.3, color: Colors.black)),
-          ),
-        ],
-      ),
-    );
+              child: Text(text,
+                  style: const TextStyle(
+                      fontSize: 13, height: 1.3, color: Colors.black)))
+        ]));
   }
 }

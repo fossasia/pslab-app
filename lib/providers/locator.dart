@@ -1,8 +1,8 @@
 import 'package:get_it/get_it.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/communication/handler/base.dart';
-import 'package:pslab/communication/handler/io_router.dart'
-    if (dart.library.js_interop) 'package:pslab/communication/handler/web_router.dart';
+
+import 'package:pslab/communication/handler/router/platform_handler.dart';
 
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/science_lab_common.dart';
@@ -12,8 +12,7 @@ import 'package:pslab/providers/sht21_provider.dart';
 final GetIt getIt = GetIt.instance;
 
 void setupLocator() {
-  getIt.registerLazySingleton<CommunicationHandler>(
-      () => getCommunicationHandler());
+  getIt.registerLazySingleton<CommunicationHandler>(() => getPlatformHandler());
 
   getIt.registerLazySingleton<ScienceLabCommon>(
       () => ScienceLabCommon(getIt.get<CommunicationHandler>()));

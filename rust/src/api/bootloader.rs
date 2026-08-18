@@ -25,16 +25,39 @@ struct Segment {
 
 fn read_exact(size: u32, timeout_ms: u32) -> Result<Vec<u8>> {
     let mut buf = Vec::new();
-    let start = std::time::Instant::now();
+
+    #[cfg(target_family = "wasm")]
+    let mut loops = 0;
+
+    #[cfg(not(target_family = "wasm"))]
+    let start_time = std::time::Instant::now();
+    #[cfg(not(target_family = "wasm"))]
     let timeout = std::time::Duration::from_millis(timeout_ms as u64);
 
     while buf.len() < size as usize {
-        if start.elapsed() > timeout {
-            return Err(anyhow!("Read timeout: Expected {} bytes, got {}", size, buf.len()));
+        #[cfg(target_family = "wasm")]
+        {
+            loops += 1;
+            if loops > (timeout_ms * 10_000) {
+                return Err(anyhow!("Read timeout: Expected {} bytes, got {}", size, buf.len()));
+            }
         }
+
+        #[cfg(not(target_family = "wasm"))]
+        {
+            if start_time.elapsed() > timeout {
+                return Err(anyhow!("Read timeout: Expected {} bytes, got {}", size, buf.len()));
+            }
+        }
+
         let chunk = read_data(size - buf.len() as u32, 100);
         if !chunk.is_empty() {
             buf.extend(chunk);
+            #[cfg(target_family = "wasm")]
+            { loops = 0; }
+        } else {
+            #[cfg(not(target_family = "wasm"))]
+            std::thread::sleep(std::time::Duration::from_millis(10));
         }
     }
     Ok(buf)
@@ -100,7 +123,6 @@ fn get_local_checksum(data: &[u8]) -> u16 {
     (chksum & 0xFFFF) as u16
 }
 
-
 fn prepare_flash_chunks(hex_str: &str, program_start: u32, program_end: u32, max_packet: u16, write_size: u16) -> Result<Vec<Segment>> {
     let num_pc_addresses = program_end - program_start;
     let mut mem_size_bytes = num_pc_addresses * 2;
@@ -134,7 +156,6 @@ fn prepare_flash_chunks(hex_str: &str, program_start: u32, program_end: u32, max
 
                 for (i, &byte) in value.iter().enumerate() {
                     let hex_addr = base_hex_addr + (i as u32);
-
                     let pc_addr = hex_addr / 2;
 
                     if pc_addr >= program_start && pc_addr < program_end {
@@ -205,24 +226,38 @@ pub fn flash_firmware(hex_str: String, progress_sink: StreamSink<FlashState>) ->
     let _ = progress_sink.add(FlashState::Connecting);
 
     match flash_inner(hex_str, &progress_sink) {
-        Ok(_) => {
-            println!("[FLASHER DEBUG] SEQUENCE COMPLETE.");
-            Ok(())
-        }
+        Ok(_) => { Ok(()) }
         Err(e) => {
             let err_msg = format!("Flasher failed: {}", e);
-            println!("\n[FLASHER FATAL ERROR] {}\n", err_msg);
-            let _ = progress_sink.add(FlashState::Error { message: err_msg.clone() });
-            Err(anyhow!(err_msg))
+            let _ = progress_sink.add(FlashState::Error { message: err_msg });
+            Ok(())
         }
     }
 }
 
 fn flash_inner(hex_str: String, progress_sink: &StreamSink<FlashState>) -> Result<()> {
-    set_baud_rate(460800).unwrap_or(());
-    let _ = read_data(2048, 200);
+    let baud_rates = [115200, 460800, 1000000];
+    let mut version_resp = Vec::new();
 
-    let version_resp = exchange(0x00, 0, 0, 0, &[], 2000)?;
+    for baud in baud_rates {
+        set_baud_rate(baud).unwrap_or(());
+        let _ = read_data(2048, 100);
+
+        for _ in 0..4 {
+            if let Ok(resp) = exchange(0x00, 0, 0, 0, &[], 500) {
+                version_resp = resp;
+                break;
+            }
+        }
+        if !version_resp.is_empty() {
+            break;
+        }
+    }
+
+    if version_resp.is_empty() {
+        return Err(anyhow!("Board did not respond at any baud rate. Are you sure the status LED was blinking in bootloader mode?"));
+    }
+
     let mut cursor = Cursor::new(&version_resp[11..]);
     let _version = cursor.read_u16::<LittleEndian>()?;
     let max_packet_length = cursor.read_u16::<LittleEndian>()?;
@@ -231,11 +266,13 @@ fn flash_inner(hex_str: String, progress_sink: &StreamSink<FlashState>) -> Resul
     let _2 = cursor.read_u16::<LittleEndian>()?;
     let erase_size = cursor.read_u16::<LittleEndian>()?;
     let write_size = cursor.read_u16::<LittleEndian>()?;
+
     let mem_resp = exchange(0x0B, 0, 0, 0, &[], 2000)?;
     let mut cursor = Cursor::new(&mem_resp[12..]);
     let program_start = cursor.read_u32::<LittleEndian>()?;
     let mut program_end = cursor.read_u32::<LittleEndian>()?;
     program_end += 2;
+
     let chunks = prepare_flash_chunks(&hex_str, program_start, program_end, max_packet_length, write_size)?;
     let total_bytes: usize = chunks.iter().map(|c| c.data.len()).sum();
 
@@ -265,6 +302,7 @@ fn flash_inner(hex_str: String, progress_sink: &StreamSink<FlashState>) -> Resul
         let percent = (written_bytes as f32 / total_bytes as f32 * 100.0) as i32;
         let _ = progress_sink.add(FlashState::Writing { progress_percent: percent });
     }
+
     let _ = progress_sink.add(FlashState::Verifying);
 
     if let Err(e) = exchange(0x0A, 0, 0, 0, &[], 5000) {

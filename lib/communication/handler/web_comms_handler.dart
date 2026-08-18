@@ -67,7 +67,7 @@ class WebCommsHandler implements CommunicationHandler {
   }
 
   @override
-  Future<void> open() async {
+  Future<void> open({int overrideBaud = 1000000}) async {
     if (!deviceFound) {
       throw Exception("Web Serial API not available");
     }
@@ -75,9 +75,8 @@ class WebCommsHandler implements CommunicationHandler {
     try {
       logger.d("Requesting Web Serial port (waiting for user selection)...");
       _port = await web.window.navigator.serial.requestPort().toDart;
-
-      logger.d("Opening Web Serial port at 1000000 baud...");
-      await _port!.open(SerialOptions(baudRate: 1000000)).toDart;
+      logger.d("Opening Web Serial port at $overrideBaud baud...");
+      await _port!.open(SerialOptions(baudRate: overrideBaud)).toDart;
 
       logger.d("Setting DTR/RTS signals...");
       await _port!
@@ -129,16 +128,35 @@ class WebCommsHandler implements CommunicationHandler {
 
   @override
   bool isConnected() => connected;
-
   @override
-  void close() {
+  void close() async {
     if (!connected) return;
-    logger.d("Closing Web Serial connection...");
+    logger.d("Closing Web Serial connection and unlocking streams...");
     _isReading = false;
-    _reader?.cancel().toDart.catchError((_) => null);
-    _writer?.close().toDart.catchError((_) => null);
-    _port?.close().toDart.catchError((_) => null);
     connected = false;
+
+    try {
+      if (_reader != null) {
+        await _reader!.cancel().toDart.catchError((_) => null);
+        (_reader as JSObject).callMethod('releaseLock'.toJS);
+        _reader = null;
+      }
+
+      if (_writer != null) {
+        await _writer!.close().toDart.catchError((_) => null);
+        (_writer as JSObject).callMethod('releaseLock'.toJS);
+        _writer = null;
+      }
+
+      if (_port != null) {
+        await _port!.close().toDart.catchError((_) => null);
+        _port = null;
+      }
+      logger.d("Web Serial port safely closed.");
+    } catch (e) {
+      logger.e("Error during Web Serial lock release: $e");
+    }
+
     rust_api.closeUsb();
   }
 

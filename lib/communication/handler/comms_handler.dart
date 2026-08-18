@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/others/logger_service.dart';
-
 import 'package:pslab/src/rust/api/simple.dart' as rust_api;
 
 class PSLabBoard {
@@ -46,7 +45,7 @@ class PSLabCommunicationHandler implements CommunicationHandler {
   }
 
   @override
-  Future<void> open() async {
+  Future<void> open({int overrideBaud = 1000000}) async {
     if (!deviceFound) {
       throw Exception("Device not connected");
     }
@@ -106,6 +105,10 @@ class PSLabCommunicationHandler implements CommunicationHandler {
   bool isDeviceFound() {
     if (kIsWeb) return false;
 
+    if (Platform.isAndroid) {
+      return true;
+    }
+
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       return rust_api.checkDesktopDevicePresent();
     }
@@ -126,21 +129,29 @@ class PSLabCommunicationHandler implements CommunicationHandler {
   Future<int> read(Uint8List dest, int bytesToRead, int timeoutMillis) async {
     int numBytesRead = 0;
     int bytesToBeReadTemp = bytesToRead;
+    int actualTimeout =
+        (Platform.isAndroid && timeoutMillis < 500) ? 500 : timeoutMillis;
+    int attempts = 0;
 
     try {
       while (numBytesRead < bytesToRead) {
         final List<int> receivedData = await rust_api.readData(
           bytesToRead: bytesToBeReadTemp,
-          timeoutMs: timeoutMillis,
+          timeoutMs: actualTimeout,
         );
 
         int readNow = receivedData.length;
-        logger.d("Received chunk: $receivedData");
 
         if (readNow == 0) {
-          logger.w("No signal on wire. Returning 0 bytes.");
-          return numBytesRead;
+          attempts++;
+          if (attempts >= 3) {
+            logger.w(
+                "No signal on wire after retries. Returning $numBytesRead bytes.");
+            return numBytesRead;
+          }
+          await Future.delayed(const Duration(milliseconds: 50));
         } else {
+          attempts = 0;
           int readLength = readNow.clamp(0, bytesToBeReadTemp);
           dest.setRange(numBytesRead, numBytesRead + readLength, receivedData);
           numBytesRead += readLength;
@@ -151,7 +162,6 @@ class PSLabCommunicationHandler implements CommunicationHandler {
       logger.e("Exception during read: $e");
     }
 
-    logger.d("Bytes Read: $numBytesRead");
     return numBytesRead;
   }
 

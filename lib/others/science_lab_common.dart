@@ -2,7 +2,8 @@ import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/communication/handler/wifi_comms_handler.dart';
-import 'package:pslab/communication/handler/comms_handler.dart';
+
+import 'package:pslab/communication/handler/router/platform_handler.dart';
 
 class ScienceLabCommon {
   static late ScienceLab _scienceLab;
@@ -18,13 +19,16 @@ class ScienceLabCommon {
   }
 
   Future<bool> openDevice() async {
-    if (communicationHandler is! PSLabCommunicationHandler) {
-      logger.d("Swapping communication handler to USB...");
-      communicationHandler = PSLabCommunicationHandler();
-      _scienceLab.mCommunicationHandler = communicationHandler;
-    }
+    var platformHandler = getPlatformHandler();
 
+    if (communicationHandler.runtimeType != platformHandler.runtimeType) {
+      logger.d("Swapping communication handler to platform default USB...");
+      communicationHandler = platformHandler;
+      _scienceLab.mCommunicationHandler = communicationHandler;
+      await communicationHandler.initialize();
+    }
     await _scienceLab.connect();
+
     if (!_scienceLab.isConnected()) {
       logger.d("Error in connection");
       return false;

@@ -8,7 +8,7 @@ interface class CommunicationHandler {
     throw UnimplementedError();
   }
 
-  Future<void> open() async {
+  Future<void> open({int overrideBaud = 1000000}) async {
     throw UnimplementedError();
   }
 

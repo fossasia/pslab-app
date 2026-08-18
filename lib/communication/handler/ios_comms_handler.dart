@@ -14,7 +14,7 @@ class IosNoOpCommunicationHandler implements CommunicationHandler {
   Future<void> initialize() async {}
 
   @override
-  Future<void> open() async {}
+  Future<void> open({int overrideBaud = 1000000}) async {}
 
   @override
   bool isDeviceFound() => deviceFound;

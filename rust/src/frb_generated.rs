@@ -38,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.12.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 411393436;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 214360270;
 
 // Section: executor
 
@@ -215,6 +215,35 @@ fn wire__crate__api__simple__init_desktop_impl(
                     })(),
                 )
             }
+        },
+    )
+}
+fn wire__crate__api__simple__pop_web_tx_data_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "pop_web_tx_data",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Result::<_, ()>::Ok(crate::api::simple::pop_web_tx_data())?;
+                Ok(output_ok)
+            })())
         },
     )
 }
@@ -711,9 +740,9 @@ fn pde_ffi_dispatcher_primary_impl(
         3 => wire__crate__api__bootloader__flash_firmware_impl(port, ptr, rust_vec_len, data_len),
         4 => wire__crate__api__simple__init_android_impl(port, ptr, rust_vec_len, data_len),
         5 => wire__crate__api__simple__init_desktop_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__simple__read_data_impl(port, ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__simple__wifi_connect_impl(port, ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__simple__wifi_read_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__simple__read_data_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__simple__wifi_connect_impl(port, ptr, rust_vec_len, data_len),
+        15 => wire__crate__api__simple__wifi_read_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -730,14 +759,15 @@ fn pde_ffi_dispatcher_sync_impl(
             wire__crate__api__simple__check_desktop_device_present_impl(ptr, rust_vec_len, data_len)
         }
         2 => wire__crate__api__simple__close_usb_impl(ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__simple__push_web_data_impl(ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__simple__read_web_data_impl(ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__simple__set_baud_rate_impl(ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__simple__set_dtr_impl(ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__simple__set_rts_impl(ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__simple__wifi_disconnect_impl(ptr, rust_vec_len, data_len),
-        15 => wire__crate__api__simple__wifi_write_impl(ptr, rust_vec_len, data_len),
-        16 => wire__crate__api__simple__write_data_impl(ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__simple__pop_web_tx_data_impl(ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__simple__push_web_data_impl(ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__simple__read_web_data_impl(ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__simple__set_baud_rate_impl(ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__simple__set_dtr_impl(ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__simple__set_rts_impl(ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__simple__wifi_disconnect_impl(ptr, rust_vec_len, data_len),
+        16 => wire__crate__api__simple__wifi_write_impl(ptr, rust_vec_len, data_len),
+        17 => wire__crate__api__simple__write_data_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

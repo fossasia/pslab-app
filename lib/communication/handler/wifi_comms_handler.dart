@@ -25,7 +25,7 @@ class WifiCommsHandler implements CommunicationHandler {
   }
 
   @override
-  Future<void> open() async {
+  Future<void> open({int overrideBaud = 1000000}) async {
     logger.d("Connecting to $host on port $wsPort...");
 
     if (kIsWeb) {

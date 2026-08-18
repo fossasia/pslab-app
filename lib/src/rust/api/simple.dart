@@ -27,6 +27,8 @@ void setRts({required bool state}) =>
 void writeData({required List<int> data}) =>
     RustLib.instance.api.crateApiSimpleWriteData(data: data);
 
+Uint8List popWebTxData() => RustLib.instance.api.crateApiSimplePopWebTxData();
+
 Future<Uint8List> readData(
         {required int bytesToRead, required int timeoutMs}) =>
     RustLib.instance.api
