@@ -207,14 +207,14 @@ class DataService {
     try {
       logger.i(
           'Opening file picker. Allowed instruments count: ${allowedInstruments.length}');
-      final result = await FilePicker.pickFiles(
+      final result = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: ['csv', 'txt', 'json'],
       );
 
-      if (result != null && result.files.single.path != null) {
-        final file = File(result.files.single.path!);
-        final fileName = result.files.single.name;
+      if (result != null && result.path != null) {
+        final file = File(result.path!);
+        final fileName = result.name;
         logger.i('File selected: ${file.path}');
 
         final data = await readDataFromFile(file);
