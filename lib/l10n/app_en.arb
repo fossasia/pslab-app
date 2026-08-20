@@ -944,5 +944,7 @@
     "flasherVariantStandard": "V6 (Standard) : ",
     "flasherBtnDownloadHex": "Download HEX",
     "flasherLocalFileDesc": "Select a pre-compiled .hex file from device storage.",
-    "flasherBtnBrowseFile": "BROWSE FILE"
+    "flasherBtnBrowseFile": "BROWSE FILE",
+    "filterInstrument" : "Filter Instruments",
+    "allInstrument" : "All Instruments"
 }

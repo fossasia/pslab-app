@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:pslab/console_helper_dummy.dart'
     if (dart.library.io) 'package:pslab/console_helper.dart' as console_helper;
+import 'package:pslab/providers/instrument_filter_provider.dart';
 
 import 'package:pslab/providers/sht21_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -69,6 +70,7 @@ void main(List<String> args) async {
         ChangeNotifierProvider<BoardStateProvider>(
           create: (context) => getIt<BoardStateProvider>(),
         ),
+        ChangeNotifierProvider(create: (_) => HardwareFilterProvider()),
         ChangeNotifierProvider<SHT21Provider>(
           create: (context) => getIt<SHT21Provider>(),
         ),
