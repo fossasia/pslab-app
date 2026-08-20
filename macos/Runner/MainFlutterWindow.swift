@@ -61,7 +61,7 @@ class MainFlutterWindow: NSWindow, CLLocationManagerDelegate {
     private func checkLocationStatus(result: @escaping FlutterResult) {
         let status: CLAuthorizationStatus
         if #available(macOS 11.0, *) {
-            status = locationManager?.authorizationStatus ?? CLLocationManager.authorizationStatus()
+            status = locationManager?.authorizationStatus ?? .notDetermined
         } else {
             status = CLLocationManager.authorizationStatus()
         }
@@ -95,7 +95,7 @@ class MainFlutterWindow: NSWindow, CLLocationManagerDelegate {
     private func requestLocation(result: @escaping FlutterResult) {
         let status: CLAuthorizationStatus
         if #available(macOS 11.0, *) {
-            status = self.locationManager?.authorizationStatus ?? CLLocationManager.authorizationStatus()
+            status = self.locationManager?.authorizationStatus ?? .notDetermined
         } else {
             status = CLLocationManager.authorizationStatus()
         }

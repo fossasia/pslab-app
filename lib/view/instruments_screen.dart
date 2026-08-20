@@ -45,9 +45,8 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   }
 
   void _onSearchChanged(String query) {
-    setState(() {
-      _searchQuery = query;
-    });
+    _searchQuery = query;
+    _applyFilters();
   }
 
   void _applyFilters() {
@@ -85,7 +84,9 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
       indices.add(i);
     }
 
-    _filteredIndices = indices;
+    setState(() {
+      _filteredIndices = indices;
+    });
   }
 
   @override
@@ -146,6 +147,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           appLocalizations.roboticArmDesc, '/roboticArm'),
       _InstrumentData(appLocalizations.gasSensor,
           appLocalizations.gasSensorDesc, '/gassensor'),
+      // _InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensorDesc, '/dustsensor'),
       _InstrumentData(appLocalizations.soundMeter,
           appLocalizations.soundMeterDesc, '/soundmeter'),
       _InstrumentData(
@@ -154,9 +156,13 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           '/oledDisplay'),
     ];
 
+    _filteredIndices =
+        List<int>.generate(_instrumentDatas.length, (index) => index);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setPortraitOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      _applyFilters();
     });
   }
 
@@ -179,7 +185,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   @override
   Widget build(BuildContext context) {
     context.watch<HardwareFilterProvider>();
-    _applyFilters();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _applyFilters());
 
     return MainScaffold(
       index: 0,
