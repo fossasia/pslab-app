@@ -20,7 +20,7 @@ void main() async {
   group('E2E Group', () {
     testWidgets('Take Screenshots', (tester) async {
       app.main([]);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 3));
 
       final instrumentsScreenTitle =
           find.byKey(const ValueKey(instrumentsScreenTitleKey));
@@ -44,7 +44,7 @@ void main() async {
           scrollable: find.byType(Scrollable),
           maxScrolls: 50,
         );
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(seconds: 1));
       }
 
       await pumpUntilFound(tester, instrumentsScreenTitle);
@@ -53,13 +53,14 @@ void main() async {
 
       ScaffoldState state = tester.firstState(find.byType(Scaffold));
       state.openDrawer();
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
+
       await pumpUntilFound(tester, notConnectedText);
       await tester.pump(const Duration(seconds: 1));
       await binding.takeScreenshot('2_nav_drawer');
 
       state.closeDrawer();
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       final accelerometerCard = find.text('ACCELEROMETER');
       await tester.scrollUntilVisible(
@@ -67,7 +68,7 @@ void main() async {
         200.0,
         scrollable: find.byType(Scrollable),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
       await tester.tap(accelerometerCard);
       await tester.pump(const Duration(seconds: 2));
 
@@ -94,7 +95,7 @@ void main() async {
         200.0,
         scrollable: find.byType(Scrollable),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
       await tester.tap(powerSourceCard);
       await pumpUntilFound(tester, powerSourceScreenTitle);
       await tester.pump(const Duration(seconds: 2));
@@ -112,7 +113,7 @@ void main() async {
         200.0,
         scrollable: find.byType(Scrollable),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
       await tester.tap(multimeterCard);
       await pumpUntilFound(tester, multimeterScreenTitle);
       await tester.pump(const Duration(seconds: 2));
@@ -130,7 +131,7 @@ void main() async {
         200.0,
         scrollable: find.byType(Scrollable),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
       await tester.tap(waveGeneratorCard);
       await pumpUntilFound(tester, waveGeneratorScreenTitle);
 
@@ -153,7 +154,7 @@ void main() async {
         200.0,
         scrollable: find.byType(Scrollable),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
       await tester.tap(oscilloscopeCard);
       await pumpUntilFound(tester, oscilloscopeScreenTitle);
       await tester.pump(const Duration(seconds: 2));
