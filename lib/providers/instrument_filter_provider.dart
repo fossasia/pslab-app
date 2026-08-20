@@ -13,6 +13,8 @@ class HardwareFilterProvider with ChangeNotifier {
   static const String _prefKey = 'selected_hardware_filter_mode';
   HardwareMode _currentMode = HardwareMode.all;
 
+  bool _hasCheckedSensors = false;
+
   final Map<String, bool> _sensorAvailability = {
     '/luxmeter': false,
     '/accelerometer': false,
@@ -28,7 +30,6 @@ class HardwareFilterProvider with ChangeNotifier {
 
   HardwareFilterProvider() {
     _loadSavedMode();
-    _checkDeviceSensorsDynamically();
   }
 
   Future<void> _loadSavedMode() async {
@@ -37,17 +38,28 @@ class HardwareFilterProvider with ChangeNotifier {
     _currentMode =
         HardwareMode.values[index.clamp(0, HardwareMode.values.length - 1)];
     notifyListeners();
+
+    if (_currentMode == HardwareMode.inbuiltSensors) {
+      _checkDeviceSensorsDynamically();
+    }
   }
 
   Future<void> setHardwareMode(HardwareMode mode) async {
     if (_currentMode == mode) return;
     _currentMode = mode;
     notifyListeners();
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_prefKey, mode.index);
+
+    if (_currentMode == HardwareMode.inbuiltSensors && !_hasCheckedSensors) {
+      await _checkDeviceSensorsDynamically();
+    }
   }
 
   Future<void> _checkDeviceSensorsDynamically() async {
+    if (_hasCheckedSensors) return;
+
     try {
       final results = await Future.wait([
         _isStreamActive(accelerometerEventStream()),
@@ -62,6 +74,8 @@ class HardwareFilterProvider with ChangeNotifier {
       _sensorAvailability['/compass'] = results[2];
       _sensorAvailability['/barometer'] = results[3];
       _sensorAvailability['/luxmeter'] = results[4];
+
+      _hasCheckedSensors = true;
       notifyListeners();
     } catch (e) {
       debugPrint('Error in dynamic sensor check: $e');
