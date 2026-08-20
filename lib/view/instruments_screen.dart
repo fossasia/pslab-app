@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:pslab/constants.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/board_state_provider.dart';
+import 'package:pslab/providers/instrument_filter_provider.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/view/widgets/applications_list_item.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
@@ -23,6 +25,7 @@ class _InstrumentData {
 
 class _InstrumentsScreenState extends State<InstrumentsScreen> {
   List<int> _filteredIndices = <int>[];
+  String _searchQuery = '';
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<_InstrumentData> _instrumentDatas;
 
@@ -41,19 +44,48 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     }
   }
 
-  void _filterInstruments(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredIndices =
-            List<int>.generate(_instrumentDatas.length, (index) => index);
-      } else {
-        _filteredIndices = List.generate(_instrumentDatas.length, (i) => i)
-            .where((i) => _instrumentDatas[i]
-                .heading
-                .toLowerCase()
-                .contains(query.toLowerCase()))
-            .toList();
+  void _onSearchChanged(String query) {
+    _searchQuery = query;
+    _applyFilters();
+  }
+
+  void _applyFilters() {
+    final filterProvider =
+        Provider.of<HardwareFilterProvider>(context, listen: false);
+    final mode = filterProvider.currentMode;
+    final sensorAvailability = filterProvider.sensorAvailability;
+
+    final List<int> indices = [];
+
+    for (int i = 0; i < _instrumentDatas.length; i++) {
+      final instrument = _instrumentDatas[i];
+      final route = instrument.name;
+
+      if (mode == HardwareMode.inbuiltSensors) {
+        if (route == '/oscilloscope' || route == '/waveGenerator') {
+        } else if (sensorAvailability.containsKey(route)) {
+          final bool isAvailable = sensorAvailability[route] ?? false;
+          if (!isAvailable) {
+            continue;
+          }
+        } else {
+          continue;
+        }
       }
+      if (_searchQuery.isNotEmpty) {
+        final matchesQuery = instrument.heading
+            .toLowerCase()
+            .contains(_searchQuery.toLowerCase());
+        if (!matchesQuery) {
+          continue;
+        }
+      }
+
+      indices.add(i);
+    }
+
+    setState(() {
+      _filteredIndices = indices;
     });
   }
 
@@ -115,11 +147,9 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           appLocalizations.roboticArmDesc, '/roboticArm'),
       _InstrumentData(appLocalizations.gasSensor,
           appLocalizations.gasSensorDesc, '/gassensor'),
-
       // _InstrumentData(appLocalizations.dustSensor, appLocalizations.dustSensorDesc, '/dustsensor'),
       _InstrumentData(appLocalizations.soundMeter,
           appLocalizations.soundMeterDesc, '/soundmeter'),
-
       _InstrumentData(
           'OLED Display',
           'Draw shapes & render text on an external OLED display.',
@@ -128,9 +158,11 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
 
     _filteredIndices =
         List<int>.generate(_instrumentDatas.length, (index) => index);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setPortraitOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      _applyFilters();
     });
   }
 
@@ -143,21 +175,25 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     if (ModalRoute.of(context)?.isCurrent ?? true) {
       _setPortraitOrientation();
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
-    super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
+    context.watch<HardwareFilterProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _applyFilters());
+
     return MainScaffold(
       index: 0,
       scaffoldKey: const Key(instrumentsScreenTitleKey),
       title: appLocalizations.instrumentsTitle,
       showSearch: true,
-      onSearchChanged: _filterInstruments,
+      showFilter: true,
+      onSearchChanged: _onSearchChanged,
       searchHint: appLocalizations.searchInstrumentsHint,
       body: SafeArea(
         child: _filteredIndices.isEmpty

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/locator.dart';
+import '../../providers/instrument_filter_provider.dart';
 import '../../theme/colors.dart';
 import '../pin_layout_screen.dart';
 import 'navigation_drawer.dart';
@@ -18,6 +19,7 @@ class MainScaffold extends StatefulWidget {
   final String icUsbConnected = 'assets/icons/ic_usb_connected.png';
   final String icWiFiConnected = 'assets/icons/ic_wifi_connected.png';
   final bool showSearch;
+  final bool showFilter;
   final Function(String)? onSearchChanged;
   final String? searchHint;
 
@@ -29,6 +31,7 @@ class MainScaffold extends StatefulWidget {
     this.actions,
     required this.index,
     this.showSearch = false,
+    this.showFilter = true,
     this.onSearchChanged,
     this.searchHint,
   });
@@ -246,6 +249,55 @@ class _MainScaffoldState extends State<MainScaffold>
                     );
                   },
                 ),
+                if (widget.showFilter)
+                  Consumer<HardwareFilterProvider>(
+                    builder: (context, filterProvider, _) {
+                      return PopupMenuButton<HardwareMode>(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(
+                            color: Colors.white,
+                            width: 1.5,
+                          ),
+                        ),
+                        elevation: 6,
+                        offset: const Offset(0, 45),
+                        color: Colors.white,
+                        icon: Icon(
+                          filterProvider.currentMode == HardwareMode.all
+                              ? Icons.filter_list
+                              : Icons.filter_list_alt,
+                          color: appBarContentColor,
+                          size: iconGlyph,
+                        ),
+                        tooltip: appLocalizations.filterInstrument,
+                        padding: EdgeInsets.symmetric(horizontal: btnHPad),
+                        constraints: BoxConstraints(
+                          minWidth: btnMin,
+                          minHeight: btnMin,
+                        ),
+                        initialValue: filterProvider.currentMode,
+                        onSelected: (HardwareMode mode) {
+                          filterProvider.setHardwareMode(mode);
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          _buildStyledFilterItem(
+                            context,
+                            mode: HardwareMode.all,
+                            label: appLocalizations.allInstrument,
+                            selectedMode: filterProvider.currentMode,
+                          ),
+                          const PopupMenuDivider(height: 1),
+                          _buildStyledFilterItem(
+                            context,
+                            mode: HardwareMode.inbuiltSensors,
+                            label: appLocalizations.builtIn,
+                            selectedMode: filterProvider.currentMode,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 PopupMenuButton<String>(
                   icon: Icon(
                     Icons.more_vert,
@@ -295,6 +347,39 @@ class _MainScaffoldState extends State<MainScaffold>
       body: widget.body,
       drawer: NavDrawer(
         selectedIndex: widget.index,
+      ),
+    );
+  }
+
+  PopupMenuItem<HardwareMode> _buildStyledFilterItem(
+    BuildContext context, {
+    required HardwareMode mode,
+    required String label,
+    required HardwareMode selectedMode,
+  }) {
+    final bool isSelected = mode == selectedMode;
+    final Color color =
+        isSelected ? Theme.of(context).primaryColor : Colors.black87;
+
+    return PopupMenuItem<HardwareMode>(
+      value: mode,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  color: color,
+                ),
+              ),
+            ),
+            if (isSelected) Icon(Icons.check, size: 20, color: color),
+          ],
+        ),
       ),
     );
   }
