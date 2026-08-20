@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:light/light.dart';
 
+import '../others/logger_service.dart' show logger;
+
 enum HardwareMode {
   all,
   inbuiltSensors,
@@ -11,8 +13,8 @@ enum HardwareMode {
 
 class HardwareFilterProvider with ChangeNotifier {
   static const String _prefKey = 'selected_hardware_filter_mode';
-  HardwareMode _currentMode = HardwareMode.all;
 
+  HardwareMode _currentMode = HardwareMode.all;
   bool _hasCheckedSensors = false;
 
   final Map<String, bool> _sensorAvailability = {
@@ -28,24 +30,12 @@ class HardwareFilterProvider with ChangeNotifier {
   HardwareMode get currentMode => _currentMode;
   Map<String, bool> get sensorAvailability => _sensorAvailability;
 
-  HardwareFilterProvider() {
-    _loadSavedMode();
-  }
-
-  Future<void> _loadSavedMode() async {
-    final prefs = await SharedPreferences.getInstance();
-    final index = prefs.getInt(_prefKey) ?? 0;
-    _currentMode =
-        HardwareMode.values[index.clamp(0, HardwareMode.values.length - 1)];
-    notifyListeners();
-
-    if (_currentMode == HardwareMode.inbuiltSensors) {
-      _checkDeviceSensorsDynamically();
-    }
-  }
+  HardwareFilterProvider();
 
   Future<void> setHardwareMode(HardwareMode mode) async {
-    if (_currentMode == mode) return;
+    if (_currentMode == mode) {
+      return;
+    }
     _currentMode = mode;
     notifyListeners();
 
@@ -58,15 +48,17 @@ class HardwareFilterProvider with ChangeNotifier {
   }
 
   Future<void> _checkDeviceSensorsDynamically() async {
-    if (_hasCheckedSensors) return;
+    if (_hasCheckedSensors) {
+      return;
+    }
 
     try {
       final results = await Future.wait([
-        _isStreamActive(accelerometerEventStream()),
-        _isStreamActive(gyroscopeEventStream()),
-        _isStreamActive(magnetometerEventStream()),
-        _isStreamActive(barometerEventStream()),
-        _isStreamActive(Light().lightSensorStream),
+        _isStreamActive(accelerometerEventStream(), 'accelerometer'),
+        _isStreamActive(gyroscopeEventStream(), 'gyroscope'),
+        _isStreamActive(magnetometerEventStream(), 'compass'),
+        _isStreamActive(barometerEventStream(), 'barometer'),
+        _isStreamActive(Light().lightSensorStream, 'luxmeter'),
       ]);
 
       _sensorAvailability['/accelerometer'] = results[0];
@@ -78,11 +70,12 @@ class HardwareFilterProvider with ChangeNotifier {
       _hasCheckedSensors = true;
       notifyListeners();
     } catch (e) {
-      debugPrint('Error in dynamic sensor check: $e');
+      logger.d(
+          'TRACE [HardwareFilterProvider]: Error checking device sensors: $e');
     }
   }
 
-  Future<bool> _isStreamActive(Stream<dynamic> stream) async {
+  Future<bool> _isStreamActive(Stream<dynamic> stream, String name) async {
     try {
       await stream.first.timeout(const Duration(seconds: 2));
       return true;
