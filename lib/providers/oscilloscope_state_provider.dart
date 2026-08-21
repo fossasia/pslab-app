@@ -1261,6 +1261,23 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   List<LineChartBarData> createPlotForChannel(String channelName) {
     final index = dataParamsChannels.indexOf(channelName);
     final plots = <LineChartBarData>[];
+    if (_configProvider.config.bufferOverlayEnabled && index >= 0) {
+      for (int b = 0; b < _waveformBuffer.length; b++) {
+        if (index >= _waveformBuffer[b].length) continue;
+        final age = b + 1;
+        final opacity =
+            (1.0 - (age / (_waveformBuffer.length + 1))).clamp(0.1, 0.6);
+        plots.add(
+          LineChartBarData(
+            spots: _waveformBuffer[b][index],
+            isCurved: true,
+            color: colors[index % colors.length].withValues(alpha: opacity),
+            barWidth: 1,
+            dotData: const FlDotData(show: false),
+          ),
+        );
+      }
+    }
     if (index >= 0 && index < dataEntries.length) {
       plots.add(
         LineChartBarData(
