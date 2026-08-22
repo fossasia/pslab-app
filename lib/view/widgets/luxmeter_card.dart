@@ -25,8 +25,7 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
     double minLux = provider.getMinLux();
     double maxLux = provider.getMaxLux();
     double avgLux = provider.getAverageLux();
-
-    final cardMargin = screenWidth < 400 ? 8.0 : 16.0;
+    final cardMargin = screenWidth < 400 ? 8.0 : 12.0;
     final cardPadding = screenWidth < 400 ? 12.0 : 20.0;
     final gaugeSize = isLargeScreen ? 260.0 : screenWidth * 0.55;
     final titleFontSize = isLargeScreen ? 25.0 : 20.0;
@@ -62,7 +61,6 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
             Instrumentstats(
               titleFontSize: titleFontSize,
               statFontSize: statFontSize,

@@ -7,7 +7,6 @@ import 'package:pslab/view/logged_data_screen.dart';
 import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/widgets/instruments_graph.dart';
 
 import 'gas_sensor_config_screen.dart';
