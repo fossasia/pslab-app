@@ -48,14 +48,17 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
           children: [
             Expanded(
               child: Center(
-                child: InstrumentGauge(
-                  size: gaugeSize,
-                  currentValue: currentLux,
-                  minValue: 0,
-                  maxValue: 10000,
-                  interval: 2000,
-                  unit: 'Lx',
-                  decimalPlaces: 0,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 25.0),
+                  child: InstrumentGauge(
+                    size: gaugeSize,
+                    currentValue: currentLux,
+                    minValue: 0,
+                    maxValue: 10000,
+                    interval: 2000,
+                    unit: 'Lx',
+                    decimalPlaces: 0,
+                  ),
                 ),
               ),
             ),

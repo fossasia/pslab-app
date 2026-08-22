@@ -13,6 +13,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:pslab/view/logged_data_screen.dart';
+import 'package:pslab/view/widgets/instruments_graph.dart';
 
 import '../others/logger_service.dart';
 import '../providers/barometer_config_provider.dart';
@@ -352,83 +353,29 @@ class _BarometerScreenState extends State<BarometerScreen> {
   Widget _buildChartSection() {
     return Consumer<BarometerStateProvider>(
       builder: (context, provider, child) {
-        final screenWidth = MediaQuery.of(context).size.width;
-        final cardMargin = screenWidth < 400 ? 8.0 : 16.0;
-        final cardPadding = screenWidth < 400 ? 2.0 : 5.0;
-        List<FlSpot> spots = provider.getPressureChartData();
         double maxPressure = provider.getMaxPressure();
-        double maxTime = provider.getMaxTime();
-        double minTime = provider.getMinTime();
-        double timeInterval = provider.getTimeInterval();
-        double maxAltitude = provider.getMaxAltitudeForChart();
-        double minAltitude = provider.getMinAltitudeForChart();
-        double altitudeInterval = provider.getAltitudeInterval();
 
-        return Container(
-            margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
-            padding: EdgeInsets.all(cardPadding),
-            decoration: BoxDecoration(
-              color: chartBackgroundColor,
-              borderRadius: BorderRadius.zero,
-            ),
-            child: _buildChart(
-                screenWidth,
-                maxPressure,
-                maxTime,
-                minTime,
-                timeInterval,
-                spots,
-                maxAltitude,
-                minAltitude,
-                altitudeInterval));
+        return InstrumentsGraph(
+          spots: provider.getPressureChartData(),
+          minX: provider.getMinTime(),
+          maxX: provider.getMaxTime(),
+          timeInterval: provider.getTimeInterval(),
+          minY: 0,
+          maxY: maxPressure > 0 ? (maxPressure * 1.1) : 2.0,
+          yInterval: maxPressure > 0 ? (maxPressure / 5) : 0.2,
+          xAxisLabel: appLocalizations.timeAxisLabel,
+          yAxisLabel: appLocalizations.atm,
+          lineColor: xOrientationChartLineColor,
+          rightAxisLabel: appLocalizations.meterUnit,
+          rightTitlesWidget: _altitudeTitleWidgets,
+        );
       },
     );
   }
 
-  Widget sideTitleWidgets(double value, TitleMeta meta) {
+  Widget _altitudeTitleWidgets(double value, TitleMeta meta) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final fontSize = screenWidth < 400
-        ? 7.0
-        : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: fontSize,
-    );
-    String timeText;
-    if (value < 60) {
-      timeText = '${value.toInt()}s';
-    } else if (value < 3600) {
-      int minutes = (value / 60).floor();
-      int seconds = (value % 60).toInt();
-      timeText = '${minutes}m${seconds}s';
-    } else {
-      int hours = (value / 3600).floor();
-      int minutes = ((value % 3600) / 60).floor();
-      timeText = '${hours}h${minutes}m';
-    }
-    return SideTitleWidget(
-      meta: meta,
-      child: Text(
-        maxLines: 1,
-        timeText,
-        style: style,
-      ),
-    );
-  }
-
-  Widget altitudeTitleWidgets(double value, TitleMeta meta) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final fontSize = screenWidth < 400
-        ? 7.0
-        : screenWidth < 600
-            ? 8.0
-            : 9.0;
-    final style = TextStyle(
-      color: chartTextColor,
-      fontSize: fontSize,
-    );
+    final labelFontSize = screenWidth < 400 ? 8.0 : 9.0;
 
     const double seaLevelPressureAtm = 1.0;
     const double temperatureK = 288.15;
@@ -446,146 +393,19 @@ class _BarometerScreenState extends State<BarometerScreen> {
                   (gasConstant * lapseRate) / gravity));
     }
 
-    String altitudeText;
-    if (altitude < 1000) {
-      altitudeText = '${altitude.round()}';
-    } else {
-      altitudeText = altitude.toStringAsFixed(0);
-    }
+    String altitudeText =
+        altitude < 1000 ? '${altitude.round()}' : altitude.toStringAsFixed(0);
 
     return SideTitleWidget(
       meta: meta,
+      space: 2,
       child: Text(
         altitudeText,
-        style: style,
-      ),
-    );
-  }
-
-  Widget _buildChart(
-      double screenWidth,
-      double maxPressure,
-      double maxTime,
-      double minTime,
-      double timeInterval,
-      List<FlSpot> spots,
-      double maxAltitude,
-      double minAltitude,
-      double altitudeInterval) {
-    final chartFontSize = screenWidth < 400
-        ? 8.0
-        : screenWidth < 600
-            ? 9.0
-            : 10.0;
-    final axisNameFontSize = screenWidth < 400 ? 9.0 : 10.0;
-    final reservedSizeBottom = screenWidth < 400 ? 25.0 : 30.0;
-    final reservedSizeLeft = screenWidth < 400 ? 29.0 : 32.0;
-    final reservedSizeRight = screenWidth < 400 ? 29.0 : 32.0;
-
-    return LineChart(
-      LineChartData(
-        backgroundColor: chartBackgroundColor,
-        titlesData: FlTitlesData(
-          show: true,
-          topTitles: AxisTitles(
-            axisNameWidget: Padding(
-              padding: EdgeInsets.only(left: screenWidth < 400 ? 15 : 25),
-              child: Text(
-                appLocalizations.timeAxisLabel,
-                style: TextStyle(
-                  fontSize: axisNameFontSize,
-                  color: chartTextColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            axisNameSize: screenWidth < 400 ? 18 : 20,
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: reservedSizeBottom,
-              getTitlesWidget: sideTitleWidgets,
-              interval: timeInterval,
-            ),
-          ),
-          leftTitles: AxisTitles(
-            axisNameWidget: Text(
-              appLocalizations.atm,
-              style: TextStyle(
-                fontSize: axisNameFontSize,
-                color: chartTextColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            sideTitles: SideTitles(
-              reservedSize: reservedSizeLeft,
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  meta: meta,
-                  child: Text(
-                    value.toStringAsFixed(2),
-                    style: TextStyle(
-                      color: chartTextColor,
-                      fontSize: chartFontSize,
-                    ),
-                  ),
-                );
-              },
-              interval: maxPressure > 0 ? (maxPressure / 5) : 0.2,
-            ),
-          ),
-          rightTitles: AxisTitles(
-            axisNameWidget: Text(
-              appLocalizations.meterUnit,
-              style: TextStyle(
-                fontSize: axisNameFontSize,
-                color: chartTextColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            sideTitles: SideTitles(
-              reservedSize: reservedSizeRight,
-              showTitles: true,
-              getTitlesWidget: (value, meta) =>
-                  altitudeTitleWidgets(value, meta),
-              interval: maxPressure > 0 ? (maxPressure / 5) : 0.2,
-            ),
-          ),
+        style: TextStyle(
+          color: chartTextColor,
+          fontSize: labelFontSize,
+          fontWeight: FontWeight.bold,
         ),
-        gridData: FlGridData(
-          show: true,
-          drawHorizontalLine: true,
-          drawVerticalLine: true,
-          horizontalInterval: maxPressure > 0 ? (maxPressure / 5) : 0.2,
-          verticalInterval: timeInterval,
-        ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border(
-            bottom: BorderSide(color: chartBorderColor),
-            left: BorderSide(color: chartBorderColor),
-            top: BorderSide(color: chartBorderColor),
-            right: BorderSide(color: chartBorderColor),
-          ),
-        ),
-        minY: 0,
-        maxY: maxPressure > 0 ? (maxPressure * 1.1) : 2.0,
-        maxX: maxTime > 0 ? maxTime : 10,
-        minX: minTime,
-        clipData: const FlClipData.all(),
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            color: xOrientationChartLineColor,
-            barWidth: screenWidth < 400 ? 1.5 : 2.0,
-            isStrokeCapRound: true,
-            dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: false),
-          ),
-        ],
       ),
     );
   }

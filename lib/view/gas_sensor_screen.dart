@@ -8,6 +8,7 @@ import 'package:pslab/view/widgets/common_scaffold_widget.dart';
 import 'package:pslab/view/widgets/export_helper.dart';
 import 'package:pslab/view/widgets/guide_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pslab/view/widgets/instruments_graph.dart';
 
 import 'gas_sensor_config_screen.dart';
 import 'widgets/gas_sensor_card.dart';
@@ -263,176 +264,39 @@ class _GasSensorScreenState extends State<GasSensorScreen> {
   Widget _buildChartSection() {
     return Consumer<GasSensorStateProvider>(
       builder: (context, provider, child) {
-        final screenWidth = MediaQuery.of(context).size.width;
-        final cardMargin = screenWidth < 400 ? 8.0 : 12.0;
-        final cardPadding = screenWidth < 400 ? 12.0 : 16.0;
+        final spots = provider.getGasChartData();
+        final cleanedMode = provider.getActiveMode().trim();
+        final isPpmMode = cleanedMode.toLowerCase() != 'raw' ||
+            spots.any((spot) => spot.y > 1024);
 
-        List<FlSpot> spots = provider.getGasChartData();
+        final double yMax = isPpmMode ? 5000 : 1024;
+        final double yInterval = isPpmMode ? 1000 : 200;
 
-        return Container(
-          margin: EdgeInsets.fromLTRB(cardMargin, 0, cardMargin, cardMargin),
-          padding: EdgeInsets.all(cardPadding),
-          decoration: BoxDecoration(
-            color: chartBackgroundColor,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: _buildChart(
-              screenWidth,
-              provider.getMaxTime(),
-              provider.getMinTime(),
-              provider.getTimeInterval(),
-              spots,
-              provider.getActiveMode()),
-        );
-      },
-    );
-  }
+        String yLabel;
+        if (isPpmMode) {
+          if (cleanedMode.toLowerCase() == 'raw') {
+            yLabel = appLocalizations.concentrationPpm;
+          } else {
+            yLabel = cleanedMode.toLowerCase().contains('ppm')
+                ? cleanedMode
+                : '$cleanedMode (ppm)';
+          }
+        } else {
+          yLabel = appLocalizations.airQuality;
+        }
 
-  Widget sideTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(
-        color: chartTextColor, fontSize: 10, fontWeight: FontWeight.bold);
-    String timeText =
-        value < 60 ? '${value.toInt()}s' : '${(value / 60).floor()}m';
-    return SideTitleWidget(
-        meta: meta, space: 6, child: Text(timeText, maxLines: 1, style: style));
-  }
-
-  Widget _buildChart(double screenWidth, double maxTime, double minTime,
-      double timeInterval, List<FlSpot> spots, String activeMode) {
-    final axisNameFontSize = screenWidth < 400 ? 11.0 : 12.0;
-
-    double yMax = 1024;
-    double yInterval = 200;
-    String yLabel = "Raw Data";
-
-    final cleanedMode = activeMode.trim();
-    bool isPpmMode = cleanedMode.toLowerCase() != 'raw' ||
-        spots.any((spot) => spot.y > 1024);
-
-    if (isPpmMode) {
-      yMax = 5000;
-      yInterval = 1000;
-      if (cleanedMode.toLowerCase() == 'raw') {
-        yLabel = appLocalizations.concentrationPpm;
-      } else {
-        yLabel = cleanedMode.toLowerCase().contains('ppm')
-            ? cleanedMode
-            : "$cleanedMode (ppm)";
-      }
-    } else {
-      yMax = 1024;
-      yInterval = 200;
-      yLabel = appLocalizations.airQuality;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 16.0, top: 8.0),
-      child: LineChart(
-        LineChartData(
-          backgroundColor: chartBackgroundColor,
-          titlesData: FlTitlesData(
-            show: true,
-            topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            bottomTitles: AxisTitles(
-              axisNameWidget: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text("Time",
-                    style: TextStyle(
-                        fontSize: axisNameFontSize,
-                        color: chartTextColor,
-                        fontWeight: FontWeight.bold)),
-              ),
-              axisNameSize: 24,
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 24,
-                interval: timeInterval,
-                getTitlesWidget: sideTitleWidgets,
-              ),
-            ),
-            leftTitles: AxisTitles(
-              axisNameWidget: Text(yLabel,
-                  style: TextStyle(
-                      fontSize: axisNameFontSize,
-                      color: chartTextColor,
-                      fontWeight: FontWeight.bold)),
-              sideTitles: SideTitles(
-                reservedSize: 40,
-                showTitles: true,
-                interval: yInterval,
-                getTitlesWidget: (value, meta) {
-                  if (value % yInterval != 0) return const SizedBox.shrink();
-                  return SideTitleWidget(
-                    meta: meta,
-                    space: 6,
-                    child: Text(value.toInt().toString(),
-                        style: TextStyle(
-                            color: chartTextColor,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold)),
-                  );
-                },
-              ),
-            ),
-          ),
-          gridData: FlGridData(
-            show: true,
-            drawHorizontalLine: true,
-            drawVerticalLine: true,
-            horizontalInterval: yInterval,
-            verticalInterval: timeInterval,
-            getDrawingHorizontalLine: (value) =>
-                FlLine(color: chartBorderColor, strokeWidth: 1),
-            getDrawingVerticalLine: (value) =>
-                FlLine(color: chartBorderColor, strokeWidth: 1),
-          ),
-          borderData: FlBorderData(
-            show: true,
-            border: Border(
-              bottom: BorderSide(color: chartBorderColor, width: 1.5),
-              left: BorderSide(color: chartBorderColor, width: 1.5),
-              top: BorderSide(color: chartBorderColor, width: 1.5),
-              right: BorderSide(color: chartBorderColor, width: 1.5),
-            ),
-          ),
+        return InstrumentsGraph(
+          spots: spots,
+          minX: provider.getMinTime(),
+          maxX: provider.getMaxTime(),
+          timeInterval: provider.getTimeInterval(),
           minY: 0,
           maxY: yMax,
-          maxX: maxTime > 0 ? maxTime : 10,
-          minX: minTime,
-          clipData: const FlClipData.all(),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: chartLineColor,
-              barWidth: 2.0,
-              isStrokeCapRound: true,
-              dotData: const FlDotData(show: false),
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  colors: [
-                    chartLineColor.withValues(alpha: 0.3),
-                    chartLineColor.withValues(alpha: 0.0)
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          yInterval: yInterval,
+          xAxisLabel: appLocalizations.timeAxisLabel,
+          yAxisLabel: yLabel,
+        );
+      },
     );
   }
 }

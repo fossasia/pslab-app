@@ -52,18 +52,20 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
           children: [
             Expanded(
               child: Center(
-                child: InstrumentGauge(
-                  size: gaugeSize,
-                  currentValue: currentDb,
-                  minValue: 0,
-                  maxValue: 200,
-                  interval: 20,
-                  unit: appLocalizations.db,
-                  decimalPlaces: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 25.0),
+                  child: InstrumentGauge(
+                    size: gaugeSize,
+                    currentValue: currentDb,
+                    minValue: 0,
+                    maxValue: 200,
+                    interval: 20,
+                    unit: appLocalizations.db,
+                    decimalPlaces: 1,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
             Instrumentstats(
               titleFontSize: titleFontSize,
               statFontSize: statFontSize,

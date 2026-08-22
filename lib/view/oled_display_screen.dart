@@ -154,7 +154,7 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
                             builder: (context, provider, child) {
                           return Container(
                             margin: const EdgeInsets.only(
-                                top: 6, bottom: 6, left: 10, right: 10),
+                                top: 15, bottom: 6, left: 10, right: 10),
                             padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
                             decoration: BoxDecoration(
                               border: Border.all(width: 1.5, color: primaryRed),
@@ -313,7 +313,7 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
                           return Positioned(
                             left: 0,
                             right: 0,
-                            top: 4,
+                            top: 6,
                             child: Align(
                               alignment: Alignment.center,
                               child: Container(
