@@ -87,6 +87,51 @@ pub fn init_desktop(vid: u16, pid: u16) -> Result<()> {
     }
 }
 
+#[frb(sync)]
+pub fn get_available_ports() -> Vec<String> {
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        let mut port_names = Vec::new();
+        if let Ok(ports) = serialport::available_ports() {
+            for p in ports {
+                if let serialport::SerialPortType::UsbPort(info) = p.port_type {
+                    if (info.vid == 0x10C4 && info.pid == 0xEA60) || (info.vid == 1240 && info.pid == 223) {
+                        port_names.push(p.port_name);
+                    }
+                }
+            }
+        }
+        port_names
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
+    {
+        vec![]
+    }
+}
+
+pub fn init_desktop_by_port(port_name: String) -> Result<()> {
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        let mut port = serialport::new(port_name, 1_000_000)
+            .timeout(Duration::from_millis(100))
+            .open()
+            .map_err(|e| anyhow!("Failed to open Serial port: {}", e))?;
+
+        port.write_data_terminal_ready(true).unwrap_or(());
+        let _ = port.clear(serialport::ClearBuffer::All);
+
+        *SERIAL_PORT.lock().unwrap() = Some(port);
+        Ok(())
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
+    {
+        let _ = port_name;
+        Err(anyhow!("Desktop USB init not supported on this platform"))
+    }
+}
+
 pub fn init_android(fd: i32) -> Result<()> {
     #[cfg(target_os = "android")]
     {
