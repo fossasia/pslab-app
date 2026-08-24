@@ -45,7 +45,7 @@ dependencies:
   latlong2: ^0.10.1
   geolocator: ^14.0.3
   wakelock_plus: ^1.7.0
-  image: ^4.9.1
+  image: ^4.9.2
   web: ^1.1.1
   mp_audio_stream: ^0.2.2
   ffi: ^2.2.0
