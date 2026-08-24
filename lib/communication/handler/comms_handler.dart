@@ -26,6 +26,7 @@ class PSLabCommunicationHandler implements CommunicationHandler {
 
   @override
   bool deviceFound = false;
+  String? targetPortName;
 
   @override
   Future<void> initialize() async {
@@ -38,7 +39,7 @@ class PSLabCommunicationHandler implements CommunicationHandler {
     }
 
     if (deviceFound) {
-      logger.d("Found PSLab device");
+      logger.d("Found COM device");
     } else {
       logger.d("No drivers found");
     }
@@ -46,48 +47,48 @@ class PSLabCommunicationHandler implements CommunicationHandler {
 
   @override
   Future<void> open({int overrideBaud = 1000000}) async {
-    if (!deviceFound) {
-      throw Exception("Device not connected");
-    }
-
-    if (kIsWeb) {
-      throw Exception("Native USB not supported on Web. Use WebCommsHandler.");
-    }
+    if (!deviceFound) throw Exception("Device not connected");
+    if (kIsWeb) throw Exception("Native USB not supported on Web.");
 
     rust_api.closeUsb();
-
     bool boardConnected = false;
-
-    for (final board in supportedBoards) {
+    if (targetPortName != null &&
+        (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
       try {
-        if (Platform.isAndroid) {
-          logger.d(
-              "Probing Android for ${board.version} (VID: ${board.vid}, PID: ${board.pid})...");
-          final int fd = await _androidChannel.invokeMethod('getAndroidFd', {
-            "vid": board.vid,
-            "pid": board.pid,
-          });
-          logger.d("Got FD from Android: $fd. Handing to Rust...");
-          await rust_api.initAndroid(fd: fd);
-        } else {
-          logger.d("Probing Desktop for ${board.version}...");
-          await rust_api.initDesktop(vid: board.vid, pid: board.pid);
-        }
-
-        logger.d(
-            "Port opened for ${board.version} chip. Waiting for PSLab handshake...");
+        logger.d("Attempting connection on specific port: $targetPortName");
+        await rust_api.initDesktopByPort(portName: targetPortName!);
         boardConnected = true;
-        break;
       } catch (e) {
-        logger.w("Failed on ${board.version}: $e");
-        continue;
+        logger.w("Failed to open $targetPortName: $e");
+      }
+    } else {
+      for (final board in supportedBoards) {
+        try {
+          if (Platform.isAndroid) {
+            logger.d("Probing Android for ${board.version}...");
+            final int fd = await _androidChannel.invokeMethod('getAndroidFd', {
+              "vid": board.vid,
+              "pid": board.pid,
+            });
+            await rust_api.initAndroid(fd: fd);
+            boardConnected = true;
+            break;
+          } else {
+            logger.d("Probing Desktop for ${board.version}...");
+            await rust_api.initDesktop(vid: board.vid, pid: board.pid);
+            boardConnected = true;
+            break;
+          }
+        } catch (e) {
+          logger.w("Failed on ${board.version}: $e");
+          continue;
+        }
       }
     }
 
     if (!boardConnected) {
       connected = false;
-      throw Exception(
-          "Failed to open. See warnings above for the exact reason.");
+      throw Exception("Failed to open port. See warnings above.");
     }
 
     try {
@@ -145,8 +146,6 @@ class PSLabCommunicationHandler implements CommunicationHandler {
         if (readNow == 0) {
           attempts++;
           if (attempts >= 3) {
-            logger.w(
-                "No signal on wire after retries. Returning $numBytesRead bytes.");
             return numBytesRead;
           }
           await Future.delayed(const Duration(milliseconds: 50));

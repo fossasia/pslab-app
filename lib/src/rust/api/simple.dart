@@ -12,6 +12,12 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 Future<void> initDesktop({required int vid, required int pid}) =>
     RustLib.instance.api.crateApiSimpleInitDesktop(vid: vid, pid: pid);
 
+List<String> getAvailablePorts() =>
+    RustLib.instance.api.crateApiSimpleGetAvailablePorts();
+
+Future<void> initDesktopByPort({required String portName}) =>
+    RustLib.instance.api.crateApiSimpleInitDesktopByPort(portName: portName);
+
 Future<void> initAndroid({required int fd}) =>
     RustLib.instance.api.crateApiSimpleInitAndroid(fd: fd);
 

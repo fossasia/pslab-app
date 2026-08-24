@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -9,6 +10,7 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/settings_config_provider.dart';
 import 'package:pslab/others/science_lab_common.dart';
 import 'package:pslab/communication/handler/wifi_comms_handler.dart';
+import 'package:pslab/communication/handler/comms_handler.dart';
 
 import 'package:pslab/src/rust/api/simple.dart' as rust_api;
 
@@ -47,11 +49,21 @@ class BoardStateProvider extends ChangeNotifier {
   Future<void> initialize() async {
     if (_isProcessing) return;
     _isProcessing = true;
+
     if (!scienceLabCommon.isConnected()) {
       await scienceLabCommon.initialize();
-      bool portOpened = await scienceLabCommon.openDevice();
-      if (portOpened) {
-        await _validateHandshake();
+
+      if (!kIsWeb &&
+          (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+        bool success = await _connectToDesktopDynamic();
+        if (!success) {
+          logger.w("PSLab not found on any available COM port.");
+        }
+      } else {
+        bool portOpened = await scienceLabCommon.openDevice();
+        if (portOpened) {
+          await _validateHandshake();
+        }
       }
     }
     _isProcessing = false;
@@ -76,6 +88,48 @@ class BoardStateProvider extends ChangeNotifier {
         _resetConnectionState();
       }
     });
+  }
+
+  Future<bool> _connectToDesktopDynamic() async {
+    if (ScienceLabCommon.communicationHandler is! PSLabCommunicationHandler)
+      return false;
+
+    final comms =
+        ScienceLabCommon.communicationHandler as PSLabCommunicationHandler;
+    List<String> ports = rust_api.getAvailablePorts();
+
+    for (String port in ports) {
+      try {
+        logger.d("Testing port $port for PSLab handshake...");
+        comms.targetPortName = port;
+        bool portOpened = await scienceLabCommon.openDevice();
+
+        if (portOpened) {
+          await setPSLabVersionIDs();
+
+          if (pslabVersionID == pslabVersionIDV6 ||
+              pslabVersionID == pslabVersionIDV5) {
+            logger.i("Found PSLab on $port!");
+            pslabIsConnected = true;
+            await fetchFirmwareVersion();
+            notifyListeners();
+            return true;
+          } else {
+            logger.w(
+                "Device on $port failed handshake. Closing and moving to next port...");
+            comms.close();
+            _resetConnectionState();
+          }
+        }
+      } catch (e) {
+        logger.w("Exception while testing $port: $e");
+        comms.close();
+        _resetConnectionState();
+      }
+    }
+
+    comms.targetPortName = null;
+    return false;
   }
 
   void _startDesktopMonitor() {
@@ -106,9 +160,14 @@ class BoardStateProvider extends ChangeNotifier {
 
       try {
         if (!scienceLabCommon.isConnected() && await attemptToConnectPSLab()) {
-          bool portOpened = await scienceLabCommon.openDevice();
-          if (portOpened) {
-            await _validateHandshake();
+          if (!kIsWeb &&
+              (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+            await _connectToDesktopDynamic();
+          } else {
+            bool portOpened = await scienceLabCommon.openDevice();
+            if (portOpened) {
+              await _validateHandshake();
+            }
           }
         }
       } catch (e) {
