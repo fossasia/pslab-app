@@ -40,7 +40,7 @@ dependencies:
   path_provider: ^2.1.6
   file_picker: ^12.0.0
   flutter_screenutil: ^5.9.3
-  inno_bundle: ^0.11.2
+  inno_bundle: ^0.12.0
   flutter_map: ^8.3.0
   latlong2: ^0.10.1
   geolocator: ^14.0.3
