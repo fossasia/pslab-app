@@ -91,8 +91,9 @@ class BoardStateProvider extends ChangeNotifier {
   }
 
   Future<bool> _connectToDesktopDynamic() async {
-    if (ScienceLabCommon.communicationHandler is! PSLabCommunicationHandler)
+    if (ScienceLabCommon.communicationHandler is! PSLabCommunicationHandler) {
       return false;
+    }
 
     final comms =
         ScienceLabCommon.communicationHandler as PSLabCommunicationHandler;
