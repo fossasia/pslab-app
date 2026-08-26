@@ -55,6 +55,12 @@ class FAQScreen extends StatelessWidget {
         question: appLocalizations.faqCompatibleSensors,
         answer: appLocalizations.faqCompatibleSensorsAnswer,
       ),
+      FAQItem(
+        question: appLocalizations.faqQuestionNotListed,
+        answer: appLocalizations.faqQuestionNotListedAnswer,
+        linkText: appLocalizations.faqQuestionNotListedLinkText,
+        linkUrl: appLocalizations.faqQuestionNotListedLinkUrl,
+      ),
     ];
     return MainScaffold(
       title: appLocalizations.faqTitle,
