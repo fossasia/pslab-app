@@ -143,6 +143,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                 excludeSemantics: true,
                 selected: oscilloscopeStateProvider.selectedIndex == 0,
                 label: appLocalizations.channels,
+                onTap: () => _selectTab(oscilloscopeStateProvider, 0),
                 child: GestureDetector(
                   onTap: () => _selectTab(oscilloscopeStateProvider, 0),
                   child: Column(
@@ -199,6 +200,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                 excludeSemantics: true,
                 selected: oscilloscopeStateProvider.selectedIndex == 1,
                 label: appLocalizations.timeBase,
+                onTap: () => _selectTab(oscilloscopeStateProvider, 1),
                 child: GestureDetector(
                   onTap: () => _selectTab(oscilloscopeStateProvider, 1),
                   child: Column(
@@ -254,6 +256,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                 excludeSemantics: true,
                 selected: oscilloscopeStateProvider.selectedIndex == 2,
                 label: appLocalizations.dataAnalysis,
+                onTap: () => _selectTab(oscilloscopeStateProvider, 2),
                 child: GestureDetector(
                   onTap: () => _selectTab(oscilloscopeStateProvider, 2),
                   child: Column(
@@ -309,6 +312,7 @@ class _OscilloscopeTabsState extends State<OscilloscopeScreenTabs> {
                 excludeSemantics: true,
                 selected: oscilloscopeStateProvider.selectedIndex == 3,
                 label: appLocalizations.xyPlot,
+                onTap: () => _selectTab(oscilloscopeStateProvider, 3),
                 child: GestureDetector(
                   onTap: () => _selectTab(oscilloscopeStateProvider, 3),
                   child: Column(
