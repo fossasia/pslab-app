@@ -46,6 +46,7 @@ class CommonScaffold extends StatefulWidget {
 class _CommonScaffoldState extends State<CommonScaffold> {
   Timer? _recordingTimer;
   Duration _recordingElapsed = Duration.zero;
+  DateTime? _recordingStartedAt;
 
   @override
   void initState() {
@@ -73,10 +74,15 @@ class _CommonScaffoldState extends State<CommonScaffold> {
 
   void _startRecordingTimer() {
     _recordingElapsed = Duration.zero;
+    _recordingStartedAt = DateTime.now();
     _recordingTimer?.cancel();
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final startedAt = _recordingStartedAt;
+      if (startedAt == null) {
+        return;
+      }
       setState(() {
-        _recordingElapsed += const Duration(seconds: 1);
+        _recordingElapsed = DateTime.now().difference(startedAt);
       });
     });
   }
@@ -85,6 +91,7 @@ class _CommonScaffoldState extends State<CommonScaffold> {
     _recordingTimer?.cancel();
     _recordingTimer = null;
     _recordingElapsed = Duration.zero;
+    _recordingStartedAt = null;
   }
 
   String _formatRecordingDuration(Duration duration) {
