@@ -41,7 +41,7 @@ dependencies:
   file_picker: ^12.0.0
   flutter_screenutil: ^5.9.3
   inno_bundle: ^0.12.0
-  flutter_map: ^8.3.0
+  flutter_map: ^8.3.2
   latlong2: ^0.10.1
   geolocator: ^14.0.3
   wakelock_plus: ^1.7.0
