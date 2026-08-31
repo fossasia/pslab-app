@@ -553,17 +553,14 @@ class DataService {
         if (row.length <= timestampColumn) {
           continue;
         }
-        final timestamp =
-            double.tryParse(row[timestampColumn].toString());
+        final timestamp = double.tryParse(row[timestampColumn].toString());
         if (timestamp == null) {
           continue;
         }
-        minTimestamp = minTimestamp == null
-            ? timestamp
-            : min(minTimestamp, timestamp);
-        maxTimestamp = maxTimestamp == null
-            ? timestamp
-            : max(maxTimestamp, timestamp);
+        minTimestamp =
+            minTimestamp == null ? timestamp : min(minTimestamp, timestamp);
+        maxTimestamp =
+            maxTimestamp == null ? timestamp : max(maxTimestamp, timestamp);
       }
 
       if (minTimestamp == null || maxTimestamp == null) {

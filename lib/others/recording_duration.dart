@@ -33,9 +33,8 @@ Duration? computeRecordingDurationFromData(List<List<dynamic>> data) {
   }
 
   if (data[0].isNotEmpty) {
-    final fromMeta = durationFromMetadataMilliseconds(data[0].length >= 4
-        ? data[0][3]
-        : null);
+    final fromMeta = durationFromMetadataMilliseconds(
+        data[0].length >= 4 ? data[0][3] : null);
     if (fromMeta != null) {
       return fromMeta;
     }
@@ -75,12 +74,10 @@ Duration? computeRecordingDurationFromData(List<List<dynamic>> data) {
     if (timestamp == null) {
       continue;
     }
-    minTimestamp = minTimestamp == null
-        ? timestamp
-        : min(minTimestamp, timestamp);
-    maxTimestamp = maxTimestamp == null
-        ? timestamp
-        : max(maxTimestamp, timestamp);
+    minTimestamp =
+        minTimestamp == null ? timestamp : min(minTimestamp, timestamp);
+    maxTimestamp =
+        maxTimestamp == null ? timestamp : max(maxTimestamp, timestamp);
   }
 
   if (minTimestamp == null || maxTimestamp == null) {
