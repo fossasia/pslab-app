@@ -25,6 +25,7 @@ import 'package:pslab/view/oled_display_screen.dart';
 
 import '../l10n/app_localizations.dart';
 import '../others/data_service.dart';
+import '../others/recording_duration.dart';
 import '../providers/locator.dart';
 import 'logged_data_chart_screen.dart';
 
@@ -47,8 +48,13 @@ class LoggedDataScreen extends StatefulWidget {
 class LoggedDataFile {
   final String instrumentName;
   final FileSystemEntity file;
+  final Duration? recordingDuration;
 
-  LoggedDataFile({required this.instrumentName, required this.file});
+  LoggedDataFile({
+    required this.instrumentName,
+    required this.file,
+    this.recordingDuration,
+  });
 }
 
 class _LoggedDataScreenState extends State<LoggedDataScreen> {
@@ -78,7 +84,16 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     for (var name in widget.instrumentNames) {
       final files = await _dataService.getSavedFiles(name);
       for (var file in files) {
-        _allFiles.add(LoggedDataFile(instrumentName: name, file: file));
+        final duration = await _dataService.computeRecordingDurationFromFile(
+          File(file.path),
+        );
+        _allFiles.add(
+          LoggedDataFile(
+            instrumentName: name,
+            file: file,
+            recordingDuration: duration,
+          ),
+        );
       }
     }
 
@@ -648,8 +663,18 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                         final fileName = file.uri.pathSegments.last;
                         final instrumentName =
                             _filteredFiles[index].instrumentName;
+                        final recordingDuration =
+                            _filteredFiles[index].recordingDuration;
                         final formattedDate =
                             DateFormat.yMMMd().add_jm().format(stat.modified);
+                        final durationLine = recordingDuration != null
+                            ? 'Recording: ${formatRecordingDuration(recordingDuration)}'
+                            : null;
+                        final subtitleLines = <String>[
+                          '${(stat.size / 1024).toStringAsFixed(2)} KB',
+                          if (durationLine != null) durationLine,
+                          formattedDate,
+                        ];
                         final bool selected = index == _selectedIndex;
                         return Padding(
                           padding: const EdgeInsets.symmetric(
@@ -680,8 +705,7 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                                 title: Text(fileName,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold)),
-                                subtitle: Text(
-                                    '${(stat.size / 1024).toStringAsFixed(2)} KB\n$formattedDate'),
+                                subtitle: Text(subtitleLines.join('\n')),
                                 isThreeLine: true,
                                 trailing: PopupMenuButton<String>(
                                   tooltip: appLocalizations.options,

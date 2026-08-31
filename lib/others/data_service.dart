@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:math';
 import 'package:csv/csv.dart' as csv;
 import 'package:file_picker/file_picker.dart';
 import 'package:home_widget/home_widget.dart';
@@ -10,6 +11,7 @@ import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
 import '../providers/locator.dart';
+import 'recording_duration.dart';
 
 class DataService {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
@@ -478,7 +480,7 @@ class DataService {
   }
 
   void writeMetaData(String instrumentName, List<List<dynamic>> data,
-      {String? extraMetadata}) {
+      {String? extraMetadata, Duration? recordingDuration}) {
     if (data.isNotEmpty && data[0].isNotEmpty && data[0][0] == instrumentName) {
       return;
     }
@@ -486,12 +488,96 @@ class DataService {
     final now = DateTime.now();
     final sdf = DateFormat('yyyy-MM-dd HH:mm:ss');
     final metaDataTime = sdf.format(now);
+    final resolvedDuration =
+        recordingDuration ?? computeRecordingDurationFromData(data);
     final metaData = <dynamic>[
       instrumentName,
       metaDataTime.split(' ')[0],
       metaDataTime.split(' ')[1],
+      if (resolvedDuration != null) resolvedDuration.inMilliseconds,
       if (extraMetadata != null) extraMetadata,
     ];
     data.insert(0, metaData);
+  }
+
+  Future<Duration?> computeRecordingDurationFromFile(File file) async {
+    try {
+      final extension = file.path.split('.').last.toLowerCase();
+      if (extension == 'json') {
+        final data = await readDataFromFile(file);
+        return computeRecordingDurationFromData(data);
+      }
+
+      final lines = await file.readAsLines();
+      if (lines.isEmpty) {
+        return null;
+      }
+
+      final codec = extension == 'txt'
+          ? csv.Csv(fieldDelimiter: '\t', dynamicTyping: true)
+          : csv.Csv(dynamicTyping: true);
+      final firstRow = codec.decode(lines.first).first;
+      final fromMeta = durationFromMetadataMilliseconds(
+        firstRow.length >= 4 ? firstRow[3] : null,
+      );
+      if (fromMeta != null) {
+        return fromMeta;
+      }
+
+      int headerIndex = -1;
+      int timestampColumn = -1;
+      double? minTimestamp;
+      double? maxTimestamp;
+
+      for (int i = 0; i < lines.length; i++) {
+        final parsed = codec.decode(lines[i]);
+        if (parsed.isEmpty) {
+          continue;
+        }
+        final row = parsed.first;
+        if (row.isEmpty) {
+          continue;
+        }
+
+        if (headerIndex < 0) {
+          for (int j = 0; j < row.length; j++) {
+            if (row[j].toString().toLowerCase() == 'timestamp') {
+              headerIndex = i;
+              timestampColumn = j;
+              break;
+            }
+          }
+          continue;
+        }
+
+        if (row.length <= timestampColumn) {
+          continue;
+        }
+        final timestamp =
+            double.tryParse(row[timestampColumn].toString());
+        if (timestamp == null) {
+          continue;
+        }
+        minTimestamp = minTimestamp == null
+            ? timestamp
+            : min(minTimestamp, timestamp);
+        maxTimestamp = maxTimestamp == null
+            ? timestamp
+            : max(maxTimestamp, timestamp);
+      }
+
+      if (minTimestamp == null || maxTimestamp == null) {
+        return null;
+      }
+
+      final deltaMs = (maxTimestamp - minTimestamp).round();
+      if (deltaMs < 0) {
+        return null;
+      }
+      return Duration(milliseconds: deltaMs);
+    } catch (e) {
+      logger.e('Error computing recording duration: $e');
+      return null;
+    }
   }
 }

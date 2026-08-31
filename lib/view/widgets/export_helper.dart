@@ -6,6 +6,7 @@ import 'package:pslab/theme/colors.dart';
 import 'package:pslab/view/widgets/save_filename_dialog.dart';
 
 import '../../others/data_service.dart';
+import '../../others/recording_duration.dart';
 
 class ExportHelper {
   static Future<void> handleSaveData({
@@ -35,6 +36,7 @@ class ExportHelper {
         instrumentName,
         data,
         extraMetadata: extraMetadata,
+        recordingDuration: computeRecordingDurationFromData(data),
       );
 
       final file = await dataService.saveDataFile(
