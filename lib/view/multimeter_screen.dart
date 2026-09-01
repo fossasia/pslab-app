@@ -457,16 +457,59 @@ class _MultimeterScreenState extends State<MultimeterScreen> {
                                                 child: Align(
                                                   alignment:
                                                       Alignment.bottomCenter,
-                                                  child: Text(
-                                                      appLocalizations.measure,
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color:
-                                                              multimeterBorderBlack,
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                      textAlign:
-                                                          TextAlign.center),
+                                                  child: provider
+                                                              .getSelectedIndex() ==
+                                                          3
+                                                      ? Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Transform.scale(
+                                                              scale: 0.75,
+                                                              child: Switch(
+                                                                activeThumbColor:
+                                                                    multimeterBorderBlack,
+                                                                value: provider
+                                                                    .isContinuityChecked,
+                                                                onChanged: (bool
+                                                                    value) {
+                                                                  provider
+                                                                      .setContinuitySwitch(
+                                                                          value);
+                                                                },
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              "Cont.",
+                                                              style: TextStyle(
+                                                                  fontSize: 15,
+                                                                  color:
+                                                                      multimeterBorderBlack,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Text(
+                                                          appLocalizations
+                                                              .measure,
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  multimeterBorderBlack,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
                                                 ),
                                               ),
                                             )

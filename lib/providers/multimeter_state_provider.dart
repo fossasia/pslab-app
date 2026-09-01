@@ -1,8 +1,10 @@
 import 'dart:async';
-
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:mp_audio_stream/mp_audio_stream.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
@@ -15,12 +17,18 @@ class MultimeterStateProvider extends ChangeNotifier {
   late List<String> knobMarker;
   late int _selectedIndex = 0;
   late ScienceLab _scienceLab;
+
   late bool isSwitchChecked;
+  late bool isContinuityChecked;
+
   late String value;
   late String unit;
 
   late bool _isProcessing;
   Timer? _timer;
+  AudioStream? _audioStream;
+  bool _isBeeping = false;
+  double _audioAngle = 0.0;
 
   bool _isPlayingBack = false;
   bool get isPlayingBack => _isPlayingBack;
@@ -41,6 +49,7 @@ class MultimeterStateProvider extends ChangeNotifier {
     _selectedIndex = 0;
     _scienceLab = getIt<ScienceLab>();
     isSwitchChecked = false;
+    isContinuityChecked = false;
     value = appLocalizations.defaultValue;
     unit = appLocalizations.unitVolts;
     knobMarker = [
@@ -113,6 +122,8 @@ class MultimeterStateProvider extends ChangeNotifier {
   void setSelectedIndex(int index) {
     _selectedIndex = index;
     _currentPulseCount = 0;
+    isSwitchChecked = false;
+    setContinuitySwitch(false);
     notifyListeners();
   }
 
@@ -127,6 +138,69 @@ class MultimeterStateProvider extends ChangeNotifier {
       _currentPulseCount = 0;
     }
     notifyListeners();
+  }
+
+  void setContinuitySwitch(bool checked) {
+    isContinuityChecked = checked;
+    if (!checked) {
+      _stopBeepingStream();
+      _audioStream?.uninit();
+      _audioStream = null;
+    } else {
+      if (_audioStream == null) {
+        _audioStream = getAudioStream();
+        _audioStream!
+            .init(bufferMilliSec: 1000, channels: 1, sampleRate: 44100);
+        _audioStream!.resume();
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> _startBeepingStream() async {
+    if (_isBeeping) return;
+    _isBeeping = true;
+
+    if (_audioStream == null) {
+      _audioStream = getAudioStream();
+      _audioStream!.init(bufferMilliSec: 1000, channels: 1, sampleRate: 44100);
+      _audioStream!.resume();
+    }
+
+    final int bufferSize = 4096;
+    final double bufferDurationMs = (bufferSize / 44100.0) * 1000.0;
+    final Float32List buffer = Float32List(bufferSize);
+
+    double generatedAudioMs = 0.0;
+    Stopwatch stopwatch = Stopwatch()..start();
+    _audioAngle = 0.0;
+
+    while (_isBeeping && _audioStream != null) {
+      double elapsedRealTimeMs = stopwatch.elapsedMilliseconds.toDouble();
+
+      if (generatedAudioMs - elapsedRealTimeMs < 300.0) {
+        double increment = (2 * math.pi * 1000) / 44100.0;
+        for (int i = 0; i < bufferSize; i++) {
+          buffer[i] = 0.25 * math.sin(_audioAngle);
+          _audioAngle += increment;
+          if (_audioAngle >= 2 * math.pi) {
+            _audioAngle -= 2 * math.pi;
+          }
+        }
+        _audioStream!.push(buffer);
+        generatedAudioMs += bufferDurationMs;
+      } else {
+        await Future.delayed(const Duration(milliseconds: 20));
+      }
+
+      if (elapsedRealTimeMs > generatedAudioMs) {
+        generatedAudioMs = elapsedRealTimeMs;
+      }
+    }
+  }
+
+  void _stopBeepingStream() {
+    _isBeeping = false;
   }
 
   Future<void> logData() async {
@@ -153,29 +227,52 @@ class MultimeterStateProvider extends ChangeNotifier {
                 avgResistance = avgResistance! + resistance / loops;
               }
             }
+
             String resistanceValue;
             String resistanceUnit;
-            if (avgResistance == null) {
-              resistanceValue = "Infinity";
-              resistanceUnit = "\u2126";
-            } else {
-              if (avgResistance > 10e5) {
-                resistanceValue = (avgResistance / 10e5).toStringAsFixed(2);
-                resistanceUnit = "M\u2126";
-              } else if (avgResistance > 10e2) {
-                resistanceValue = (avgResistance / 10e2).toStringAsFixed(2);
-                resistanceUnit = "k\u2126";
-              } else if (avgResistance > 1) {
+
+            if (isContinuityChecked) {
+              const double continuityThreshold = 50.0;
+
+              if (avgResistance == null ||
+                  avgResistance > continuityThreshold) {
+                resistanceValue = "OL";
+                resistanceUnit = "No Continuity";
+
+                _stopBeepingStream();
+              } else {
                 resistanceValue = avgResistance.toStringAsFixed(2);
+                resistanceUnit = "\u2126 (Continuity)";
+
+                _startBeepingStream();
+                HapticFeedback.heavyImpact();
+              }
+            } else {
+              _stopBeepingStream();
+              if (avgResistance == null) {
+                resistanceValue = "Infinity";
                 resistanceUnit = "\u2126";
               } else {
-                resistanceValue = "Cannot measure!";
-                resistanceUnit = "\u2126";
+                if (avgResistance > 10e5) {
+                  resistanceValue = (avgResistance / 10e5).toStringAsFixed(2);
+                  resistanceUnit = "M\u2126";
+                } else if (avgResistance > 10e2) {
+                  resistanceValue = (avgResistance / 10e2).toStringAsFixed(2);
+                  resistanceUnit = "k\u2126";
+                } else if (avgResistance >= 0) {
+                  resistanceValue = avgResistance.toStringAsFixed(2);
+                  resistanceUnit = "\u2126";
+                } else {
+                  resistanceValue = "Cannot measure!";
+                  resistanceUnit = "\u2126";
+                }
               }
             }
+
             value = resistanceValue;
             unit = resistanceUnit;
             break;
+
           case 4:
             double? capacitance = await _scienceLab.getCapacitance();
             String capacitanceValue;
@@ -205,14 +302,8 @@ class MultimeterStateProvider extends ChangeNotifier {
             unit = capacitanceUnit;
             break;
           case 5:
-            await getIDData();
-            break;
           case 6:
-            await getIDData();
-            break;
           case 7:
-            await getIDData();
-            break;
           case 8:
             await getIDData();
             break;
@@ -414,6 +505,10 @@ class MultimeterStateProvider extends ChangeNotifier {
       _locationStream!.cancel();
     }
     _configProvider?.removeListener(_onConfigChanged);
+
+    _stopBeepingStream();
+    _audioStream?.uninit();
+
     super.dispose();
   }
 }
