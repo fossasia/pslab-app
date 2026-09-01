@@ -68,7 +68,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: Text(appLocalizations.ok),
             ),
           ],
         );
