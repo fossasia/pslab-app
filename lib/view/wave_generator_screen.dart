@@ -54,6 +54,28 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
     });
   }
 
+  void _showHardwareConflictWarning() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(appLocalizations.hardwareLimit),
+          content: Text(
+            appLocalizations.hardwareLimitMessage,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   List<Widget> _getWaveGeneratorContent() {
     return [
       InstrumentIntroText(text: appLocalizations.waveGeneratorIntro),
@@ -255,7 +277,14 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                           fontSize: 14,
                                         ),
                                       ),
-                                      onPressed: () => {
+                                      onPressed: () {
+                                        if (provider.isDigitalActive &&
+                                            provider.waveGeneratorConstants
+                                                    .modeSelected !=
+                                                WaveConst.square) {
+                                          _showHardwareConflictWarning();
+                                        }
+
                                         setState(
                                           () {
                                             provider.waveGeneratorConstants
@@ -264,7 +293,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                             provider.propSelected = null;
                                             provider.previewWave();
                                           },
-                                        ),
+                                        );
                                       },
                                     ),
                                   ),
@@ -290,7 +319,14 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                           fontSize: 14,
                                         ),
                                       ),
-                                      onPressed: () => {
+                                      onPressed: () {
+                                        if (provider.isAnalogActive &&
+                                            provider.waveGeneratorConstants
+                                                    .modeSelected !=
+                                                WaveConst.pwm) {
+                                          _showHardwareConflictWarning();
+                                        }
+
                                         setState(
                                           () {
                                             provider.waveGeneratorConstants
@@ -298,7 +334,7 @@ class _WaveGeneratorScreenState extends State<WaveGeneratorScreen> {
                                             provider.propSelected = null;
                                             provider.previewWave();
                                           },
-                                        ),
+                                        );
                                       },
                                     ),
                                   ),

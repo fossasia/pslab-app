@@ -950,5 +950,7 @@
     "flasherLocalFileDesc": "Select a pre-compiled .hex file from device storage.",
     "flasherBtnBrowseFile": "BROWSE FILE",
     "filterInstrument" : "Filter Instruments",
-    "allInstrument" : "All Instruments"
+    "allInstrument" : "All Instruments",
+    "hardwareLimit" : "Hardware Limitation",
+    "hardwareLimitMessage" : "Generating analog and digital waveforms simultaneously on PSLab V5/V6 may cause distortion due to shared hardware pins (SI1/SQ4, SI2/SQ3)."
 }

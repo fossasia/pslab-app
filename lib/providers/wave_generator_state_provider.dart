@@ -72,6 +72,8 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   AudioStream? _audioStream;
 
   bool isPlayingSound = false;
+  bool isAnalogActive = false;
+  bool isDigitalActive = false;
 
   double _audioAngle = 0.0;
 
@@ -297,6 +299,7 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   Future<void> setValue(int value) async {
     if (waveGeneratorConstants.modeSelected == WaveConst.square) {
       waveGeneratorConstants.wave[selectedAnalogWave]?[propSelected!] = value;
+      isAnalogActive = true;
     } else {
       if (propSelected == WaveConst.frequency) {
         waveGeneratorConstants.wave[WaveConst.sqr1]?[propSelected!] = value;
@@ -304,6 +307,7 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         waveGeneratorConstants.wave[selectedDigitalWave]?[propSelected!] =
             value;
       }
+      isDigitalActive = true;
     }
     previewWave();
     await setWave();
