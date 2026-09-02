@@ -71,7 +71,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_oss_licenses: ^3.2.0
   build_runner: ^2.16.0
-  freezed: ^4.0.0
+  freezed: ^4.0.1
 
 flutter:
   generate: true
