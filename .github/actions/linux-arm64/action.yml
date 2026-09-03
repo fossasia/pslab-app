@@ -17,37 +17,28 @@ runs:
       shell: bash
       run: |
         sudo apt-get update -y;
-        sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev yq libudev-dev
+        sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev yq libudev-dev libasound2-dev
 
     - name: Clone Flutter
       shell: bash
       run: |
-        # get Flutter version from pubspec.yaml
         FLUTTER_VERSION="$(yq -r '.environment.flutter' pubspec.yaml)"
-
-        # Shallow-clone Flutter to reduce download size
         git clone --depth 1 --branch $FLUTTER_VERSION https://github.com/flutter/flutter.git $RUNNER_TEMP/flutter
-
-        # Add Flutter to PATH
         echo "$RUNNER_TEMP/flutter/bin" >> $GITHUB_PATH
 
     - name: Install Flutter
       shell: bash
-      # Running "flutter doctor" will download Flutter's dependencies
       run: flutter doctor
-    
+
     - name: Build Linux App
       shell: bash
       run: |
         flutter config --enable-linux-desktop
         source linux/prep.sh
-        # Flutter ignores --build-name/--build-number on Linux (flutter/flutter#152236).
-        # Bake the CI version into pubspec.yaml so version.json / PackageInfo are correct.
         sed -i "s/^version: .*/version: ${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}/" pubspec.yaml
         flutter build linux --release \
           --build-name ${{ inputs.VERSION_NAME }} \
           --build-number ${{ inputs.VERSION_CODE }}
-        # Ensure the bundled version.json matches even if Flutter still ignores the flags.
         for vf in build/linux/*/release/bundle/data/flutter_assets/version.json \
                   build/linux/*/release/bundle/share/pslab/flutter_assets/version.json; do
           [ -f "$vf" ] || continue
@@ -60,7 +51,7 @@ runs:
       run: |
         sudo apt-get install -y ruby ruby-dev build-essential
         sudo gem install --no-document fpm
-    
+
     - name: Build .deb package
       shell: bash
       run: |
