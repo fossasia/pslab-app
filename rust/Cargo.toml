@@ -13,16 +13,21 @@ lazy_static = "1.4.0"
 ihex = "3.0"
 byteorder = "1.5"
 
+# Shared native (non-WASM) dependencies
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 tungstenite = "0.20.1"
 url = "2.4.0"
 
+# Android-specific dependencies
 [target.'cfg(target_os = "android")'.dependencies]
 rusb = "0.9.4"
 
+# Desktop platforms 
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
 serialport = "4.3.0"
+cpal = "0.15.2"
 
+# WebAssembly dependencies
 [target.'cfg(target_family = "wasm")'.dependencies]
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
@@ -37,3 +42,6 @@ web-sys = { version = "0.3", features = [
     "WritableStream",
     "WritableStreamDefaultWriter"
 ] }
+
+[lints.rust]
+unexpected_cfgs = "allow"
