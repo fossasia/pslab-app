@@ -12,7 +12,7 @@ Before building the project, install the required native build tools and hardwar
 
 ## Linux (Debian/Ubuntu)
 
-The `serialport` crate depends on `pkg-config` and `libudev-dev` for USB and serial device discovery. `libasound2-dev` is rquired for desktop audio capture.
+The `serialport` crate depends on `pkg-config` and `libudev-dev` for USB and serial device discovery. `libasound2-dev` is required for desktop audio capture.
 
 ```bash
 sudo apt update
