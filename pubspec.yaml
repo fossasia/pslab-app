@@ -6,7 +6,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.4
-  flutter: '3.47.2'
+  flutter: '3.47.4'
 
 dependencies:
   flutter:
@@ -23,7 +23,7 @@ dependencies:
   get_it: ^9.2.1
   record: ^7.1.1
   data: ^0.15.1
-  logger: ^2.7.0
+  logger: ^2.8.0
   url_launcher: ^6.3.2
   font_awesome_flutter: ^11.0.0
   package_info_plus: ^10.2.1
