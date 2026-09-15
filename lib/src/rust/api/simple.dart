@@ -63,3 +63,11 @@ void pushWebData({required List<int> data}) =>
 
 Uint8List readWebData({required int bytesToRead}) =>
     RustLib.instance.api.crateApiSimpleReadWebData(bytesToRead: bytesToRead);
+
+void sendScpiRust({required String command}) =>
+    RustLib.instance.api.crateApiSimpleSendScpiRust(command: command);
+
+Future<Uint8List> queryScpiBinaryRust(
+        {required String command, required int timeoutMs}) =>
+    RustLib.instance.api.crateApiSimpleQueryScpiBinaryRust(
+        command: command, timeoutMs: timeoutMs);
