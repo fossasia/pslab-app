@@ -78,6 +78,7 @@ class PacketHandler {
         await rust_api.queryScpiBinaryRust(command: command, timeoutMs: 1000);
     return data;
   }
+
   void sendByte(int val) {
     if (!isConnected()) {
       throw Exception("Device not connected");
