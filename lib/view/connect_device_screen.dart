@@ -95,7 +95,11 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
         builder: (context, provider, _) {
           final bool isWifiConnected =
               provider.scienceLabCommon.isWiFiConnected();
-
+          final String displayDeviceName =
+              (provider.pslabVersionID == 'PSLab Pico' ||
+                      provider.pslabVersion == 7)
+                  ? appLocalizations.pslabMini
+                  : provider.pslabVersionID;
           return SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -124,7 +128,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 20),
                                 child: Text(
-                                  '${appLocalizations.deviceConnected} via ${isWifiConnected ? "Wi-Fi" : "USB"}\n\nFirmware: ${provider.pslabVersionID}',
+                                  '${appLocalizations.deviceConnected} via ${isWifiConnected ? "Wi-Fi" : "USB"}\n\nFirmware: $displayDeviceName',
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     fontSize: 18,
