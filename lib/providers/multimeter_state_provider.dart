@@ -25,6 +25,8 @@ class MultimeterStateProvider extends ChangeNotifier {
   late String unit;
 
   late bool _isProcessing;
+  bool _isDisposed = false;
+
   Timer? _timer;
   AudioStream? _audioStream;
   bool _isBeeping = false;
@@ -80,7 +82,6 @@ class MultimeterStateProvider extends ChangeNotifier {
       _timer!.cancel();
     }
     logData();
-    notifyListeners();
   }
 
   Future<void> _startGeoLocationUpdates() async {
@@ -96,17 +97,10 @@ class MultimeterStateProvider extends ChangeNotifier {
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        logger.w('Location permissions are denied');
-        return;
-      }
+      if (permission == LocationPermission.denied) return;
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
-      return;
-    }
+    if (permission == LocationPermission.deniedForever) return;
 
     _locationStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
@@ -120,11 +114,24 @@ class MultimeterStateProvider extends ChangeNotifier {
   int getSelectedIndex() => _selectedIndex;
 
   void setSelectedIndex(int index) {
+    if (_selectedIndex == index) return;
+
     _selectedIndex = index;
     _currentPulseCount = 0;
     isSwitchChecked = false;
     setContinuitySwitch(false);
+    value = "---";
+    if (index >= 5 && index <= 8) {
+      unit = appLocalizations.unitHz;
+    } else if (index == 3) {
+      unit = "\u2126";
+    } else if (index == 1 || index == 4) {
+      unit = "F";
+    } else {
+      unit = appLocalizations.unitVolts;
+    }
     notifyListeners();
+    logData();
   }
 
   void stepMode(int direction) {
@@ -203,166 +210,155 @@ class MultimeterStateProvider extends ChangeNotifier {
     _isBeeping = false;
   }
 
-  Future<void> logData() async {
+  void logData() {
+    _timer?.cancel();
+    if (_configProvider == null) return;
+    _performMeasurement();
     _timer = Timer.periodic(
-        Duration(milliseconds: _configProvider!.config.updatePeriod),
-        (timer) async {
-      if (_isProcessing) {
+        Duration(milliseconds: _configProvider!.config.updatePeriod), (timer) {
+      if (_isDisposed) {
+        timer.cancel();
         return;
       }
-      _isProcessing = true;
-
-      if (_scienceLab.isConnected()) {
-        switch (_selectedIndex) {
-          case 3:
-            double? resistance;
-            double? avgResistance = 0.0;
-            int loops = 20;
-            for (int i = 0; i < loops; i++) {
-              resistance = await _scienceLab.getResistance();
-              if (resistance == null) {
-                avgResistance = null;
-                break;
-              } else {
-                avgResistance = avgResistance! + resistance / loops;
-              }
-            }
-
-            String resistanceValue;
-            String resistanceUnit;
-
-            if (isContinuityChecked) {
-              const double continuityThreshold = 50.0;
-
-              if (avgResistance == null ||
-                  avgResistance > continuityThreshold) {
-                resistanceValue = "OL";
-                resistanceUnit = "No Continuity";
-
-                _stopBeepingStream();
-              } else {
-                resistanceValue = avgResistance.toStringAsFixed(2);
-                resistanceUnit = "\u2126 (Continuity)";
-
-                _startBeepingStream();
-                HapticFeedback.heavyImpact();
-              }
-            } else {
-              _stopBeepingStream();
-              if (avgResistance == null) {
-                resistanceValue = "Infinity";
-                resistanceUnit = "\u2126";
-              } else {
-                if (avgResistance > 10e5) {
-                  resistanceValue = (avgResistance / 10e5).toStringAsFixed(2);
-                  resistanceUnit = "M\u2126";
-                } else if (avgResistance > 10e2) {
-                  resistanceValue = (avgResistance / 10e2).toStringAsFixed(2);
-                  resistanceUnit = "k\u2126";
-                } else if (avgResistance >= 0) {
-                  resistanceValue = avgResistance.toStringAsFixed(2);
-                  resistanceUnit = "\u2126";
-                } else {
-                  resistanceValue = "Cannot measure!";
-                  resistanceUnit = "\u2126";
-                }
-              }
-            }
-
-            value = resistanceValue;
-            unit = resistanceUnit;
-            break;
-
-          case 4:
-            double? capacitance = await _scienceLab.getCapacitance();
-            String capacitanceValue;
-            String capacitanceUnit;
-            if (capacitance == null) {
-              capacitanceValue = "Cannot measure!";
-              capacitanceUnit = "pF";
-            } else {
-              if (capacitance < 1e-9) {
-                capacitanceValue = (capacitance / 1e-12).toStringAsFixed(2);
-                capacitanceUnit = "pF";
-              } else if (capacitance < 1e-6) {
-                capacitanceValue = (capacitance / 1e-9).toStringAsFixed(2);
-                capacitanceUnit = "nF";
-              } else if (capacitance < 1e-3) {
-                capacitanceValue = (capacitance / 1e-6).toStringAsFixed(2);
-                capacitanceUnit = "\u00B5F";
-              } else if (capacitance < 1e-1) {
-                capacitanceValue = (capacitance / 1e-3).toStringAsFixed(2);
-                capacitanceUnit = "mF";
-              } else {
-                capacitanceValue = capacitance.toStringAsFixed(2);
-                capacitanceUnit = "F";
-              }
-            }
-            value = capacitanceValue;
-            unit = capacitanceUnit;
-            break;
-          case 5:
-          case 6:
-          case 7:
-          case 8:
-            await getIDData();
-            break;
-          default:
-            double? voltage =
-                await _scienceLab.getVoltage(knobMarker[_selectedIndex], 1);
-            String voltageValue = voltage.toStringAsFixed(2);
-            String voltageUnit = appLocalizations.unitVolts;
-            value = voltageValue;
-            unit = voltageUnit;
-        }
-        if (_isRecording) {
-          final now = DateTime.now();
-          final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
-          _recordedData.add(
-            [
-              now.millisecondsSinceEpoch.toString(),
-              dateFormat.format(now),
-              _selectedIndex,
-              value,
-              unit,
-              _configProvider!.config.includeLocationData
-                  ? currentPosition?.latitude.toString() ?? 0
-                  : 0,
-              _configProvider!.config.includeLocationData
-                  ? currentPosition?.longitude.toString() ?? 0
-                  : 0
-            ],
-          );
-        }
-        notifyListeners();
-        _isProcessing = false;
-      }
+      _performMeasurement();
     });
   }
 
-  Future<void> getIDData() async {
+  Future<void> _performMeasurement() async {
+    if (_isDisposed || _isProcessing || !_scienceLab.isConnected()) return;
+    _isProcessing = true;
+    int currentIndex = _selectedIndex;
+
     try {
-      String channel = knobMarker[_selectedIndex];
-      double frequency = await _scienceLab.getFrequency(channel);
+      switch (currentIndex) {
+        case 3:
+          double? resistance;
+          double? avgResistance = 0.0;
+          int loops = 20;
+          for (int i = 0; i < loops; i++) {
+            resistance = await _scienceLab.getResistance();
+            if (resistance == null) {
+              avgResistance = null;
+              break;
+            } else {
+              avgResistance = avgResistance! + resistance / loops;
+            }
+          }
 
-      if (!isSwitchChecked) {
-        value = frequency.toStringAsFixed(2);
-        unit = appLocalizations.unitHz;
-      } else {
-        double elapsedSeconds = _configProvider!.config.updatePeriod / 1000.0;
+          if (isContinuityChecked) {
+            const double continuityThreshold = 50.0;
+            if (avgResistance == null || avgResistance > continuityThreshold) {
+              value = "OL";
+              unit = "No Continuity";
+              _stopBeepingStream();
+            } else {
+              value = avgResistance.toStringAsFixed(2);
+              unit = "\u2126 (Continuity)";
+              _startBeepingStream();
+              HapticFeedback.heavyImpact();
+            }
+          } else {
+            _stopBeepingStream();
+            if (avgResistance == null) {
+              value = "Infinity";
+              unit = "\u2126";
+            } else {
+              if (avgResistance > 10e5) {
+                value = (avgResistance / 10e5).toStringAsFixed(2);
+                unit = "M\u2126";
+              } else if (avgResistance > 10e2) {
+                value = (avgResistance / 10e2).toStringAsFixed(2);
+                unit = "k\u2126";
+              } else if (avgResistance >= 0) {
+                value = avgResistance.toStringAsFixed(2);
+                unit = "\u2126";
+              } else {
+                value = "Cannot measure!";
+                unit = "\u2126";
+              }
+            }
+          }
+          break;
 
-        int newPulses = (frequency * elapsedSeconds).round();
+        case 4:
+        case 1:
+          double? capacitance = await _scienceLab.getCapacitance();
+          if (capacitance == null) {
+            value = "Cannot measure!";
+            unit = "pF";
+          } else {
+            if (capacitance < 1e-9) {
+              value = (capacitance / 1e-12).toStringAsFixed(2);
+              unit = "pF";
+            } else if (capacitance < 1e-6) {
+              value = (capacitance / 1e-9).toStringAsFixed(2);
+              unit = "nF";
+            } else if (capacitance < 1e-3) {
+              value = (capacitance / 1e-6).toStringAsFixed(2);
+              unit = "\u00B5F";
+            } else if (capacitance < 1e-1) {
+              value = (capacitance / 1e-3).toStringAsFixed(2);
+              unit = "mF";
+            } else {
+              value = capacitance.toStringAsFixed(2);
+              unit = "F";
+            }
+          }
+          break;
 
-        _currentPulseCount += newPulses;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+          String channel = knobMarker[currentIndex];
+          double frequency = await _scienceLab.getFrequency(channel);
 
-        final formatter = NumberFormat('#,##0');
-        value = formatter.format(_currentPulseCount);
+          if (!isSwitchChecked) {
+            value = frequency.toStringAsFixed(2);
+            unit = appLocalizations.unitHz;
+          } else {
+            double elapsedSeconds =
+                _configProvider!.config.updatePeriod / 1000.0;
+            int newPulses = (frequency * elapsedSeconds).round();
+            _currentPulseCount += newPulses;
+            final formatter = NumberFormat('#,##0');
+            value = formatter.format(_currentPulseCount);
+            unit = "Pulses";
+          }
+          break;
 
-        unit = "Pulses";
+        default:
+          double? voltage =
+              await _scienceLab.getVoltage(knobMarker[currentIndex], 1);
+          value = voltage.toStringAsFixed(2);
+          unit = appLocalizations.unitVolts;
+      }
+
+      if (_isDisposed) return;
+      if (currentIndex == _selectedIndex) {
+        if (_isRecording) {
+          final now = DateTime.now();
+          final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+          _recordedData.add([
+            now.millisecondsSinceEpoch.toString(),
+            dateFormat.format(now),
+            _selectedIndex,
+            value,
+            unit,
+            _configProvider!.config.includeLocationData
+                ? currentPosition?.latitude.toString() ?? 0
+                : 0,
+            _configProvider!.config.includeLocationData
+                ? currentPosition?.longitude.toString() ?? 0
+                : 0
+          ]);
+        }
+        notifyListeners();
       }
     } catch (e) {
-      value = "Cannot measure!";
-      unit = "null";
+      logger.e("Measurement error: $e");
+    } finally {
+      _isProcessing = false;
     }
   }
 
@@ -380,8 +376,6 @@ class MultimeterStateProvider extends ChangeNotifier {
       _playbackIndex++;
       notifyListeners();
     } else {
-      logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
       _playbackIndex++;
       notifyListeners();
     }
@@ -495,6 +489,8 @@ class MultimeterStateProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
+
     if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
     }

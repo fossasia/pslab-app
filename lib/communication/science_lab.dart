@@ -499,7 +499,9 @@ class ScienceLab {
             channel, i * dataSplitting, channels, bytes));
         mPacketHandler.sendInt(dataSplitting);
         Uint8List data = Uint8List(dataSplitting * 2 + 1);
-        await mPacketHandler.read(data, dataSplitting * 2 + 1);
+        int bytesRead = await mPacketHandler.read(data, dataSplitting * 2 + 1);
+        if (bytesRead <= 0) return null;
+
         for (int j = 0; j < data.length - 1; j++) {
           l.add(data[j] & 0xFF);
         }
@@ -512,25 +514,24 @@ class ScienceLab {
             channel, bytes - bytes % dataSplitting, channels, bytes));
         mPacketHandler.sendInt(bytes % dataSplitting);
         Uint8List data = Uint8List(2 * (bytes % dataSplitting) + 1);
-        await mPacketHandler.read(data, 2 * (bytes % dataSplitting) + 1);
+        int bytesRead =
+            await mPacketHandler.read(data, 2 * (bytes % dataSplitting) + 1);
+        if (bytesRead <= 0) return null;
+
         for (int j = 0; j < data.length - 1; j++) {
           l.add(data[j] & 0xFF);
         }
       }
 
       if (l.isNotEmpty) {
-        String string = "";
         List<int> timeStamps = List.filled(bytes + 1, 0);
         for (int i = 0; i < bytes; i++) {
           int t = (l[i * 2] | (l[i * 2 + 1] << 8));
           timeStamps[i + 1] = t;
-          string += "$t ";
         }
-        logger.t("Fetched points: $string");
         timeStamps[0] = 1;
         return timeStamps;
       } else {
-        logger.e("Error: Obtained bytes = 0");
         List<int> timeStamps = List.filled(2501, 0);
         return timeStamps;
       }
@@ -590,7 +591,11 @@ class ScienceLab {
 
     int i = initialStates['A']!;
     List<int>? temp = await fetchIntDataFromLA(i, 1, 1);
-    List<double> data = List.filled(temp!.length - 1, 0.0);
+    if (temp == null || temp.isEmpty) {
+      return 0.0;
+    }
+
+    List<double> data = List.filled(temp.length - 1, 0.0);
     if (temp[0] == 1) {
       for (int j = 1; j < temp.length; j++) {
         data[j - 1] = temp[j].toDouble();
@@ -620,13 +625,20 @@ class ScienceLab {
     try {
       await startOneChannelLA(channel, 1, channel, 3);
       await Future.delayed(const Duration(milliseconds: 250));
+
       data = await getLAInitialStates();
+      if (data == null) {
+        return 0.0;
+      }
+
       await Future.delayed(const Duration(milliseconds: 250));
     } catch (e) {
       logger.e("Error in getFrequency: $e");
     }
+    if (data == null) return 0.0;
+
     return await fetchLAChannelFrequency(
-        calculateDigitalChannel(channel)!, data!);
+        calculateDigitalChannel(channel)!, data);
   }
 
   Future<void> startOneChannelLA(String? channel, int? channelMode,
@@ -765,7 +777,13 @@ class ScienceLab {
       mPacketHandler.sendByte(mCommandsProto.timing);
       mPacketHandler.sendByte(mCommandsProto.getInitialDigitalStates);
       Uint8List initialStatesBytes = Uint8List(13);
-      await mPacketHandler.read(initialStatesBytes, 13);
+      int bytesRead = await mPacketHandler.read(initialStatesBytes, 13);
+
+      if (bytesRead < 13) {
+        await clearBuffer(0, 10);
+        return null;
+      }
+
       int initial = (initialStatesBytes[0] & 0xFF) |
           ((initialStatesBytes[1] << 8) & 0xFF00);
       int A = ((((initialStatesBytes[2] & 0xFF) |

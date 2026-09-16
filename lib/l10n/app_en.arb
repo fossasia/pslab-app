@@ -281,6 +281,7 @@
     "roboticArmTitle": "Robotic Arm",
     "play": "Play",
     "pause": "Pause",
+    "loopMode": "Loop",
     "stop": "Stop",
     "controls": "Controls",
     "saveData": "Save Data",
@@ -581,6 +582,18 @@
     "location": "Location",
     "noLocationDataAvailable": "No location data available",
     "share": "Share",
+    "selectLogs": "Select",
+    "selectAllLogs": "Select all",
+    "shareSelectedLogs": "Share selected",
+    "noLogsSelectedToShare": "Select at least one log to share.",
+    "logsSelectedCount": "{count} selected",
+    "@logsSelectedCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
     "loggedData": "Logged Data",
     "oscilloscopeConfigs": "Oscilloscope Configurations",
     "automatedMeasurementsInfo": "Automatically measures and displays waveform characteristics such as Amplitude, Frequency, Period, etc.",

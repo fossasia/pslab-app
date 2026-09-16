@@ -195,10 +195,18 @@ class DataService {
   }
 
   Future<void> shareFile(String filePath) async {
+    await shareFiles([filePath]);
+  }
+
+  Future<void> shareFiles(List<String> filePaths) async {
+    if (filePaths.isEmpty) {
+      return;
+    }
     try {
-      final xFile = XFile(filePath);
+      final files = filePaths.map(XFile.new).toList();
       await SharePlus.instance.share(
-          ShareParams(files: [xFile], text: appLocalizations.sharingMessage));
+        ShareParams(files: files, text: appLocalizations.sharingMessage),
+      );
     } catch (e) {
       logger.e('${appLocalizations.sharingError}: $e');
     }

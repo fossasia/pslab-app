@@ -69,6 +69,11 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
   final FocusNode _keyboardFocusNode = FocusNode(debugLabel: 'LoggedDataKeys');
   int _selectedIndex = -1;
   final Map<String, GlobalKey> _itemKeys = {};
+  bool _isSelectionMode = false;
+  final Set<String> _selectedPaths = {};
+
+  GlobalKey _keyFor(String path) =>
+      _itemKeys.putIfAbsent(path, () => GlobalKey());
 
   @override
   void initState() {
@@ -523,9 +528,14 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       ),
       items: [
         PopupMenuItem(
-          value: 'import_log',
-          child: Text(appLocalizations.importLog),
+          value: 'select_logs',
+          child: Text(appLocalizations.selectLogs),
         ),
+        if (widget.instrumentNames.length == 1)
+          PopupMenuItem(
+            value: 'import_log',
+            child: Text(appLocalizations.importLog),
+          ),
         PopupMenuItem(
           value: 'delete_all',
           child: Text(appLocalizations.deleteAllData),
@@ -534,6 +544,9 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
     ).then((value) {
       if (value != null) {
         switch (value) {
+          case 'select_logs':
+            _enterSelectionMode();
+            break;
           case 'import_log':
             _pickAndImportFile();
             break;
@@ -557,7 +570,66 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
           return fileName.contains(search) || instrumentName.contains(search);
         }).toList();
       }
+      _selectedPaths.removeWhere(
+          (path) => !_filteredFiles.any((f) => f.file.path == path));
     });
+  }
+
+  void _enterSelectionMode({String? initialPath}) {
+    setState(() {
+      _isSelectionMode = true;
+      _isSearching = false;
+      _searchController.clear();
+      _filteredFiles = List.from(_allFiles);
+      _selectedPaths.clear();
+      if (initialPath != null) {
+        _selectedPaths.add(initialPath);
+      }
+    });
+  }
+
+  void _exitSelectionMode() {
+    setState(() {
+      _isSelectionMode = false;
+      _selectedPaths.clear();
+    });
+  }
+
+  void _togglePathSelection(String path) {
+    setState(() {
+      if (_selectedPaths.contains(path)) {
+        _selectedPaths.remove(path);
+      } else {
+        _selectedPaths.add(path);
+      }
+    });
+  }
+
+  void _selectAllFiltered() {
+    setState(() {
+      _selectedPaths
+        ..clear()
+        ..addAll(_filteredFiles.map((f) => f.file.path));
+    });
+  }
+
+  Future<void> _shareSelectedLogs() async {
+    if (_selectedPaths.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            appLocalizations.noLogsSelectedToShare,
+            style: TextStyle(color: snackBarContentColor),
+          ),
+          backgroundColor: snackBarBackgroundColor,
+        ),
+      );
+      return;
+    }
+    await _dataService.shareFiles(_selectedPaths.toList());
+    if (mounted) {
+      _exitSelectionMode();
+    }
   }
 
   @override
@@ -601,14 +673,34 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                 cursorColor: appBarContentColor,
               )
             : Text(
-                widget.appBarName,
+                _isSelectionMode
+                    ? appLocalizations.logsSelectedCount(_selectedPaths.length)
+                    : widget.appBarName,
                 style: TextStyle(
                   color: appBarContentColor,
                   fontSize: 15,
                 ),
               ),
+        leading: _isSelectionMode
+            ? IconButton(
+                tooltip: appLocalizations.close,
+                icon: const Icon(Icons.close),
+                onPressed: _exitSelectionMode,
+              )
+            : null,
         actions: [
-          if (_isSearching)
+          if (_isSelectionMode) ...[
+            IconButton(
+              tooltip: appLocalizations.selectAllLogs,
+              icon: const Icon(Icons.select_all),
+              onPressed: _filteredFiles.isEmpty ? null : _selectAllFiltered,
+            ),
+            IconButton(
+              tooltip: appLocalizations.shareSelectedLogs,
+              icon: const Icon(Icons.share),
+              onPressed: _shareSelectedLogs,
+            ),
+          ] else if (_isSearching)
             IconButton(
               tooltip: appLocalizations.close,
               icon: const Icon(Icons.close),
@@ -650,8 +742,8 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                 )
               : Focus(
                   focusNode: _keyboardFocusNode,
-                  canRequestFocus: !_isSearching,
-                  autofocus: !_isSearching,
+                  canRequestFocus: !_isSearching && !_isSelectionMode,
+                  autofocus: !_isSearching && !_isSelectionMode,
                   onKeyEvent: (node, event) => _handleKey(event),
                   child: RefreshIndicator(
                     onRefresh: _loadFiles,
@@ -675,17 +767,21 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                           if (durationLine != null) durationLine,
                           formattedDate,
                         ];
-                        final bool selected = index == _selectedIndex;
+                        final bool keyboardSelected =
+                            !_isSelectionMode && index == _selectedIndex;
+                        final bool checked = _selectedPaths.contains(file.path);
+                        final bool highlighted = keyboardSelected || checked;
                         return Padding(
+                          key: _keyFor(file.path),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           child: Material(
-                            color: selected
+                            color: highlighted
                                 ? primaryRed.withValues(alpha: 0.08)
                                 : Theme.of(context).colorScheme.surface,
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
-                                  color: selected
+                                  color: highlighted
                                       ? primaryRed
                                       : Colors.grey.shade300,
                                   width: 1),
@@ -693,143 +789,172 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
                             ),
                             child: InkWell(
                               onTap: () {
-                                setState(() => _selectedIndex = index);
-                                _openFile(file, instrumentName);
+                                if (_isSelectionMode) {
+                                  _togglePathSelection(file.path);
+                                } else {
+                                  setState(() => _selectedIndex = index);
+                                  _openFile(file, instrumentName);
+                                }
+                              },
+                              onLongPress: () {
+                                if (!_isSelectionMode) {
+                                  _enterSelectionMode(initialPath: file.path);
+                                }
                               },
                               child: ListTile(
-                                leading: Image.asset(
-                                  widget.instrumentIcons[widget.instrumentNames
-                                      .indexOf(instrumentName)],
-                                  color: primaryRed,
-                                ),
+                                leading: _isSelectionMode
+                                    ? Checkbox(
+                                        value: checked,
+                                        activeColor: primaryRed,
+                                        onChanged: (_) =>
+                                            _togglePathSelection(file.path),
+                                      )
+                                    : Image.asset(
+                                        widget.instrumentIcons[widget
+                                            .instrumentNames
+                                            .indexOf(instrumentName)],
+                                        color: primaryRed,
+                                      ),
                                 title: Text(fileName,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold)),
                                 subtitle: Text(subtitleLines.join('\n')),
                                 isThreeLine: true,
-                                trailing: PopupMenuButton<String>(
-                                  tooltip: appLocalizations.options,
-                                  icon: const Icon(Icons.more_vert,
-                                      color: Colors.black),
-                                  onSelected: (value) async {
-                                    if (value == appLocalizations.play) {
-                                      _playFile(file, instrumentName);
-                                    } else if (value ==
-                                        appLocalizations.location) {
-                                      final data = await _dataService
-                                          .readDataFromFile(file);
-                                      if (!context.mounted) return;
-                                      double latitude = 0;
-                                      double longitude = 0;
-                                      if (data[data.length - 1]
-                                              [data[data.length - 1].length - 2]
-                                          is double) {
-                                        latitude = data[data.length - 1][
+                                trailing: _isSelectionMode
+                                    ? null
+                                    : PopupMenuButton<String>(
+                                        tooltip: appLocalizations.options,
+                                        icon: const Icon(Icons.more_vert,
+                                            color: Colors.black),
+                                        onSelected: (value) async {
+                                          if (value == appLocalizations.play) {
+                                            _playFile(file, instrumentName);
+                                          } else if (value ==
+                                              appLocalizations.location) {
+                                            final data = await _dataService
+                                                .readDataFromFile(file);
+                                            if (!context.mounted) return;
+                                            double latitude = 0;
+                                            double longitude = 0;
+                                            if (data[data.length - 1][
                                                 data[data.length - 1].length -
-                                                    2]
-                                            .toDouble();
-                                        longitude = data[data.length - 1][
-                                                data[data.length - 1].length -
-                                                    1]
-                                            .toDouble();
-                                      }
-                                      if (latitude == 0 && longitude == 0) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              appLocalizations
-                                                  .noLocationDataAvailable,
-                                              style: TextStyle(
-                                                  color: snackBarContentColor),
+                                                    2] is double) {
+                                              latitude = data[data.length - 1][
+                                                      data[data.length - 1]
+                                                              .length -
+                                                          2]
+                                                  .toDouble();
+                                              longitude = data[data.length - 1][
+                                                      data[data.length - 1]
+                                                              .length -
+                                                          1]
+                                                  .toDouble();
+                                            }
+                                            if (latitude == 0 &&
+                                                longitude == 0) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    appLocalizations
+                                                        .noLocationDataAvailable,
+                                                    style: TextStyle(
+                                                        color:
+                                                            snackBarContentColor),
+                                                  ),
+                                                  backgroundColor:
+                                                      snackBarBackgroundColor,
+                                                ),
+                                              );
+                                              return;
+                                            }
+                                            await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => MapScreen(
+                                                  latitude: latitude,
+                                                  longitude: longitude,
+                                                ),
+                                              ),
+                                            );
+                                          } else if (value ==
+                                              appLocalizations.share) {
+                                            _dataService.shareFile(file.path);
+                                          } else if (value ==
+                                              appLocalizations.rename) {
+                                            _renameFile(file);
+                                          } else if (value ==
+                                              appLocalizations.delete) {
+                                            _deleteFile(file.path);
+                                          }
+                                        },
+                                        itemBuilder: (BuildContext context) => [
+                                          if (playableInstruments.contains(
+                                              instrumentName.toLowerCase()))
+                                            PopupMenuItem<String>(
+                                              value: appLocalizations.play,
+                                              child: ListTile(
+                                                dense: true,
+                                                leading: Icon(Icons.play_arrow,
+                                                    color: primaryRed),
+                                                title: Text(
+                                                    appLocalizations.play,
+                                                    style: const TextStyle(
+                                                        color: Colors.black)),
+                                              ),
                                             ),
-                                            backgroundColor:
-                                                snackBarBackgroundColor,
+                                          PopupMenuItem<String>(
+                                            value: appLocalizations.location,
+                                            child: ListTile(
+                                              dense: true,
+                                              leading: Icon(Icons.map,
+                                                  color: primaryRed),
+                                              title: Text(
+                                                  appLocalizations.location,
+                                                  style: const TextStyle(
+                                                      color: Colors.black)),
+                                            ),
                                           ),
-                                        );
-                                        return;
-                                      }
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => MapScreen(
-                                            latitude: latitude,
-                                            longitude: longitude,
+                                          PopupMenuItem<String>(
+                                            value: appLocalizations.share,
+                                            child: ListTile(
+                                              dense: true,
+                                              leading: Icon(Icons.share,
+                                                  color: primaryRed),
+                                              title: Text(
+                                                  appLocalizations.share,
+                                                  style: const TextStyle(
+                                                      color: Colors.black)),
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    } else if (value ==
-                                        appLocalizations.share) {
-                                      _dataService.shareFile(file.path);
-                                    } else if (value ==
-                                        appLocalizations.rename) {
-                                      _renameFile(file);
-                                    } else if (value ==
-                                        appLocalizations.delete) {
-                                      _deleteFile(file.path);
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) => [
-                                    if (playableInstruments
-                                        .contains(instrumentName.toLowerCase()))
-                                      PopupMenuItem<String>(
-                                        value: appLocalizations.play,
-                                        child: ListTile(
-                                          dense: true,
-                                          leading: Icon(Icons.play_arrow,
-                                              color: primaryRed),
-                                          title: Text(appLocalizations.play,
-                                              style: const TextStyle(
-                                                  color: Colors.black)),
-                                        ),
+                                          PopupMenuItem<String>(
+                                            value: appLocalizations.rename,
+                                            child: ListTile(
+                                              dense: true,
+                                              leading: Icon(
+                                                  Icons
+                                                      .drive_file_rename_outline,
+                                                  color: primaryRed),
+                                              title: Text(
+                                                  appLocalizations.rename,
+                                                  style: const TextStyle(
+                                                      color: Colors.black)),
+                                            ),
+                                          ),
+                                          PopupMenuItem<String>(
+                                            value: appLocalizations.delete,
+                                            child: ListTile(
+                                              dense: true,
+                                              leading: Icon(Icons.delete,
+                                                  color: primaryRed),
+                                              title: Text(
+                                                  appLocalizations.delete,
+                                                  style: const TextStyle(
+                                                      color: Colors.black)),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    PopupMenuItem<String>(
-                                      value: appLocalizations.location,
-                                      child: ListTile(
-                                        dense: true,
-                                        leading:
-                                            Icon(Icons.map, color: primaryRed),
-                                        title: Text(appLocalizations.location,
-                                            style: const TextStyle(
-                                                color: Colors.black)),
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: appLocalizations.share,
-                                      child: ListTile(
-                                        dense: true,
-                                        leading: Icon(Icons.share,
-                                            color: primaryRed),
-                                        title: Text(appLocalizations.share,
-                                            style: const TextStyle(
-                                                color: Colors.black)),
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: appLocalizations.rename,
-                                      child: ListTile(
-                                        dense: true,
-                                        leading: Icon(
-                                            Icons.drive_file_rename_outline,
-                                            color: primaryRed),
-                                        title: Text(appLocalizations.rename,
-                                            style: const TextStyle(
-                                                color: Colors.black)),
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: appLocalizations.delete,
-                                      child: ListTile(
-                                        dense: true,
-                                        leading: Icon(Icons.delete,
-                                            color: primaryRed),
-                                        title: Text(appLocalizations.delete,
-                                            style: const TextStyle(
-                                                color: Colors.black)),
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
                             ),
                           ),

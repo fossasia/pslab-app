@@ -125,26 +125,32 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
   }
 
   Widget _buildPlayPauseButton() {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      label: widget.isPlaying ? appLocalizations.pause : appLocalizations.play,
       onTap: widget.onPlayPause,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: primaryRed,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: primaryRed.withAlpha(80),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Icon(
-          widget.isPlaying ? Icons.pause : Icons.play_arrow,
-          color: buttonTextColor,
-          size: 24,
+      child: GestureDetector(
+        onTap: widget.onPlayPause,
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: primaryRed,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: primaryRed.withAlpha(80),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(
+            widget.isPlaying ? Icons.pause : Icons.play_arrow,
+            color: buttonTextColor,
+            size: 24,
+          ),
         ),
       ),
     );
@@ -186,25 +192,39 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
   }
 
   Widget _buildLoopButton() {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      toggled: widget.isLooping,
+      label: appLocalizations.loopMode,
       onTap: widget.onLoop,
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: widget.isLooping
-              ? primaryRed.withAlpha(26)
-              : sensorStatusBackgroundColor,
-          border: Border.all(
-            color: widget.isLooping ? primaryRed : sensorStatusBorder,
-            width: 1,
+      child: GestureDetector(
+        onTap: widget.onLoop,
+        behavior: HitTestBehavior.opaque,
+        child: SizedBox(
+          width: 48,
+          height: 48,
+          child: Center(
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: widget.isLooping
+                    ? primaryRed.withAlpha(26)
+                    : sensorStatusBackgroundColor,
+                border: Border.all(
+                  color: widget.isLooping ? primaryRed : sensorStatusBorder,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(
+                Icons.all_inclusive,
+                color: widget.isLooping ? primaryRed : sensorControlIconColor,
+                size: 18,
+              ),
+            ),
           ),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Icon(
-          Icons.all_inclusive,
-          color: widget.isLooping ? primaryRed : sensorControlIconColor,
-          size: 18,
         ),
       ),
     );
