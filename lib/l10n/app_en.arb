@@ -281,6 +281,7 @@
     "roboticArmTitle": "Robotic Arm",
     "play": "Play",
     "pause": "Pause",
+    "loopMode": "Loop",
     "stop": "Stop",
     "controls": "Controls",
     "saveData": "Save Data",
