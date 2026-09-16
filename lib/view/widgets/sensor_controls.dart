@@ -294,12 +294,19 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
               valueIndicatorColor: primaryRed,
               valueIndicatorTextStyle: const TextStyle(fontSize: 12),
             ),
-            child: Slider(
-              value: widget.timegapMs.toDouble(),
-              min: 200,
-              max: 1000,
-              label: '${widget.timegapMs}${appLocalizations.ms}',
-              onChanged: (value) => widget.onTimegapChanged(value.toInt()),
+            child: MergeSemantics(
+              child: Semantics(
+                label: appLocalizations.timeGap,
+                child: Slider(
+                  value: widget.timegapMs.toDouble(),
+                  min: 200,
+                  max: 1000,
+                  label: '${widget.timegapMs}${appLocalizations.ms}',
+                  semanticFormatterCallback: (value) =>
+                      '${value.toInt()} ${appLocalizations.ms}',
+                  onChanged: (value) => widget.onTimegapChanged(value.toInt()),
+                ),
+              ),
             ),
           ),
         ),
