@@ -24,13 +24,23 @@ class PacketHandler {
 
   Future<String> getVersion() async {
     try {
+      String scpiResponse = await queryScpi("*IDN?");
+      if (scpiResponse.contains("PSLab Pico") ||
+          scpiResponse.contains("PSLab Mini")) {
+        version = scpiResponse;
+        return version;
+      }
       sendByte(_mCommandsProto.common);
       sendByte(_mCommandsProto.getVersion);
       await _commonRead(versionStringLength + 1);
-      version = utf8.decode(_buffer).split('\n').first;
+      version = utf8
+          .decode(_buffer.sublist(0, versionStringLength + 1))
+          .split('\n')
+          .first;
     } catch (e) {
       logger.e("Error in getting version: $e");
     }
+
     return version;
   }
 
@@ -124,6 +134,9 @@ class PacketHandler {
 
   Future<int> getFirmwareVersion() async {
     try {
+      if (version.contains("Pico") || version.contains("Mini")) {
+        return 3;
+      }
       sendByte(_mCommandsProto.common);
       sendByte(_mCommandsProto.getFwVersion);
       int numBytesRead = await _commonRead(fwVersionLength);
@@ -168,5 +181,19 @@ class PacketHandler {
     if (_mCommunicationHandler.isConnected()) {
       _mCommunicationHandler.write(data, _timeout);
     }
+  }
+
+  Future<String> queryScpi(String command) async {
+    String fullCommand = "$command\r\n";
+    _mCommunicationHandler.write(
+        Uint8List.fromList(fullCommand.codeUnits), 100);
+    Uint8List buffer = Uint8List(256);
+    int bytesRead = await _mCommunicationHandler.read(buffer, 256, 500);
+    if (bytesRead > 0) {
+      String response =
+          String.fromCharCodes(buffer.sublist(0, bytesRead)).trim();
+      return response;
+    }
+    return "";
   }
 }

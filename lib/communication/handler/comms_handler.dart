@@ -17,6 +17,7 @@ class PSLabCommunicationHandler implements CommunicationHandler {
   static const List<PSLabBoard> supportedBoards = [
     PSLabBoard(version: 'V6', vid: 0x10C4, pid: 0xEA60),
     PSLabBoard(version: 'V5', vid: 1240, pid: 223),
+    PSLabBoard(version: 'Mini', vid: 0xCAFE, pid: 0x4010),
   ];
 
   static const MethodChannel _androidChannel = MethodChannel('usb_serial');
@@ -52,10 +53,10 @@ class PSLabCommunicationHandler implements CommunicationHandler {
 
     rust_api.closeUsb();
     bool boardConnected = false;
+
     if (targetPortName != null &&
         (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
       try {
-        logger.d("Attempting connection on specific port: $targetPortName");
         await rust_api.initDesktopByPort(portName: targetPortName!);
         boardConnected = true;
       } catch (e) {
@@ -65,11 +66,13 @@ class PSLabCommunicationHandler implements CommunicationHandler {
       for (final board in supportedBoards) {
         try {
           if (Platform.isAndroid) {
-            logger.d("Probing Android for ${board.version}...");
+            logger.d(
+                "Probing Android for ${board.version} [VID: ${board.vid}, PID: ${board.pid}]...");
             final int fd = await _androidChannel.invokeMethod('getAndroidFd', {
               "vid": board.vid,
               "pid": board.pid,
             });
+
             await rust_api.initAndroid(fd: fd);
             boardConnected = true;
             break;
@@ -79,6 +82,8 @@ class PSLabCommunicationHandler implements CommunicationHandler {
             boardConnected = true;
             break;
           }
+        } on PlatformException {
+          continue;
         } catch (e) {
           logger.w("Failed on ${board.version}: $e");
           continue;
@@ -95,10 +100,11 @@ class PSLabCommunicationHandler implements CommunicationHandler {
       rust_api.setDtr(state: true);
       rust_api.setRts(state: true);
       await Future.delayed(const Duration(milliseconds: 250));
+
       connected = true;
     } catch (e) {
       connected = false;
-      throw Exception("Failed to wake up board");
+      logger.e("Failed to wake up board: $e");
     }
   }
 
@@ -128,10 +134,10 @@ class PSLabCommunicationHandler implements CommunicationHandler {
 
   @override
   Future<int> read(Uint8List dest, int bytesToRead, int timeoutMillis) async {
-    int numBytesRead = 0;
-    int bytesToBeReadTemp = bytesToRead;
     int actualTimeout =
         (Platform.isAndroid && timeoutMillis < 500) ? 500 : timeoutMillis;
+    int numBytesRead = 0;
+    int bytesToBeReadTemp = bytesToRead;
     int attempts = 0;
 
     try {
@@ -161,12 +167,22 @@ class PSLabCommunicationHandler implements CommunicationHandler {
       logger.e("Exception during read: $e");
     }
 
+    logger.d("Successfully read $numBytesRead bytes.");
     return numBytesRead;
   }
 
   @override
   void write(Uint8List src, int timeoutMillis) {
-    if (!connected) return;
-    rust_api.writeData(data: src.toList());
+    if (!connected) {
+      logger.w("Write aborted: Device not connected.");
+      return;
+    }
+
+    try {
+      rust_api.writeData(data: src.toList());
+      logger.d("write completed successfully!");
+    } catch (e) {
+      logger.e("write failed: $e");
+    }
   }
 }

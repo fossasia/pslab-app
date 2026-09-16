@@ -60,6 +60,7 @@ class ScienceLab {
       }
     }
     if (isConnected()) {
+      await getVersion();
       await _initializeVariables();
     }
   }
@@ -72,6 +73,7 @@ class ScienceLab {
       logger.e(e);
     }
     if (isConnected()) {
+      await getVersion();
       await _initializeVariables();
     }
   }
@@ -151,14 +153,19 @@ class ScienceLab {
       dChannels.add(DigitalChannel(i));
     }
     if (isConnected()) {
-      for (String temp in ['CH1', 'CH2']) {
-        await setGain(temp, 0, true);
-      }
-      for (String temp in ['SI1', 'SI2']) {
-        await loadEquation(temp, 'sine');
+      if (!PacketHandler.version.contains("Pico") &&
+          !PacketHandler.version.contains("Mini")) {
+        for (String temp in ['CH1', 'CH2']) {
+          await setGain(temp, 0, true);
+        }
+        for (String temp in ['SI1', 'SI2']) {
+          await loadEquation(temp, 'sine');
+        }
+        await clearBuffer(0, samples);
+      } else {
+        logger.d("PSLab Pico detected: Skipping legacy binary initialization.");
       }
     }
-    await clearBuffer(0, samples);
     calibrated = false;
   }
 

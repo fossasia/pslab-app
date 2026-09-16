@@ -95,9 +95,12 @@ pub fn get_available_ports() -> Vec<String> {
         if let Ok(ports) = serialport::available_ports() {
             for p in ports {
                 if let serialport::SerialPortType::UsbPort(info) = p.port_type {
-                    if (info.vid == 0x10C4 && info.pid == 0xEA60) || (info.vid == 1240 && info.pid == 223) {
-                        port_names.push(p.port_name);
-                    }
+                 if (info.vid == 0x10C4 && info.pid == 0xEA60)
+                     || (info.vid == 1240 && info.pid == 223)
+                     || (info.vid == 0xCAFE)
+                 {
+                     port_names.push(p.port_name);
+                 }
                 }
             }
         }
@@ -169,24 +172,34 @@ fn setup_device(handle: DeviceHandle<GlobalContext>) -> Result<()> {
         .map_err(|e| anyhow!("Failed to get config: {}", e))?;
 
     let is_v6_cp210x = desc.vendor_id() == 0x10C4 && desc.product_id() == 0xEA60;
-    let is_v5_mcp2200 = desc.vendor_id() == 1240 && desc.product_id() == 223;
+    let is_cdc_acm = desc.vendor_id() == 1240 || desc.vendor_id() == 0xCAFE;
 
     let mut ep_in = 0;
     let mut ep_out = 0;
-    let mut interface_num = 0;
-
+    let mut data_interface_num = 0;
     for interface in config.interfaces() {
         for interface_desc in interface.descriptors() {
+            let mut temp_in = 0;
+            let mut temp_out = 0;
+
             for endpoint in interface_desc.endpoint_descriptors() {
                 if endpoint.transfer_type() == TransferType::Bulk {
                     if endpoint.direction() == Direction::In {
-                        ep_in = endpoint.address();
+                        temp_in = endpoint.address();
                     } else if endpoint.direction() == Direction::Out {
-                        ep_out = endpoint.address();
+                        temp_out = endpoint.address();
                     }
                 }
             }
-            interface_num = interface.number();
+            if temp_in != 0 && temp_out != 0 {
+                ep_in = temp_in;
+                ep_out = temp_out;
+                data_interface_num = interface.number();
+                break;
+            }
+        }
+        if ep_in != 0 && ep_out != 0 {
+            break;
         }
     }
 
@@ -195,31 +208,35 @@ fn setup_device(handle: DeviceHandle<GlobalContext>) -> Result<()> {
     }
 
     let _ = handle.set_auto_detach_kernel_driver(true);
+    if is_cdc_acm {
+        let _ = handle.claim_interface(0);
+    }
+
     handle
-        .claim_interface(interface_num)
-        .map_err(|e| anyhow!("Failed to claim interface: {}", e))?;
+        .claim_interface(data_interface_num)
+        .map_err(|e| anyhow!("Failed to claim data interface: {}", e))?;
 
     let timeout = Duration::from_millis(100);
 
     if is_v6_cp210x {
         let req_type = request_type(Direction::Out, RequestType::Vendor, Recipient::Device);
 
-        handle.write_control(req_type, 0x00, 0x0001, interface_num as u16, &[], timeout)?;
+        handle.write_control(req_type, 0x00, 0x0001, data_interface_num as u16, &[], timeout)?;
 
         let baud: u32 = 1_000_000;
         let baud_bytes = baud.to_le_bytes();
-        handle.write_control(req_type, 0x1E, 0, interface_num as u16, &baud_bytes, timeout)?;
+        handle.write_control(req_type, 0x1E, 0, data_interface_num as u16, &baud_bytes, timeout)?;
 
-        handle.write_control(req_type, 0x03, 0x0800, interface_num as u16, &[], timeout)?;
+        handle.write_control(req_type, 0x03, 0x0800, data_interface_num as u16, &[], timeout)?;
 
         let flow_off: [u8; 16] = [
             0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00, 0x20,
             0x00, 0x00,
         ];
-        handle.write_control(req_type, 0x13, 0, interface_num as u16, &flow_off, timeout)?;
+        handle.write_control(req_type, 0x13, 0, data_interface_num as u16, &flow_off, timeout)?;
 
-        handle.write_control(req_type, 0x07, 0x0000, interface_num as u16, &[], timeout)?;
-    } else if is_v5_mcp2200 {
+        handle.write_control(req_type, 0x07, 0x0000, data_interface_num as u16, &[], timeout)?;
+    } else if is_cdc_acm {
         let req_type = request_type(Direction::Out, RequestType::Class, Recipient::Interface);
 
         let mut line_coding = vec![];
@@ -227,16 +244,15 @@ fn setup_device(handle: DeviceHandle<GlobalContext>) -> Result<()> {
         line_coding.push(0x00);
         line_coding.push(0x00);
         line_coding.push(0x08);
-
-        handle.write_control(req_type, 0x20, 0, interface_num as u16, &line_coding, timeout)?;
-        handle.write_control(req_type, 0x22, 0x03, interface_num as u16, &[], timeout)?;
+        let _ = handle.write_control(req_type, 0x20, 0, 0, &line_coding, timeout);
+        let _ = handle.write_control(req_type, 0x22, 0x03, 0, &[], timeout);
     }
 
     let handle_arc = Arc::new(handle);
     *USB_HANDLE.lock().unwrap() = Some(handle_arc.clone());
     *EP_IN.lock().unwrap() = ep_in;
     *EP_OUT.lock().unwrap() = ep_out;
-    *INTERFACE_ID.lock().unwrap() = interface_num;
+    *INTERFACE_ID.lock().unwrap() = data_interface_num;
 
     *ANDROID_RUN_THREAD.lock().unwrap() = true;
     let reader_handle = handle_arc.clone();
@@ -258,7 +274,6 @@ fn setup_device(handle: DeviceHandle<GlobalContext>) -> Result<()> {
 
     Ok(())
 }
-
 #[frb(sync)]
 pub fn set_baud_rate(baud_rate: u32) -> Result<()> {
     #[cfg(target_os = "android")]
@@ -266,9 +281,9 @@ pub fn set_baud_rate(baud_rate: u32) -> Result<()> {
         if let Some(handle) = USB_HANDLE.lock().unwrap().as_ref() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
             let desc = handle.device().device_descriptor().unwrap();
-            let is_v5_mcp2200 = desc.vendor_id() == 1240 && desc.product_id() == 223;
+            let is_cdc_acm = desc.vendor_id() == 1240 || desc.vendor_id() == 0x2E8A;
 
-            if is_v5_mcp2200 {
+            if is_cdc_acm {
                 let req_type = request_type(Direction::Out, RequestType::Class, Recipient::Interface);
                 let mut line_coding = vec![];
                 line_coding.extend_from_slice(&baud_rate.to_le_bytes());
@@ -313,9 +328,9 @@ pub fn set_dtr(state: bool) -> Result<()> {
         if let Some(handle) = USB_HANDLE.lock().unwrap().as_ref() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
             let desc = handle.device().device_descriptor().unwrap();
-            let is_v5_mcp2200 = desc.vendor_id() == 1240;
+            let is_cdc_acm = desc.vendor_id() == 1240 || desc.vendor_id() == 0x2E8A;
 
-            if is_v5_mcp2200 {
+            if is_cdc_acm {
                 let req_type = request_type(Direction::Out, RequestType::Class, Recipient::Interface);
                 let val = if state { 0x01 } else { 0x00 };
                 let _ = handle.write_control(req_type, 0x22, val, interface_num as u16, &[], Duration::from_millis(100));
@@ -354,9 +369,9 @@ pub fn set_rts(state: bool) -> Result<()> {
         if let Some(handle) = USB_HANDLE.lock().unwrap().as_ref() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
             let desc = handle.device().device_descriptor().unwrap();
-            let is_v5_mcp2200 = desc.vendor_id() == 1240;
+            let is_cdc_acm = desc.vendor_id() == 1240 || desc.vendor_id() == 0x2E8A;
 
-            if is_v5_mcp2200 {
+            if is_cdc_acm {
                 let req_type = request_type(Direction::Out, RequestType::Class, Recipient::Interface);
                 let val = if state { 0x03 } else { 0x00 };
                 let _ = handle.write_control(req_type, 0x22, val, interface_num as u16, &[], Duration::from_millis(100));
@@ -537,11 +552,12 @@ pub fn check_desktop_device_present() -> bool {
         if let Ok(ports) = serialport::available_ports() {
             for p in ports {
                 if let serialport::SerialPortType::UsbPort(info) = p.port_type {
-                    if (info.vid == 0x10C4 && info.pid == 0xEA60)
-                        || (info.vid == 1240 && info.pid == 223)
-                    {
-                        return true;
-                    }
+                 if (info.vid == 0x10C4 && info.pid == 0xEA60)
+                     || (info.vid == 1240 && info.pid == 223)
+                     || (info.vid == 0xCAFE)
+                 {
+                     return true;
+                 }
                 }
             }
         }
