@@ -138,9 +138,19 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
       ),
       child: IconButton(
         onPressed: widget.onPlayPause,
-        tooltip: widget.isPlaying
-            ? appLocalizations.pause
-            : appLocalizations.play,
+        style: ButtonStyle(
+          shape: const WidgetStatePropertyAll(CircleBorder()),
+          side: WidgetStateProperty.resolveWith((states) {
+            return BorderSide(
+              color: states.contains(WidgetState.focused)
+                  ? blackTextColor
+                  : Colors.transparent,
+              width: 2,
+            );
+          }),
+        ),
+        tooltip:
+            widget.isPlaying ? appLocalizations.pause : appLocalizations.play,
         icon: Icon(
           widget.isPlaying ? Icons.pause : Icons.play_arrow,
           color: buttonTextColor,
