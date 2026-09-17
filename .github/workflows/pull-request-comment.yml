@@ -86,8 +86,16 @@ jobs:
             git config --global user.name "github-actions[bot]"
             git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
             
-            git clone --branch=pr-screenshots --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} pr-screenshots
-            cd pr-screenshots
+            # Try to clone. If the branch doesn't exist yet, initialize it automatically.
+            if ! git clone --branch=pr-screenshots --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} pr-screenshots; then
+              echo "Branch pr-screenshots not found. Creating a new one."
+              mkdir pr-screenshots
+              cd pr-screenshots
+              git init
+              git remote add origin https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }}
+            else
+              cd pr-screenshots
+            fi
             
             for file in ../screenshots/*; do
               if [[ -f "$file" ]]; then
@@ -111,7 +119,7 @@ jobs:
             git checkout --orphan temporary
             git add --all .
             git commit -am "[Auto] Update screenshots for #${{ steps.fetch-pr-number.outputs.pr_number }} ($(date +%Y-%m-%d.%H:%M:%S))"
-            git branch -D pr-screenshots
+            git branch -D pr-screenshots || true
             git branch -m pr-screenshots
             git push --force origin pr-screenshots
           else
@@ -137,7 +145,18 @@ jobs:
             artifacts.data.artifacts.forEach(artifact => {
               if (!ignoredArtifacts.includes(artifact.name)) {
                 const url = `https://github.com/${owner}/${repo}/actions/runs/${{ github.event.workflow_run.id }}/artifacts/${artifact.id}`;
-                artifactLinks += `- **${artifact.name}**: [Download](${url})\n`;
+                
+                // Map raw artifact names to pretty platform names
+                let platformName = artifact.name;
+                if (artifact.name.includes('apk-files')) platformName = 'Android';
+                else if (artifact.name.includes('iOS IPA')) platformName = 'iOS';
+                else if (artifact.name.includes('windows-installer')) platformName = 'Windows';
+                else if (artifact.name.includes('macos-app')) platformName = 'macOS';
+                else if (artifact.name === 'linux-packages') platformName = 'Linux';
+                else if (artifact.name === 'linux-packages-arm64') platformName = 'Linux (ARM64)';
+                else if (artifact.name.includes('web-app') || artifact.name.includes('web')) platformName = 'Web';
+
+                artifactLinks += `- **${platformName}**: [Download](${url})\n`;
               }
             });
 
@@ -194,7 +213,7 @@ jobs:
             </details>
             `;
 
-            let body = `## Build Status\n`;
+            let body = `## Build Status: `;
             if (conclusion === 'success') {
               body += `**Build successful.**\n\n## Build artifacts to test\n${artifactLinks || '_No artifacts uploaded._'}\n\n## Screenshots\n${screenshotsSection}`;
             } else {
