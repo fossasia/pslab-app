@@ -300,6 +300,17 @@ class _SensorControlsWidgetState extends State<SensorControlsWidget> {
             child: MergeSemantics(
               child: Semantics(
                 label: appLocalizations.timeGap,
+                value: '${widget.timegapMs} ${appLocalizations.ms}',
+                increasedValue:
+                    '${(widget.timegapMs + 100).clamp(200, 1000).toInt()} ${appLocalizations.ms}',
+                decreasedValue:
+                    '${(widget.timegapMs - 100).clamp(200, 1000).toInt()} ${appLocalizations.ms}',
+                onIncrease: () => widget.onTimegapChanged(
+                  (widget.timegapMs + 100).clamp(200, 1000).toInt(),
+                ),
+                onDecrease: () => widget.onTimegapChanged(
+                  (widget.timegapMs - 100).clamp(200, 1000).toInt(),
+                ),
                 child: Slider(
                   value: widget.timegapMs.toDouble(),
                   min: 200,
