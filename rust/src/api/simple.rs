@@ -747,3 +747,60 @@ pub fn read_web_data(bytes_to_read: u32) -> Vec<u8> {
         vec![]
     }
 }
+
+
+#[frb(sync)]
+pub fn send_scpi_rust(command: String) {
+    let mut full_cmd = command.into_bytes();
+    full_cmd.push(b'\r');
+    full_cmd.push(b'\n');
+    write_data(full_cmd);
+}
+
+pub fn query_scpi_binary_rust(command: String, timeout_ms: u32) -> Vec<u8> {
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
+        let _ = port.clear(serialport::ClearBuffer::Input);
+    }
+    #[cfg(target_os = "android")]
+    if let Ok(mut buffer) = ANDROID_RX_BUFFER.lock() { buffer.clear(); }
+    std::thread::sleep(std::time::Duration::from_millis(50));
+
+    send_scpi_rust(command);
+
+    let mut raw_buffer = Vec::new();
+    let start_time = std::time::Instant::now();
+    let timeout = std::time::Duration::from_millis(timeout_ms as u64);
+
+    while start_time.elapsed() < timeout {
+        let chunk = read_data(2048, 10);
+
+        if !chunk.is_empty() {
+            raw_buffer.extend_from_slice(&chunk);
+            if let Some(hash_idx) = raw_buffer.iter().position(|&x| x == b'#') {
+                if hash_idx > 0 {
+                    raw_buffer.drain(0..hash_idx);
+                }
+
+                if raw_buffer.len() > 2 {
+                    if let Some(num_digits) = (raw_buffer[1] as char).to_digit(10).map(|d| d as usize) {
+                        let header_len = 2 + num_digits;
+                        if raw_buffer.len() >= header_len {
+                            if let Ok(len_str) = std::str::from_utf8(&raw_buffer[2..header_len]) {
+                                if let Ok(data_len) = len_str.parse::<usize>() {
+                                    let total_frame_len = header_len + data_len;
+
+                                    if raw_buffer.len() >= total_frame_len {
+                                        return raw_buffer[header_len..total_frame_len].to_vec();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    vec![]
+}

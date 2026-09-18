@@ -588,11 +588,11 @@
     "noLogsSelectedToShare": "Select at least one log to share.",
     "logsSelectedCount": "{count} selected",
     "@logsSelectedCount": {
-      "placeholders": {
-        "count": {
-          "type": "int"
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
         }
-      }
     },
     "loggedData": "Logged Data",
     "oscilloscopeConfigs": "Oscilloscope Configurations",
