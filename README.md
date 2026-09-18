@@ -16,7 +16,7 @@ Our website is at https://pslab.io.
 
 The PSLab app is available for **Android**, **iOS**, **Windows**, **macOS**, **Linux**, and **Web**.
 
-- Store listings and install guides: [PSLab Application documentation](https://docs.pslab.io/application/Readme.html)
+- Store listings and install guides: [PSLab Application documentation](https://docs.pslab.io/application/Readme/)
 - Development builds (direct downloads): [Download page](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fossasia/pslab-app/refs/heads/app/index.html)
 
 Sign up for the latest updates and test new features early by joining our [beta program](https://play.google.com/apps/testing/io.pslab).
