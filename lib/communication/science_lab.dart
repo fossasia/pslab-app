@@ -489,102 +489,46 @@ class ScienceLab {
     return 0;
   }
 
-  Future<void> loadEquation(String channel, String function) async {
-    List<double> span = List.filled(2, 0);
+  Future<void> loadEquation(String channel, String function,
+      {double amplitudeVolt = 3.0}) async {
+    amplitudeVolt = amplitudeVolt.clamp(0.1, 3.0);
+    int ampTable = ((amplitudeVolt / 3.0) * 255.0).round();
+    const int centerTable = 256;
 
-    if (function == 'sine') {
-      span[0] = 0;
-      span[1] = 2 * pi;
-      waveType[channel] = 'sine';
-    } else if (function == 'tria') {
-      span[0] = 0;
-      span[1] = 4;
-      waveType[channel] = 'tria';
-    } else if (function == 'sawtooth') {
-      span[0] = 0;
-      span[1] = 2 * pi;
-      waveType[channel] = 'sawtooth';
-    } else {
-      waveType[channel] = 'orbit';
-    }
-
-    double factor = (span[1] - span[0]) / 512;
-    List<double> x = [];
-    List<double> y = [];
-
+    List<int> yMod1 = [];
     for (int i = 0; i < 512; i++) {
-      x.add(span[0] + i * factor);
+      double rawVal = 0.0;
+      double t = 2 * pi * (i / 512.0);
 
       switch (function) {
         case 'sine':
-          y.add(sin(x[i]));
+          rawVal = sin(t);
           break;
         case 'tria':
-          y.add((x[i] % 4 - 2).abs());
+          rawVal = (2 / pi) * asin(sin(t));
           break;
         case 'sawtooth':
-          y.add((x[i] / pi) - 1.0);
+          rawVal = ((t % (2 * pi)) / pi) - 1.0;
           break;
         default:
           break;
       }
-    }
-    await _loadTable(channel, y, waveType[channel]!, -1);
-  }
 
-  Future<void> _loadTable(
-      String channel, List<double> y, String mode, double amp) async {
-    waveType[channel] = mode;
-    List<String> channels = [];
-    List<double> points = y;
-    channels.add('SI1');
-    channels.add('SI2');
-    int num;
-    if (channels.contains(channel)) {
-      num = channels.indexOf(channel) + 1;
-    } else {
-      logger.e("Channel doesn't exist. Try SI1 or SI2");
-      return;
+      int val = (centerTable + (ampTable * rawVal)).round();
+      yMod1.add(val.clamp(0, 511));
     }
-    if (amp == -1) {
-      amp = 0.95;
-    }
-    double largeMax = 511 * amp, smallMax = 63 * amp;
-    double minimum = y.reduce(min);
-    for (int i = 0; i < y.length; i++) {
-      y[i] = y[i] - minimum;
-    }
-    double maximum = y.reduce(max);
-    List<int> yMod1 = [];
-    for (int i = 0; i < y.length; i++) {
-      double temp = 1 - (y[i] / maximum);
-      yMod1.add((largeMax - largeMax * temp).round());
-    }
-    y = [];
-    for (int i = 0; i < points.length; i += 16) {
-      y.add(points[i]);
-    }
-    minimum = y.reduce(min);
-    for (int i = 0; i < y.length; i++) {
-      y[i] = y[i] - minimum;
-    }
-    maximum = y.reduce(max);
+
     List<int> yMod2 = [];
-    for (int i = 0; i < y.length; i++) {
-      double temp = 1 - (y[i] / maximum);
-      yMod2.add((smallMax - smallMax * temp).round());
+    for (int i = 0; i < 512; i += 16) {
+      yMod2.add((yMod1[i] ~/ 8).clamp(0, 63));
     }
-
     try {
       mPacketHandler.sendByte(mCommandsProto.wavegen);
-      switch (num) {
-        case 1:
-          mPacketHandler.sendByte(mCommandsProto.loadWaveform1);
-          break;
-        case 2:
-          mPacketHandler.sendByte(mCommandsProto.loadWaveform2);
-          break;
-      }
+      mPacketHandler.sendByte(
+        channel == 'SI1'
+            ? mCommandsProto.loadWaveform1
+            : mCommandsProto.loadWaveform2,
+      );
       for (int a in yMod1) {
         mPacketHandler.sendInt(a);
       }
@@ -593,8 +537,10 @@ class ScienceLab {
       }
       await mPacketHandler.getAcknowledgement();
     } catch (e) {
-      logger.e(e);
+      logger.e("Error loading waveform equation: $e");
     }
+
+    waveType[channel] = function;
   }
 
   Future<void> clearBuffer(int startingPosition, int totalPoints) async {
@@ -1240,7 +1186,8 @@ class ScienceLab {
     }
   }
 
-  Future<double> setSI1(double frequency, String? waveType) async {
+  Future<double> setSI1(double frequency, String? waveType,
+      {double amplitudeVolt = 3.0}) async {
     double freqLowLimit = 0.1;
     int highRes, tableSize;
 
@@ -1257,9 +1204,7 @@ class ScienceLab {
 
     if (waveType != null) {
       if (waveType == "sine" || waveType == "tria" || waveType == "sawtooth") {
-        if (this.waveType["SI1"] != waveType) {
-          loadEquation("SI1", waveType);
-        }
+        await loadEquation("SI1", waveType, amplitudeVolt: amplitudeVolt);
       } else {
         logger.e("Not a valid waveform. try sine, tria, or sawtooth");
       }
@@ -1297,7 +1242,8 @@ class ScienceLab {
     return -1;
   }
 
-  Future<double> setSI2(double frequency, String? waveType) async {
+  Future<double> setSI2(double frequency, String? waveType,
+      {double amplitudeVolt = 3.0}) async {
     double freqLowLimit = 0.1;
     int highRes, tableSize;
 
@@ -1314,9 +1260,7 @@ class ScienceLab {
 
     if (waveType != null) {
       if (waveType == "sine" || waveType == "tria" || waveType == "sawtooth") {
-        if (this.waveType["SI2"] != waveType) {
-          loadEquation("SI2", waveType);
-        }
+        await loadEquation("SI2", waveType, amplitudeVolt: amplitudeVolt);
       } else {
         logger.e("Not a valid waveform. try sine, tria, or sawtooth");
       }
@@ -1354,12 +1298,15 @@ class ScienceLab {
     return -1;
   }
 
-  Future<double> setWaves(
-      double frequency, double phase, double frequency2) async {
+  Future<double> setWaves(double frequency, double phase, double frequency2,
+      String waveType1, String waveType2,
+      {double amplitudeVolt1 = 3.0, double amplitudeVolt2 = 3.0}) async {
     int highRes, tableSize, highRes2, tableSize2;
     int wavelength = 0, wavelength2 = 0;
 
     if (frequency2 == -1) frequency2 = frequency;
+    await loadEquation("SI1", waveType1, amplitudeVolt: amplitudeVolt1);
+    await loadEquation("SI2", waveType2, amplitudeVolt: amplitudeVolt2);
 
     if (frequency < 0.1) {
       logger.e("frequency 1 too low");
