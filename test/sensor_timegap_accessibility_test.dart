@@ -51,6 +51,8 @@ void main() {
         final initial = sliderNode().getSemanticsData();
         expect(initial.value, '400 ${localizations.ms}');
         expect(initial.label, contains(localizations.timeGap));
+        expect(initial.increasedValue, '500 ${localizations.ms}');
+        expect(initial.decreasedValue, '300 ${localizations.ms}');
         expect(initial.hasAction(SemanticsAction.increase), isTrue);
         expect(initial.hasAction(SemanticsAction.decrease), isTrue);
         await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
