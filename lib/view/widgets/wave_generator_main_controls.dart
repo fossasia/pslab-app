@@ -30,6 +30,7 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
     WaveConst.phase: WaveData.phaseMax.value,
     WaveConst.duty: WaveData.dutyMax.value,
   };
+
   @override
   Widget build(BuildContext context) {
     labelMap = {
@@ -42,6 +43,7 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
       WaveConst.phase: appLocalizations.unitDeg,
       WaveConst.duty: appLocalizations.unitPercentage,
     };
+
     return Consumer<WaveGeneratorStateProvider>(
       builder: (context, provider, _) {
         return Column(
@@ -274,9 +276,14 @@ class _WaveGeneratorMainControlsState extends State<WaveGeneratorMainControls> {
                                           provider.propSelected]
                                       ?.toDouble() ??
                                   WaveData.freqMin.value.toDouble()),
-                      onChanged: (value) async {
+                      onChanged: (value) {
                         if (provider.propSelected != null) {
-                          await provider.setValue(value.round());
+                          provider.setPreviewValue(value.round());
+                        }
+                      },
+                      onChangeEnd: (value) async {
+                        if (provider.propSelected != null) {
+                          await provider.setWave();
                         }
                       },
                     ),
