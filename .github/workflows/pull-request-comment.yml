@@ -17,152 +17,144 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+            const fs = require('fs');
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
                owner: context.repo.owner,
                repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
+               run_id: ${{ github.event.workflow_run.id }},
             });
 
-            var pr = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "pr"
-            })[0];
-            var download = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: pr.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+            async function downloadIfAvailable(name, fileName) {
+              const artifact = artifacts.data.artifacts.find((a) => a.name === name);
+              if (artifact) {
+                const download = await github.rest.actions.downloadArtifact({
+                   owner: context.repo.owner,
+                   repo: context.repo.repo,
+                   artifact_id: artifact.id,
+                   archive_format: 'zip',
+                });
+                fs.writeFileSync(`${{github.workspace}}/${fileName}`, Buffer.from(download.data));
+                return true;
+              }
+              return false;
+            }
 
-            var androidScreenshots = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "Android Screenshots"
-            })[0];
-            var downloadAndroidScreenshots = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: androidScreenshots.id,
-               archive_format: 'zip',
-            });
-
-            fs.writeFileSync('${{github.workspace}}/androidScreenshots.zip', Buffer.from(downloadAndroidScreenshots.data));
-
-            var iPadScreenshots = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "iPad Screenshots"
-            })[0];
-            var downloadiPadScreenshots = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: iPadScreenshots.id,
-               archive_format: 'zip',
-            });
-
-            fs.writeFileSync('${{github.workspace}}/iPadScreenshots.zip', Buffer.from(downloadiPadScreenshots.data));
-
-            var iPhoneScreenshots = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "iPhone Screenshots"
-            })[0];
-            var downloadiPhoneScreenshots = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: iPhoneScreenshots.id,
-               archive_format: 'zip',
-            });
-
-            fs.writeFileSync('${{github.workspace}}/iPhoneScreenshots.zip', Buffer.from(downloadiPhoneScreenshots.data));
+            await downloadIfAvailable("pr", "pr.zip");
+            await downloadIfAvailable("Android Screenshots", "androidScreenshots.zip");
+            await downloadIfAvailable("iPad Screenshots", "iPadScreenshots.zip");
+            await downloadIfAvailable("iPhone Screenshots", "iPhoneScreenshots.zip");
 
       - name: Unzip Artifacts
         shell: bash
         run: |
-          unzip pr.zip
-          mkdir screenshots
-          unzip androidScreenshots.zip -d screenshots/
-          unzip iPadScreenshots.zip -d screenshots/
-          unzip iPhoneScreenshots.zip -d screenshots/
+          if [ -f "pr.zip" ]; then unzip pr.zip; fi
+          mkdir -p screenshots
+          if [ -f "androidScreenshots.zip" ]; then unzip androidScreenshots.zip -d screenshots/; fi
+          if [ -f "iPadScreenshots.zip" ]; then unzip iPadScreenshots.zip -d screenshots/; fi
+          if [ -f "iPhoneScreenshots.zip" ]; then unzip iPhoneScreenshots.zip -d screenshots/; fi
 
       - name: Fetch PR Number
         id: fetch-pr-number
         uses: actions/github-script@v9
         with:
           script: |
-            var fs = require('fs')
-            var issue_number = Number(fs.readFileSync('./NR'));
+            const fs = require('fs');
+            let issue_number;
+            
+            if (fs.existsSync('./NR')) {
+              issue_number = Number(fs.readFileSync('./NR', 'utf8').trim());
+            } else {
+              const { data } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: '${{ github.event.workflow_run.head_sha }}'
+              });
+              if (data.length > 0) {
+                issue_number = data[0].number;
+              } else {
+                core.setFailed("Could not determine PR number.");
+                return;
+              }
+            }
             core.setOutput("pr_number", issue_number);
 
       - name: Update PR Screenshots
         shell: bash
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          git clone --branch=pr-screenshots --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} pr-screenshots
-          cd pr-screenshots
-          
-          for file in ../screenshots/*; do
-            if [[ -f "$file" ]]; then
-              filename=$(basename "$file")
-          
-              if [[ "$filename" =~ -([0-9]+_.*\.png)$ ]]; then
-                screenshot_part="${BASH_REMATCH[1]}"
-          
-                if [[ "$filename" == *"iPhone"* ]]; then
-                  generic_name="iPhone-${screenshot_part}"
-                elif [[ "$filename" == *"iPad"* ]]; then
-                  generic_name="iPad-${screenshot_part}"
-                else
-                  generic_name="Android-${screenshot_part}"
-                fi
-              else
-                generic_name="$filename"
-              fi
-          
-              cp -f "$file" "./${{ steps.fetch-pr-number.outputs.pr_number }}_${generic_name}"
+          if [ -d "screenshots" ] && [ "$(ls -A screenshots 2>/dev/null)" ]; then
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            
+            if ! git clone --branch=pr-screenshots --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} pr-screenshots; then
+              mkdir pr-screenshots
+              cd pr-screenshots
+              git init
+              git remote add origin https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }}
+            else
+              cd pr-screenshots
             fi
-          done
-          
-          # Force push to pr-screenshots branch
-          git checkout --orphan temporary
-          git add --all .
-          git commit -am "[Auto] Update screenshots for #${{ steps.fetch-pr-number.outputs.pr_number }} ($(date +%Y-%m-%d.%H:%M:%S))"
-          git branch -D pr-screenshots
-          git branch -m pr-screenshots
-          git push --force origin pr-screenshots
+            
+            for file in ../screenshots/*; do
+              if [[ -f "$file" ]]; then
+                filename=$(basename "$file")
+                if [[ "$filename" =~ -([0-9]+_.*\.png)$ ]]; then
+                  screenshot_part="${BASH_REMATCH[1]}"
+                  if [[ "$filename" == *"iPhone"* ]]; then
+                    generic_name="iPhone-${screenshot_part}"
+                  elif [[ "$filename" == *"iPad"* ]]; then
+                    generic_name="iPad-${screenshot_part}"
+                  else
+                    generic_name="Android-${screenshot_part}"
+                  fi
+                else
+                  generic_name="$filename"
+                fi
+                cp -f "$file" "./${{ steps.fetch-pr-number.outputs.pr_number }}_${generic_name}"
+              fi
+            done
+            
+            git checkout --orphan temporary
+            git add --all .
+            git commit -am "[Auto] Update screenshots for #${{ steps.fetch-pr-number.outputs.pr_number }} ($(date +%Y-%m-%d.%H:%M:%S))"
+            git branch -D pr-screenshots || true
+            git branch -m pr-screenshots
+            git push --force origin pr-screenshots
+          fi
 
-      - name: Build success
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+      - name: Update PR Comment
         uses: actions/github-script@v9
         with:
           script: |
-            var issue_number = ${{ steps.fetch-pr-number.outputs.pr_number }};
+            const issue_number = ${{ steps.fetch-pr-number.outputs.pr_number }};
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+            const conclusion = '${{ github.event.workflow_run.conclusion }}';
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
                owner,
                repo,
-               run_id: ${{github.event.workflow_run.id }},
+               run_id: ${{ github.event.workflow_run.id }},
             });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "apk-files"
-            })[0];
-            const artifact_url = `https://github.com/${owner}/${repo}/actions/runs/${{ github.event.workflow_run.id }}/artifacts/${matchArtifact.id}`;
+            let artifactLinks = "";
+            const ignoredArtifacts = ["pr", "Android Screenshots", "iPad Screenshots", "iPhone Screenshots"];
             
-            const comments = await github.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number
-            });
+            artifacts.data.artifacts.forEach(artifact => {
+              if (!ignoredArtifacts.includes(artifact.name)) {
+                const url = `https://github.com/${owner}/${repo}/actions/runs/${{ github.event.workflow_run.id }}/artifacts/${artifact.id}`;
+                
+                let platformName = artifact.name;
+                if (artifact.name.includes('apk-files')) platformName = 'Android';
+                else if (artifact.name.includes('iOS IPA')) platformName = 'iOS';
+                else if (artifact.name.includes('windows-installer')) platformName = 'Windows';
+                else if (artifact.name.includes('macos-app')) platformName = 'macOS';
+                else if (artifact.name === 'linux-packages') platformName = 'Linux';
+                else if (artifact.name === 'linux-packages-arm64') platformName = 'Linux (ARM64)';
+                else if (artifact.name.includes('web-app') || artifact.name.includes('web')) platformName = 'Web';
 
-            let comment_id;
-            for (const comment of comments.data) {
-              if (comment.user.login === 'github-actions[bot]') {
-                comment_id = comment.id;
-                break;
+                artifactLinks += `- **${platformName}**: [Download](${url})\n`;
               }
-            }
-            
-            var statusText = `Build successful. APKs to test: ${artifact_url}.`;
+            });
 
-            var androidScreenshots = `
+            const screenshotsSection = `
             <details>
             <summary>Android Screenshots</summary>
             <table>
@@ -175,15 +167,11 @@ jobs:
               <tr>
                 <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Android-5_multimeter.png?raw=true" width="1080"/></td>
                 <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Android-6_wave_generator.png?raw=true" width="1080"/></td>
-                <td colspan="2">
-                  <img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Android-7_oscilloscope.png?raw=true" width="2146"/>
-                </td>
+                <td colspan="2"><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_Android-7_oscilloscope.png?raw=true" width="2146"/></td>
               </tr>
             </table>
             </details>
-            `;
 
-            var iPhoneScreenshots = `
             <details>
             <summary>iPhone Screenshots</summary>
             <table>
@@ -196,15 +184,11 @@ jobs:
               <tr>
                 <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone-5_multimeter.png?raw=true" width="1080"/></td>
                 <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone-6_wave_generator.png?raw=true" width="1080"/></td>
-                <td colspan="2">
-                  <img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone-7_oscilloscope.png?raw=true" width="2146"/>
-                </td>
+                <td colspan="2"><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPhone-7_oscilloscope.png?raw=true" width="2146"/></td>
               </tr>
             </table>
             </details>
-            `;
 
-            var iPadScreenshots = `
             <details>
             <summary>iPad Screenshots</summary>
             <table>
@@ -217,48 +201,22 @@ jobs:
               <tr>
                 <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad-5_multimeter.png?raw=true" width="1080"/></td>
                 <td><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad-6_wave_generator.png?raw=true" width="1080"/></td>
-                <td colspan="2">
-                  <img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad-7_oscilloscope.png?raw=true" width="2146"/>
-                </td>
+                <td colspan="2"><img src="https://github.com/${owner}/${repo}/blob/pr-screenshots/${issue_number}_iPad-7_oscilloscope.png?raw=true" width="2146"/></td>
               </tr>
             </table>
             </details>
             `;
 
-            const body = `
-            ## Build Status
-            ${statusText}
-
-            ## Screenshots
-            ${androidScreenshots}
-            ${iPhoneScreenshots}
-            ${iPadScreenshots}
-            `;
-            
-            if (comment_id) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id,
-                body
-              });
+            let body = `**Build Status:** `;
+            if (conclusion === 'success') {
+              body += `Build successful.\n\n## Build artifacts to test\n\n${artifactLinks || '_No artifacts uploaded._'}\n\n## Screenshots\n\n${screenshotsSection}`;
             } else {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body
-              });
+              body += `Build workflow failed. _Please check the Actions logs for details._\n`;
+              if (artifactLinks) {
+                body += `\n## Build artifacts to test\n\n(Available before failure)\n\n${artifactLinks}\n`;
+              }
+              body += `\n> *Note: Screenshots are not generated on failed builds. Below are the latest screenshots from the \`pr-screenshots\` branch, if they exist.*\n\n## Screenshots\n\n${screenshotsSection}`;
             }
-
-      - name: Build failed
-        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-        uses: actions/github-script@v9
-        with:
-          script: |
-            var issue_number = ${{ steps.fetch-pr-number.outputs.pr_number }};
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
 
             const comments = await github.rest.issues.listComments({
               owner,
@@ -266,27 +224,13 @@ jobs:
               issue_number
             });
 
-            let comment_id;
-            for (const comment of comments.data) {
-              if (comment.user.login === 'github-actions[bot]') {
-                comment_id = comment.id;
-                break;
-              }
-            }
+            const botComment = comments.data.find(comment => comment.user.login === 'github-actions[bot]');
 
-            const body = `
-            ## Build Status
-            _Build workflow failed. Please check the logs for more information._
-
-            ## Screenshots
-            _Not able to fetch screenshots._
-            `;
-            
-            if (comment_id) {
+            if (botComment) {
               await github.rest.issues.updateComment({
                 owner,
                 repo,
-                comment_id,
+                comment_id: botComment.id,
                 body
               });
             } else {
