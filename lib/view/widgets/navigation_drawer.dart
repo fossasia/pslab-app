@@ -430,7 +430,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 SharePlus.instance.share(
                   ShareParams(
                     text:
-                        '${appLocalizations.shareApp}\nhttps://docs.pslab.io/application/Readme.html',
+                        '${appLocalizations.shareApp}\nhttps://docs.pslab.io/application/Read/me.html',
                   ),
                 );
               },
