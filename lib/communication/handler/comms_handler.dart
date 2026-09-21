@@ -180,7 +180,6 @@ class PSLabCommunicationHandler implements CommunicationHandler {
 
     try {
       rust_api.writeData(data: src.toList());
-      logger.d("write completed successfully!");
     } catch (e) {
       logger.e("write failed: $e");
     }

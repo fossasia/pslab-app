@@ -29,16 +29,19 @@ enum WaveConst {
   triangular,
   square,
   pwm,
-  sawtooth
+  sawtooth,
+  amplitude
 }
 
 enum WaveData {
   freqMin(10),
   dutyMin(0),
   phaseMin(0),
+  ampMin(1),
   freqMax(5000),
   phaseMax(360),
-  dutyMax(100);
+  dutyMax(100),
+  ampMax(30);
 
   final int value;
   const WaveData(this.value);
@@ -54,21 +57,15 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   static final int sawtooth = 4;
 
   late WaveConst? selectedAnalogWave;
-
   late WaveConst? selectedDigitalWave;
-
   late WaveConst? propSelected;
 
   late WaveGeneratorConstants waveGeneratorConstants;
-
   late List<List<FlSpot>> waveData;
-
   late ScienceLab _scienceLab;
 
   List<List<dynamic>> _recordedData = [];
-
   Position? currentPosition;
-
   AudioStream? _audioStream;
 
   bool isPlayingSound = false;
@@ -79,15 +76,10 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
   WaveGeneratorStateProvider() {
     selectedAnalogWave = WaveConst.wave1;
-
     selectedDigitalWave = WaveConst.sqr1;
-
     _scienceLab = getIt.get<ScienceLab>();
-
     propSelected = null;
-
     waveGeneratorConstants = WaveGeneratorConstants();
-
     waveData = [];
   }
 
@@ -98,50 +90,36 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   void toggleSound() {
     if (isPlayingSound) {
       isPlayingSound = false;
-
       _stopAudioStream();
     } else {
       isPlayingSound = true;
-
       _startAudioStream();
     }
-
     notifyListeners();
   }
 
   Future<void> _startAudioStream() async {
     _audioStream = getAudioStream();
-
     _audioStream!.init(bufferMilliSec: 1000, channels: 1, sampleRate: 44100);
-
     _audioStream!.resume();
 
     await Future.delayed(const Duration(milliseconds: 100));
-
     _audioAngle = 0.0;
 
     final int bufferSize = 4096;
-
     final double bufferDurationMs = (bufferSize / 44100.0) * 1000.0;
-
     final List<Float32List> bufferPool =
         List.generate(5, (_) => Float32List(bufferSize));
 
     int poolIndex = 0;
-
     double generatedAudioMs = 0.0;
-
     Stopwatch stopwatch = Stopwatch()..start();
 
     for (int i = 0; i < 3; i++) {
       final buffer = bufferPool[poolIndex];
-
       poolIndex = (poolIndex + 1) % bufferPool.length;
-
       _fillAudioBuffer(buffer, bufferSize);
-
       _audioStream!.push(buffer);
-
       generatedAudioMs += bufferDurationMs;
     }
 
@@ -150,13 +128,9 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
       if (generatedAudioMs - elapsedRealTimeMs < 300.0) {
         final buffer = bufferPool[poolIndex];
-
         poolIndex = (poolIndex + 1) % bufferPool.length;
-
         _fillAudioBuffer(buffer, bufferSize);
-
         _audioStream!.push(buffer);
-
         generatedAudioMs += bufferDurationMs;
       } else {
         await Future.delayed(const Duration(milliseconds: 20));
@@ -170,7 +144,6 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
   void _fillAudioBuffer(Float32List buffer, int bufferSize) {
     double frequency;
-
     double duty = 0.5;
 
     if (waveGeneratorConstants.modeSelected == WaveConst.square) {
@@ -181,18 +154,15 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
       frequency = waveGeneratorConstants
           .wave[WaveConst.sqr1]![WaveConst.frequency]!
           .toDouble();
-
       int currentDuty =
           waveGeneratorConstants.wave[selectedDigitalWave]![WaveConst.duty] ??
               50;
-
       duty = currentDuty / 100.0;
     }
 
     if (frequency <= 0) frequency = 1;
 
     double increment = (2 * math.pi * frequency) / 44100.0;
-
     const double volume = 0.15;
 
     for (int i = 0; i < bufferSize; i++) {
@@ -209,12 +179,10 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         } else if (currentWaveType == sawtooth) {
           sample = (_audioAngle / math.pi) - 1.0;
         }
-
         buffer[i] = sample * volume;
       }
 
       _audioAngle += increment;
-
       if (_audioAngle >= 2 * math.pi) {
         _audioAngle -= 2 * math.pi;
       }
@@ -224,7 +192,6 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
   void _stopAudioStream() {
     if (_audioStream != null) {
       _audioStream!.uninit();
-
       _audioStream = null;
     }
   }
@@ -296,6 +263,17 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setAmplitude(double amplitudeVoltage) async {
+    int ampInt = (amplitudeVoltage * 10).round();
+    waveGeneratorConstants.wave[selectedAnalogWave]?[WaveConst.amplitude] =
+        ampInt;
+    isAnalogActive = true;
+
+    previewWave();
+    await setWave();
+    notifyListeners();
+  }
+
   Future<void> setValue(int value) async {
     if (waveGeneratorConstants.modeSelected == WaveConst.square) {
       waveGeneratorConstants.wave[selectedAnalogWave]?[propSelected!] = value;
@@ -311,6 +289,23 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
     }
     previewWave();
     await setWave();
+    notifyListeners();
+  }
+
+  void setPreviewValue(int value) {
+    if (waveGeneratorConstants.modeSelected == WaveConst.square) {
+      waveGeneratorConstants.wave[selectedAnalogWave]?[propSelected!] = value;
+      isAnalogActive = true;
+    } else {
+      if (propSelected == WaveConst.frequency) {
+        waveGeneratorConstants.wave[WaveConst.sqr1]?[propSelected!] = value;
+      } else {
+        waveGeneratorConstants.wave[selectedDigitalWave]?[propSelected!] =
+            value;
+      }
+      isDigitalActive = true;
+    }
+    previewWave();
     notifyListeners();
   }
 
@@ -337,11 +332,21 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
     if (_scienceLab.isConnected()) {
       if (waveGeneratorConstants.modeSelected == WaveConst.square) {
+        int ampW1 = waveGeneratorConstants.wave[WaveConst.wave1]
+                ?[WaveConst.amplitude] ??
+            30;
+        int ampW2 = waveGeneratorConstants.wave[WaveConst.wave2]
+                ?[WaveConst.amplitude] ??
+            30;
+
         if (phase == WaveData.phaseMin.getValue) {
-          await _scienceLab.setSI1(freq1, waveType1);
-          await _scienceLab.setSI2(freq2, waveType2);
+          await _scienceLab.setSI1(freq1, waveType1,
+              amplitudeVolt: ampW1 / 10.0);
+          await _scienceLab.setSI2(freq2, waveType2,
+              amplitudeVolt: ampW2 / 10.0);
         } else {
-          await _scienceLab.setWaves(freq1, phase, freq2);
+          await _scienceLab.setWaves(freq1, phase, freq2, waveType1, waveType2,
+              amplitudeVolt1: ampW1 / 10.0, amplitudeVolt2: ampW2 / 10.0);
         }
       } else {
         double freqSqr1 = waveGeneratorConstants
@@ -454,6 +459,7 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
 
   List<FlSpot> getSamplePoints(bool isReference) {
     List<FlSpot> entries = [];
+
     if (waveGeneratorConstants.modeSelected == WaveConst.pwm) {
       double freq = waveGeneratorConstants
           .wave[WaveConst.sqr1]![WaveConst.frequency]!
@@ -483,34 +489,32 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
       double phase = 0;
       int shape =
           waveGeneratorConstants.wave[selectedAnalogWave]![WaveConst.waveType]!;
-
       double freq = waveGeneratorConstants
           .wave[selectedAnalogWave]![WaveConst.frequency]!
           .toDouble();
+      int ampStored = waveGeneratorConstants.wave[selectedAnalogWave]
+              ?[WaveConst.amplitude] ??
+          30;
+      double amplitude = ampStored / 10.0;
+      double centerVolt = 0.0;
 
       if (selectedAnalogWave != WaveConst.wave1 && !isReference) {
         phase = waveGeneratorConstants.wave[WaveConst.wave2]![WaveConst.phase]!
             .toDouble();
       }
 
-      if (shape == sin) {
-        for (int i = 0; i < 5000; i++) {
-          double y = 5 * math.sin(2 * pi * (freq / 1e6) * i + phase * pi / 180);
-          entries.add(FlSpot(i.toDouble(), y));
+      for (int i = 0; i < 5000; i++) {
+        double rawVal = 0.0;
+        double t = 2 * pi * (freq / 1e6) * i + phase * pi / 180;
+        if (shape == sin) {
+          rawVal = math.sin(t);
+        } else if (shape == triangular) {
+          rawVal = (2 / pi) * math.asin(math.sin(t));
+        } else if (shape == sawtooth) {
+          rawVal = (((t % (2 * pi)) / pi) - 1.0);
         }
-      } else if (shape == triangular) {
-        for (int i = 0; i < 5000; i++) {
-          double y = (10 / pi) *
-              (math.asin(
-                  math.sin(2 * pi * (freq / 1e6) * i + phase * pi / 180)));
-          entries.add(FlSpot(i.toDouble(), y));
-        }
-      } else if (shape == sawtooth) {
-        for (int i = 0; i < 5000; i++) {
-          double t = 2 * pi * (freq / 1e6) * i + phase * pi / 180;
-          double y = 5 * (((t % (2 * pi)) / pi) - 1.0);
-          entries.add(FlSpot(i.toDouble(), y));
-        }
+        double y = (amplitude * rawVal) + centerVolt;
+        entries.add(FlSpot(i.toDouble(), y));
       }
     }
     return entries;
@@ -571,6 +575,8 @@ class WaveGeneratorStateProvider extends ChangeNotifier {
         return WaveConst.pwm;
       case 'sawtooth':
         return WaveConst.sawtooth;
+      case 'offset':
+        return WaveConst.amplitude;
       default:
         return WaveConst.wave1;
     }

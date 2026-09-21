@@ -31,16 +31,9 @@ runs:
       run: |
         flutter config --enable-linux-desktop
         source linux/prep.sh
-        sed -i "s/^version: .*/version: ${{ inputs.VERSION_NAME }}+${{ inputs.VERSION_CODE }}/" pubspec.yaml
         flutter build linux --release \
           --build-name ${{ inputs.VERSION_NAME }} \
           --build-number ${{ inputs.VERSION_CODE }}
-        for vf in build/linux/*/release/bundle/data/flutter_assets/version.json \
-                  build/linux/*/release/bundle/share/pslab/flutter_assets/version.json; do
-          [ -f "$vf" ] || continue
-          python3 -c "import json,sys; p,v,b=sys.argv[1:4]; d=json.load(open(p)); d['version']=v; d['build_number']=b; json.dump(d, open(p,'w'))" \
-            "$vf" "${{ inputs.VERSION_NAME }}" "${{ inputs.VERSION_CODE }}"
-        done
 
     - name: Install fpm
       shell: bash

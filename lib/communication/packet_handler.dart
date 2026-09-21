@@ -4,10 +4,17 @@ import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
 import 'package:pslab/others/logger_service.dart';
 
+import '../src/rust/api/simple.dart' as rust_api;
+
+enum BoardType { binary, scpi, other }
+
 class PacketHandler {
   late Uint8List _buffer;
   late CommunicationHandler _mCommunicationHandler;
+
   static String version = '';
+  static BoardType boardType = BoardType.other;
+
   late CommandsProto _mCommandsProto;
   int _timeout = 500, versionStringLength = 8, fwVersionLength = 3;
 
@@ -28,8 +35,10 @@ class PacketHandler {
       if (scpiResponse.contains("PSLab Pico") ||
           scpiResponse.contains("PSLab Mini")) {
         version = scpiResponse;
+        boardType = BoardType.scpi;
         return version;
       }
+
       sendByte(_mCommandsProto.common);
       sendByte(_mCommandsProto.getVersion);
       await _commonRead(versionStringLength + 1);
@@ -37,11 +46,37 @@ class PacketHandler {
           .decode(_buffer.sublist(0, versionStringLength + 1))
           .split('\n')
           .first;
+      boardType = BoardType.binary;
     } catch (e) {
       logger.e("Error in getting version: $e");
     }
-
     return version;
+  }
+
+  Future<void> sendScpi(String command) async {
+    String fullCommand = "$command\r\n";
+    _mCommunicationHandler.write(
+        Uint8List.fromList(fullCommand.codeUnits), 100);
+    await Future.delayed(const Duration(milliseconds: 25));
+  }
+
+  Future<String> queryScpi(String command) async {
+    await sendScpi(command);
+
+    Uint8List buffer = Uint8List(256);
+    int bytesRead = await _mCommunicationHandler.read(buffer, 256, 500);
+    if (bytesRead > 0) {
+      String response =
+          String.fromCharCodes(buffer.sublist(0, bytesRead)).trim();
+      return response;
+    }
+    return "";
+  }
+
+  Future<Uint8List> queryScpiBinary(String command) async {
+    Uint8List data =
+        await rust_api.queryScpiBinaryRust(command: command, timeoutMs: 1000);
+    return data;
   }
 
   void sendByte(int val) {
@@ -134,7 +169,7 @@ class PacketHandler {
 
   Future<int> getFirmwareVersion() async {
     try {
-      if (version.contains("Pico") || version.contains("Mini")) {
+      if (boardType == BoardType.scpi) {
         return 3;
       }
       sendByte(_mCommandsProto.common);
@@ -172,7 +207,9 @@ class PacketHandler {
 
   Future<int> _commonRead(int bytesToRead) async {
     if (_mCommunicationHandler.isConnected()) {
-      return await _mCommunicationHandler.read(_buffer, bytesToRead, _timeout);
+      int res =
+          await _mCommunicationHandler.read(_buffer, bytesToRead, _timeout);
+      return res;
     }
     return 0;
   }
@@ -181,19 +218,5 @@ class PacketHandler {
     if (_mCommunicationHandler.isConnected()) {
       _mCommunicationHandler.write(data, _timeout);
     }
-  }
-
-  Future<String> queryScpi(String command) async {
-    String fullCommand = "$command\r\n";
-    _mCommunicationHandler.write(
-        Uint8List.fromList(fullCommand.codeUnits), 100);
-    Uint8List buffer = Uint8List(256);
-    int bytesRead = await _mCommunicationHandler.read(buffer, 256, 500);
-    if (bytesRead > 0) {
-      String response =
-          String.fromCharCodes(buffer.sublist(0, bytesRead)).trim();
-      return response;
-    }
-    return "";
   }
 }
