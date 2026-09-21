@@ -49,7 +49,7 @@ dependencies:
   web: ^1.1.1
   mp_audio_stream: ^0.2.2
   ffi: ^2.2.0
-  home_widget: ^0.9.4
+  home_widget: ^0.10.0
   girix_code_gauge: ^0.0.6
   image_picker: ^1.2.3
   rust_lib_pslab:
