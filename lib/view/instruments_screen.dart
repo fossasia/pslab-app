@@ -96,6 +96,13 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     }
   }
 
+  void _onUnresponsiveDevice() {
+    if (getIt.get<BoardStateProvider>().unresponsiveDeviceNotifier.value) {
+      _showWarningDialog(appLocalizations.unresponsiveDeviceAlertTitle,
+          appLocalizations.unresponsiveDeviceAlertMessage);
+    }
+  }
+
   void _showWarningDialog(String title, String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -126,6 +133,10 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
         .get<BoardStateProvider>()
         .legacyFirmwareNotifier
         .removeListener(_onLegacyFirmware);
+    getIt
+        .get<BoardStateProvider>()
+        .unresponsiveDeviceNotifier
+        .removeListener(_onUnresponsiveDevice);
     super.dispose();
   }
 
@@ -136,6 +147,10 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
         .get<BoardStateProvider>()
         .legacyFirmwareNotifier
         .addListener(_onLegacyFirmware);
+    getIt
+        .get<BoardStateProvider>()
+        .unresponsiveDeviceNotifier
+        .addListener(_onUnresponsiveDevice);
 
     _instrumentDatas = [
       _InstrumentData(appLocalizations.oscilloscope,
