@@ -213,7 +213,12 @@ class BoardStateProvider extends ChangeNotifier {
   }
 
   Future<void> _validateHandshake() async {
-    await setPSLabVersionIDs();
+    try {
+      await setPSLabVersionIDs();
+    } catch (e) {
+      logger.w("Version handshake threw: $e");
+      pslabVersion = 0;
+    }
 
     if (pslabVersion == 0 || pslabVersionID == 'Not Connected') {
       logger.w(
