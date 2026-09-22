@@ -105,10 +105,11 @@ class BoardStateProvider extends ChangeNotifier {
     bool anyPortFailedHandshake = false;
 
     for (String port in ports) {
+      bool portOpened = false;
       try {
         logger.d("Testing port $port for PSLab handshake...");
         comms.targetPortName = port;
-        bool portOpened = await scienceLabCommon.openDevice();
+        portOpened = await scienceLabCommon.openDevice();
 
         if (portOpened) {
           await setPSLabVersionIDs();
@@ -130,6 +131,10 @@ class BoardStateProvider extends ChangeNotifier {
         }
       } catch (e) {
         logger.w("Exception while testing $port: $e");
+        // A handshake that throws is as unresponsive as one that fails.
+        if (portOpened && !pslabIsConnected) {
+          anyPortFailedHandshake = true;
+        }
         comms.close();
         _resetConnectionState();
       }
