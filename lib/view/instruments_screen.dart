@@ -97,7 +97,10 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   }
 
   void _onUnresponsiveDevice() {
-    if (getIt.get<BoardStateProvider>().unresponsiveDeviceNotifier.value) {
+    final notifier = getIt.get<BoardStateProvider>().unresponsiveDeviceNotifier;
+    if (notifier.value) {
+      // Consume the report so reopening this screen does not show it again.
+      notifier.value = false;
       _showWarningDialog(appLocalizations.unresponsiveDeviceAlertTitle,
           appLocalizations.unresponsiveDeviceAlertMessage);
     }
@@ -151,6 +154,8 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
         .get<BoardStateProvider>()
         .unresponsiveDeviceNotifier
         .addListener(_onUnresponsiveDevice);
+    // Show a failure reported before this screen was listening.
+    _onUnresponsiveDevice();
 
     _instrumentDatas = [
       _InstrumentData(appLocalizations.oscilloscope,
