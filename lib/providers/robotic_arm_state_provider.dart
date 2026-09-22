@@ -40,7 +40,6 @@ class RoboticArmStateProvider extends ChangeNotifier {
   int get totalTimelineItems =>
       _selectedDuration == appLocalizations.duration2Min ? 120 : 60;
 
-  // Playback advances one timeline step per second.
   Duration get timelineDuration => Duration(seconds: totalTimelineItems);
 
   VoidCallback? onPlaybackEnd;
