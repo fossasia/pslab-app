@@ -71,7 +71,8 @@ class ScientificDataAnalyzer {
     }
 
     if (inst == 'oscilloscope' || inst == 'logic analyzer') {
-      return _parseOscilloscopeData(dataRows);
+      // The Logic Analyzer stores maxY and minY before its Channels column.
+      return _parseOscilloscopeData(dataRows, headers.indexOf('Channels'));
     }
 
     Map<String, InstrumentSeries> results = {};
@@ -207,7 +208,11 @@ class ScientificDataAnalyzer {
   }
 
   static Map<String, InstrumentSeries> _parseOscilloscopeData(
-      List<List<dynamic>> dataRows) {
+      List<List<dynamic>> dataRows, int channelsColumn) {
+    // Without a Channels header, assume the Oscilloscope layout.
+    if (channelsColumn < 0) {
+      channelsColumn = 3;
+    }
     Map<String, InstrumentSeries> results = {};
 
     if (dataRows.isEmpty) {
@@ -223,7 +228,7 @@ class ScientificDataAnalyzer {
     Map<String, List<FlSpot>> channelSpots = {};
 
     for (var row in dataRows) {
-      if (row.length < 4) {
+      if (row.length <= channelsColumn) {
         continue;
       }
 
@@ -235,7 +240,7 @@ class ScientificDataAnalyzer {
       double timeOffsetSec = (currentTimestamp - firstTimestamp) / 1000.0;
 
       String spotsStr = row[2].toString();
-      String channelsStr = row[3].toString();
+      String channelsStr = row[channelsColumn].toString();
 
       List<List<FlSpot>> allSpots = _parseOscilloscopeSpots(spotsStr);
       List<String> channelNames = _parseChannelsList(channelsStr);
