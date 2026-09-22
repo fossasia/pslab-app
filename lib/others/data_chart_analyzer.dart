@@ -56,14 +56,7 @@ class ScientificDataAnalyzer {
       return {};
     }
 
-    int headerIndex = 0;
-    for (int i = 0; i < rawData.length; i++) {
-      if (rawData[i].isNotEmpty &&
-          rawData[i].first.toString().toLowerCase() == 'timestamp') {
-        headerIndex = i;
-        break;
-      }
-    }
+    final headerIndex = _headerIndex(rawData);
 
     if (headerIndex >= rawData.length - 1) {
       return {};
@@ -441,13 +434,22 @@ class ScientificDataAnalyzer {
   /// English instrument key for [rawData], independent of the app language.
   static String instrumentKey(
       String instrumentName, List<List<dynamic>> rawData) {
-    final headers = rawData.firstWhere(
-      (row) =>
-          row.isNotEmpty && row.first.toString().toLowerCase() == 'timestamp',
-      orElse: () => const [],
-    );
+    if (rawData.isEmpty) {
+      return instrumentName.toLowerCase();
+    }
+    final headers = rawData[_headerIndex(rawData)];
     return _instrumentKey(
         instrumentName, headers.map((e) => e.toString()).toList());
+  }
+
+  static int _headerIndex(List<List<dynamic>> rawData) {
+    for (int i = 0; i < rawData.length; i++) {
+      if (rawData[i].isNotEmpty &&
+          rawData[i].first.toString().toLowerCase() == 'timestamp') {
+        return i;
+      }
+    }
+    return 0;
   }
 
   static String _instrumentKey(String instrumentName, List<String> headers) {
