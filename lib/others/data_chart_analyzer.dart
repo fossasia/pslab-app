@@ -438,6 +438,18 @@ class ScientificDataAnalyzer {
     return [2];
   }
 
+  /// English instrument key for [rawData], independent of the app language.
+  static String instrumentKey(
+      String instrumentName, List<List<dynamic>> rawData) {
+    final headers = rawData.firstWhere(
+      (row) =>
+          row.isNotEmpty && row.first.toString().toLowerCase() == 'timestamp',
+      orElse: () => const [],
+    );
+    return _instrumentKey(
+        instrumentName, headers.map((e) => e.toString()).toList());
+  }
+
   static String _instrumentKey(String instrumentName, List<String> headers) {
     for (final entry in _instrumentByHeader.entries) {
       if (headers.contains(entry.key)) {
