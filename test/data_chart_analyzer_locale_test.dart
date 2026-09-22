@@ -74,12 +74,19 @@ void main() {
   }
 
   test('falls back to the name for files without a known header', () {
-    final thermometer = <List<dynamic>>[
-      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude'],
-      ['1000', 'x', '20.5', 0, 0],
-      ['2000', 'x', '21.0', 0, 0],
+    final barometer = <List<dynamic>>[
+      ['Timestamp', 'DateTime', 'RawPressure', 'RawTemperature'],
+      ['1000', 'x', '20.5', '25.0'],
+      ['2000', 'x', '21.0', '25.5'],
     ];
-    expect(ScientificDataAnalyzer.analyze('termometro', thermometer).keys,
-        ['Readings']);
+    expect(ScientificDataAnalyzer.analyze('barometer', barometer).keys,
+        ['RawPressure', 'RawTemperature']);
+  });
+
+  test('resolves the instrument key from the headers', () {
+    expect(ScientificDataAnalyzer.instrumentKey('accelerometro', accelerometer),
+        'accelerometer');
+    expect(
+        ScientificDataAnalyzer.instrumentKey('Sound Meter', []), 'sound meter');
   });
 }
