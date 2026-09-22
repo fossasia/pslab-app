@@ -88,34 +88,54 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
     _filteredIndices = indices;
   }
 
+  void _onLegacyFirmware() {
+    if (getIt.get<BoardStateProvider>().legacyFirmwareNotifier.value ==
+        "LegacyFirmwareDetected") {
+      _showWarningDialog(appLocalizations.legacyFirmwareAlertTitle,
+          appLocalizations.legacyFirmwareAlertMessage);
+    }
+  }
+
+  void _showWarningDialog(String title, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            icon: const Icon(Icons.warning),
+            title: Text(title),
+            content: Text(message),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(appLocalizations.ok),
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    getIt
+        .get<BoardStateProvider>()
+        .legacyFirmwareNotifier
+        .removeListener(_onLegacyFirmware);
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-    getIt.get<BoardStateProvider>().legacyFirmwareNotifier.addListener(() {
-      if (getIt.get<BoardStateProvider>().legacyFirmwareNotifier.value ==
-          "LegacyFirmwareDetected") {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                icon: const Icon(Icons.warning),
-                title: Text(appLocalizations.legacyFirmwareAlertTitle),
-                content: Text(appLocalizations.legacyFirmwareAlertMessage),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(appLocalizations.ok),
-                  ),
-                ],
-              );
-            },
-          );
-        });
-      }
-    });
+    getIt
+        .get<BoardStateProvider>()
+        .legacyFirmwareNotifier
+        .addListener(_onLegacyFirmware);
 
     _instrumentDatas = [
       _InstrumentData(appLocalizations.oscilloscope,
