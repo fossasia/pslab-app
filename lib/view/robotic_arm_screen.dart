@@ -213,6 +213,7 @@ class _RoboticArmScreenState extends State<RoboticArmScreen> {
                     context: context,
                     instrumentName: appLocalizations.roboticArm.toLowerCase(),
                     data: exportData,
+                    recordingDuration: provider.timelineDuration,
                   );
                 },
               ),
