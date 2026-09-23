@@ -428,7 +428,6 @@ class ScientificDataAnalyzer {
       return [2, 3];
     }
 
-    // Column 2 is the selected mode; the measured value follows it.
     if (inst == 'multimeter') {
       return [3];
     }
