@@ -33,7 +33,6 @@ class BoardStateProvider extends ChangeNotifier {
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
-  /// Becomes true when a device opens but fails the PSLab version handshake.
   final ValueNotifier<bool> unresponsiveDeviceNotifier = ValueNotifier(false);
 
   static const EventChannel _androidUsbEventChannel =
@@ -131,7 +130,6 @@ class BoardStateProvider extends ChangeNotifier {
         }
       } catch (e) {
         logger.w("Exception while testing $port: $e");
-        // A handshake that throws is as unresponsive as one that fails.
         if (portOpened && !pslabIsConnected) {
           anyPortFailedHandshake = true;
         }
@@ -233,7 +231,6 @@ class BoardStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Reset first so listeners are notified on every failed handshake.
   void _reportUnresponsiveDevice() {
     unresponsiveDeviceNotifier.value = false;
     unresponsiveDeviceNotifier.value = true;
