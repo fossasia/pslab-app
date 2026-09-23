@@ -38,6 +38,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
   int sampleCount = 0;
   String? logTime;
   String cleanFileName = '';
+  String instrumentKey = '';
 
   final GlobalKey _printKey = GlobalKey();
 
@@ -66,6 +67,8 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
 
     analyzedData =
         ScientificDataAnalyzer.analyze(widget.instrumentName, widget.data);
+    instrumentKey = ScientificDataAnalyzer.instrumentKey(
+        widget.instrumentName, widget.data);
   }
 
   Future<void> _exportToPdf() async {
@@ -119,7 +122,7 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
   }
 
   List<Widget> _getSpecificMetrics(InstrumentSeries series) {
-    final inst = widget.instrumentName.toLowerCase();
+    final inst = instrumentKey;
 
     if (inst == 'oscilloscope' ||
         inst == 'wave generator' ||

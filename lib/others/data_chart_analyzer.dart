@@ -38,20 +38,25 @@ class InstrumentSeries {
 }
 
 class ScientificDataAnalyzer {
+  // Saved files are grouped by the localized instrument name, so identify the
+  // instrument from its CSV headers, which are the same in every language.
+  static const Map<String, String> _instrumentByHeader = {
+    'Waveform Data': 'wave generator',
+    'Channels': 'oscilloscope',
+    'ReadingsX': 'accelerometer',
+    'Bx': 'compass',
+    'PV1': 'power source',
+    'Pressure': 'barometer',
+    'Mode': 'multimeter',
+  };
+
   static Map<String, InstrumentSeries> analyze(
       String instrumentName, List<List<dynamic>> rawData) {
     if (rawData.isEmpty || rawData.length < 2) {
       return {};
     }
 
-    int headerIndex = 0;
-    for (int i = 0; i < rawData.length; i++) {
-      if (rawData[i].isNotEmpty &&
-          rawData[i].first.toString().toLowerCase() == 'timestamp') {
-        headerIndex = i;
-        break;
-      }
-    }
+    final headerIndex = _headerIndex(rawData);
 
     if (headerIndex >= rawData.length - 1) {
       return {};
@@ -59,7 +64,7 @@ class ScientificDataAnalyzer {
 
     final headers = rawData[headerIndex].map((e) => e.toString()).toList();
     final dataRows = rawData.sublist(headerIndex + 1);
-    String inst = instrumentName.toLowerCase();
+    String inst = _instrumentKey(instrumentName, headers);
 
     if (inst == 'wave generator') {
       return _parseWaveGeneratorData(dataRows);
@@ -424,6 +429,36 @@ class ScientificDataAnalyzer {
     }
 
     return [2];
+  }
+
+  /// English instrument key for [rawData], independent of the app language.
+  static String instrumentKey(
+      String instrumentName, List<List<dynamic>> rawData) {
+    if (rawData.isEmpty) {
+      return instrumentName.toLowerCase();
+    }
+    final headers = rawData[_headerIndex(rawData)];
+    return _instrumentKey(
+        instrumentName, headers.map((e) => e.toString()).toList());
+  }
+
+  static int _headerIndex(List<List<dynamic>> rawData) {
+    for (int i = 0; i < rawData.length; i++) {
+      if (rawData[i].isNotEmpty &&
+          rawData[i].first.toString().toLowerCase() == 'timestamp') {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  static String _instrumentKey(String instrumentName, List<String> headers) {
+    for (final entry in _instrumentByHeader.entries) {
+      if (headers.contains(entry.key)) {
+        return entry.value;
+      }
+    }
+    return instrumentName.toLowerCase();
   }
 
   static double? _parseDouble(dynamic val) {
