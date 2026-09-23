@@ -16,6 +16,7 @@ class ExportHelper {
     String? extraMetadata,
     String? customTitle,
     List<Widget>? extraWidgets,
+    Duration? recordingDuration,
   }) async {
     final appLocalizations = AppLocalizations.of(context)!;
     final dataService = DataService();
@@ -36,7 +37,8 @@ class ExportHelper {
         instrumentName,
         data,
         extraMetadata: extraMetadata,
-        recordingDuration: computeRecordingDurationFromData(data),
+        recordingDuration:
+            recordingDuration ?? computeRecordingDurationFromData(data),
       );
 
       final file = await dataService.saveDataFile(

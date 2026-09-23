@@ -40,6 +40,8 @@ class RoboticArmStateProvider extends ChangeNotifier {
   int get totalTimelineItems =>
       _selectedDuration == appLocalizations.duration2Min ? 120 : 60;
 
+  Duration get timelineDuration => Duration(seconds: totalTimelineItems);
+
   VoidCallback? onPlaybackEnd;
 
   RoboticArmStateProvider() {
