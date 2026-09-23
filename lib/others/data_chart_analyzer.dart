@@ -71,7 +71,6 @@ class ScientificDataAnalyzer {
     }
 
     if (inst == 'oscilloscope' || inst == 'logic analyzer') {
-      // The Logic Analyzer stores maxY and minY before its Channels column.
       return _parseOscilloscopeData(dataRows, headers.indexOf('Channels'));
     }
 
@@ -209,7 +208,6 @@ class ScientificDataAnalyzer {
 
   static Map<String, InstrumentSeries> _parseOscilloscopeData(
       List<List<dynamic>> dataRows, int channelsColumn) {
-    // Without a Channels header, assume the Oscilloscope layout.
     if (channelsColumn < 0) {
       channelsColumn = 3;
     }
