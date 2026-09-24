@@ -428,6 +428,10 @@ class ScientificDataAnalyzer {
       return [2, 3];
     }
 
+    if (inst == 'multimeter') {
+      return [3];
+    }
+
     return [2];
   }
 
