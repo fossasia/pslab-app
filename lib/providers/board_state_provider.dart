@@ -33,6 +33,8 @@ class BoardStateProvider extends ChangeNotifier {
 
   final ValueNotifier<String?> legacyFirmwareNotifier = ValueNotifier(null);
 
+  final ValueNotifier<bool> unresponsiveDeviceNotifier = ValueNotifier(false);
+
   static const EventChannel _androidUsbEventChannel =
       EventChannel('io.pslab/usb_events');
   Timer? _desktopHotplugTimer;
@@ -99,12 +101,14 @@ class BoardStateProvider extends ChangeNotifier {
     final comms =
         ScienceLabCommon.communicationHandler as PSLabCommunicationHandler;
     List<String> ports = rust_api.getAvailablePorts();
+    bool anyPortFailedHandshake = false;
 
     for (String port in ports) {
+      bool portOpened = false;
       try {
         logger.d("Testing port $port for PSLab handshake...");
         comms.targetPortName = port;
-        bool portOpened = await scienceLabCommon.openDevice();
+        portOpened = await scienceLabCommon.openDevice();
 
         if (portOpened) {
           await setPSLabVersionIDs();
@@ -119,18 +123,25 @@ class BoardStateProvider extends ChangeNotifier {
           } else {
             logger.w(
                 "Device on $port failed handshake. Closing and moving to next port...");
+            anyPortFailedHandshake = true;
             comms.close();
             _resetConnectionState();
           }
         }
       } catch (e) {
         logger.w("Exception while testing $port: $e");
+        if (portOpened && !pslabIsConnected) {
+          anyPortFailedHandshake = true;
+        }
         comms.close();
         _resetConnectionState();
       }
     }
 
     comms.targetPortName = null;
+    if (anyPortFailedHandshake) {
+      _reportUnresponsiveDevice();
+    }
     return false;
   }
 
@@ -200,18 +211,29 @@ class BoardStateProvider extends ChangeNotifier {
   }
 
   Future<void> _validateHandshake() async {
-    await setPSLabVersionIDs();
+    try {
+      await setPSLabVersionIDs();
+    } catch (e) {
+      logger.w("Version handshake threw: $e");
+      pslabVersion = 0;
+    }
 
     if (pslabVersion == 0 || pslabVersionID == 'Not Connected') {
       logger.w(
           "Port opened, but device failed the Version Handshake. Rejecting generic device.");
       _resetConnectionState();
+      _reportUnresponsiveDevice();
     } else {
       logger.i("Handshake successful: $pslabVersionID");
       pslabIsConnected = true;
       await fetchFirmwareVersion();
     }
     notifyListeners();
+  }
+
+  void _reportUnresponsiveDevice() {
+    unresponsiveDeviceNotifier.value = false;
+    unresponsiveDeviceNotifier.value = true;
   }
 
   void _resetConnectionState() {
