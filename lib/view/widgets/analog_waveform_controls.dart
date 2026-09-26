@@ -259,11 +259,6 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                       flex: 12,
                       child: IconButton(
                         tooltip: appLocalizations.sine,
-                        isSelected: waveGeneratorStateProvider
-                                    .waveGeneratorConstants.wave[
-                                waveGeneratorStateProvider
-                                    .selectedAnalogWave]?[WaveConst.waveType] ==
-                            WaveGeneratorStateProvider.sin,
                         style: TextButton.styleFrom(
                           backgroundColor: waveGeneratorStateProvider
                                               .waveGeneratorConstants.wave[
@@ -277,9 +272,17 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        icon: Image.asset(
-                          iconSin,
-                          color: Colors.white,
+                        icon: Semantics(
+                          selected: waveGeneratorStateProvider
+                                          .waveGeneratorConstants.wave[
+                                      waveGeneratorStateProvider
+                                          .selectedAnalogWave]
+                                  ?[WaveConst.waveType] ==
+                              WaveGeneratorStateProvider.sin,
+                          child: Image.asset(
+                            iconSin,
+                            color: Colors.white,
+                          ),
                         ),
                         onPressed: () => {
                           setState(
@@ -294,11 +297,6 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                       flex: 12,
                       child: IconButton(
                         tooltip: appLocalizations.triangular,
-                        isSelected: waveGeneratorStateProvider
-                                    .waveGeneratorConstants.wave[
-                                waveGeneratorStateProvider
-                                    .selectedAnalogWave]?[WaveConst.waveType] ==
-                            WaveGeneratorStateProvider.triangular,
                         style: TextButton.styleFrom(
                           backgroundColor: waveGeneratorStateProvider
                                               .waveGeneratorConstants.wave[
@@ -312,9 +310,17 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        icon: Image.asset(
-                          iconTriangular,
-                          color: Colors.white,
+                        icon: Semantics(
+                          selected: waveGeneratorStateProvider
+                                          .waveGeneratorConstants.wave[
+                                      waveGeneratorStateProvider
+                                          .selectedAnalogWave]
+                                  ?[WaveConst.waveType] ==
+                              WaveGeneratorStateProvider.triangular,
+                          child: Image.asset(
+                            iconTriangular,
+                            color: Colors.white,
+                          ),
                         ),
                         onPressed: () => {
                           setState(
@@ -329,11 +335,6 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                       flex: 12,
                       child: IconButton(
                         tooltip: appLocalizations.sawtooth,
-                        isSelected: waveGeneratorStateProvider
-                                    .waveGeneratorConstants.wave[
-                                waveGeneratorStateProvider
-                                    .selectedAnalogWave]?[WaveConst.waveType] ==
-                            WaveGeneratorStateProvider.sawtooth,
                         style: TextButton.styleFrom(
                           backgroundColor: waveGeneratorStateProvider
                                               .waveGeneratorConstants.wave[
@@ -347,9 +348,17 @@ class _AnalogWaveformControlsState extends State<AnalogWaveformControls> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        icon: Image.asset(
-                          iconSawtooth,
-                          color: Colors.white,
+                        icon: Semantics(
+                          selected: waveGeneratorStateProvider
+                                          .waveGeneratorConstants.wave[
+                                      waveGeneratorStateProvider
+                                          .selectedAnalogWave]
+                                  ?[WaveConst.waveType] ==
+                              WaveGeneratorStateProvider.sawtooth,
+                          child: Image.asset(
+                            iconSawtooth,
+                            color: Colors.white,
+                          ),
                         ),
                         onPressed: () => {
                           setState(
