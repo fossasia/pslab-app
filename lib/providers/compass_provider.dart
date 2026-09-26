@@ -22,6 +22,11 @@ class CompassProvider extends ChangeNotifier {
   AccelerometerEvent _accelerometerEvent =
       AccelerometerEvent(0, 0, 0, DateTime.now());
 
+  double _filteredAx = 0.0;
+  double _filteredAy = 0.0;
+  double _filteredAz = 9.8;
+  bool _hasInitialAccel = false;
+
   StreamSubscription? _magnetometerSubscription;
   StreamSubscription? _accelerometerSubscription;
 
@@ -32,6 +37,7 @@ class CompassProvider extends ChangeNotifier {
   double _currentDegree = 0.0;
   int _direction = 0;
   double _smoothedHeading = 0.0;
+  bool _hasInitialHeading = false;
 
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
@@ -103,10 +109,26 @@ class CompassProvider extends ChangeNotifier {
   }
 
   void initializeSensors() {
-    _accelerometerSubscription = accelerometerEventStream().listen(
+    disposeSensors();
+
+    _accelerometerSubscription = accelerometerEventStream(
+      samplingPeriod: SensorInterval.gameInterval,
+    ).listen(
       (event) {
         _accelerometerEvent = event;
-        if (_configProvider?.config.sensorSource == 'inbuilt') {
+        if (!_hasInitialAccel) {
+          _filteredAx = event.x;
+          _filteredAy = event.y;
+          _filteredAz = event.z;
+          _hasInitialAccel = true;
+        } else {
+          const double accelAlpha = 0.25;
+          _filteredAx += accelAlpha * (event.x - _filteredAx);
+          _filteredAy += accelAlpha * (event.y - _filteredAy);
+          _filteredAz += accelAlpha * (event.z - _filteredAz);
+        }
+
+        if (_configProvider?.config.sensorSource == 'hmc5883l') {
           _updateCompassDirection();
           notifyListeners();
         }
@@ -119,7 +141,9 @@ class CompassProvider extends ChangeNotifier {
     if (_configProvider?.config.sensorSource == 'hmc5883l') {
       _initExternalCompass();
     } else {
-      _magnetometerSubscription = magnetometerEventStream().listen(
+      _magnetometerSubscription = magnetometerEventStream(
+        samplingPeriod: SensorInterval.gameInterval,
+      ).listen(
         (event) {
           _magnetometerEvent = event;
           _updateCompassDirection();
@@ -138,11 +162,18 @@ class CompassProvider extends ChangeNotifier {
 
       if (!scienceLab.isConnected()) {
         logger.w(appLocalizations.pslabNotConnected);
-        _magnetometerSubscription = magnetometerEventStream().listen((event) {
-          _magnetometerEvent = event;
-          _updateCompassDirection();
-          notifyListeners();
-        });
+        _magnetometerSubscription = magnetometerEventStream(
+          samplingPeriod: SensorInterval.gameInterval,
+        ).listen(
+          (event) {
+            _magnetometerEvent = event;
+            _updateCompassDirection();
+            notifyListeners();
+          },
+          onError: (error) =>
+              logger.e("${appLocalizations.magnetometerError}: $error"),
+          cancelOnError: false,
+        );
         return;
       }
 
@@ -150,14 +181,18 @@ class CompassProvider extends ChangeNotifier {
       _hmc5883l = await HMC5883L.create(i2c, scienceLab);
 
       _externalSensorTimer =
-          Timer.periodic(const Duration(milliseconds: 400), (timer) async {
+          Timer.periodic(const Duration(milliseconds: 100), (timer) async {
         if (_isPlayingBack) return;
 
         try {
           List<double> rawData = await _hmc5883l!.getRaw();
 
-          _magnetometerEvent = MagnetometerEvent(rawData[0] * 100.0,
-              rawData[1] * 100.0, rawData[2] * 100.0, DateTime.now());
+          _magnetometerEvent = MagnetometerEvent(
+            rawData[0] * 100.0,
+            rawData[1] * 100.0,
+            rawData[2] * 100.0,
+            DateTime.now(),
+          );
 
           _updateCompassDirection();
           notifyListeners();
@@ -220,6 +255,9 @@ class CompassProvider extends ChangeNotifier {
 
       _magnetometerEvent = MagnetometerEvent(bx, by, bz, DateTime.now());
       _accelerometerEvent = AccelerometerEvent(0, 0, 9.8, DateTime.now());
+      _filteredAx = 0.0;
+      _filteredAy = 0.0;
+      _filteredAz = 9.8;
 
       _updateCompassDirection();
       _playbackIndex++;
@@ -336,6 +374,7 @@ class CompassProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _configProvider?.removeListener(_onConfigChanged);
     disposeSensors();
     _recordTimer?.cancel();
     _locationStream?.cancel();
@@ -354,19 +393,32 @@ class CompassProvider extends ChangeNotifier {
       degrees += 360;
     }
 
-    const double alpha = 0.45;
-    double angleDiff = degrees - _smoothedHeading;
-    if (angleDiff > 180) {
-      angleDiff -= 360;
-    } else if (angleDiff < -180) {
-      angleDiff += 360;
+    if (!_hasInitialHeading) {
+      _smoothedHeading = degrees;
+      _hasInitialHeading = true;
+    } else {
+      double angleDiff = degrees - _smoothedHeading;
+      if (angleDiff > 180) {
+        angleDiff -= 360;
+      } else if (angleDiff < -180) {
+        angleDiff += 360;
+      }
+
+      final double absDiff = angleDiff.abs();
+      final double alpha = absDiff > 15.0
+          ? 0.88
+          : absDiff > 5.0
+              ? 0.60
+              : 0.28;
+
+      _smoothedHeading = _smoothedHeading + alpha * angleDiff;
+      if (_smoothedHeading >= 360) {
+        _smoothedHeading -= 360;
+      } else if (_smoothedHeading < 0) {
+        _smoothedHeading += 360;
+      }
     }
-    _smoothedHeading = _smoothedHeading + alpha * angleDiff;
-    if (_smoothedHeading >= 360) {
-      _smoothedHeading -= 360;
-    } else if (_smoothedHeading < 0) {
-      _smoothedHeading += 360;
-    }
+
     switch (_selectedAxis) {
       case 'X':
         _currentDegree = -(_smoothedHeading * pi / 180);
@@ -381,9 +433,9 @@ class CompassProvider extends ChangeNotifier {
   }
 
   double _getRadiansForAxis(String axis) {
-    double ax = _accelerometerEvent.x;
-    double ay = _accelerometerEvent.y;
-    double az = _accelerometerEvent.z;
+    double ax = _hasInitialAccel ? _filteredAx : _accelerometerEvent.x;
+    double ay = _hasInitialAccel ? _filteredAy : _accelerometerEvent.y;
+    double az = _hasInitialAccel ? _filteredAz : _accelerometerEvent.z;
     double mx = _magnetometerEvent.x;
     double my = _magnetometerEvent.y;
     double mz = _magnetometerEvent.z;
@@ -436,6 +488,7 @@ class CompassProvider extends ChangeNotifier {
 
   void onAxisSelected(String axis) {
     _selectedAxis = axis;
+    _hasInitialHeading = false;
     switch (axis) {
       case 'X':
         _direction = 0;
@@ -447,6 +500,7 @@ class CompassProvider extends ChangeNotifier {
         _direction = 2;
         break;
     }
+    _updateCompassDirection();
     notifyListeners();
   }
 }
