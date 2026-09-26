@@ -6,16 +6,42 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  RELEASE_TAG: ${{ github.event.release.tag_name }}
+  RELEASE_NOTES: ${{ github.event.release.body }}
 
 jobs:
-  release:
-    name: Release
+  common:
+    name: Read release version
     if: ${{ github.repository == 'fossasia/pslab-app' }}
     runs-on: ubuntu-latest
-
+    outputs:
+      VERSION_CODE: ${{ steps.download-assets.outputs.VERSION_CODE }}
     steps:
       - name: Download repository
         uses: actions/checkout@v7
+
+      - name: Download Assets
+        id: download-assets
+        run: |
+          gh release download "$RELEASE_TAG" --pattern 'versionCode.txt'
+          read -r version_code < versionCode.txt
+          [[ "$version_code" =~ ^[0-9]+$ ]] || { echo 'Invalid version code'; exit 1; }
+          echo "VERSION_CODE=$version_code" >> "$GITHUB_OUTPUT"
+
+  android:
+    name: Release Android
+    needs: common
+    runs-on: ubuntu-latest
+    env:
+      VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v7
+
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Prepare Secrets (Android)
         env:
@@ -24,36 +50,18 @@ jobs:
         run: |
           bash scripts/prep-android-key.sh
 
-      - name: Prepare Secrets (iOS)
-        if: ${{ github.repository == 'fossasia/pslab-app' }}
-        env:
-          ENCRYPTED_IOS_IV: ${{ secrets.ENCRYPTED_IOS_IV }}
-          ENCRYPTED_IOS_KEY: ${{ secrets.ENCRYPTED_IOS_KEY }}
-        run: |
-          bash scripts/prep-ios-key.sh
-
-      - name: Download Assets
-        id: download-assets
-        run: |
-          gh release download ${{ github.event.release.tag_name }} --pattern '*.txt'
-          read -r version_code < versionCode.txt
-          echo "VERSION_CODE=$version_code" >> $GITHUB_OUTPUT
-
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
       - name: Update Fastlane Metadata (Android)
         run: |
           cd ./android
           git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
           cd fastlane
           
-          printf "%s" "${{ github.event.release.body }}" > "metadata/android/en-US/changelogs/${{ steps.download-assets.outputs.VERSION_CODE }}.txt"
+          printf "%s" "$RELEASE_NOTES" > "metadata/android/en-US/changelogs/${VERSION_CODE}.txt"
           
           # Force push to fastlane branch
           git checkout --orphan temporary
           git add --all .
-          git commit -am "[Auto] Update changelogs for versionCode: ${{ steps.download-assets.outputs.VERSION_CODE }} ($(date +%Y-%m-%d.%H:%M:%S))"
+          git commit -am "[Auto] Update changelogs for versionCode: ${VERSION_CODE} ($(date +%Y-%m-%d.%H:%M:%S))"
           git branch -D fastlane-android
           git branch -m fastlane-android
           git push --force origin fastlane-android
@@ -61,33 +69,56 @@ jobs:
       - name: Push version to production (Android)
         run: |
           cd ./android
-          fastlane promoteToProduction version_code:${{ steps.download-assets.outputs.VERSION_CODE }}
+          fastlane promoteToProduction version_code:${VERSION_CODE}
           if [[ $? -ne 0 ]]; then
               exit 1
           fi
 
+
+  ios:
+    name: Release iOS
+    needs: common
+    runs-on: ubuntu-latest
+    env:
+      VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v7
+
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Prepare Secrets (iOS)
+        env:
+          ENCRYPTED_IOS_IV: ${{ secrets.ENCRYPTED_IOS_IV }}
+          ENCRYPTED_IOS_KEY: ${{ secrets.ENCRYPTED_IOS_KEY }}
+        run: |
+          bash scripts/prep-ios-key.sh
+
       - name: Update Fastlane Metadata (iOS)
         run: |
-          cd ./iOS
+          cd ./ios
           git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
           cd fastlane
           
-          printf "%s" "${{ github.event.release.body }}" > "metadata/en-US/release_notes.txt"
+          printf "%s" "$RELEASE_NOTES" > "metadata/en-US/release_notes.txt"
           
           # Force push to fastlane branch
           git checkout --orphan temporary
           git add --all .
-          git commit -am "[Auto] Update changelogs for versionCode: ${{ steps.download-assets.outputs.VERSION_CODE }} ($(date +%Y-%m-%d.%H:%M:%S))"
+          git commit -am "[Auto] Update changelogs for versionCode: ${VERSION_CODE} ($(date +%Y-%m-%d.%H:%M:%S))"
           git branch -D fastlane-ios
           git branch -m fastlane-ios
           git push --force origin fastlane-ios
 
       - name: Push version to production (iOS)
         run: |
-          cd ./iOS
-          VERSION_TAG="${{ github.event.release.tag_name }}"
+          cd ./ios
+          VERSION_TAG="$RELEASE_TAG"
           CLEAN_VERSION="${VERSION_TAG#v}"
-          fastlane promoteToProduction build_number:${{ steps.download-assets.outputs.VERSION_CODE }} version_name:${CLEAN_VERSION}
+          fastlane promoteToProduction build_number:${VERSION_CODE} version_name:${CLEAN_VERSION}
           if [[ $? -ne 0 ]]; then
               exit 1
-          fi    
+          fi
