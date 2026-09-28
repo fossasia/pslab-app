@@ -99,15 +99,17 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   void _onUnresponsiveDevice() {
     final notifier = getIt.get<BoardStateProvider>().unresponsiveDeviceNotifier;
     if (notifier.value) {
-      notifier.value = false;
       _showWarningDialog(appLocalizations.unresponsiveDeviceAlertTitle,
-          appLocalizations.unresponsiveDeviceAlertMessage);
+          appLocalizations.unresponsiveDeviceAlertMessage,
+          onShown: () => notifier.value = false);
     }
   }
 
-  void _showWarningDialog(String title, String message) {
+  void _showWarningDialog(String title, String message,
+      {VoidCallback? onShown}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      onShown?.call();
       showDialog<void>(
         context: context,
         builder: (BuildContext context) {
