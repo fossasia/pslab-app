@@ -28,6 +28,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
   String _searchQuery = '';
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
   late List<_InstrumentData> _instrumentDatas;
+  bool _unresponsiveAlertQueued = false;
 
   void _onItemTapped(int index) {
     _InstrumentData instrument = _instrumentDatas[index];
@@ -98,15 +99,16 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
 
   void _onUnresponsiveDevice() {
     final notifier = getIt.get<BoardStateProvider>().unresponsiveDeviceNotifier;
-    if (notifier.value) {
-      _showWarningDialog(appLocalizations.unresponsiveDeviceAlertTitle,
-          appLocalizations.unresponsiveDeviceAlertMessage,
-          onShown: () => notifier.value = false);
-    }
+    if (!notifier.value || _unresponsiveAlertQueued) return;
+    _unresponsiveAlertQueued = true;
+    _showWarningDialog(appLocalizations.unresponsiveDeviceAlertTitle,
+        appLocalizations.unresponsiveDeviceAlertMessage,
+        onShown: () => notifier.value = false,
+        onDismissed: () => _unresponsiveAlertQueued = false);
   }
 
   void _showWarningDialog(String title, String message,
-      {VoidCallback? onShown}) {
+      {VoidCallback? onShown, VoidCallback? onDismissed}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       onShown?.call();
@@ -127,7 +129,7 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
             ],
           );
         },
-      );
+      ).whenComplete(() => onDismissed?.call());
     });
   }
 
