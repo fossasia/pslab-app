@@ -24,7 +24,8 @@ class BoardStateProvider extends ChangeNotifier {
   String pslabVersionID = 'Not Connected';
   String pslabVersionIDV6 = 'PSLab V6';
   String pslabVersionIDV5 = 'PSLab V5';
-  String pslabVersionIDMini = 'PSLab Pico';
+  String pslabVersionIDMini = 'PSLab Mini';
+  String pslabVersionIDPico = 'PSLab Pico';
   int pslabVersion = 0;
   int pslabFirmwareVersion = 0;
   bool _isProcessing = false;
@@ -114,7 +115,7 @@ class BoardStateProvider extends ChangeNotifier {
           await setPSLabVersionIDs();
           if (pslabVersionID == pslabVersionIDV6 ||
               pslabVersionID == pslabVersionIDV5 ||
-              pslabVersionID == pslabVersionIDMini) {
+              pslabVersion == 7) {
             logger.i("Found PSLab on $port!");
             pslabIsConnected = true;
             await fetchFirmwareVersion();
@@ -248,8 +249,11 @@ class BoardStateProvider extends ChangeNotifier {
   Future<void> setPSLabVersionIDs() async {
     String rawVersion = await getIt.get<ScienceLab>().getVersion();
 
-    if (rawVersion.contains(pslabVersionIDMini)) {
-      pslabVersionID = pslabVersionIDMini;
+    if (rawVersion.contains(pslabVersionIDMini) ||
+        rawVersion.contains(pslabVersionIDPico)) {
+      pslabVersionID = rawVersion.contains(pslabVersionIDMini)
+          ? pslabVersionIDMini
+          : pslabVersionIDPico;
       pslabVersion = 7;
     } else if (rawVersion == pslabVersionIDV6) {
       pslabVersionID = pslabVersionIDV6;

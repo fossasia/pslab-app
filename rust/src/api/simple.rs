@@ -97,7 +97,8 @@ pub fn get_available_ports() -> Vec<String> {
                 if let serialport::SerialPortType::UsbPort(info) = p.port_type {
                  if (info.vid == 0x10C4 && info.pid == 0xEA60)
                      || (info.vid == 1240 && info.pid == 223)
-                     || (info.vid == 0xCAFE)
+                     || (info.vid == 0xCAFE && info.pid == 0x4010)
+                     || (info.vid == 0x2E8A && info.pid == 0x0003)
                  {
                      port_names.push(p.port_name);
                  }
@@ -172,7 +173,9 @@ fn setup_device(handle: DeviceHandle<GlobalContext>) -> Result<()> {
         .map_err(|e| anyhow!("Failed to get config: {}", e))?;
 
     let is_v6_cp210x = desc.vendor_id() == 0x10C4 && desc.product_id() == 0xEA60;
-    let is_cdc_acm = desc.vendor_id() == 1240 || desc.vendor_id() == 0xCAFE;
+    let is_cdc_acm = desc.vendor_id() == 1240
+        || desc.vendor_id() == 0xCAFE
+        || desc.vendor_id() == 0x2E8A;
 
     let mut ep_in = 0;
     let mut ep_out = 0;
@@ -554,7 +557,8 @@ pub fn check_desktop_device_present() -> bool {
                 if let serialport::SerialPortType::UsbPort(info) = p.port_type {
                  if (info.vid == 0x10C4 && info.pid == 0xEA60)
                      || (info.vid == 1240 && info.pid == 223)
-                     || (info.vid == 0xCAFE)
+                     || (info.vid == 0xCAFE && info.pid == 0x4010)
+                     || (info.vid == 0x2E8A && info.pid == 0x0003)
                  {
                      return true;
                  }

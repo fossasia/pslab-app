@@ -96,8 +96,7 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
           final bool isWifiConnected =
               provider.scienceLabCommon.isWiFiConnected();
           final String displayDeviceName =
-              (provider.pslabVersionID == 'PSLab Pico' ||
-                      provider.pslabVersion == 7)
+              provider.pslabVersionID == provider.pslabVersionIDMini
                   ? appLocalizations.pslabMini
                   : provider.pslabVersionID;
           return SafeArea(

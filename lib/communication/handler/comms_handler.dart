@@ -18,6 +18,7 @@ class PSLabCommunicationHandler implements CommunicationHandler {
     PSLabBoard(version: 'V6', vid: 0x10C4, pid: 0xEA60),
     PSLabBoard(version: 'V5', vid: 1240, pid: 223),
     PSLabBoard(version: 'Mini', vid: 0xCAFE, pid: 0x4010),
+    PSLabBoard(version: 'Mini', vid: 0x2E8A, pid: 0x0003),
   ];
 
   static const MethodChannel _androidChannel = MethodChannel('usb_serial');

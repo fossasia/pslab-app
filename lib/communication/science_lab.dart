@@ -154,8 +154,7 @@ class ScienceLab {
       dChannels.add(DigitalChannel(i));
     }
     if (isConnected()) {
-      if (!PacketHandler.version.contains("Pico") &&
-          !PacketHandler.version.contains("Mini")) {
+      if (PacketHandler.boardType != BoardType.scpi) {
         for (String temp in ['CH1', 'CH2']) {
           await setGain(temp, 0, true);
         }
@@ -164,7 +163,7 @@ class ScienceLab {
         }
         await clearBuffer(0, samples);
       } else {
-        logger.d("PSLab Pico detected: Skipping legacy binary initialization.");
+        logger.d("SCPI board detected: Skipping legacy binary initialization.");
       }
     }
     calibrated = false;

@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/handler/base.dart';
+import 'package:pslab/communication/scpi_commands.dart';
 import 'package:pslab/others/logger_service.dart';
 
 import '../src/rust/api/simple.dart' as rust_api;
@@ -30,8 +32,10 @@ class PacketHandler {
   }
 
   Future<String> getVersion() async {
+    version = '';
+    boardType = BoardType.other;
     try {
-      String scpiResponse = await queryScpi("*IDN?");
+      String scpiResponse = await queryScpi(ScpiCommands.identify);
       if (scpiResponse.contains("PSLab Pico") ||
           scpiResponse.contains("PSLab Mini")) {
         version = scpiResponse;
@@ -53,29 +57,40 @@ class PacketHandler {
     return version;
   }
 
-  Future<void> sendScpi(String command) async {
-    String fullCommand = "$command\r\n";
+  Future<void> sendScpiCommand(String command) async {
     _mCommunicationHandler.write(
-        Uint8List.fromList(fullCommand.codeUnits), 100);
+      Uint8List.fromList(utf8.encode("$command\n")),
+      100,
+    );
+    await Future.delayed(const Duration(milliseconds: 25));
+  }
+
+  Future<void> sendScpi(String command) async {
+    // Existing I2C SCPI block commands embed raw byte values in a String.
+    _mCommunicationHandler.write(
+      Uint8List.fromList("$command\r\n".codeUnits),
+      100,
+    );
     await Future.delayed(const Duration(milliseconds: 25));
   }
 
   Future<String> queryScpi(String command) async {
-    await sendScpi(command);
+    await sendScpiCommand(command);
 
     Uint8List buffer = Uint8List(256);
     int bytesRead = await _mCommunicationHandler.read(buffer, 256, 500);
     if (bytesRead > 0) {
-      String response =
-          String.fromCharCodes(buffer.sublist(0, bytesRead)).trim();
+      String response = utf8.decode(buffer.sublist(0, bytesRead)).trim();
       return response;
     }
     return "";
   }
 
   Future<Uint8List> queryScpiBinary(String command) async {
-    Uint8List data =
-        await rust_api.queryScpiBinaryRust(command: command, timeoutMs: 1000);
+    Uint8List data = await rust_api.queryScpiBinaryRust(
+      command: command,
+      timeoutMs: 1000,
+    );
     return data;
   }
 
@@ -200,15 +215,19 @@ class PacketHandler {
       return numBytesRead;
     } else {
       logger.e(
-          "Error in PacketHandler Reading. Expected: $bytesToRead, Got: $numBytesRead");
+        "Error in PacketHandler Reading. Expected: $bytesToRead, Got: $numBytesRead",
+      );
     }
     return -1;
   }
 
   Future<int> _commonRead(int bytesToRead) async {
     if (_mCommunicationHandler.isConnected()) {
-      int res =
-          await _mCommunicationHandler.read(_buffer, bytesToRead, _timeout);
+      int res = await _mCommunicationHandler.read(
+        _buffer,
+        bytesToRead,
+        _timeout,
+      );
       return res;
     }
     return 0;

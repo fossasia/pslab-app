@@ -1,7 +1,9 @@
 import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:pslab/communication/commands_proto.dart';
 import 'package:pslab/communication/packet_handler.dart';
+import 'package:pslab/communication/scpi_commands.dart';
 import 'package:pslab/others/logger_service.dart';
 
 class I2C {
@@ -56,12 +58,14 @@ class I2C {
 
   Future<void> config(int frequency) async {
     if (PacketHandler.boardType == BoardType.scpi) {
-      await packetHandler.sendScpi("BUS:I2C:CONF:BUS 0");
+      await packetHandler.sendScpi("${ScpiCommands.busI2cConfigureBus} 0");
       await Future.delayed(const Duration(milliseconds: 5));
 
-      await packetHandler.sendScpi("BUS:I2C:CONF:RATE $frequency");
+      await packetHandler.sendScpi(
+        "${ScpiCommands.busI2cConfigureRate} $frequency",
+      );
       await Future.delayed(const Duration(milliseconds: 5));
-      await packetHandler.sendScpi("BUS:I2C:OPEN");
+      await packetHandler.sendScpi(ScpiCommands.busI2cOpen);
       await Future.delayed(const Duration(milliseconds: 15));
       return;
     }
@@ -80,7 +84,9 @@ class I2C {
   Future<int> start(int address, int rw) async {
     if (PacketHandler.boardType == BoardType.scpi) {
       _currentScpiAddress = address;
-      await packetHandler.sendScpi("BUS:I2C:CONF:ADDR $address");
+      await packetHandler.sendScpi(
+        "${ScpiCommands.busI2cConfigureAddress} $address",
+      );
       return 1;
     }
 
@@ -127,8 +133,9 @@ class I2C {
 
   Future<List<int>> read(int length) async {
     if (PacketHandler.boardType == BoardType.scpi) {
-      Uint8List rxData =
-          await packetHandler.queryScpiBinary("BUS:I2C:READ? $length");
+      Uint8List rxData = await packetHandler.queryScpiBinary(
+        "${ScpiCommands.busI2cReadQuery} $length",
+      );
       return rxData.toList();
     }
 
@@ -156,10 +163,15 @@ class I2C {
   }
 
   Future<List<int>> readBulk(
-      int deviceAddress, int registerAddress, int bytesToRead) async {
+    int deviceAddress,
+    int registerAddress,
+    int bytesToRead,
+  ) async {
     if (PacketHandler.boardType == BoardType.scpi) {
-      await packetHandler.sendScpi("BUS:I2C:CONF:ADDR $deviceAddress");
-      String blockCmd = "${_buildScpiBlock("BUS:I2C:TRAN?", [
+      await packetHandler.sendScpi(
+        "${ScpiCommands.busI2cConfigureAddress} $deviceAddress",
+      );
+      String blockCmd = "${_buildScpiBlock(ScpiCommands.busI2cTransactQuery, [
             registerAddress
           ])}, $bytesToRead";
 
@@ -201,8 +213,10 @@ class I2C {
 
   Future<void> writeBulk(int deviceAddress, List<int> data) async {
     if (PacketHandler.boardType == BoardType.scpi) {
-      await packetHandler.sendScpi("BUS:I2C:CONF:ADDR $deviceAddress");
-      String blockCmd = _buildScpiBlock("BUS:I2C:WRIT", data);
+      await packetHandler.sendScpi(
+        "${ScpiCommands.busI2cConfigureAddress} $deviceAddress",
+      );
+      String blockCmd = _buildScpiBlock(ScpiCommands.busI2cWrite, data);
       await packetHandler.sendScpi(blockCmd);
       return;
     }
@@ -218,31 +232,48 @@ class I2C {
   }
 
   Future<void> write(
-      int deviceAddress, List<int> data, int registerAddress) async {
+    int deviceAddress,
+    List<int> data,
+    int registerAddress,
+  ) async {
     List<int> finalData = [registerAddress, ...data];
     await writeBulk(deviceAddress, finalData);
   }
 
   Future<void> writeByte(
-      int deviceAddress, int registerAddress, int data) async {
+    int deviceAddress,
+    int registerAddress,
+    int data,
+  ) async {
     await write(deviceAddress, [data], registerAddress);
   }
 
   Future<void> writeInt(
-      int deviceAddress, int registerAddress, int data) async {
+    int deviceAddress,
+    int registerAddress,
+    int data,
+  ) async {
     await write(
-        deviceAddress, [data & 0xFF, (data >> 8) & 0xFF], registerAddress);
+        deviceAddress,
+        [
+          data & 0xFF,
+          (data >> 8) & 0xFF,
+        ],
+        registerAddress);
   }
 
   Future<void> writeLong(
-      int deviceAddress, int registerAddress, int data) async {
+    int deviceAddress,
+    int registerAddress,
+    int data,
+  ) async {
     await write(
         deviceAddress,
         [
           data & 0xFF,
           (data >> 8) & 0xFF,
           (data >> 16) & 0xFF,
-          (data >> 24) & 0xFF
+          (data >> 24) & 0xFF,
         ],
         registerAddress);
   }
@@ -252,7 +283,9 @@ class I2C {
     await config(frequency);
 
     if (PacketHandler.boardType == BoardType.scpi) {
-      String scanResult = await packetHandler.queryScpi("BUS:I2C:SCAN?");
+      String scanResult = await packetHandler.queryScpi(
+        ScpiCommands.busI2cScanQuery,
+      );
 
       logger.i("Raw I2C Scan Result: '$scanResult'");
 
