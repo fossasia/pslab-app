@@ -15,6 +15,9 @@ class VL53L0XProvider extends ChangeNotifier {
   VL53L0X? _sensor;
   Timer? _timer;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   bool _isRunning = false;
   bool _isLooping = false;
   int _timegapMs = 500;
@@ -69,8 +72,12 @@ class VL53L0XProvider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _timer = Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _collectData();
         _collectedReadings++;
@@ -83,21 +90,28 @@ class VL53L0XProvider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error collecting VL53L0X data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('VL53L0X dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error collecting VL53L0X data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _timer?.cancel();
     _timer = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _collectData() async {
-    if (_sensor == null) return;
+    if (_sensor == null || _isDisposed) return;
 
     try {
       double newDistance = await _sensor!.getDistance();
@@ -107,7 +121,7 @@ class VL53L0XProvider extends ChangeNotifier {
 
       _addDataPoint(_distanceData, _distance);
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _collectData: $e');
       rethrow;
@@ -131,7 +145,7 @@ class VL53L0XProvider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int newTimegap) {
@@ -142,12 +156,12 @@ class VL53L0XProvider extends ChangeNotifier {
       _startDataCollection();
     }
 
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int newNumber) {
     _numberOfReadings = newNumber;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -155,7 +169,7 @@ class VL53L0XProvider extends ChangeNotifier {
     _distance = 0.0;
     _currentTime = 0.0;
     _collectedReadings = 0;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   bool get isCollectionComplete {
@@ -164,6 +178,7 @@ class VL53L0XProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }

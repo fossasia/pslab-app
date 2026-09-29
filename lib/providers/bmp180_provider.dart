@@ -24,6 +24,8 @@ class BMP180Provider extends ChangeNotifier {
 
   bool _isRunning = false;
   bool _isLooping = false;
+  bool _isFetching = false;
+
   int _timegapMs = 1000;
   int _numberOfReadings = 100;
   int _collectedReadings = 0;
@@ -86,9 +88,13 @@ class BMP180Provider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -101,7 +107,14 @@ class BMP180Provider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching sensor data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('Sensor dropped a frame. Skipping tick gracefully...');
+        } else {
+          logger.e('Error fetching sensor data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
     notifyListeners();

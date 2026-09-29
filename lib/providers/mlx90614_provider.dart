@@ -14,6 +14,9 @@ class MLX90614Provider extends ChangeNotifier {
   MLX90614? _mlx90614;
   Timer? _dataTimer;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   double _objectTemperature = 0.0;
   double _ambientTemperature = 0.0;
 
@@ -62,7 +65,7 @@ class MLX90614Provider extends ChangeNotifier {
       }
 
       _mlx90614 = await MLX90614.create(i2c, scienceLab);
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error initializing MLX90614: $e');
     }
@@ -81,9 +84,13 @@ class MLX90614Provider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -96,21 +103,28 @@ class MLX90614Provider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching sensor data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('MLX90614 dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error fetching sensor data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _dataTimer?.cancel();
     _dataTimer = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _fetchSensorData() async {
-    if (_mlx90614 == null) return;
+    if (_mlx90614 == null || _isDisposed) return;
 
     try {
       final rawData = await _mlx90614!.getRawData();
@@ -123,7 +137,7 @@ class MLX90614Provider extends ChangeNotifier {
       _addDataPoint(_objectTemperatureData, _objectTemperature);
       _addDataPoint(_ambientTemperatureData, _ambientTemperature);
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
       rethrow;
@@ -149,7 +163,7 @@ class MLX90614Provider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int timegapMs) {
@@ -160,12 +174,12 @@ class MLX90614Provider extends ChangeNotifier {
       _startDataCollection();
     }
 
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int numberOfReadings) {
     _numberOfReadings = numberOfReadings;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -175,7 +189,7 @@ class MLX90614Provider extends ChangeNotifier {
     _ambientTemperature = 0.0;
     _currentTime = 0.0;
     _collectedReadings = 0;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   bool get isCollectionComplete {
@@ -184,6 +198,7 @@ class MLX90614Provider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }

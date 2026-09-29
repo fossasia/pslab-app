@@ -20,12 +20,22 @@ class I2C {
     buffer = List.filled(10000, 0);
     commandsProto = CommandsProto();
   }
-
-  String _buildScpiBlock(String prefix, List<int> data) {
+  Uint8List _buildScpiBlockBytes(String prefix, List<int> data,
+      {String suffix = ""}) {
     String dataLen = data.length.toString();
     String numDigits = dataLen.length.toString();
     String header = "$prefix #$numDigits$dataLen";
-    return header + String.fromCharCodes(data);
+
+    List<int> cmdBytes = header.codeUnits.toList();
+    cmdBytes.addAll(data);
+
+    if (suffix.isNotEmpty) {
+      cmdBytes.addAll(suffix.codeUnits);
+    }
+
+    Uint8List finalBytes = Uint8List.fromList(cmdBytes);
+    logger.i("SCPI COMMAND BUILT -> Raw array: $finalBytes");
+    return finalBytes;
   }
 
   Future<void> init() async {
@@ -159,11 +169,25 @@ class I2C {
       int deviceAddress, int registerAddress, int bytesToRead) async {
     if (PacketHandler.boardType == BoardType.scpi) {
       await packetHandler.sendScpi("BUS:I2C:CONF:ADDR $deviceAddress");
-      String blockCmd = "${_buildScpiBlock("BUS:I2C:TRAN?", [
-            registerAddress
-          ])}, $bytesToRead";
+      await Future.delayed(const Duration(milliseconds: 2));
 
-      Uint8List rxData = await packetHandler.queryScpiBinary(blockCmd);
+      String prefix = "BUS:I2C:TRAN? $bytesToRead,";
+      Uint8List blockCmd = _buildScpiBlockBytes(prefix, [registerAddress]);
+
+      int attempts = 0;
+      Uint8List rxData = Uint8List(0);
+
+      while (attempts < 5) {
+        rxData = await packetHandler.queryScpiBinaryRawCmd(blockCmd);
+
+        if (rxData.length == bytesToRead) {
+          return rxData.toList();
+        }
+
+        attempts++;
+        await Future.delayed(const Duration(milliseconds: 10));
+      }
+
       return rxData.toList();
     }
 
@@ -202,8 +226,9 @@ class I2C {
   Future<void> writeBulk(int deviceAddress, List<int> data) async {
     if (PacketHandler.boardType == BoardType.scpi) {
       await packetHandler.sendScpi("BUS:I2C:CONF:ADDR $deviceAddress");
-      String blockCmd = _buildScpiBlock("BUS:I2C:WRIT", data);
-      await packetHandler.sendScpi(blockCmd);
+      await Future.delayed(const Duration(milliseconds: 5));
+      Uint8List blockCmd = _buildScpiBlockBytes("BUS:I2C:WRIT", data);
+      packetHandler.sendScpiRawCmd(blockCmd);
       return;
     }
 

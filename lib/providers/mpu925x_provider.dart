@@ -10,6 +10,9 @@ class MPU925XProvider extends ChangeNotifier {
   MPU925X? _mpu925x;
   Timer? _dataTimer;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   final Map<String, double> _currentValues = {
     'ax': 0.0,
     'ay': 0.0,
@@ -77,7 +80,7 @@ class MPU925XProvider extends ChangeNotifier {
         return;
       }
       _mpu925x = await MPU925X.create(i2c, scienceLab);
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error initializing MPU925X: $e');
     }
@@ -86,13 +89,13 @@ class MPU925XProvider extends ChangeNotifier {
   Future<void> updateAccelRange(int range) async {
     _selectedAccelRange = range;
     await _mpu925x?.setAccelerationRange(range);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> updateGyroRange(int range) async {
     _selectedGyroRange = range;
     await _mpu925x?.setGyroRange(range);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void toggleDataCollection() {
@@ -103,9 +106,13 @@ class MPU925XProvider extends ChangeNotifier {
     if (_mpu925x == null) return;
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -117,20 +124,27 @@ class MPU925XProvider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching MPU925X data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('MPU925X dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error fetching MPU925X data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _dataTimer?.cancel();
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _fetchSensorData() async {
-    if (_mpu925x == null) return;
+    if (_mpu925x == null || _isDisposed) return;
     try {
       final rawData = await _mpu925x!.getRawData();
       final magData = await _mpu925x!.getMagneticField();
@@ -157,9 +171,10 @@ class MPU925XProvider extends ChangeNotifier {
       _addDataPoint(_myData, _currentValues['my']!);
       _addDataPoint(_mzData, _currentValues['mz']!);
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
+      rethrow;
     }
   }
 
@@ -185,7 +200,7 @@ class MPU925XProvider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int ms) {
@@ -194,12 +209,12 @@ class MPU925XProvider extends ChangeNotifier {
       _stopDataCollection();
       _startDataCollection();
     }
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int val) {
     _numberOfReadings = val;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -215,11 +230,12 @@ class MPU925XProvider extends ChangeNotifier {
     _currentTime = 0.0;
     _collectedReadings = 0;
     _currentValues.updateAll((key, value) => 0.0);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }

@@ -13,6 +13,10 @@ class ADS1115Provider extends ChangeNotifier {
 
   ADS1115? _ads1115;
   Timer? _dataTimer;
+
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   double _voltage = 0.0;
   String _currentGain = "GAIN_ONE";
   String _currentChannel = "UNI_0";
@@ -82,7 +86,7 @@ class ADS1115Provider extends ChangeNotifier {
 
       _ads1115 = await ADS1115.create(i2c, scienceLab);
       _updateCurrentSettings();
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error initializing ADS1115: $e');
     }
@@ -100,7 +104,7 @@ class ADS1115Provider extends ChangeNotifier {
     if (_ads1115 != null) {
       _ads1115!.setGain(gain);
       _currentGain = gain;
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     }
   }
 
@@ -108,7 +112,7 @@ class ADS1115Provider extends ChangeNotifier {
     if (_ads1115 != null) {
       _ads1115!.setChannel(channel);
       _currentChannel = channel;
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     }
   }
 
@@ -116,7 +120,7 @@ class ADS1115Provider extends ChangeNotifier {
     if (_ads1115 != null) {
       _ads1115!.setDataRate(rate);
       _currentRate = rate;
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     }
   }
 
@@ -133,8 +137,13 @@ class ADS1115Provider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
+
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -147,21 +156,28 @@ class ADS1115Provider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching sensor data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('ADS1115 dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error fetching sensor data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _dataTimer?.cancel();
     _dataTimer = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _fetchSensorData() async {
-    if (_ads1115 == null) return;
+    if (_ads1115 == null || _isDisposed) return;
 
     try {
       final rawData = await _ads1115!.getRawData();
@@ -169,7 +185,7 @@ class ADS1115Provider extends ChangeNotifier {
       _currentTime += _timegapMs / 1000.0;
 
       _addDataPoint(_voltageData, _voltage);
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
       rethrow;
@@ -193,24 +209,23 @@ class ADS1115Provider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int timegapMs) {
-    if (_timegapMs == timegapMs) {
-      return;
-    }
+    if (_timegapMs == timegapMs) return;
+
     _timegapMs = timegapMs;
     if (_isRunning) {
       _stopDataCollection();
       _startDataCollection();
     }
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int numberOfReadings) {
     _numberOfReadings = numberOfReadings;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -218,7 +233,7 @@ class ADS1115Provider extends ChangeNotifier {
     _voltage = 0.0;
     _currentTime = 0.0;
     _collectedReadings = 0;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   bool get isCollectionComplete {
@@ -227,6 +242,7 @@ class ADS1115Provider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }

@@ -10,6 +10,9 @@ class MPU6050Provider extends ChangeNotifier {
   MPU6050? _mpu6050;
   Timer? _dataTimer;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   Map<String, double> _currentValues = {
     'ax': 0.0,
     'ay': 0.0,
@@ -36,7 +39,7 @@ class MPU6050Provider extends ChangeNotifier {
 
   int _selectedAccelRange = 16;
   int _selectedGyroRange = 2000;
-  double? _selectedFilter; // null means OFF
+  double? _selectedFilter;
   final String _selectedHighPassFilter = 'OFF';
 
   Map<String, double> get currentValues => _currentValues;
@@ -68,7 +71,7 @@ class MPU6050Provider extends ChangeNotifier {
         return;
       }
       _mpu6050 = await MPU6050.create(i2c, scienceLab);
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error initializing MPU6050: $e');
     }
@@ -77,13 +80,13 @@ class MPU6050Provider extends ChangeNotifier {
   Future<void> updateAccelRange(int range) async {
     _selectedAccelRange = range;
     await _mpu6050?.setAccelerationRange(range);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> updateGyroRange(int range) async {
     _selectedGyroRange = range;
     await _mpu6050?.setGyroRange(range);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void toggleDataCollection() {
@@ -94,9 +97,13 @@ class MPU6050Provider extends ChangeNotifier {
     if (_mpu6050 == null) return;
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -108,20 +115,27 @@ class MPU6050Provider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching MPU6050 data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('MPU6050 dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error fetching MPU6050 data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _dataTimer?.cancel();
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _fetchSensorData() async {
-    if (_mpu6050 == null) return;
+    if (_mpu6050 == null || _isDisposed) return;
     try {
       _currentValues = await _mpu6050!.getRawData();
       _currentTime += _timegapMs / 1000.0;
@@ -133,9 +147,10 @@ class MPU6050Provider extends ChangeNotifier {
       _addDataPoint(_gyData, _currentValues['gy']!);
       _addDataPoint(_gzData, _currentValues['gz']!);
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
+      rethrow;
     }
   }
 
@@ -156,7 +171,7 @@ class MPU6050Provider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int ms) {
@@ -165,12 +180,12 @@ class MPU6050Provider extends ChangeNotifier {
       _stopDataCollection();
       _startDataCollection();
     }
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int val) {
     _numberOfReadings = val;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -183,11 +198,12 @@ class MPU6050Provider extends ChangeNotifier {
     _currentTime = 0.0;
     _collectedReadings = 0;
     _currentValues.updateAll((key, value) => 0.0);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }
