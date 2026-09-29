@@ -282,6 +282,32 @@ jobs:
           name: macOS DMG
           path: '*.dmg'
 
+  update-release:
+    name: Update Draft Release
+    needs: [common, android]
+    if: ${{ github.repository == 'fossasia/pslab-app' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Draft next release
+        id: draft
+        uses: release-drafter/release-drafter@v7
+        with:
+          version: ${{ needs.common.outputs.VERSION_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Attach version code
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
+          RELEASE_TAG: ${{ steps.draft.outputs.tag_name }}
+        run: |
+          printf '%s\n' "$VERSION_CODE" > versionCode.txt
+          gh release upload "$RELEASE_TAG" versionCode.txt --clobber
+
   publish-app-branch:
     name: Publish artifacts to app branch
     needs: [android, ios, windows, linux, linux-arm64, macos, web]
