@@ -79,10 +79,8 @@ class PacketHandler {
     return "";
   }
 
-  Future<Uint8List> queryScpiBinary(String command) async {
-    Uint8List data =
-        await rust_api.queryScpiBinaryRust(command: command, timeoutMs: 1000);
-    return data;
+  Future<void> sendScpiRaw(Uint8List command) async {
+    rust_api.sendScpiRawRust(command: command);
   }
 
   void sendByte(int val) {
@@ -235,5 +233,22 @@ class PacketHandler {
     if (_mCommunicationHandler.isConnected()) {
       _mCommunicationHandler.write(data, _timeout);
     }
+  }
+
+  Future<Uint8List> queryScpiBinary(String command) async {
+    Uint8List data =
+        await rust_api.queryScpiBinaryRust(command: command, timeoutMs: 1000);
+    return data;
+  }
+
+  void sendScpiRawCmd(Uint8List command) {
+    rust_api.sendScpiRawRust(command: command);
+  }
+
+  Future<Uint8List> queryScpiBinaryRawCmd(Uint8List command,
+      {int timeoutMs = 1000}) async {
+    final result = await rust_api.queryScpiBinaryRawRust(
+        command: command, timeoutMs: timeoutMs);
+    return Uint8List.fromList(result);
   }
 }

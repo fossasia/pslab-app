@@ -71,3 +71,11 @@ Future<Uint8List> queryScpiBinaryRust(
         {required String command, required int timeoutMs}) =>
     RustLib.instance.api.crateApiSimpleQueryScpiBinaryRust(
         command: command, timeoutMs: timeoutMs);
+
+void sendScpiRawRust({required List<int> command}) =>
+    RustLib.instance.api.crateApiSimpleSendScpiRawRust(command: command);
+
+Future<Uint8List> queryScpiBinaryRawRust(
+        {required List<int> command, required int timeoutMs}) =>
+    RustLib.instance.api.crateApiSimpleQueryScpiBinaryRawRust(
+        command: command, timeoutMs: timeoutMs);
