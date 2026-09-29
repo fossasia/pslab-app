@@ -302,6 +302,7 @@ jobs:
       - name: Attach version code
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           VERSION_CODE: ${{ needs.common.outputs.VERSION_CODE }}
           RELEASE_TAG: ${{ steps.draft.outputs.tag_name }}
         run: |
