@@ -58,6 +58,7 @@ class _BlockingReadUart extends Uart2 {
     0x8a,
     0xab,
   ];
+  final List<List<int>> writes = [];
   int configureCount = 0;
 
   @override
@@ -70,7 +71,10 @@ class _BlockingReadUart extends Uart2 {
   Future<int> readByte() async => _frame.removeAt(0);
 
   @override
-  Future<void> write(List<int> values) => readGate.future;
+  Future<void> write(List<int> values) {
+    writes.add(List<int>.of(values));
+    return values[2] == 0x04 ? readGate.future : Future<void>.value();
+  }
 }
 
 class _FakeDustSensorSource implements DustSensorSource {
@@ -185,6 +189,7 @@ void main() {
       firmwareMajorOverride: 3,
     );
     await source.initialize();
+    expect(uart.writes.single.sublist(0, 5), [0xaa, 0xb4, 0x02, 0x01, 0x01]);
 
     final read = source.read();
     await Future<void>.delayed(Duration.zero);

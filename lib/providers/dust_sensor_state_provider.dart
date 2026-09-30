@@ -90,6 +90,27 @@ class Sds011DustSensorSource implements DustSensorSource {
     0x02,
     0xab,
   ];
+  static const List<int> _queryModeCommand = [
+    0xaa,
+    0xb4,
+    0x02,
+    0x01,
+    0x01,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0xff,
+    0xff,
+    0x02,
+    0xab,
+  ];
 
   final ScienceLab scienceLab;
   Uart2? _uart;
@@ -138,6 +159,7 @@ class Sds011DustSensorSource implements DustSensorSource {
         }
         final uart = _uart!;
         await uart.configure(baudRate);
+        await uart.write(_queryModeCommand);
       });
 
   @override
