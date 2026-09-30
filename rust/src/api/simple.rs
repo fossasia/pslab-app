@@ -407,23 +407,16 @@ pub fn set_rts(state: bool) -> Result<()> {
 pub fn write_data(data: Vec<u8>) {
     #[cfg(target_os = "android")]
     {
-        if let Ok(mut buffer) = ANDROID_RX_BUFFER.lock() {
-            buffer.clear();
-        }
-
         let handle_opt = USB_HANDLE.lock().unwrap().clone();
         let ep_out = *EP_OUT.lock().unwrap();
         if let Some(handle) = handle_opt {
-            let _ = handle.write_bulk(ep_out, &data, Duration::from_millis(500));
+            let _ = handle.write_bulk(ep_out, &data, std::time::Duration::from_millis(500));
         }
     }
     #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     {
         if let Some(port) = SERIAL_PORT.lock().unwrap().as_mut() {
-            let _ = port.clear(serialport::ClearBuffer::Input);
-
             let _ = port.write_all(&data);
-            let _ = port.flush();
         }
     }
     #[cfg(target_family = "wasm")]

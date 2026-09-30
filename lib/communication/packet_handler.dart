@@ -31,7 +31,8 @@ class PacketHandler {
 
   Future<String> getVersion() async {
     try {
-      String scpiResponse = await queryScpi("*IDN?");
+      String scpiResponse = await queryScpi("*IDN?", timeout: 50);
+
       if (scpiResponse.contains("PSLab Pico") ||
           scpiResponse.contains("PSLab Mini")) {
         version = scpiResponse;
@@ -42,6 +43,7 @@ class PacketHandler {
       sendByte(_mCommandsProto.common);
       sendByte(_mCommandsProto.getVersion);
       await _commonRead(versionStringLength + 1);
+
       version = utf8
           .decode(_buffer.sublist(0, versionStringLength + 1))
           .split('\n')
@@ -60,11 +62,15 @@ class PacketHandler {
     await Future.delayed(const Duration(milliseconds: 25));
   }
 
-  Future<String> queryScpi(String command) async {
-    await sendScpi(command);
+  Future<String> queryScpi(String command, {int timeout = 50}) async {
+    String fullCommand = "$command\r\n";
+
+    _mCommunicationHandler.write(
+        Uint8List.fromList(fullCommand.codeUnits), 100);
 
     Uint8List buffer = Uint8List(256);
-    int bytesRead = await _mCommunicationHandler.read(buffer, 256, 500);
+    int bytesRead = await _mCommunicationHandler.read(buffer, 256, timeout);
+
     if (bytesRead > 0) {
       String response =
           String.fromCharCodes(buffer.sublist(0, bytesRead)).trim();
@@ -98,6 +104,17 @@ class PacketHandler {
       _commonWrite(Uint8List.fromList([val & 0xFF, (val >> 8) & 0xFF]));
     } catch (e) {
       logger.e("Error in sending int: $e");
+    }
+  }
+
+  void sendBytes(List<int> data) {
+    if (!isConnected()) {
+      throw Exception("Device not connected");
+    }
+    try {
+      _commonWrite(Uint8List.fromList(data));
+    } catch (e) {
+      logger.e("Error in sending bytes: $e");
     }
   }
 

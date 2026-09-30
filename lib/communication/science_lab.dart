@@ -153,6 +153,7 @@ class ScienceLab {
     for (int i = 0; i < 4; i++) {
       dChannels.add(DigitalChannel(i));
     }
+
     if (isConnected()) {
       if (!PacketHandler.version.contains("Pico") &&
           !PacketHandler.version.contains("Mini")) {
@@ -162,7 +163,6 @@ class ScienceLab {
         for (String temp in ['SI1', 'SI2']) {
           await loadEquation(temp, 'sine');
         }
-        await clearBuffer(0, samples);
       } else {
         logger.d("PSLab Pico detected: Skipping legacy binary initialization.");
       }
@@ -522,19 +522,26 @@ class ScienceLab {
     for (int i = 0; i < 512; i += 16) {
       yMod2.add((yMod1[i] ~/ 8).clamp(0, 63));
     }
+
     try {
-      mPacketHandler.sendByte(mCommandsProto.wavegen);
-      mPacketHandler.sendByte(
+      List<int> packet = [];
+      packet.add(mCommandsProto.wavegen);
+      packet.add(
         channel == 'SI1'
             ? mCommandsProto.loadWaveform1
             : mCommandsProto.loadWaveform2,
       );
+
       for (int a in yMod1) {
-        mPacketHandler.sendInt(a);
+        packet.add(a & 0xFF);
+        packet.add((a >> 8) & 0xFF);
       }
+
       for (int a in yMod2) {
-        mPacketHandler.sendByte(a);
+        packet.add(a & 0xFF);
       }
+
+      mPacketHandler.sendBytes(packet);
       await mPacketHandler.getAcknowledgement();
     } catch (e) {
       logger.e("Error loading waveform equation: $e");
