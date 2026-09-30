@@ -112,7 +112,7 @@ class _SoundMeterScreenState extends State<SoundMeterScreen> {
         builder: (context) => LoggedDataScreen(
           instrumentNames: [appLocalizations.soundMeter.toLowerCase()],
           appBarName: appLocalizations.soundMeter,
-          instrumentIcons: [instrumentIcons[14]],
+          instrumentIcons: [instrumentIcons[15]],
         ),
       ),
     );

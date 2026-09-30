@@ -90,7 +90,7 @@ class _OledDisplayScreenState extends State<OledDisplayScreen> {
                 appLocalizations.oledDisplayTitle.toLowerCase()
               ],
               appBarName: appLocalizations.showLoggedData,
-              instrumentIcons: [instrumentIcons[15]],
+              instrumentIcons: [instrumentIcons[16]],
             ),
           ),
         );
