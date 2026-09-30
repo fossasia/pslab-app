@@ -1,7 +1,77 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pslab/communication/handler/base.dart';
+import 'package:pslab/communication/packet_handler.dart';
+import 'package:pslab/communication/peripherals/uart.dart';
+import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/providers/dust_sensor_state_provider.dart';
+
+class _ConnectedCommunicationHandler implements CommunicationHandler {
+  @override
+  bool connected = true;
+
+  @override
+  bool deviceFound = true;
+
+  @override
+  void close() => connected = false;
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  bool isConnected() => connected;
+
+  @override
+  bool isDeviceFound() => deviceFound;
+
+  @override
+  Future<void> open({int overrideBaud = 1000000}) async => connected = true;
+
+  @override
+  Future<int> read(
+    Uint8List dest,
+    int bytesToRead,
+    int timeoutMillis,
+  ) async =>
+      0;
+
+  @override
+  void write(Uint8List src, int timeoutMillis) {}
+}
+
+class _BlockingReadUart extends Uart2 {
+  _BlockingReadUart(super.packetHandler);
+
+  final Completer<void> readGate = Completer<void>();
+  final List<int> _frame = [
+    0xaa,
+    0xc0,
+    0x7b,
+    0x00,
+    0xc8,
+    0x01,
+    0x12,
+    0x34,
+    0x8a,
+    0xab,
+  ];
+  int configureCount = 0;
+
+  @override
+  Future<void> configure(int baudRate) async => configureCount++;
+
+  @override
+  Future<bool> hasData() async => _frame.isNotEmpty;
+
+  @override
+  Future<int> readByte() async => _frame.removeAt(0);
+
+  @override
+  Future<void> write(List<int> values) => readGate.future;
+}
 
 class _FakeDustSensorSource implements DustSensorSource {
   _FakeDustSensorSource(this.values, {this.connected = true});
@@ -104,6 +174,28 @@ void main() {
       expect(reading?.pm25, 12.3);
       expect(reading?.pm10, 45.6);
     });
+  });
+
+  test('SDS011 initialization waits for an in-flight UART read', () async {
+    final handler = _ConnectedCommunicationHandler();
+    final uart = _BlockingReadUart(PacketHandler(500, handler));
+    final source = Sds011DustSensorSource(
+      ScienceLab(handler),
+      uart: uart,
+      firmwareMajorOverride: 3,
+    );
+    await source.initialize();
+
+    final read = source.read();
+    await Future<void>.delayed(Duration.zero);
+    final reinitialize = source.initialize();
+    await Future<void>.delayed(Duration.zero);
+
+    expect(uart.configureCount, 1);
+    uart.readGate.complete();
+    expect((await read).pm25, 12.3);
+    await reinitialize;
+    expect(uart.configureCount, 2);
   });
 
   test('provider samples PM2.5 data and calculates summary values', () async {

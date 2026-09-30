@@ -94,53 +94,76 @@ class Sds011DustSensorSource implements DustSensorSource {
   final ScienceLab scienceLab;
   Uart2? _uart;
   int? _uartFirmwareMajor;
+  final int? _firmwareMajorOverride;
   final Sds011FrameParser _parser = Sds011FrameParser();
+  Future<void> _ioTail = Future<void>.value();
 
-  Sds011DustSensorSource(this.scienceLab);
+  Sds011DustSensorSource(
+    this.scienceLab, {
+    @visibleForTesting Uart2? uart,
+    @visibleForTesting int? firmwareMajorOverride,
+  })  : _uart = uart,
+        _uartFirmwareMajor = uart == null ? null : firmwareMajorOverride,
+        _firmwareMajorOverride = firmwareMajorOverride;
 
   @override
   bool get isConnected => scienceLab.isConnected();
 
-  @override
-  Future<void> initialize() async {
-    final firmwareMajor = getIt.get<BoardStateProvider>().pslabFirmwareVersion;
-    if (firmwareMajor == 0) {
-      throw StateError('Unable to determine the PSLab firmware version');
+  Future<T> _withIoLock<T>(Future<T> Function() operation) async {
+    final previous = _ioTail;
+    final release = Completer<void>();
+    _ioTail = release.future;
+
+    await previous;
+    try {
+      return await operation();
+    } finally {
+      release.complete();
     }
-    if (_uart == null || _uartFirmwareMajor != firmwareMajor) {
-      _uart = Uart2(
-        scienceLab.mPacketHandler,
-        requiresWriteAcknowledgement: firmwareMajor < 3,
-      );
-      _uartFirmwareMajor = firmwareMajor;
-    }
-    final uart = _uart!;
-    await uart.configure(baudRate);
   }
 
   @override
-  Future<DustSensorReading> read() async {
-    final uart = _uart;
-    if (uart == null) throw StateError('SDS011 source is not initialized');
+  Future<void> initialize() => _withIoLock(() async {
+        final firmwareMajor = _firmwareMajorOverride ??
+            getIt.get<BoardStateProvider>().pslabFirmwareVersion;
+        if (firmwareMajor == 0) {
+          throw StateError('Unable to determine the PSLab firmware version');
+        }
+        if (_uart == null || _uartFirmwareMajor != firmwareMajor) {
+          _uart = Uart2(
+            scienceLab.mPacketHandler,
+            requiresWriteAcknowledgement: firmwareMajor < 3,
+          );
+          _uartFirmwareMajor = firmwareMajor;
+        }
+        final uart = _uart!;
+        await uart.configure(baudRate);
+      });
 
-    await uart.write(_queryCommand);
-    final deadline = DateTime.now().add(frameTimeout);
+  @override
+  Future<DustSensorReading> read() => _withIoLock(() async {
+        final uart = _uart;
+        if (uart == null) throw StateError('SDS011 source is not initialized');
 
-    while (DateTime.now().isBefore(deadline)) {
-      if (!isConnected) {
-        throw StateError('PSLab disconnected while reading SDS011');
-      }
-      if (!await uart.hasData()) {
-        await Future<void>.delayed(const Duration(milliseconds: 10));
-        continue;
-      }
+        await uart.write(_queryCommand);
+        final deadline = DateTime.now().add(frameTimeout);
 
-      final reading = _parser.add(await uart.readByte());
-      if (reading != null) return reading;
-    }
+        while (DateTime.now().isBefore(deadline)) {
+          if (!isConnected) {
+            throw StateError('PSLab disconnected while reading SDS011');
+          }
+          if (!await uart.hasData()) {
+            await Future<void>.delayed(const Duration(milliseconds: 10));
+            continue;
+          }
 
-    throw TimeoutException('No valid SDS011 data frame received', frameTimeout);
-  }
+          final reading = _parser.add(await uart.readByte());
+          if (reading != null) return reading;
+        }
+
+        throw TimeoutException(
+            'No valid SDS011 data frame received', frameTimeout);
+      });
 
   @override
   Future<void> close() async {}
