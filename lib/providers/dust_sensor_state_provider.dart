@@ -117,7 +117,9 @@ class DustSensorStateProvider extends ChangeNotifier {
     _startedAt = DateTime.now().millisecondsSinceEpoch / 1000;
     notifyListeners();
     await sampleOnce();
-    _readTimer = Timer.periodic(updatePeriod, (_) => sampleOnce());
+    if (_isReading) {
+      _readTimer = Timer.periodic(updatePeriod, (_) => sampleOnce());
+    }
   }
 
   void stop() {
@@ -138,7 +140,12 @@ class DustSensorStateProvider extends ChangeNotifier {
 
   @visibleForTesting
   Future<void> sampleOnce() async {
-    if (_isBusy || !isConnected) return;
+    if (_isBusy) return;
+    if (!isConnected) {
+      _error = DustSensorError.notConnected;
+      stop();
+      return;
+    }
     _isBusy = true;
     try {
       final voltage = await _source.readVoltage();

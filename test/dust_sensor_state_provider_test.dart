@@ -5,7 +5,7 @@ class _FakeDustSensorSource implements DustSensorSource {
   _FakeDustSensorSource(this.values, {this.connected = true});
 
   final List<double> values;
-  final bool connected;
+  bool connected;
   int _index = 0;
 
   @override
@@ -13,6 +13,14 @@ class _FakeDustSensorSource implements DustSensorSource {
 
   @override
   Future<double> readVoltage() async => values[_index++];
+}
+
+class _FailingDustSensorSource implements DustSensorSource {
+  @override
+  bool get isConnected => true;
+
+  @override
+  Future<double> readVoltage() => Future.error('read failed');
 }
 
 void main() {
@@ -59,6 +67,36 @@ void main() {
     );
 
     await provider.initialize();
+
+    expect(provider.isReading, isFalse);
+    expect(provider.error, DustSensorError.notConnected);
+    provider.dispose();
+  });
+
+  test('provider stays stopped when the initial read fails', () async {
+    final provider = DustSensorStateProvider(
+      source: _FailingDustSensorSource(),
+      updatePeriod: const Duration(milliseconds: 1),
+    );
+
+    await provider.start();
+
+    expect(provider.isReading, isFalse);
+    expect(provider.error, DustSensorError.readFailed);
+    provider.dispose();
+  });
+
+  test('provider stops and reports a connection lost during sampling',
+      () async {
+    final source = _FakeDustSensorSource([2.5]);
+    final provider = DustSensorStateProvider(
+      source: source,
+      updatePeriod: const Duration(days: 1),
+    );
+    await provider.start();
+    source.connected = false;
+
+    await provider.sampleOnce();
 
     expect(provider.isReading, isFalse);
     expect(provider.error, DustSensorError.notConnected);

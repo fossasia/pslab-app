@@ -27,7 +27,10 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
   void initState() {
     super.initState();
     _provider = widget.provider ?? DustSensorStateProvider();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _provider.initialize());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _provider.initialize();
+    });
   }
 
   @override
