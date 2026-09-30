@@ -65,6 +65,12 @@ void main() {
     expect(handler.writes, [5, 4, 0x82, 0x06]);
   });
 
+  test('rejects a failed baud-rate acknowledgement', () async {
+    handler.responses.add(3);
+
+    await expectLater(uart.configure(9600), throwsStateError);
+  });
+
   test('reads UART status and one byte without bulk length fields', () async {
     handler.responses.addAll([1, 0xaa]);
 

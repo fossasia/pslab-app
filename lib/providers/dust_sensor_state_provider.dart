@@ -93,6 +93,7 @@ class Sds011DustSensorSource implements DustSensorSource {
 
   final ScienceLab scienceLab;
   Uart2? _uart;
+  int? _uartFirmwareMajor;
   final Sds011FrameParser _parser = Sds011FrameParser();
 
   Sds011DustSensorSource(this.scienceLab);
@@ -103,10 +104,17 @@ class Sds011DustSensorSource implements DustSensorSource {
   @override
   Future<void> initialize() async {
     final firmwareMajor = getIt.get<BoardStateProvider>().pslabFirmwareVersion;
-    final uart = _uart ??= Uart2(
-      scienceLab.mPacketHandler,
-      requiresWriteAcknowledgement: firmwareMajor > 0 && firmwareMajor < 3,
-    );
+    if (firmwareMajor == 0) {
+      throw StateError('Unable to determine the PSLab firmware version');
+    }
+    if (_uart == null || _uartFirmwareMajor != firmwareMajor) {
+      _uart = Uart2(
+        scienceLab.mPacketHandler,
+        requiresWriteAcknowledgement: firmwareMajor < 3,
+      );
+      _uartFirmwareMajor = firmwareMajor;
+    }
+    final uart = _uart!;
     await uart.configure(baudRate);
   }
 

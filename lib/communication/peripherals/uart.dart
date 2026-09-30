@@ -32,7 +32,12 @@ class Uart2 {
     packetHandler.sendByte(_commands.uart2);
     packetHandler.sendByte(_commands.setBaud);
     packetHandler.sendInt(divider);
-    await packetHandler.getAcknowledgement();
+    final acknowledgement = await packetHandler.getAcknowledgement();
+    if (acknowledgement != 1) {
+      throw StateError(
+        'UART2 rejected baud-rate configuration (ACK $acknowledgement)',
+      );
+    }
   }
 
   Future<bool> hasData() async {
