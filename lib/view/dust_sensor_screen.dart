@@ -83,10 +83,10 @@ class _DustSensorScreenState extends State<DustSensorScreen> {
                       maxX: provider.maxTime,
                       timeInterval: provider.timeInterval,
                       minY: 0,
-                      maxY: 5,
-                      yInterval: 1,
+                      maxY: provider.chartMaximum,
+                      yInterval: provider.chartMaximum / 5,
                       xAxisLabel: appLocalizations.timeAxisLabel,
-                      yAxisLabel: appLocalizations.dustSensorVoltageAxis,
+                      yAxisLabel: appLocalizations.dustSensorPm25Axis,
                     ),
                   );
 

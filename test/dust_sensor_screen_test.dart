@@ -10,7 +10,14 @@ class _ScreenTestSource implements DustSensorSource {
   bool get isConnected => true;
 
   @override
-  Future<double> readVoltage() async => 2.5;
+  Future<void> initialize() async {}
+
+  @override
+  Future<DustSensorReading> read() async =>
+      const DustSensorReading(pm25: 12.3, pm10: 45.6);
+
+  @override
+  Future<void> close() async {}
 }
 
 void main() {
@@ -37,7 +44,7 @@ void main() {
     await tester.pump();
 
     expect(find.text('Dust Sensor'), findsOneWidget);
-    expect(find.text('Relative signal: 50%'), findsOneWidget);
+    expect(find.text('PM10: 45.6 µg/m³'), findsOneWidget);
     expect(find.text('Stop'), findsOneWidget);
     expect(find.text('RESET'), findsOneWidget);
     expect(tester.takeException(), isNull);

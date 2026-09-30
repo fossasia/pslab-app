@@ -37,19 +37,19 @@ class DustSensorCard extends StatelessWidget {
           Expanded(
             child: Center(
               child: InstrumentGauge(
-                currentValue: provider.currentReading.voltage,
+                currentValue: provider.currentReading.pm25,
                 minValue: 0,
-                maxValue: 5,
-                interval: 1,
-                unit: 'V',
+                maxValue: 1000,
+                interval: 200,
+                unit: 'µg/m³',
                 size: gaugeSize,
-                decimalPlaces: 2,
+                decimalPlaces: 1,
               ),
             ),
           ),
           Text(
-            '${appLocalizations.dustSensorRelativeSignal}: '
-            '${provider.currentReading.relativeLevel.toStringAsFixed(0)}%',
+            '${appLocalizations.dustSensorPm10}: '
+            '${provider.currentReading.pm10.toStringAsFixed(1)} µg/m³',
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
@@ -63,7 +63,7 @@ class DustSensorCard extends StatelessWidget {
               DustSensorError.readFailed =>
                 appLocalizations.dustSensorReadFailed,
               null => provider.isReading
-                  ? appLocalizations.dustSensorReadingCh1
+                  ? appLocalizations.dustSensorReadingUart
                   : appLocalizations.dustSensorStopped,
             },
             textAlign: TextAlign.center,
@@ -76,12 +76,12 @@ class DustSensorCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Instrumentstats(
-            unit: 'V',
+            unit: 'µg/m³',
             titleFontSize: isLargeScreen ? 25 : 20,
             statFontSize: isLargeScreen ? 20 : 15,
-            minValue: provider.minVoltage,
-            avgValue: provider.averageVoltage,
-            maxValue: provider.maxVoltage,
+            minValue: provider.minPm25,
+            avgValue: provider.averagePm25,
+            maxValue: provider.maxPm25,
           ),
           const SizedBox(height: 12),
           Row(
