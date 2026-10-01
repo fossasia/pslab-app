@@ -960,10 +960,10 @@ packages:
     dependency: "direct main"
     description:
       name: mp_audio_stream
-      sha256: "078f9b9118056618707617bb6e853ac457389b9b90a7b5a75b90686aefdf2343"
+      sha256: a3d084a5eb058f643e4a3f33f61d960b086885122f0871afa2c7a5aaacb72050
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.3.0"
   nested:
     dependency: transitive
     description:

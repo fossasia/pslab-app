@@ -47,7 +47,7 @@ dependencies:
   wakelock_plus: ^1.8.0
   image: ^4.10.1
   web: ^1.1.1
-  mp_audio_stream: ^0.2.2
+  mp_audio_stream: ^0.3.0
   ffi: ^2.2.0
   home_widget: ^0.10.0
   girix_code_gauge: ^0.0.6
