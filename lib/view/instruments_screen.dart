@@ -188,6 +188,8 @@ class _InstrumentsScreenState extends State<InstrumentsScreen> {
           appLocalizations.roboticArmDesc, '/roboticArm'),
       _InstrumentData(appLocalizations.gasSensor,
           appLocalizations.gasSensorDesc, '/gassensor'),
+      _InstrumentData(appLocalizations.dustSensor,
+          appLocalizations.dustSensorDesc, '/dustSensor'),
       _InstrumentData(appLocalizations.soundMeter,
           appLocalizations.soundMeterDesc, '/soundmeter'),
       _InstrumentData(
