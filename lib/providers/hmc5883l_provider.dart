@@ -14,6 +14,9 @@ class HMC5883LProvider extends ChangeNotifier {
   HMC5883L? _hmc5883l;
   Timer? _dataTimer;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   double _bx = 0.0;
   double _by = 0.0;
   double _bz = 0.0;
@@ -66,7 +69,7 @@ class HMC5883LProvider extends ChangeNotifier {
       }
 
       _hmc5883l = await HMC5883L.create(i2c, scienceLab);
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error initializing HMC5883L: $e');
     }
@@ -85,9 +88,13 @@ class HMC5883LProvider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -100,21 +107,28 @@ class HMC5883LProvider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching sensor data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('HMC5883L dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error fetching sensor data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _dataTimer?.cancel();
     _dataTimer = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _fetchSensorData() async {
-    if (_hmc5883l == null) return;
+    if (_hmc5883l == null || _isDisposed) return;
 
     try {
       List<double> data = await _hmc5883l!.getRaw();
@@ -129,15 +143,14 @@ class HMC5883LProvider extends ChangeNotifier {
       _addDataPoint(_byData, _by);
       _addDataPoint(_bzData, _bz);
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
-      _stopDataCollection();
+      rethrow;
     }
   }
 
   void _addDataPoint(List<ChartDataPoint> dataList, double value) {
-    // Corrected instantiation format
     dataList.add(ChartDataPoint(_currentTime, value));
     if (dataList.length > 50) {
       dataList.removeAt(0);
@@ -157,7 +170,7 @@ class HMC5883LProvider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int timegapMs) {
@@ -168,12 +181,12 @@ class HMC5883LProvider extends ChangeNotifier {
       _startDataCollection();
     }
 
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int numberOfReadings) {
     _numberOfReadings = numberOfReadings;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -185,7 +198,7 @@ class HMC5883LProvider extends ChangeNotifier {
     _bz = 0;
     _currentTime = 0.0;
     _collectedReadings = 0;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   bool get isCollectionComplete {
@@ -194,6 +207,7 @@ class HMC5883LProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }

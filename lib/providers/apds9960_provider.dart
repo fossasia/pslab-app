@@ -14,6 +14,9 @@ class APDS9960Provider extends ChangeNotifier {
   APDS9960? _apds9960;
   Timer? _dataTimer;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   int _red = 0;
   int _green = 0;
   int _blue = 0;
@@ -76,7 +79,7 @@ class APDS9960Provider extends ChangeNotifier {
       }
 
       _apds9960 = await APDS9960.create(i2c, scienceLab);
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error initializing APDS9960: $e');
     }
@@ -96,7 +99,7 @@ class APDS9960Provider extends ChangeNotifier {
         _gestureString = '';
       }
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     }
   }
 
@@ -113,9 +116,13 @@ class APDS9960Provider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -128,21 +135,28 @@ class APDS9960Provider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching sensor data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('APDS9960 dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error fetching sensor data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _dataTimer?.cancel();
     _dataTimer = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _fetchSensorData() async {
-    if (_apds9960 == null) return;
+    if (_apds9960 == null || _isDisposed) return;
 
     try {
       final rawData = await _apds9960!.getRawData(_mode);
@@ -168,7 +182,7 @@ class APDS9960Provider extends ChangeNotifier {
         _gestureString = _apds9960!.getGestureString(_gesture);
       }
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
       rethrow;
@@ -194,7 +208,7 @@ class APDS9960Provider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int timegapMs) {
@@ -205,12 +219,12 @@ class APDS9960Provider extends ChangeNotifier {
       _startDataCollection();
     }
 
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int numberOfReadings) {
     _numberOfReadings = numberOfReadings;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -226,7 +240,7 @@ class APDS9960Provider extends ChangeNotifier {
     _gestureString = '';
     _currentTime = 0.0;
     _collectedReadings = 0;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   bool get isCollectionComplete {
@@ -235,6 +249,7 @@ class APDS9960Provider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }

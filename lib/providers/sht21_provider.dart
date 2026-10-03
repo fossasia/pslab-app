@@ -16,6 +16,9 @@ class SHT21Provider extends ChangeNotifier {
   bool _isSensorAvailable = false;
   bool _isInitialized = false;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   bool isRunning = false;
   bool isLooping = false;
   int timegapMs = 500;
@@ -27,7 +30,7 @@ class SHT21Provider extends ChangeNotifier {
   final List<double> _timeData = [];
   final List<double> _tempRawData = [];
   final List<double> _humidityRawData = [];
-  bool _isFetching = false;
+
   final List<ChartDataPoint> tempChartData = [];
   final List<ChartDataPoint> humidityChartData = [];
   double _startTime = 0;
@@ -51,7 +54,7 @@ class SHT21Provider extends ChangeNotifier {
         _isSensorAvailable = true;
         _isInitialized = true;
         logger.d("$_tag: SHT21 initialized successfully!");
-        notifyListeners();
+        if (!_isDisposed) notifyListeners();
         return;
       }
     }
@@ -59,7 +62,7 @@ class SHT21Provider extends ChangeNotifier {
     _isSensorAvailable = false;
     _isInitialized = true;
     onError("SHT21 Sensor not found.");
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void toggleDataCollection() {
@@ -72,7 +75,7 @@ class SHT21Provider extends ChangeNotifier {
 
   void toggleLooping() {
     isLooping = !isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int newTimegap) {
@@ -81,12 +84,12 @@ class SHT21Provider extends ChangeNotifier {
       _stopReading();
       _startReading();
     }
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int readings) {
     numberOfReadings = readings;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -97,13 +100,15 @@ class SHT21Provider extends ChangeNotifier {
     humidityChartData.clear();
     _currentTemp = 0.0;
     _currentHumidity = 0.0;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _startReading() {
     if (!_isSensorAvailable || _sensor == null) return;
 
     isRunning = true;
+    _isFetching = false;
+
     if (_timeData.isEmpty) {
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
     } else {
@@ -115,36 +120,40 @@ class SHT21Provider extends ChangeNotifier {
     _readTimer?.cancel();
     _readTimer =
         Timer.periodic(Duration(milliseconds: timegapMs), (timer) async {
-      if (!isRunning) return;
-
-      if (_isFetching) return;
+      if (!isRunning || _isFetching || _isDisposed) return;
       _isFetching = true;
 
       try {
         _currentHumidity = await _sensor!.getHumidity();
         await Future.delayed(const Duration(milliseconds: 250));
 
+        if (_isDisposed) return;
         _currentTemp = await _sensor!.getTemperature();
 
         _updateChartData();
-        notifyListeners();
+        if (!_isDisposed) notifyListeners();
 
         if (!isLooping && tempChartData.length >= numberOfReadings) {
           _stopReading();
         }
       } catch (e) {
-        logger.e("$_tag: Error reading sensor data: $e");
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('$_tag dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e("$_tag: Error reading sensor data: $e");
+        }
       } finally {
         _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopReading() {
     isRunning = false;
     _readTimer?.cancel();
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _updateChartData() {
@@ -173,6 +182,7 @@ class SHT21Provider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopReading();
     super.dispose();
   }

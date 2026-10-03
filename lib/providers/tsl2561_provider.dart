@@ -14,6 +14,9 @@ class TSL2561Provider extends ChangeNotifier {
   TSL2561? _tsl2561;
   Timer? _dataTimer;
 
+  bool _isDisposed = false;
+  bool _isFetching = false;
+
   double _fullSpectrum = 0.0;
   double _infrared = 0.0;
   double _visible = 0.0;
@@ -66,7 +69,7 @@ class TSL2561Provider extends ChangeNotifier {
       }
 
       _tsl2561 = await TSL2561.create(i2c, scienceLab);
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error initializing TSL2561: $e');
     }
@@ -85,9 +88,13 @@ class TSL2561Provider extends ChangeNotifier {
 
     _isRunning = true;
     _collectedReadings = 0;
+    _isFetching = false;
 
     _dataTimer =
         Timer.periodic(Duration(milliseconds: _timegapMs), (timer) async {
+      if (_isFetching || _isDisposed) return;
+      _isFetching = true;
+
       try {
         await _fetchSensorData();
         _collectedReadings++;
@@ -100,21 +107,28 @@ class TSL2561Provider extends ChangeNotifier {
           _removeOldestDataPoints();
         }
       } catch (e) {
-        logger.e('Error fetching sensor data: $e');
+        String errorMsg = e.toString();
+        if (errorMsg.contains("Expected")) {
+          logger.w('TSL2561 dropped a frame. Skipping gracefully...');
+        } else {
+          logger.e('Error fetching sensor data: $e');
+        }
+      } finally {
+        _isFetching = false;
       }
     });
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void _stopDataCollection() {
     _isRunning = false;
     _dataTimer?.cancel();
     _dataTimer = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   Future<void> _fetchSensorData() async {
-    if (_tsl2561 == null) return;
+    if (_tsl2561 == null || _isDisposed) return;
 
     try {
       final rawData = await _tsl2561!.getRawData();
@@ -129,7 +143,7 @@ class TSL2561Provider extends ChangeNotifier {
       _addDataPoint(_infraredData, _infrared);
       _addDataPoint(_visibleData, _visible);
 
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     } catch (e) {
       logger.e('Error in _fetchSensorData: $e');
       rethrow;
@@ -156,7 +170,7 @@ class TSL2561Provider extends ChangeNotifier {
 
   void toggleLooping() {
     _isLooping = !_isLooping;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setTimegap(int timegapMs) {
@@ -165,12 +179,12 @@ class TSL2561Provider extends ChangeNotifier {
       _stopDataCollection();
       _startDataCollection();
     }
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setNumberOfReadings(int numberOfReadings) {
     _numberOfReadings = numberOfReadings;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void clearData() {
@@ -182,7 +196,7 @@ class TSL2561Provider extends ChangeNotifier {
     _visible = 0;
     _currentTime = 0.0;
     _collectedReadings = 0;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   bool get isCollectionComplete {
@@ -191,6 +205,7 @@ class TSL2561Provider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _stopDataCollection();
     super.dispose();
   }
