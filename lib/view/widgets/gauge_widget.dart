@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:girix_code_gauge/girix_code_gauge.dart';
+import 'package:gx_gauge/gx_gauge.dart';
 import 'package:pslab/theme/colors.dart';
 
 class InstrumentGauge extends StatelessWidget {
@@ -30,34 +30,34 @@ class InstrumentGauge extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         GxRadialGauge(
-          value: GaugeValue(
+          value: GxGaugeValue(
               value: clampedValue.toDouble(),
               min: minValue.toDouble(),
               max: maxValue.toDouble()),
-          size: Size(size.toDouble(), size.toDouble()),
+          diameter: size.toDouble(),
           startAngleInDegree: 140.0,
           sweepAngleInDegree: 260.0,
           showValueAtCenter: false,
           showMajorTicks: true,
           showLabels: true,
-          interval: interval,
-          labelTickStyle: const RadialTickLabelStyle(
+          interval: interval.toDouble(),
+          labelTickStyle: const GxRadialTickLabelStyle(
             padding: 22,
-            position: RadialElementPosition.outside,
+            position: GxRadialElementPosition.outside,
             style: TextStyle(
               fontSize: 8,
               color: Colors.black87,
               fontWeight: FontWeight.w500,
             ),
           ),
-          majorTickStyle: RadialTickStyle(
+          majorTickStyle: GxRadialTickStyle(
             color: Colors.blueGrey.shade300,
             thickness: 2,
             length: 12,
-            position: RadialElementPosition.outside,
-            alignment: RadialElementAlignment.start,
+            position: GxRadialElementPosition.outside,
+            alignment: GxRadialElementAlignment.start,
           ),
-          style: const RadialGaugeStyle(
+          style: const GxRadialGaugeStyle(
             color: Color(0xFFEEEEEE),
             thickness: 15,
             gradient: LinearGradient(
@@ -71,12 +71,12 @@ class InstrumentGauge extends StatelessWidget {
             ),
           ),
           showNeedle: true,
-          needle: const RadialNeedle(
+          needle: const GxRadialNeedle(
             color: Color(0xFF424242),
-            shape: RadialNeedleShape.tapperedLine,
+            shape: GxRadialNeedleShape.taperedLine,
             thickness: 8,
-            alignment: RadialElementAlignment.end,
-            circle: NeedleCircle(
+            alignment: GxRadialElementAlignment.end,
+            cap: GxNeedleCap(
               radius: 8,
               innerColor: Colors.black87,
               paintingStyle: PaintingStyle.fill,
