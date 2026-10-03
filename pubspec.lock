@@ -647,14 +647,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.3.0"
-  girix_code_gauge:
-    dependency: "direct main"
-    description:
-      name: girix_code_gauge
-      sha256: f1505ef49dacff948d051cad3883fe73b089fe868bf7313e56f99969309e7121
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   glob:
     dependency: transitive
     description:
@@ -687,6 +679,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.8"
+  gx_gauge:
+    dependency: "direct main"
+    description:
+      name: gx_gauge
+      sha256: "0d5df416d93eedfc7f2950e70be8781e25365bd858c930bb442c5eb0fb4ebea0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   home_widget:
     dependency: "direct main"
     description:

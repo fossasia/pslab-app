@@ -50,7 +50,6 @@ dependencies:
   mp_audio_stream: ^0.3.0
   ffi: ^2.2.0
   home_widget: ^0.10.0
-  girix_code_gauge: ^0.0.6
   image_picker: ^1.2.3
   rust_lib_pslab:
     path: rust_builder
@@ -61,6 +60,7 @@ dependencies:
   freezed_annotation: ^3.1.0
   archive: ^4.3.0
   http: ^1.6.0
+  gx_gauge: ^1.0.1
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_test:
