@@ -4,11 +4,10 @@ use lazy_static::lazy_static;
 use std::collections::VecDeque;
 use std::sync::Mutex;
 
-#[cfg(target_os = "android")]
+#[cfg(not(target_family = "wasm"))]
 use std::sync::Arc;
-#[cfg(target_os = "android")]
+#[cfg(not(target_family = "wasm"))]
 use std::thread;
-
 #[cfg(not(target_family = "wasm"))]
 use std::time::Duration;
 #[cfg(not(target_family = "wasm"))]
@@ -16,17 +15,17 @@ use std::io::{Read, Write};
 #[cfg(not(target_family = "wasm"))]
 use std::net::TcpStream;
 #[cfg(not(target_family = "wasm"))]
-use tungstenite::{connect, stream::MaybeTlsStream, Message, WebSocket};
+use tungstenite::{stream::MaybeTlsStream, Message, WebSocket};
 
-#[cfg(target_os = "android")]
+#[cfg(not(target_family = "wasm"))]
 use rusb::{
     request_type, DeviceHandle, Direction, GlobalContext, Recipient, RequestType, TransferType,
     UsbContext,
 };
 
-#[cfg(target_os = "android")]
+#[cfg(not(target_family = "wasm"))]
 lazy_static! {
-    static ref USB_HANDLE: Mutex<Option<Arc<DeviceHandle<GlobalContext>>>> = Mutex::new(None);
+    pub static ref USB_HANDLE: Mutex<Option<Arc<DeviceHandle<GlobalContext>>>> = Mutex::new(None);
     static ref EP_IN: Mutex<u8> = Mutex::new(0);
     static ref EP_OUT: Mutex<u8> = Mutex::new(0);
     static ref INTERFACE_ID: Mutex<u8> = Mutex::new(0);
@@ -88,6 +87,30 @@ pub fn init_desktop(vid: u16, pid: u16) -> Result<()> {
 }
 
 #[frb(sync)]
+pub fn init_labrador_desktop() -> Result<()> {
+    #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
+    {
+        let context = GlobalContext::default();
+        let handle = context
+            .open_device_with_vid_pid(0x03EB, 0xBA94)
+            .ok_or_else(|| anyhow!("EspoTek Labrador not found on USB bus"))?;
+
+        let _ = handle.set_auto_detach_kernel_driver(true);
+        handle
+            .claim_interface(0)
+            .map_err(|e| anyhow!("Failed to claim interface 0: {}", e))?;
+
+        *USB_HANDLE.lock().unwrap() = Some(Arc::new(handle));
+        Ok(())
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
+    {
+        Err(anyhow!("Desktop init called on non-desktop platform"))
+    }
+}
+
+#[frb(sync)]
 pub fn get_available_ports() -> Vec<String> {
     #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
     {
@@ -101,6 +124,18 @@ pub fn get_available_ports() -> Vec<String> {
                  {
                      port_names.push(p.port_name);
                  }
+                }
+            }
+        }
+        if let Ok(context) = rusb::Context::new() {
+            if let Ok(devices) = context.devices() {
+                for device in devices.iter() {
+                    if let Ok(desc) = device.device_descriptor() {
+                        if desc.vendor_id() == 0x03EB && desc.product_id() == 0xBA94 {
+                            port_names.push("USB_LABRADOR".to_string());
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -150,6 +185,13 @@ pub fn init_android(fd: i32) -> Result<()> {
         let context = GlobalContext::default();
         let handle = unsafe { context.open_device_with_fd(fd as RawFd) }
             .map_err(|e| anyhow!("Failed to open Android FD: {}", e))?;
+        let desc = handle.device().device_descriptor()?;
+        if desc.vendor_id() == 0x03EB && desc.product_id() == 0xBA94 {
+            let _ = handle.set_auto_detach_kernel_driver(true);
+            handle.claim_interface(0)?;
+            *USB_HANDLE.lock().unwrap() = Some(Arc::new(handle));
+            return Ok(());
+        }
 
         setup_device(handle)
     }
@@ -506,7 +548,7 @@ pub fn read_data(bytes_to_read: u32, timeout_ms: u32) -> Vec<u8> {
 
 #[frb(sync)]
 pub fn close_usb() {
-    #[cfg(target_os = "android")]
+    #[cfg(not(target_family = "wasm"))]
     {
         *ANDROID_RUN_THREAD.lock().unwrap() = false;
         if let Ok(mut buffer) = ANDROID_RX_BUFFER.lock() {
@@ -515,11 +557,16 @@ pub fn close_usb() {
 
         if let Some(handle) = USB_HANDLE.lock().unwrap().take() {
             let interface_num = *INTERFACE_ID.lock().unwrap();
-            let req_type = request_type(Direction::Out, RequestType::Vendor, Recipient::Device);
 
-            let _ = handle.write_control(req_type, 0x00, 0x0000, interface_num as u16, &[], Duration::from_millis(100));
-            let _ = handle.write_control(req_type, 0x12, 0x000F, interface_num as u16, &[], Duration::from_millis(100));
+            #[cfg(target_os = "android")]
+            {
+                let req_type = request_type(Direction::Out, RequestType::Vendor, Recipient::Device);
+                let _ = handle.write_control(req_type, 0x00, 0x0000, interface_num as u16, &[], Duration::from_millis(100));
+                let _ = handle.write_control(req_type, 0x12, 0x000F, interface_num as u16, &[], Duration::from_millis(100));
+            }
+
             let _ = handle.release_interface(interface_num);
+            let _ = handle.release_interface(0);
         }
     }
 
@@ -533,9 +580,6 @@ pub fn close_usb() {
         if let Ok(mut buffer) = WEB_RX_BUFFER.lock() { buffer.clear(); }
         if let Ok(mut buffer) = WEB_TX_BUFFER.lock() { buffer.clear(); }
     }
-
-    #[cfg(not(any(target_os = "android", target_os = "windows", target_os = "linux", target_os = "macos", target_family = "wasm")))]
-    {}
 }
 
 #[frb(sync)]
@@ -551,6 +595,17 @@ pub fn check_desktop_device_present() -> bool {
                  {
                      return true;
                  }
+                }
+            }
+        }
+        if let Ok(context) = rusb::Context::new() {
+            if let Ok(devices) = context.devices() {
+                for device in devices.iter() {
+                    if let Ok(desc) = device.device_descriptor() {
+                        if desc.vendor_id() == 0x03EB && desc.product_id() == 0xBA94 {
+                            return true;
+                        }
+                    }
                 }
             }
         }
