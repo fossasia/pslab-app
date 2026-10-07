@@ -3,21 +3,25 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/permissions.dart';
-import 'package:record/record.dart';
+import 'package:record_platform_interface/record_platform_interface.dart';
 
 import 'package:pslab/src/rust/api/audio.dart' as rust_api;
 
 class AudioJack {
   static const int maxBufferSize = 1024;
-  static const int samplingRate = 44100;
+  static const int yamnetWindowSize = 15600;
+  static const int samplingRate = 16000;
+  static const String _recorderId = 'pslab_ai_recorder';
 
   bool _isListening = false;
 
   StreamSubscription<List<double>>? _desktopAudioSubscription;
-  AudioRecorder? _platformAudioRecorder;
   StreamSubscription<Uint8List>? _platformStreamSubscription;
 
   final List<double> _audioBuffer = [];
+  final List<double> _analysisRingBuffer = [];
+
+  Function(List<double>)? onAiWindowReady;
 
   AudioJack();
 
@@ -61,9 +65,9 @@ class AudioJack {
   }
 
   Future<void> _startPlatformRecordAudio() async {
-    _platformAudioRecorder = AudioRecorder();
+    await RecordPlatform.instance.create(_recorderId);
 
-    if (await _platformAudioRecorder!.hasPermission()) {
+    if (await RecordPlatform.instance.hasPermission(_recorderId)) {
       const config = RecordConfig(
         encoder: AudioEncoder.pcm16bits,
         sampleRate: samplingRate,
@@ -73,7 +77,8 @@ class AudioJack {
         noiseSuppress: false,
       );
 
-      final stream = await _platformAudioRecorder!.startStream(config);
+      final stream =
+          await RecordPlatform.instance.startStream(_recorderId, config);
       _platformStreamSubscription =
           stream.listen(_onPlatformByteDataReceived, onError: _onError);
       _isListening = true;
@@ -85,12 +90,13 @@ class AudioJack {
   void _onAudioDataReceived(List<double> data) {
     _audioBuffer.addAll(data);
     _trimBuffer();
+    _analysisRingBuffer.addAll(data);
+    _checkAiBuffer();
   }
 
   void _onPlatformByteDataReceived(Uint8List data) {
     final byteData = ByteData.sublistView(data);
     List<double> tempBuffer = [];
-
     for (int i = 0; i < byteData.lengthInBytes - 1; i += 2) {
       final sample = byteData.getInt16(i, Endian.little);
       tempBuffer.add(sample / 32768.0);
@@ -98,6 +104,19 @@ class AudioJack {
 
     _audioBuffer.addAll(tempBuffer);
     _trimBuffer();
+
+    _analysisRingBuffer.addAll(tempBuffer);
+    _checkAiBuffer();
+  }
+
+  void _checkAiBuffer() {
+    if (_analysisRingBuffer.length >= yamnetWindowSize) {
+      final window =
+          List<double>.from(_analysisRingBuffer.sublist(0, yamnetWindowSize));
+      _analysisRingBuffer.removeRange(0, yamnetWindowSize);
+
+      onAiWindowReady?.call(window);
+    }
   }
 
   void _trimBuffer() {
@@ -126,14 +145,12 @@ class AudioJack {
       await _platformStreamSubscription?.cancel();
       _platformStreamSubscription = null;
 
-      if (_platformAudioRecorder != null) {
-        await _platformAudioRecorder!.stop();
-        await _platformAudioRecorder!.dispose();
-        _platformAudioRecorder = null;
-      }
+      await RecordPlatform.instance.stop(_recorderId);
+      await RecordPlatform.instance.dispose(_recorderId);
     }
 
     _audioBuffer.clear();
+    _analysisRingBuffer.clear();
   }
 
   Future<void> disposeHardware() async {
