@@ -22,7 +22,7 @@ dependencies:
   provider: ^6.1.5
   get_it: ^9.3.0
   record: ^7.1.1
-  record_platform_interface: ^7.1.1
+  record_platform_interface: ^2.1.0
   flutter_litert: ^1.0.0
   data: ^0.15.1
   logger: ^2.8.0
