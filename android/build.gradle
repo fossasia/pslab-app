@@ -28,18 +28,19 @@ subprojects {
                 }
             }
         }
+        project.tasks.withType(JavaCompile).configureEach {
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
+        }
+
+        project.tasks.matching { it.name.contains("KotlinCompile") }.configureEach {
+            kotlinOptions.jvmTarget = "21"
+        }
     }
 }
 
 subprojects {
     project.evaluationDependsOn(":app")
-    tasks.withType(JavaCompile).configureEach {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    tasks.matching { it.name.contains("KotlinCompile") }.configureEach {
-        kotlinOptions.jvmTarget = "17"
-    }
 }
 
 tasks.register("clean", Delete) {
