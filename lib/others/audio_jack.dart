@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/permissions.dart';
 import 'package:record_platform_interface/record_platform_interface.dart';
@@ -144,9 +145,15 @@ class AudioJack {
     } else {
       await _platformStreamSubscription?.cancel();
       _platformStreamSubscription = null;
-
-      await RecordPlatform.instance.stop(_recorderId);
-      await RecordPlatform.instance.dispose(_recorderId);
+      try {
+        await RecordPlatform.instance.stop(_recorderId);
+        await RecordPlatform.instance.dispose(_recorderId);
+      } on PlatformException catch (e) {
+        logger.w(
+            "AudioJack teardown ignored (expected during tests): ${e.message}");
+      } catch (e) {
+        logger.e("AudioJack teardown error: $e");
+      }
     }
 
     _audioBuffer.clear();
