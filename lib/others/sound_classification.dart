@@ -46,7 +46,7 @@ class SoundClassificationService {
       _interpreter = Interpreter.fromFile(file, options: options);
 
       final csvData =
-      await rootBundle.loadString('assets/yamnet_class_map.csv');
+          await rootBundle.loadString('assets/yamnet_class_map.csv');
       _labels = csvData
           .split('\n')
           .skip(1)
@@ -129,14 +129,31 @@ class SoundClassificationService {
       _isFirstFrame = false;
     } else {
       for (int i = 0; i < 521; i++) {
-        _smoothedScores[i] = (rawScores[i] * 0.75) + (_smoothedScores[i] * 0.25);
+        _smoothedScores[i] =
+            (rawScores[i] * 0.75) + (_smoothedScores[i] * 0.25);
       }
     }
 
     const blockedKeywords = [
-      'stomach', 'digest', 'rumble', 'burp', 'eructation', 'hiccup',
-      'flatulence', 'gargling', 'animal', 'bird', 'pigeon', 'dove',
-      'wild', 'chirp', 'squawk', 'roaring', 'fowl', 'livestock', 'duck'
+      'stomach',
+      'digest',
+      'rumble',
+      'burp',
+      'eructation',
+      'hiccup',
+      'flatulence',
+      'gargling',
+      'animal',
+      'bird',
+      'pigeon',
+      'dove',
+      'wild',
+      'chirp',
+      'squawk',
+      'roaring',
+      'fowl',
+      'livestock',
+      'duck'
     ];
 
     List<MapEntry<int, double>> validEvents = [];
