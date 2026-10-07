@@ -33,10 +33,12 @@ subprojects {
 
 subprojects {
     project.evaluationDependsOn(":app")
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        kotlinOptions {
-            jvmTarget = "11"
-        }
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    tasks.matching { it.name.contains("KotlinCompile") }.configureEach {
+        kotlinOptions.jvmTarget = "17"
     }
 }
 
