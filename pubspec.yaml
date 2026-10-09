@@ -50,7 +50,7 @@ dependencies:
   mp_audio_stream: ^0.3.0
   ffi: ^2.2.0
   home_widget: ^0.10.0
-  image_picker: ^1.2.3
+  image_picker: ^1.2.4
   rust_lib_pslab:
     path: rust_builder
   flutter_rust_bridge: 2.13.0
