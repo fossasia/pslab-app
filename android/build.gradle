@@ -28,6 +28,14 @@ subprojects {
                 }
             }
         }
+        project.tasks.withType(JavaCompile).configureEach {
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
+        }
+
+        project.tasks.matching { it.name.contains("KotlinCompile") }.configureEach {
+            kotlinOptions.jvmTarget = "21"
+        }
     }
 }
 

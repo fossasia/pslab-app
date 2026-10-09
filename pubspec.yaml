@@ -22,6 +22,8 @@ dependencies:
   provider: ^6.1.5
   get_it: ^9.3.0
   record: ^7.1.1
+  record_platform_interface: ^2.1.0
+  flutter_litert: ^1.0.0
   data: ^0.15.1
   logger: ^2.8.0
   url_launcher: ^6.3.3
@@ -75,6 +77,7 @@ dev_dependencies:
 
 flutter:
   generate: true
+  uses-material-design: true
 
   fonts:
     - family: Digital-7
@@ -83,12 +86,11 @@ flutter:
         - asset: fonts/Digital-7-Italic.ttf
           style: italic
 
-  uses-material-design: true
-
   assets:
     - assets/icons/
     - assets/images/
     - assets/images/guide_images/
+    - assets/yamnet_class_map.csv
 
 inno_bundle:
   id: b633ddbf-a022-4cbb-a459-4ba9fec0da51

@@ -9,18 +9,22 @@ import 'package:flutter/foundation.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/others/audio_jack.dart';
 import 'package:pslab/providers/soundmeter_config_provider.dart';
+import 'package:pslab/others/permissions.dart';
 
-import '../others/permissions.dart';
+import 'package:pslab/others/sound_classification.dart';
 
 class SoundMeterStateProvider extends ChangeNotifier {
   AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   double _currentDb = 0.0;
   Timer? _timeTimer;
   Timer? _audioTimer;
+
   final List<double> _dbData = [];
   final List<double> _timeData = [];
   final List<FlSpot> dbChartData = [];
   AudioJack? _audioJack;
+
   double _startTime = 0;
   double _currentTime = 0;
   final int _chartMaxLength = 50;
@@ -28,13 +32,16 @@ class SoundMeterStateProvider extends ChangeNotifier {
   double _dbMax = 0;
   double _dbSum = 0;
   int _dataCount = 0;
+
   bool _isRecording = false;
   List<List<dynamic>> _recordedData = [];
+
   bool _isPlayingBack = false;
   List<List<dynamic>>? _playbackData;
   int _playbackIndex = 0;
   Timer? _playbackTimer;
   bool _isPlaybackPaused = false;
+
   bool get isRecording => _isRecording;
   bool get isPlayingBack => _isPlayingBack;
   bool get isPlaybackPaused => _isPlaybackPaused;
@@ -47,6 +54,8 @@ class SoundMeterStateProvider extends ChangeNotifier {
 
   Position? currentPosition;
   StreamSubscription? _locationStream;
+  final SoundClassificationService soundAnalysis = SoundClassificationService();
+  List<ActiveSoundEvent> activeEvents = [];
 
   void setConfigProvider(SoundMeterConfigProvider configProvider) {
     _configProvider = configProvider;
@@ -76,16 +85,13 @@ class SoundMeterStateProvider extends ChangeNotifier {
   SoundMeterConfigProvider? get configProvider => _configProvider;
 
   Future<void> _startGeoLocationUpdates() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       logger.w('Location services are disabled.');
       return;
     }
 
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -95,15 +101,12 @@ class SoundMeterStateProvider extends ChangeNotifier {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      logger.w(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      logger.w('Location permissions are permanently denied.');
       return;
     }
 
     _locationStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     ).listen((Position position) {
       currentPosition = position;
     });
@@ -130,26 +133,39 @@ class SoundMeterStateProvider extends ChangeNotifier {
         }
       }
 
+      await soundAnalysis.initializeEngine();
       _audioJack = AudioJack();
       await _audioJack!.initialize();
+      _audioJack!.onAiWindowReady = (List<double> samples) {
+        if (!soundAnalysis.isModelLoaded || _isPlayingBack) return;
+
+        try {
+          final result = soundAnalysis.classifyAudioWindow(samples, _currentDb);
+          activeEvents = result;
+          notifyListeners();
+        } catch (e) {
+          logger.e("inference error: $e");
+        }
+      };
+
       await _audioJack!.start();
 
       _startTime = DateTime.now().millisecondsSinceEpoch / 1000.0;
-
       final intervalMs = _configProvider?.config.updatePeriod ?? 1000;
-
       _timeTimer = Timer.periodic(
         Duration(milliseconds: intervalMs),
         (timer) {
           _currentTime =
               (DateTime.now().millisecondsSinceEpoch / 1000.0) - _startTime;
-
           _updateData();
           notifyListeners();
         },
       );
+
       _audioTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        if (_audioJack != null && _audioJack!.isListening()) {
+        if (_audioJack != null &&
+            _audioJack!.isListening() &&
+            !_isPlayingBack) {
           final audioData = _audioJack!.read();
           if (audioData.isNotEmpty) {
             _currentDb = _calculateDecibels(audioData);
@@ -178,8 +194,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
     double rms = sqrt(sum / audioData.length);
 
     if (rms <= 0) return 0.0;
-
-    double dbFS = 20 * log(rms) / ln10;
+    double dbFS = 20 * (log(rms) / ln10);
 
     double dbSPL = dbFS + 64;
 
@@ -230,12 +245,18 @@ class SoundMeterStateProvider extends ChangeNotifier {
       if (timestamp != null && _playbackStartTimestamp != null) {
         _currentTime = (timestamp - _playbackStartTimestamp!) / 1000.0;
       }
+      if (currentRow.length > 5) {
+        activeEvents = _parseRecordedEvents(currentRow[5].toString());
+      } else {
+        activeEvents = [];
+      }
+
       _updateData();
       _playbackIndex++;
       notifyListeners();
     } else {
       logger.e(
-          'Skipping playback row at index $_playbackIndex due to insufficient columns (found ${currentRow.length}, expected at least 3');
+          'Skipping playback row at index $_playbackIndex due to insufficient columns');
       _playbackIndex++;
       notifyListeners();
     }
@@ -270,6 +291,53 @@ class SoundMeterStateProvider extends ChangeNotifier {
     });
   }
 
+  List<ActiveSoundEvent> _parseRecordedEvents(String raw) {
+    if (raw.trim().isEmpty || raw.trim().toLowerCase() == 'silence') {
+      return [ActiveSoundEvent("Silence", 1.0, 0xFFB0BEC5)];
+    }
+
+    final List<ActiveSoundEvent> events = [];
+    final items = raw.split('|');
+
+    final regexWithPercent = RegExp(r'^(.*?)\s*\((\d+(?:\.\d+)?)%\)$');
+    final regexColon = RegExp(r'^(.*?):(\d+(?:\.\d+)?)$');
+
+    for (final item in items) {
+      final trimmed = item.trim();
+      if (trimmed.isEmpty) continue;
+
+      final matchPercent = regexWithPercent.firstMatch(trimmed);
+      if (matchPercent != null) {
+        final label = matchPercent.group(1)?.trim() ?? "Unknown";
+        final percent = double.tryParse(matchPercent.group(2) ?? "0") ?? 0.0;
+        events.add(ActiveSoundEvent(
+          label,
+          percent / 100.0,
+          0xFF29B6F6,
+        ));
+        continue;
+      }
+
+      final matchColon = regexColon.firstMatch(trimmed);
+      if (matchColon != null) {
+        final label = matchColon.group(1)?.trim() ?? "Unknown";
+        final conf = double.tryParse(matchColon.group(2) ?? "0") ?? 0.0;
+        events.add(ActiveSoundEvent(
+          label,
+          conf <= 1.0 ? conf : conf / 100.0,
+          0xFF29B6F6,
+        ));
+        continue;
+      }
+
+      events.add(ActiveSoundEvent(trimmed, 1.0, 0xFF29B6F6));
+    }
+
+    return events.isEmpty
+        ? [ActiveSoundEvent("Silence", 1.0, 0xFFB0BEC5)]
+        : events;
+  }
+
   Future<void> stopPlayback() async {
     _isPlayingBack = false;
     _isPlaybackPaused = false;
@@ -284,6 +352,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
     _dataCount = 0;
     _currentDb = 0.0;
     _currentTime = 0;
+    activeEvents = [];
     notifyListeners();
     onPlaybackEnd?.call();
   }
@@ -318,9 +387,16 @@ class SoundMeterStateProvider extends ChangeNotifier {
   void _updateData() {
     final db = _currentDb;
     final time = _currentTime;
+
     if (_isRecording) {
       final now = DateTime.now();
       final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+      final soundEventsString = activeEvents.isEmpty
+          ? "Silence"
+          : activeEvents
+              .map((e) => "${e.label} (${(e.confidence * 100).toInt()}%)")
+              .join(' | ');
+
       _recordedData.add([
         now.millisecondsSinceEpoch.toString(),
         dateFormat.format(now),
@@ -330,28 +406,32 @@ class SoundMeterStateProvider extends ChangeNotifier {
             : 0,
         _configProvider!.config.includeLocationData
             ? currentPosition?.longitude.toString() ?? 0
-            : 0
+            : 0,
+        soundEventsString,
       ]);
     }
+
     _dbData.add(db);
     _timeData.add(time);
     _dbSum += db;
     _dataCount++;
+
     if (_dbData.length > _chartMaxLength) {
       final removedValue = _dbData.removeAt(0);
       _timeData.removeAt(0);
       _dbSum -= removedValue;
       _dataCount--;
     }
+
     if (_dbData.isNotEmpty) {
       _dbMin = _dbData.reduce(min);
       _dbMax = _dbData.reduce(max);
     }
+
     dbChartData.clear();
     for (int i = 0; i < _dbData.length; i++) {
       dbChartData.add(FlSpot(_timeData[i], _dbData[i]));
     }
-    notifyListeners();
   }
 
   Future<void> startRecording() async {
@@ -360,7 +440,14 @@ class SoundMeterStateProvider extends ChangeNotifier {
     }
     _isRecording = true;
     _recordedData = [
-      ['Timestamp', 'DateTime', 'Readings', 'Latitude', 'Longitude']
+      [
+        'Timestamp',
+        'DateTime',
+        'Readings',
+        'Latitude',
+        'Longitude',
+        'Sound Events'
+      ]
     ];
     notifyListeners();
   }
@@ -383,6 +470,7 @@ class SoundMeterStateProvider extends ChangeNotifier {
   double getCurrentTime() => _currentTime;
   double getMaxTime() => _timeData.isNotEmpty ? _timeData.last : 0;
   double getMinTime() => _timeData.isNotEmpty ? _timeData.first : 0;
+
   double getTimeInterval() {
     if (_currentTime <= 10) return 2;
     if (_currentTime <= 30) return 5;
