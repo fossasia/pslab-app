@@ -34,7 +34,7 @@ dependencies:
   connectivity_plus: ^7.3.1
   carousel_slider: ^5.1.1
   vibration: ^3.2.1
-  shared_preferences: ^2.5.5
+  shared_preferences: ^2.5.6
   csv: ^8.0.0
   share_plus: ^13.3.1
   path_provider: ^2.1.6
