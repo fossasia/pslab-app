@@ -6,7 +6,7 @@ import 'package:pslab/others/logger_service.dart';
 
 import '../src/rust/api/simple.dart' as rust_api;
 
-enum BoardType { binary, scpi, other }
+enum BoardType { binary, scpi, labrador, other }
 
 class PacketHandler {
   late Uint8List _buffer;
@@ -184,7 +184,7 @@ class PacketHandler {
 
   Future<int> getFirmwareVersion() async {
     try {
-      if (boardType == BoardType.scpi) {
+      if (boardType == BoardType.scpi || boardType == BoardType.labrador) {
         return 3;
       }
       sendByte(_mCommandsProto.common);
