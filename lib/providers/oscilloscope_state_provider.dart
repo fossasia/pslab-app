@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:pslab/models/oscilloscope_measurements.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/others/oscilloscope_axes_scale.dart';
+import 'package:pslab/others/ringbuffer.dart';
 import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_config_provider.dart';
 import 'package:pslab/src/rust/api/labrador.dart';
@@ -33,12 +34,16 @@ enum ChannelMeasurements {
   negativePeak
 }
 
-List<Color> colors = [
-  Colors.cyan,
-  Colors.green,
-  Colors.white,
-  Colors.purpleAccent
-];
+final Map<String, Color> plotColors = {
+  'CH1': Colors.cyan,
+  'CH2': Colors.green,
+  'CH3': Colors.white,
+  'MIC': Colors.purpleAccent
+};
+
+final Color curveFitColor = Colors.yellow;
+
+final Color xyPlotColor = Colors.red;
 
 class OscilloscopeStateProvider extends ChangeNotifier {
   late OscilloscopeConfigProvider _configProvider;
@@ -63,11 +68,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late double timeGap;
   late double timebase;
   double maxTimebase = 102.4;
-  late bool isCH1Selected;
-  late bool isCH2Selected;
-  late bool isCH3Selected;
-  late bool isMICSelected;
-  late bool isBuiltInMICSelected;
+  final Set<String> _selectedChannels = {};
+  late bool _isBuiltInMICSelected;
   late bool isAudioInputSelected;
 
   bool _isTriggerSelected = false;
@@ -165,8 +167,8 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   late Map<String, int> _channelIndexMap;
   late String xyPlotAxis1;
   late String xyPlotAxis2;
-  late List<List<FlSpot>> dataEntries;
-  final List<List<List<FlSpot>>> _waveformBuffer = [];
+  final Map<String, RingBuffer<List<FlSpot>>> _waveformBuffer =
+      <String, RingBuffer<List<FlSpot>>>{};
   late List<List<FlSpot>> dataEntriesXYPlot;
   late List<List<FlSpot>> dataEntriesCurveFit;
   late List<String> dataParamsChannels;
@@ -198,11 +200,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     _selectedIndex = 0;
     selectedChannelOffset = 'CH1';
 
-    isCH1Selected = false;
-    isCH2Selected = false;
-    isCH3Selected = false;
-    isMICSelected = false;
-    isBuiltInMICSelected = false;
+    _isBuiltInMICSelected = false;
     isAudioInputSelected = false;
     isTriggerSelected = false;
     isTriggered = false;
@@ -214,15 +212,11 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     isRunning = true;
     xyPlotAxis1 = 'CH1';
     xyPlotAxis2 = 'CH2';
-    dataEntries = [];
-    dataEntriesXYPlot = [];
-    dataEntriesCurveFit = [];
     _timebaseDivisions = 8;
     timebaseSlider = 0;
     oscillscopeRangeSelection = 0;
     _isProcessing = false;
 
-    dataEntries = <List<FlSpot>>[];
     dataEntriesXYPlot = <List<FlSpot>>[];
     dataEntriesCurveFit = <List<FlSpot>>[];
     dataParamsChannels = <String>[];
@@ -263,37 +257,57 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     monitor();
   }
 
+  bool get isBuiltInMICSelected => _isBuiltInMICSelected;
+
+  set isBuiltInMICSelected(bool isBuiltInMICSelected) {
+    _isBuiltInMICSelected = isBuiltInMICSelected;
+    if (isBuiltInMICSelected) {
+      _waveformBuffer.putIfAbsent('MIC', _createWaveformBuffer);
+    } else {
+      _waveformBuffer.remove('MIC');
+    }
+  }
+
+  RingBuffer<List<FlSpot>> _createWaveformBuffer() =>
+      RingBuffer<List<FlSpot>>(_configProvider.config.bufferSize + 1);
+
+  void _clearWaveformBuffers() {
+    for (final buffer in _waveformBuffer.values) {
+      buffer.clear();
+    }
+  }
+
+  List<FlSpot>? _latestWaveform(String channel) {
+    final buffer = _waveformBuffer[channel];
+    return buffer == null || buffer.isEmpty ? null : buffer.last;
+  }
+
   void setConfigProvider(
       OscilloscopeConfigProvider oscilloscopeConfigProvider) {
     _configProvider = oscilloscopeConfigProvider;
   }
 
+  bool isBufferOverlayEnabled() => _configProvider.config.bufferOverlayEnabled;
+
   void setChannelSelected(String channel, bool selected) {
-    logger.d("[OSC_PROVIDER] $channel selected: $selected");
-    switch (channel) {
-      case 'CH1':
-        isCH1Selected = selected;
-        break;
-      case 'CH2':
-        isCH2Selected = selected;
-        break;
-      case 'CH3':
-        isCH3Selected = selected;
-        break;
-      case 'MIC':
-        isMICSelected = selected;
-        break;
-      default:
-        return;
+    if (selected) {
+      _selectedChannels.add(channel);
+      _waveformBuffer.putIfAbsent(channel, _createWaveformBuffer);
+    } else {
+      _selectedChannels.remove(channel);
+      _removeChannelData(channel);
+      _waveformBuffer.remove(channel);
     }
+
     final chNum = _channelIndexMap[channel];
     if (chNum != null) {
       _boardState.activeBoard?.oscilloscope?.configureChannel(chNum, selected);
     }
-    if (!selected) {
-      _removeChannelData(channel);
-    }
     notifyListeners();
+  }
+
+  bool isChannelSelected(String channel) {
+    return _selectedChannels.contains(channel);
   }
 
   void removeChannelData(String channel) {
@@ -308,9 +322,6 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     }
 
     dataParamsChannels.removeAt(index);
-    if (index < dataEntries.length) {
-      dataEntries.removeAt(index);
-    }
 
     if (curveFittingChannel1 == channel) {
       curveFittingChannel1 = '';
@@ -390,12 +401,18 @@ class OscilloscopeStateProvider extends ChangeNotifier {
             }
           } else {
             if (hasOscilloscope) {
-              if (isCH1Selected) channels.add('CH1');
-              if (isCH2Selected) channels.add('CH2');
-              if (isCH3Selected) channels.add('CH3');
+              if (isChannelSelected('CH1')) {
+                channels.add('CH1');
+              }
+              if (isChannelSelected('CH2')) {
+                channels.add('CH2');
+              }
+              if (isChannelSelected('CH3')) {
+                channels.add('CH3');
+              }
             }
-            if (isAudioInputSelected && isBuiltInMICSelected ||
-                (hasOscilloscope && isMICSelected)) {
+            if (isAudioInputSelected && _isBuiltInMICSelected ||
+                (hasOscilloscope && isChannelSelected('MIC'))) {
               channels.add('MIC');
             }
             if (channels.isNotEmpty) {
@@ -410,10 +427,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
                 _wakelockEnabled = false;
               }
               resetGraph();
-              dataEntries = [];
             }
           }
-          if (!isBuiltInMICSelected && _audioJack.isListening()) {
+          if (!_isBuiltInMICSelected && _audioJack.isListening()) {
             await _audioJack.close();
           }
         }
@@ -473,7 +489,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     List<String> paramsChannels = channels;
     String? channel;
 
-    if (isBuiltInMICSelected) {
+    if (_isBuiltInMICSelected) {
       noOfChannels--;
     }
 
@@ -711,7 +727,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         }
       }
 
-      if (isBuiltInMICSelected) {
+      if (_isBuiltInMICSelected) {
         noOfChannels++;
         isTriggered = false;
         entries.add([]);
@@ -851,34 +867,33 @@ class OscilloscopeStateProvider extends ChangeNotifier {
         }
       }
 
-      if (_configProvider.config.bufferOverlayEnabled &&
-          dataEntries.isNotEmpty &&
-          isTriggerSelected) {
-        _waveformBuffer.insert(
-          0,
-          dataEntries.map((spots) => List<FlSpot>.from(spots)).toList(),
-        );
-        final maxSize = _configProvider.config.bufferSize;
-        if (_waveformBuffer.length > maxSize) {
-          _waveformBuffer.removeRange(maxSize, _waveformBuffer.length);
-        }
-      } else {
-        _waveformBuffer.clear();
+      for (int i = 0; i < min(entries.length, paramsChannels.length); i++) {
+        final channelName = paramsChannels[i];
+        _waveformBuffer
+            .putIfAbsent(channelName, _createWaveformBuffer)
+            .add(entries[i]);
       }
-
-      dataEntries = List.from(entries);
       dataEntriesCurveFit = List.from(curveFitEntries);
       dataParamsChannels = List.from(paramsChannels);
 
       if (_isRecording) {
         final now = DateTime.now();
         final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
+        final recordedChannels = <String>[];
+        final recordedWaveforms = <List<FlSpot>>[];
+        for (final channelName in paramsChannels) {
+          final waveform = _latestWaveform(channelName);
+          if (waveform != null) {
+            recordedChannels.add(channelName);
+            recordedWaveforms.add(waveform);
+          }
+        }
         _recordedData.add(
           [
             now.millisecondsSinceEpoch.toString(),
             dateFormat.format(now),
-            dataEntries,
-            dataParamsChannels,
+            recordedWaveforms,
+            recordedChannels,
             oscilloscopeAxesScale.xAxisScale,
             oscilloscopeAxesScale.yAxisScale,
             _configProvider.config.includeLocationData
@@ -902,31 +917,56 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     }
   }
 
-  List<List<FlSpot>> parseFlSpotList(String data) {
-    String clean = data.trim();
-    if (clean.startsWith('[[') && clean.endsWith(']]')) {
-      clean = clean.substring(2, clean.length - 2);
+  List<FlSpot> _parseSpotList(dynamic data) {
+    if (data is Iterable) {
+      return data
+          .map((spot) {
+            if (spot is FlSpot) return spot;
+            if (spot is Iterable) {
+              final coordinates = spot.toList();
+              if (coordinates.length >= 2) {
+                final x = double.tryParse(coordinates[0].toString());
+                final y = double.tryParse(coordinates[1].toString());
+                if (x != null && y != null) return FlSpot(x, y);
+              }
+            }
+            return null;
+          })
+          .whereType<FlSpot>()
+          .toList();
     }
 
-    List<String> groups = clean.split('], [');
+    if (data is! String) return [];
 
-    return groups.map((group) {
-      List<String> tuples = group.split('), (');
-      return tuples.map((tuple) {
-        String cleaned = tuple.replaceAll('(', '').replaceAll(')', '');
-        List<String> parts = cleaned.split(',');
-        if (parts.length <= 2) {
-          return FlSpot(0.0, 0.0);
-        }
-        double x = double.tryParse(parts[0].trim()) ?? 0.0;
-        double y = double.tryParse(parts[1].trim()) ?? 0.0;
-
-        return FlSpot(x, y);
-      }).toList();
+    final coordinatePattern = RegExp(
+      r'(?:FlSpot)?\(\s*(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*,\s*(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)(?:\s*,\s*-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\s*,\s*-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)?\s*\)',
+    );
+    return coordinatePattern.allMatches(data).map((match) {
+      return FlSpot(
+        double.parse(match.group(1)!),
+        double.parse(match.group(2)!),
+      );
     }).toList();
   }
 
-  List<String> parseChannelsList(String input) {
+  List<List<FlSpot>> parseFlSpotList(dynamic data) {
+    if (data is Map) {
+      return data.values.map(_parseSpotList).toList();
+    }
+    if (data is Iterable && data is! String) {
+      return data.map(_parseSpotList).toList();
+    }
+    if (data is! String) return [];
+
+    return data.split(RegExp(r'\],\s*\[')).map(_parseSpotList).toList();
+  }
+
+  List<String> parseChannelsList(dynamic input) {
+    if (input is Iterable && input is! String) {
+      return input.map((channel) => channel.toString()).toList();
+    }
+    if (input is! String) return [];
+
     String clean = input.trim();
     if (clean.startsWith('[') && clean.endsWith(']')) {
       clean = clean.substring(1, clean.length - 1);
@@ -943,12 +983,15 @@ class OscilloscopeStateProvider extends ChangeNotifier {
 
     final currentRow = _playbackData![_playbackIndex];
     if (currentRow.length > 2) {
-      dataEntries = parseFlSpotList(currentRow[2]);
-      dataParamsChannels = parseChannelsList(currentRow[3]);
-      oscilloscopeAxesScale
-          .setXAxisScale(double.tryParse(currentRow[4].toString()) ?? 875.0);
-      oscilloscopeAxesScale
-          .setYAxisScale(double.tryParse(currentRow[5].toString()) ?? 16.0);
+      _renderPlaybackFrame(currentRow);
+      if (currentRow.length > 4) {
+        oscilloscopeAxesScale
+            .setXAxisScale(double.tryParse(currentRow[4].toString()) ?? 875.0);
+      }
+      if (currentRow.length > 5) {
+        oscilloscopeAxesScale
+            .setYAxisScale(double.tryParse(currentRow[5].toString()) ?? 16.0);
+      }
       _playbackIndex++;
       notifyListeners();
     } else {
@@ -1012,7 +1055,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       WakelockPlus.disable();
       _wakelockEnabled = false;
     }
-    dataEntries.clear();
+    _clearWaveformBuffers();
     notifyListeners();
     onPlaybackEnd?.call();
   }
@@ -1032,7 +1075,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     }
     _timer.cancel();
 
-    dataEntries.clear();
+    _clearWaveformBuffers();
     _startPlaybackTimer();
     notifyListeners();
   }
@@ -1056,7 +1099,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       _isPlaybackComplete = false;
       _isPlaybackPaused = false;
       _playbackIndex = 1;
-      dataEntries.clear();
+      _clearWaveformBuffers();
       if (!_wakelockEnabled) {
         WakelockPlus.enable();
         _wakelockEnabled = true;
@@ -1081,9 +1124,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (_playbackData == null) return;
     if (index < 1 || index >= _playbackData!.length) return;
     final row = _playbackData![index];
-    if (row.length > 2) {
-      dataEntries = parseFlSpotList(row[2]);
-    }
+    _renderPlaybackFrame(row);
     if (row.length > 3) {
       dataParamsChannels = parseChannelsList(row[3]);
     }
@@ -1094,6 +1135,40 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     if (row.length > 5) {
       oscilloscopeAxesScale
           .setYAxisScale(double.tryParse(row[5].toString()) ?? 16.0);
+    }
+  }
+
+  void _renderPlaybackFrame(List<dynamic> row) {
+    if (row.length <= 2) return;
+
+    final channels = row.length > 3 ? parseChannelsList(row[3]) : <String>[];
+    final rawWaveforms = row[2];
+    final List<List<FlSpot>> waveforms;
+    if (rawWaveforms is Map) {
+      waveforms = channels
+          .map((channelName) => _parseSpotList(rawWaveforms[channelName]))
+          .toList();
+    } else if (rawWaveforms is String &&
+        rawWaveforms.trimLeft().startsWith('{')) {
+      waveforms = channels.map((channelName) {
+        final escapedChannel = RegExp.escape(channelName);
+        final match = RegExp(
+          '$escapedChannel\\s*:\\s*\\[(.*?)\\]',
+          dotAll: true,
+        ).firstMatch(rawWaveforms);
+        return _parseSpotList(match?.group(1));
+      }).toList();
+    } else {
+      waveforms = parseFlSpotList(rawWaveforms);
+    }
+
+    _clearWaveformBuffers();
+    dataParamsChannels = [];
+    for (int i = 0; i < min(channels.length, waveforms.length); i++) {
+      _waveformBuffer
+          .putIfAbsent(channels[i], _createWaveformBuffer)
+          .add(waveforms[i]);
+      dataParamsChannels.add(channels[i]);
     }
   }
 
@@ -1177,10 +1252,10 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     ];
     if (channels.isEmpty) {
       channels.addAll([
-        if (isCH1Selected) 'CH1',
-        if (isCH2Selected) 'CH2',
-        if (isCH3Selected) 'CH3',
-        if (isMICSelected || isBuiltInMICSelected) 'MIC',
+        if (isChannelSelected('CH1')) 'CH1',
+        if (isChannelSelected('CH2')) 'CH2',
+        if (isChannelSelected('CH3')) 'CH3',
+        if (isChannelSelected('MIC') || _isBuiltInMICSelected) 'MIC',
       ]);
     }
     final frameCount = _recordedData.isNotEmpty ? _recordedData.length - 1 : 0;
@@ -1274,9 +1349,9 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     double yRange;
     double yPadding;
     List<double> voltage = List.filled(512, 0.0);
-    for (int i = 0; i < dataParamsChannels.length; i++) {
-      if (dataEntries.length > i) {
-        List<FlSpot> entryList = dataEntries[i];
+    for (var channelName in dataParamsChannels) {
+      final entryList = _latestWaveform(channelName);
+      if (entryList != null) {
         for (int j = 0; j < entryList.length; j++) {
           FlSpot entry = entryList[j];
           if (j < voltage.length - 1) {
@@ -1290,7 +1365,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           }
         }
         final double frequency;
-        if (dataParamsChannels[i] == 'MIC') {
+        if (channelName == 'MIC') {
           frequency = _analyticsClass.findSignalFrequency(
               voltage, (1 / AudioJack.samplingRate).toDouble());
         } else {
@@ -1338,44 +1413,46 @@ class OscilloscopeStateProvider extends ChangeNotifier {
       }
       return names;
     }
-    if (isCH1Selected) names.add('CH1');
-    if (isCH2Selected) names.add('CH2');
-    if (isCH3Selected) names.add('CH3');
-    if (isMICSelected || isBuiltInMICSelected) names.add('MIC');
+    if (isChannelSelected('CH1')) names.add('CH1');
+    if (isChannelSelected('CH2')) names.add('CH2');
+    if (isChannelSelected('CH3')) names.add('CH3');
+    if (isChannelSelected('MIC') || _isBuiltInMICSelected) {
+      names.add('MIC');
+    }
     if (names.isEmpty) names.add('CH1');
     return names;
   }
 
   List<LineChartBarData> createPlotForChannel(String channelName) {
-    final index = dataParamsChannels.indexOf(channelName);
+    return _createChannelPlots(
+      channelName,
+      includeHistory: isBufferOverlayEnabled(),
+    );
+  }
+
+  List<LineChartBarData> _createChannelPlots(
+    String channelName, {
+    required bool includeHistory,
+  }) {
     final plots = <LineChartBarData>[];
-    if (_configProvider.config.bufferOverlayEnabled && index >= 0) {
-      for (int b = 0; b < _waveformBuffer.length; b++) {
-        if (index >= _waveformBuffer[b].length) continue;
-        final age = b + 1;
-        final opacity =
-            (1.0 - (age / (_waveformBuffer.length + 1))).clamp(0.1, 0.6);
-        plots.add(
-          LineChartBarData(
-            spots: _waveformBuffer[b][index],
-            isCurved: true,
-            color: colors[index % colors.length].withValues(alpha: opacity),
-            barWidth: 1,
-            dotData: const FlDotData(show: false),
-          ),
-        );
-      }
-    }
-    if (index >= 0 && index < dataEntries.length) {
+    final buffer = _waveformBuffer[channelName];
+    final color = plotColors[channelName];
+    if (buffer == null || buffer.isEmpty || color == null) return plots;
+
+    final historyCount = includeHistory ? buffer.length - 1 : 0;
+    for (int i = 0; i < buffer.length; i++) {
+      final isCurrent = i == buffer.length - 1;
+      if (!includeHistory && !isCurrent) continue;
+
+      final opacity =
+          isCurrent ? 1.0 : ((i + 1) / (historyCount + 1)).clamp(0.1, 0.6);
       plots.add(
         LineChartBarData(
-          spots: dataEntries[index],
+          spots: buffer[i],
           isCurved: true,
-          color: colors[index % colors.length],
+          color: color.withValues(alpha: opacity),
           barWidth: 1,
-          dotData: const FlDotData(
-            show: false,
-          ),
+          dotData: const FlDotData(show: false),
         ),
       );
     }
@@ -1383,45 +1460,14 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   List<LineChartBarData> createPlots() {
-    List<Color> curveFitColors = [Colors.yellow];
-    List<LineChartBarData> plots = [];
-
-    if (_configProvider.config.bufferOverlayEnabled) {
-      for (int b = 0; b < _waveformBuffer.length; b++) {
-        final age = b + 1;
-        final opacity =
-            (1.0 - (age / (_waveformBuffer.length + 1))).clamp(0.1, 0.6);
-        plots.addAll(
-          List<LineChartBarData>.generate(
-            _waveformBuffer[b].length,
-            (index) => LineChartBarData(
-              spots: _waveformBuffer[b][index],
-              isCurved: true,
-              color: colors[index % colors.length].withValues(alpha: opacity),
-              barWidth: 1,
-              dotData: const FlDotData(show: false),
-            ),
-          ),
-        );
-      }
+    final plots = <LineChartBarData>[];
+    for (final channelName in dataParamsChannels) {
+      plots.addAll(_createChannelPlots(
+        channelName,
+        includeHistory: isBufferOverlayEnabled(),
+      ));
     }
 
-    plots.addAll(
-      List<LineChartBarData>.generate(
-        dataEntries.length,
-        (index) {
-          return LineChartBarData(
-            spots: dataEntries[index],
-            isCurved: true,
-            color: colors[index % colors.length],
-            barWidth: 1,
-            dotData: const FlDotData(
-              show: false,
-            ),
-          );
-        },
-      ),
-    );
     plots.addAll(
       List<LineChartBarData>.generate(
         dataEntriesCurveFit.length,
@@ -1429,7 +1475,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
           return LineChartBarData(
             spots: dataEntriesCurveFit[index],
             isCurved: true,
-            color: curveFitColors[index % colors.length],
+            color: curveFitColor,
             barWidth: 1,
             dotData: const FlDotData(
               show: false,
@@ -1442,14 +1488,13 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   List<LineChartBarData> createXYPlot() {
-    List<Color> colors = [Colors.red];
     return List<LineChartBarData>.generate(
       dataEntriesXYPlot.length,
       (index) {
         return LineChartBarData(
           spots: dataEntriesXYPlot[index],
           isCurved: true,
-          color: colors[index % colors.length],
+          color: xyPlotColor,
           barWidth: 1,
           dotData: const FlDotData(
             show: false,
@@ -1460,7 +1505,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   void resetGraph() {
-    if (dataEntries.isEmpty &&
+    if (_waveformBuffer.values.every((buffer) => buffer.isEmpty) &&
         dataEntriesXYPlot.isEmpty &&
         dataEntriesCurveFit.isEmpty &&
         dataParamsChannels.isEmpty) {
@@ -1469,7 +1514,7 @@ class OscilloscopeStateProvider extends ChangeNotifier {
     oscilloscopeAxesScale.setYAxisScaleMax(oscilloscopeAxesScale.yAxisScale);
     oscilloscopeAxesScale.setYAxisScaleMin(-oscilloscopeAxesScale.yAxisScale);
     oscilloscopeAxesScale.setXAxisScale(timebase);
-    dataEntries = [];
+    _clearWaveformBuffers();
     dataEntriesXYPlot = [];
     dataEntriesCurveFit = [];
     dataParamsChannels = [];
@@ -1477,6 +1522,12 @@ class OscilloscopeStateProvider extends ChangeNotifier {
   }
 
   void setFourierTransform(bool enabled) {
+    if (enabled == isFourierTransformSelected) {
+      return;
+    }
+
+    _clearWaveformBuffers();
+
     isFourierTransformSelected = enabled;
 
     if (!enabled) {

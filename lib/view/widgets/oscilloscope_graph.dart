@@ -14,13 +14,6 @@ class OscilloscopeGraph extends StatefulWidget {
 }
 
 class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
-  final List<Color> plotColors = [
-    Colors.cyan,
-    Colors.green,
-    Colors.white,
-    Colors.purpleAccent
-  ];
-
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,
@@ -71,7 +64,7 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
             Container(
               width: 14,
               height: 3,
-              color: plotColors[index % plotColors.length],
+              color: plotColors[provider.dataParamsChannels[index]],
             ),
             const SizedBox(width: 8),
             Text(
@@ -97,6 +90,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
               backgroundColor: chartBackgroundColor,
               lineTouchData: LineTouchData(
                 enabled: !provider.isPlayingBack,
+                /* Removes popups with values in overlay mode because otherwise 
+                we would see data of all lines, even old ones, which would be confusing. */
+                handleBuiltInTouches: !provider.isBufferOverlayEnabled(),
               ),
               titlesData: FlTitlesData(
                 show: true,
@@ -232,6 +228,9 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
         backgroundColor: chartBackgroundColor,
         lineTouchData: LineTouchData(
           enabled: !provider.isPlayingBack,
+          /* Removes popups with values in overlay mode because otherwise 
+                we would see data of all lines, even old ones, which would be confusing. */
+          handleBuiltInTouches: !provider.isBufferOverlayEnabled(),
         ),
         titlesData: FlTitlesData(
           show: true,

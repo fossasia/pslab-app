@@ -40,7 +40,7 @@ class _MeasurementsListState extends State<MeasurementsList> {
           physics: const ClampingScrollPhysics(),
           itemBuilder: (context, index) {
             final textStyle = TextStyle(
-              color: colors[index],
+              color: plotColors[widget.dataParamsChannels[index]],
               fontSize: _responsiveFont(constraints.maxWidth, 16),
             );
             final channel = widget.dataParamsChannels[index];
