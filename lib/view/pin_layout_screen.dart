@@ -6,9 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 
 import '../models/pin_details.dart';
+import '../providers/board_state_provider.dart';
+import '../providers/locator.dart';
 import '../theme/colors.dart';
 
-enum BoardVersion { v6, v5 }
+enum BoardVersion { v6, v5, labrador }
 
 class PSLabPinLayoutScreen extends StatefulWidget {
   final bool initialIsFrontSide;
@@ -40,6 +42,13 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
     super.initState();
     isFrontSide = widget.initialIsFrontSide;
 
+    try {
+      final boardState = getIt.get<BoardStateProvider>();
+      if (boardState.isLabrador) {
+        currentVersion = BoardVersion.labrador;
+      }
+    } catch (_) {}
+
     Future.microtask(() => _loadColorMap());
   }
 
@@ -51,7 +60,9 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
 
   void _updatePinDetailsList() {
     setState(() {
-      if (currentVersion == BoardVersion.v6) {
+      if (currentVersion == BoardVersion.labrador) {
+        _pinDetails = PinDetails.getLabradorPins(context);
+      } else if (currentVersion == BoardVersion.v6) {
         _pinDetails = PinDetails.getV6Pins(context);
       } else {
         _pinDetails = PinDetails.getV5Pins(context);
@@ -152,6 +163,23 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
         return;
       }
     }
+    PinDetails? closestPin;
+    int minDistance = 35 * 35;
+    for (var pin in _pinDetails) {
+      int dr = ((pin.pinColor.r * 255).round() - (tappedColor.r * 255).round());
+      int dg = ((pin.pinColor.g * 255).round() - (tappedColor.g * 255).round());
+      int db = ((pin.pinColor.b * 255).round() - (tappedColor.b * 255).round());
+      int dist = dr * dr + dg * dg + db * db;
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestPin = pin;
+      }
+    }
+    if (closestPin != null) {
+      _showPinPopup(closestPin, tapPosition);
+      return;
+    }
+
     log("MISSING COLOR: The image returned Hex #${tappedColor.toARGB32().toRadixString(16).toUpperCase()}");
   }
 
@@ -267,7 +295,9 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
   }
 
   String get _currentLayoutImagePath {
-    if (currentVersion == BoardVersion.v6) {
+    if (currentVersion == BoardVersion.labrador) {
+      return 'assets/images/labrador_top.png';
+    } else if (currentVersion == BoardVersion.v6) {
       return isFrontSide
           ? 'assets/images/PSLab_v6_top.png'
           : 'assets/images/PSLab_v6_bottom.png';
@@ -279,7 +309,9 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
   }
 
   String get _currentColormapImagePath {
-    if (currentVersion == BoardVersion.v6) {
+    if (currentVersion == BoardVersion.labrador) {
+      return 'assets/images/labrador_top_colormap.png';
+    } else if (currentVersion == BoardVersion.v6) {
       return isFrontSide
           ? 'assets/images/pslab_v6_top_colormap.png'
           : 'assets/images/pslab_v6_bottom_colormap.png';
@@ -287,6 +319,17 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
       return isFrontSide
           ? 'assets/images/pslab_v5_front_colormap.png'
           : 'assets/images/pslab_v5_back_colormap.png';
+    }
+  }
+
+  String get _currentVersionLabel {
+    switch (currentVersion) {
+      case BoardVersion.labrador:
+        return "Labrador";
+      case BoardVersion.v6:
+        return "V6 (Latest)";
+      case BoardVersion.v5:
+        return "V5 (Legacy)";
     }
   }
 
@@ -326,16 +369,40 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
                         height: 36,
                         child: Text("PSLab V6",
                             style: TextStyle(
-                                color: blackTextColor,
+                                color: currentVersion == BoardVersion.v6
+                                    ? appBarColor
+                                    : blackTextColor,
                                 fontSize: 14,
-                                fontWeight: FontWeight.w600)),
+                                fontWeight: currentVersion == BoardVersion.v6
+                                    ? FontWeight.bold
+                                    : FontWeight.w600)),
                       ),
                       PopupMenuItem<BoardVersion>(
                         value: BoardVersion.v5,
                         height: 36,
                         child: Text("PSLab V5",
                             style: TextStyle(
-                                color: Colors.grey.shade700, fontSize: 14)),
+                                color: currentVersion == BoardVersion.v5
+                                    ? appBarColor
+                                    : Colors.grey.shade700,
+                                fontSize: 14,
+                                fontWeight: currentVersion == BoardVersion.v5
+                                    ? FontWeight.bold
+                                    : FontWeight.normal)),
+                      ),
+                      PopupMenuItem<BoardVersion>(
+                        value: BoardVersion.labrador,
+                        height: 36,
+                        child: Text("EspoTek Labrador",
+                            style: TextStyle(
+                                color: currentVersion == BoardVersion.labrador
+                                    ? appBarColor
+                                    : blackTextColor,
+                                fontSize: 14,
+                                fontWeight:
+                                    currentVersion == BoardVersion.labrador
+                                        ? FontWeight.bold
+                                        : FontWeight.w600)),
                       ),
                     ],
                     child: Container(
@@ -360,9 +427,7 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
                                   size: 18, color: appBarColor),
                               const SizedBox(width: 6),
                               Text(
-                                currentVersion == BoardVersion.v6
-                                    ? "V6 (Latest)"
-                                    : "V5 (Legacy)",
+                                _currentVersionLabel,
                                 style: TextStyle(
                                     color: blackTextColor,
                                     fontSize: 13,
@@ -392,78 +457,94 @@ class _PSLabPinLayoutScreenState extends State<PSLabPinLayoutScreen> {
                             offset: Offset(0, 2))
                       ],
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              if (!isFrontSide) {
-                                setState(() {
-                                  isFrontSide = true;
-                                  _colorMapPixels = null;
-                                });
-                                _loadColorMap();
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isFrontSide
-                                    ? appBarColor
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Front",
-                                style: TextStyle(
-                                  color: isFrontSide
-                                      ? Colors.white
-                                      : Colors.grey.shade700,
-                                  fontWeight: isFrontSide
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  fontSize: 13,
-                                ),
+                    child: currentVersion == BoardVersion.labrador
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: appBarColor,
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              "Top",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
                               ),
                             ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              if (isFrontSide) {
-                                setState(() {
-                                  isFrontSide = false;
-                                  _colorMapPixels = null;
-                                });
-                                _loadColorMap();
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: !isFrontSide
-                                    ? appBarColor
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Back",
-                                style: TextStyle(
-                                  color: !isFrontSide
-                                      ? Colors.white
-                                      : Colors.grey.shade700,
-                                  fontWeight: !isFrontSide
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  fontSize: 13,
+                          )
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (!isFrontSide) {
+                                      setState(() {
+                                        isFrontSide = true;
+                                        _colorMapPixels = null;
+                                      });
+                                      _loadColorMap();
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: isFrontSide
+                                          ? appBarColor
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Front",
+                                      style: TextStyle(
+                                        color: isFrontSide
+                                            ? Colors.white
+                                            : Colors.grey.shade700,
+                                        fontWeight: isFrontSide
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (isFrontSide) {
+                                      setState(() {
+                                        isFrontSide = false;
+                                        _colorMapPixels = null;
+                                      });
+                                      _loadColorMap();
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: !isFrontSide
+                                          ? appBarColor
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      "Back",
+                                      style: TextStyle(
+                                        color: !isFrontSide
+                                            ? Colors.white
+                                            : Colors.grey.shade700,
+                                        fontWeight: !isFrontSide
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ],

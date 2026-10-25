@@ -7,6 +7,7 @@ import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/board_state_provider.dart';
 import 'package:pslab/view/widgets/main_scaffold_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:pslab/view/pin_layout_screen.dart';
 
 import '../theme/colors.dart';
 
@@ -168,58 +169,17 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if (provider.pslabIsConnected) ...[
-                            Center(
-                              child: Image.asset(
-                                isWifiConnected
-                                    ? ConnectDeviceScreen.iconWifiConnected
-                                    : ConnectDeviceScreen.iconUsbConnected,
-                                width: 90,
-                                height: 90,
-                              ),
+                            _buildConnectedDeviceCard(
+                              context,
+                              provider,
+                              isWifiConnected,
+                              displayDeviceName,
                             ),
-                            Center(
-                              child: Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                child: Text(
-                                  '${appLocalizations.deviceConnected} via ${isWifiConnected ? "Wi-Fi" : (kIsWeb && provider.isLabrador ? "WebUSB" : (kIsWeb ? "Web Serial" : "USB"))}\n\nFirmware: $displayDeviceName',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: buttonForegroundColor,
-                                  backgroundColor: primaryRed,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  elevation: 0,
-                                ),
-                                icon: const Icon(Icons.power_settings_new,
-                                    color: Colors.white),
-                                label: Text(
-                                  appLocalizations.disconnectDevice,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  provider.disconnect();
-                                },
-                              ),
+                            const SizedBox(height: 18),
+                            _buildBoardSpecificationsCard(
+                              context,
+                              provider,
+                              displayDeviceName,
                             ),
                           ] else ...[
                             Center(
@@ -260,7 +220,6 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      // Header Row with Section Title and Red Border Dropdown
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -640,6 +599,457 @@ class _HomeScreenState extends State<ConnectDeviceScreen> {
       ),
     );
   }
+
+  Widget _buildConnectedDeviceCard(
+    BuildContext context,
+    BoardStateProvider provider,
+    bool isWifiConnected,
+    String displayDeviceName,
+  ) {
+    final bool isLabrador = provider.isLabrador ||
+        provider.pslabVersion == 8 ||
+        provider.pslabVersionID.toLowerCase().contains('labrador');
+    final bool isV6 =
+        provider.pslabVersion == 6 || provider.pslabVersionID.contains('V6');
+    final bool isV5 =
+        provider.pslabVersion == 5 || provider.pslabVersionID.contains('V5');
+    final bool isMini = provider.pslabVersion == 7 ||
+        provider.pslabVersionID.toLowerCase().contains('pico') ||
+        provider.pslabVersionID.toLowerCase().contains('mini') ||
+        displayDeviceName == appLocalizations.pslabMini;
+
+    final String resolvedBoardName;
+    if (isLabrador) {
+      resolvedBoardName = 'EspoTek Labrador';
+    } else if (isV6) {
+      resolvedBoardName = 'PSLab V6';
+    } else if (isV5) {
+      resolvedBoardName = 'PSLab V5';
+    } else if (isMini) {
+      resolvedBoardName = appLocalizations.pslabMini;
+    } else if (displayDeviceName.isNotEmpty &&
+        displayDeviceName != 'Not Connected') {
+      resolvedBoardName = displayDeviceName;
+    } else {
+      resolvedBoardName = 'PSLab';
+    }
+
+    final String connectionMethod = isWifiConnected
+        ? 'Wi-Fi'
+        : (kIsWeb && provider.isLabrador
+            ? 'WebUSB'
+            : (kIsWeb ? 'Web Serial' : 'USB'));
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(top: 14),
+          padding:
+              const EdgeInsets.only(top: 26, bottom: 20, left: 20, right: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: primaryRed, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                resolvedBoardName,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                appLocalizations.deviceConnectedVia(
+                  appLocalizations.deviceConnected,
+                  connectionMethod,
+                ),
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: primaryRed,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    elevation: 0,
+                  ),
+                  onPressed: () {
+                    provider.disconnect();
+                  },
+                  child: Text(
+                    appLocalizations.disconnectDevice,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 1,
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    appLocalizations.deviceConnected,
+                    style: TextStyle(
+                      color: primaryRed,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 15,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBoardSpecificationsCard(
+    BuildContext context,
+    BoardStateProvider provider,
+    String displayDeviceName,
+  ) {
+    final bool isLabrador = provider.isLabrador ||
+        provider.pslabVersion == 8 ||
+        provider.pslabVersionID.toLowerCase().contains('labrador');
+    final bool isV5 =
+        provider.pslabVersion == 5 || provider.pslabVersionID.contains('V5');
+    final bool isMini = provider.pslabVersion == 7 ||
+        provider.pslabVersionID.toLowerCase().contains('pico') ||
+        provider.pslabVersionID.toLowerCase().contains('mini') ||
+        displayDeviceName == appLocalizations.pslabMini;
+
+    final List<_BoardSpecBullet> bullets;
+    if (isLabrador) {
+      bullets = [
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelMicrocontroller,
+          detail: appLocalizations.specLabradorMcuDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelOperatingVoltage,
+          detail: appLocalizations.specLabradorVoltageDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelPowerSupplyOutput,
+          detail: appLocalizations.specLabradorPsuDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.oscilloscope,
+          detail: appLocalizations.specLabradorOscilloscopeDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.waveGenerator,
+          detail: appLocalizations.specLabradorWaveGenDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.logicAnalyzer,
+          detail: appLocalizations.specLabradorLogicAnalyzerDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.digitalOutputs,
+          detail: appLocalizations.specLabradorDigitalOutputsDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.multimeter,
+          detail: appLocalizations.specLabradorMultimeterDetail,
+        ),
+      ];
+    } else if (isMini) {
+      bullets = [
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelMainProcessor,
+          detail: appLocalizations.specMiniProcessorDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelOperatingVoltage,
+          detail: appLocalizations.specMiniVoltageDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelPowerRails,
+          detail: appLocalizations.specMiniPowerRailsDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.oscilloscope,
+          detail: appLocalizations.specMiniOscilloscopeDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.waveGenerator,
+          detail: appLocalizations.specMiniWaveGenDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.logicAnalyzer,
+          detail: appLocalizations.specMiniLogicAnalyzerDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelBusesAndExpansion,
+          detail: appLocalizations.specMiniBusesDetail,
+        ),
+      ];
+    } else if (isV5) {
+      bullets = [
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelMainProcessor,
+          detail: appLocalizations.specV5ProcessorDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelOperatingVoltage,
+          detail: appLocalizations.specV5VoltageDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelProgrammableVoltages,
+          detail: appLocalizations.specV5ProgrammableVoltagesDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelCurrentSourcePcs,
+          detail: appLocalizations.specV5CurrentSourceDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.oscilloscope,
+          detail: appLocalizations.specV5OscilloscopeDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.waveGenerator,
+          detail: appLocalizations.specV5WaveGenDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.logicAnalyzer,
+          detail: appLocalizations.specV5LogicAnalyzerDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.multimeter,
+          detail: appLocalizations.specV5MultimeterDetail,
+        ),
+      ];
+    } else {
+      bullets = [
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelMainProcessor,
+          detail: appLocalizations.specV6ProcessorDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelWirelessModule,
+          detail: appLocalizations.specV6WirelessModuleDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelOperatingVoltage,
+          detail: appLocalizations.specV6VoltageDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelProgrammableVoltages,
+          detail: appLocalizations.specV6ProgrammableVoltagesDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelCurrentSourcePcs,
+          detail: appLocalizations.specV6CurrentSourceDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.oscilloscope,
+          detail: appLocalizations.specV6OscilloscopeDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.waveGenerator,
+          detail: appLocalizations.specV6WaveGenDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.logicAnalyzer,
+          detail: appLocalizations.specV6LogicAnalyzerDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.multimeter,
+          detail: appLocalizations.specV6MultimeterDetail,
+        ),
+        _BoardSpecBullet(
+          label: appLocalizations.specLabelCommunicationInterfaces,
+          detail: appLocalizations.specV6CommunicationDetail,
+        ),
+      ];
+    }
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(top: 14),
+          padding:
+              const EdgeInsets.only(top: 26, bottom: 18, left: 18, right: 18),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: primaryRed, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...bullets.map(
+                  (bullet) => _buildBulletPoint(bullet.label, bullet.detail)),
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: primaryRed,
+                    side: BorderSide(color: primaryRed, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PSLabPinLayoutScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    appLocalizations.viewPinLayout,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: primaryRed,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 1,
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                appLocalizations.boardSpecifications,
+                style: TextStyle(
+                  color: primaryRed,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBulletPoint(String label, String detail) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 2.0, right: 8.0),
+            child: Text(
+              '•',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                height: 1.2,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  height: 1.45,
+                  color: Colors.black87,
+                ),
+                children: [
+                  TextSpan(
+                    text: '$label: ',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  TextSpan(
+                    text: detail,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BoardSpecBullet {
+  final String label;
+  final String detail;
+
+  const _BoardSpecBullet({
+    required this.label,
+    required this.detail,
+  });
 }
 
 Widget _stepText(String text) {
