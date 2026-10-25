@@ -34,14 +34,14 @@ runs:
           ~/.cargo/.crates2.json
           ~/.cargo/registry
           ~/.cargo/git
-        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-bin-v2-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: |
-          ${{ runner.os }}-cargo-bin-
+          ${{ runner.os }}-cargo-bin-v2-
 
     - name: Install latest wasm-pack
       shell: bash
       run: |
-        cargo install wasm-pack --locked --force
+        cargo install wasm-pack --locked
         wasm-pack --version
 
     - name: Add WebAssembly to Rust
@@ -50,8 +50,8 @@ runs:
         rustup target add wasm32-unknown-unknown
         rustup toolchain install nightly
         rustup component add rust-src --toolchain nightly
-        cargo install cargo-expand --force
-        cargo install flutter_rust_bridge_codegen --force
+        cargo install cargo-expand
+        cargo install flutter_rust_bridge_codegen
 
     - name: Install Flutter Dependencies
       shell: bash
