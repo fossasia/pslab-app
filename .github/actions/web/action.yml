@@ -25,10 +25,24 @@ runs:
         sudo apt-get update
         sudo apt-get install -y pkg-config libudev-dev libusb-1.0-0-dev libasound2-dev
 
-    - name: Install wasm-pack
-      uses: jetli/wasm-pack-action@v0.4.0
+    - name: Cache cargo binaries
+      uses: actions/cache@v4
       with:
-        version: 'latest'
+        path: |
+          ~/.cargo/bin
+          ~/.cargo/registry
+          ~/.cargo/git
+        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-bin-
+
+    - name: Install latest wasm-pack (if missing)
+      shell: bash
+      run: |
+        if ! command -v wasm-pack >/dev/null 2>&1; then
+          cargo install wasm-pack --locked
+        fi
+        wasm-pack --version
 
     - name: Add WebAssembly to Rust
       shell: bash
