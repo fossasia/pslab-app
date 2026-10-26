@@ -126,7 +126,6 @@ jobs:
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
           git clone --branch=fastlane-android --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
-          cd fastlane
           fastlane uploadToOpenTesting
           if [[ $? -ne 0 ]]; then
               exit 1
