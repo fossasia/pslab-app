@@ -26,7 +26,7 @@ runs:
         sudo apt-get install -y pkg-config libudev-dev libusb-1.0-0-dev libasound2-dev
 
     - name: Cache cargo binaries
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cargo/bin
