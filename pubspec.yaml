@@ -62,7 +62,7 @@ dependencies:
   freezed_annotation: ^3.1.0
   archive: ^4.3.0
   http: ^1.6.0
-  gx_gauge: ^1.0.1
+  gx_gauge: ^1.1.0
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_test:
