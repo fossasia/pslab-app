@@ -25,9 +25,24 @@ runs:
         sudo apt-get update
         sudo apt-get install -y pkg-config libudev-dev libusb-1.0-0-dev libasound2-dev
 
-    - name: Install wasm-pack
+    - name: Cache cargo binaries
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin
+          ~/.cargo/.crates.toml
+          ~/.cargo/.crates2.json
+          ~/.cargo/registry
+          ~/.cargo/git
+        key: ${{ runner.os }}-cargo-bin-v2-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-bin-v2-
+
+    - name: Install latest wasm-pack
       shell: bash
-      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      run: |
+        cargo install wasm-pack --locked
+        wasm-pack --version
 
     - name: Add WebAssembly to Rust
       shell: bash
