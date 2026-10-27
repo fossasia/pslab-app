@@ -222,30 +222,37 @@ class _LoggedDataScreenState extends State<LoggedDataScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(appLocalizations.renameLog),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  appLocalizations.renameHint,
-                  style: TextStyle(fontSize: 14, color: hintTextColor),
-                ),
-              ),
-              TextField(
-                controller: controller,
-                autofocus: true,
-                decoration: InputDecoration(
-                  border: const UnderlineInputBorder(),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: primaryRed),
+          content: SizedBox(
+            width: 250,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    appLocalizations.renameHint,
+                    style: TextStyle(fontSize: 14, color: hintTextColor),
                   ),
-                  suffixText: extension,
                 ),
-                onSubmitted: (value) => Navigator.of(context).pop(value),
-              ),
-            ],
+                SizedBox(
+                  width: 250,
+                  child: TextField(
+                    controller: controller,
+                    autofocus: true,
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      border: const UnderlineInputBorder(),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: primaryRed),
+                      ),
+                      suffixText: extension,
+                    ),
+                    onSubmitted: (value) => Navigator.of(context).pop(value),
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
