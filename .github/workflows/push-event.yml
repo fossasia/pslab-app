@@ -25,6 +25,8 @@ jobs:
   common:
     name: Common Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       VERSION_NAME: ${{ steps.flutter-version.outputs.VERSION_NAME }}
       VERSION_CODE: ${{ steps.flutter-version.outputs.VERSION_CODE }}
@@ -76,6 +78,8 @@ jobs:
     name: Android Flutter Build
     needs: common
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -108,6 +112,16 @@ jobs:
           name: AAB Generated
           path: build/app/outputs/bundle
 
+      - name: Setup Ruby for Fastlane
+        if: ${{ github.repository == 'fossasia/pslab-app' }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 'ruby'
+
+      - name: Install Fastlane
+        if: ${{ github.repository == 'fossasia/pslab-app' }}
+        run: gem install fastlane --no-document
+
       - name: Update app in Open Testing track
         if: ${{ github.repository == 'fossasia/pslab-app' }}
         run: |
@@ -121,6 +135,8 @@ jobs:
     name: iOS Flutter Build
     needs: common
     runs-on: macos-latest
+    permissions:
+      contents: read
     steps:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1.7.0
@@ -182,6 +198,8 @@ jobs:
     name: Web App Flutter Build
     needs: common
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -201,6 +219,8 @@ jobs:
     name: Windows Flutter Build
     needs: common
     runs-on: windows-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -220,6 +240,8 @@ jobs:
     name: Linux Flutter Build
     needs: common
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -241,6 +263,8 @@ jobs:
     name: Linux ARM64 Flutter Build
     needs: common
     runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -262,6 +286,8 @@ jobs:
     name: macOS Flutter Build
     needs: common
     runs-on: macos-latest
+    permissions:
+      contents: read
     steps:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1.7.0
@@ -287,6 +313,8 @@ jobs:
     needs: [android, ios, windows, linux, linux-arm64, macos, web]
     if: ${{ github.repository == 'fossasia/pslab-app' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     concurrency:
       group: upload-to-app-branch

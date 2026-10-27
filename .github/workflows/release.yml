@@ -42,6 +42,14 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Setup Ruby for Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 'ruby'
+
+      - name: Install Fastlane
+        run: gem install fastlane --no-document
+
       - name: Update Fastlane Metadata (Android)
         run: |
           cd ./android
