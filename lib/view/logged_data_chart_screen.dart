@@ -112,8 +112,6 @@ class _LoggedDataChartScreenState extends State<LoggedDataChartScreen> {
               '${appLocalizations.chartReportPdf}',
           bytes: await pdf.save(),
           mimeType: 'application/pdf',
-          type: FileType.custom,
-          allowedExtensions: ['pdf'],
         );
 
         if (outputFile != null && mounted) {
