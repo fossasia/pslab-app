@@ -19,6 +19,16 @@ class FAQScreen extends StatelessWidget {
         answer: appLocalizations.faqWhatIsPslabAnswer,
       ),
       FAQItem(
+        question: appLocalizations.faqSupportedHardware,
+        answer: appLocalizations.faqSupportedHardwareAnswer,
+        linkText: appLocalizations.faqSupportedHardwareLinkText,
+        linkUrl: appLocalizations.faqSupportedHardwareLinkUrl,
+      ),
+      FAQItem(
+        question: appLocalizations.faqArchitectureTechStack,
+        answer: appLocalizations.faqArchitectureTechStackAnswer,
+      ),
+      FAQItem(
         question: appLocalizations.faqWhereToBuy,
         answer: appLocalizations.faqWhereToBuyAnswer,
         linkText: appLocalizations.faqWhereToBuyLinkText,
@@ -33,16 +43,39 @@ class FAQScreen extends StatelessWidget {
       FAQItem(
         question: appLocalizations.faqDownloadDesktopApp,
         answer: appLocalizations.faqDownloadDesktopAppAnswer,
+        linkText: appLocalizations.faqDownloadDesktopAppLinkText,
+        linkUrl: appLocalizations.faqDownloadDesktopAppLinkUrl,
       ),
       FAQItem(
         question: appLocalizations.faqHowToConnect,
         answer: appLocalizations.faqHowToConnectAnswer,
+        linkText: appLocalizations.faqHowToConnectLinkText,
+        linkUrl: appLocalizations.faqHowToConnectLinkUrl,
       ),
       FAQItem(
-          question: appLocalizations.faqReportBug,
-          answer: appLocalizations.faqReportBugAnswer,
-          linkText: appLocalizations.faqReportBugLinkText,
-          linkUrl: appLocalizations.faqReportBugLinkUrl),
+        question: appLocalizations.faqLabradorSetup,
+        answer: appLocalizations.faqLabradorSetupAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqFirmwareFlashing,
+        answer: appLocalizations.faqFirmwareFlashingAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqLinuxPermissions,
+        answer: appLocalizations.faqLinuxPermissionsAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqOfflineOperation,
+        answer: appLocalizations.faqOfflineOperationAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqMicrophoneChannel,
+        answer: appLocalizations.faqMicrophoneChannelAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqSafetyVoltageLimits,
+        answer: appLocalizations.faqSafetyVoltageLimitsAnswer,
+      ),
       FAQItem(
         question: appLocalizations.faqRecordData,
         answer: appLocalizations.faqRecordDataAnswer,
@@ -54,6 +87,12 @@ class FAQScreen extends StatelessWidget {
       FAQItem(
         question: appLocalizations.faqCompatibleSensors,
         answer: appLocalizations.faqCompatibleSensorsAnswer,
+      ),
+      FAQItem(
+        question: appLocalizations.faqReportBug,
+        answer: appLocalizations.faqReportBugAnswer,
+        linkText: appLocalizations.faqReportBugLinkText,
+        linkUrl: appLocalizations.faqReportBugLinkUrl,
       ),
       FAQItem(
         question: appLocalizations.faqQuestionNotListed,
