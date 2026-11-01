@@ -52,6 +52,12 @@ android {
         versionName = flutterVersionName
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
     signingConfigs {
         if (GITHUB_BUILD) {
             release {
