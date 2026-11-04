@@ -1,0 +1,14 @@
+## What's Changed
+
+This release restores and enhances features and sensor support from the 3.x app, while adding major capabilities including:
+
+• In-app firmware updates
+• OLED display instrument and retro games
+• Multimeter continuity-beep mode
+• Oscilloscope stacked and buffer-overlay modes
+• Sound classification in the sound meter
+• Labrador board support
+
+PSLab is now available for Android, iOS, Windows, macOS, Linux, and the web.
+
+**Full Changelog**: https://github.com/fossasia/pslab-app/compare/v4.0.1...v4.60.7

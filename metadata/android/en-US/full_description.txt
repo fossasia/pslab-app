@@ -1,0 +1,7 @@
+Pocket Science Lab (PSLab) comes with an array of instruments including Oscilloscope, Multimeter, Waveform Generator, Frequency Counter, Programmable Voltage, Current Source and many more.
+
+With instruments such as the Luxmeter and Barometer you can also do measurements directly using your phone sensors. Other instruments can use the PSLab Open Hardware extension that combines many devices in one.
+
+PSLab enables you to do science experiments without the need for programming. You can store and export the data and show it on a map.
+
+The app is created by the FOSSASIA community and developed entirely as Open Source ensuring privacy and long-term support.

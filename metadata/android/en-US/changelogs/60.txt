@@ -1,0 +1,4 @@
+## Changes
+- Improvements to multiple features
+- Support for multiple orientations
+- Bugs, Crashes and Performance fixes
