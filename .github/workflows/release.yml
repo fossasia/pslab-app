@@ -72,6 +72,8 @@ jobs:
           git push --force origin fastlane-android
 
       - name: Push version to production (Android)
+        env:
+          SUPPLY_JSON_KEY: ${{ github.workspace }}/scripts/fastlane.json
         run: |
           cd ./android
           fastlane promoteToProduction version_code:${{ steps.download-assets.outputs.VERSION_CODE }}
