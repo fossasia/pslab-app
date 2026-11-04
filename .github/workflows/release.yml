@@ -32,10 +32,15 @@ jobs:
         run: |
           bash scripts/prep-ios-key.sh
 
-      - name: Download Assets
+      - name: Copy versionCode.txt from version branch to release
+        run: |
+          git fetch origin version:refs/remotes/origin/version --depth=1
+          git show origin/version:versionCode.txt > versionCode.txt
+          gh release upload "${{ github.event.release.tag_name }}" versionCode.txt --clobber
+
+      - name: Read version code
         id: download-assets
         run: |
-          gh release download ${{ github.event.release.tag_name }} --pattern '*.txt'
           read -r version_code < versionCode.txt
           echo "VERSION_CODE=$version_code" >> $GITHUB_OUTPUT
 
