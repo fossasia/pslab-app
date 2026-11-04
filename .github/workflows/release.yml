@@ -75,6 +75,8 @@ jobs:
         env:
           SUPPLY_JSON_KEY: ${{ github.workspace }}/scripts/fastlane.json
         run: |
+          mkdir -p ./android/scripts
+          ln -s "$GITHUB_WORKSPACE/scripts/fastlane.json" ./android/scripts/fastlane.json
           cd ./android
           fastlane promoteToProduction version_code:${{ steps.download-assets.outputs.VERSION_CODE }}
           if [[ $? -ne 0 ]]; then
