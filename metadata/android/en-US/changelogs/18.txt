@@ -1,0 +1,6 @@
+This version includes:
+- Improved logs
+- Enhanced oscilloscope
+- Updated wave generator
+- Smaller APK file
+and minor bug fixes
