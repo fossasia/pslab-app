@@ -31,6 +31,9 @@ void main() {
           ScreenUtilInit(
             designSize: const Size(360, 690),
             builder: (context, child) => MaterialApp(
+              locale: Locale(language),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
               home: Scaffold(
                 body: ChangeNotifierProvider<PowerSourceStateProvider>.value(
                   value: provider,
@@ -61,8 +64,20 @@ void main() {
         expect(semanticsData.hasAction(SemanticsAction.increase), isTrue);
         expect(semanticsData.hasAction(SemanticsAction.decrease), isTrue);
 
-        // Perform increase action
         final semanticsNode = tester.getSemantics(knobFinder);
+
+        // Perform decrease action at minimum boundary (should remain clamped)
+        semanticsNode.owner!.performAction(
+          semanticsNode.id,
+          SemanticsAction.decrease,
+        );
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSemantics(knobFinder).getSemanticsData().value,
+          '-5.00 V',
+        );
+
+        // Perform increase action
         semanticsNode.owner!.performAction(
           semanticsNode.id,
           SemanticsAction.increase,
@@ -72,7 +87,7 @@ void main() {
         final updatedData = tester.getSemantics(knobFinder).getSemanticsData();
         expect(updatedData.value, '-4.99 V');
 
-        // Perform decrease action
+        // Perform decrease action back to minimum
         semanticsNode.owner!.performAction(
           semanticsNode.id,
           SemanticsAction.decrease,
@@ -101,6 +116,9 @@ void main() {
           ScreenUtilInit(
             designSize: const Size(360, 690),
             builder: (context, child) => MaterialApp(
+              locale: Locale(language),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
               home: Scaffold(
                 body: ChangeNotifierProvider<PowerSourceStateProvider>.value(
                   value: provider,
@@ -131,8 +149,20 @@ void main() {
         expect(semanticsData.hasAction(SemanticsAction.increase), isTrue);
         expect(semanticsData.hasAction(SemanticsAction.decrease), isTrue);
 
-        // Perform increase action
         final semanticsNode = tester.getSemantics(knobFinder);
+
+        // Perform decrease action at minimum boundary (should remain clamped to 0.00 mA)
+        semanticsNode.owner!.performAction(
+          semanticsNode.id,
+          SemanticsAction.decrease,
+        );
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSemantics(knobFinder).getSemanticsData().value,
+          '0.00 mA',
+        );
+
+        // Perform increase action
         semanticsNode.owner!.performAction(
           semanticsNode.id,
           SemanticsAction.increase,
@@ -147,3 +177,4 @@ void main() {
     });
   }
 }
+
