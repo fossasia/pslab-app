@@ -17,6 +17,15 @@ jobs:
       - name: Download repository
         uses: actions/checkout@v7
 
+      - name: Validate release tag
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          if [[ "$TAG_NAME" != v* || "$TAG_NAME" == "v" ]]; then
+            echo "Release tag must start with 'v' (for example: v1.2.3). Got: $TAG_NAME"
+            exit 1
+          fi
+
       - name: Prepare Secrets (Android)
         env:
           ENCRYPTED_F10B5E0E5262_IV: ${{ secrets.ENCRYPTED_F10B5E0E5262_IV }}
