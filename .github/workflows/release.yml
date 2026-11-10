@@ -21,8 +21,8 @@ jobs:
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
-          if [[ "$TAG_NAME" != v* || "$TAG_NAME" == "v" ]]; then
-            echo "Release tag must start with 'v' (for example: v1.2.3). Got: $TAG_NAME"
+          if [[ ! "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tag must match vMAJOR.MINOR.PATCH (for example: v1.2.3). Got: $TAG_NAME"
             exit 1
           fi
 
