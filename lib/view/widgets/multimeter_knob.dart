@@ -358,12 +358,11 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isDesktopOrWeb) return _buildDial();
-
     return Selector<MultimeterStateProvider, int>(
       selector: (_, provider) => provider.getSelectedIndex(),
       builder: (context, selectedIndex, child) => Semantics(
         container: true,
+        label: appLocalizations.multimeter,
         value: knobMarker[selectedIndex],
         increasedValue: knobMarker[(selectedIndex + 1) % knobMarker.length],
         decreasedValue: knobMarker[
@@ -372,27 +371,34 @@ class _MultimeterKnobState extends State<MultimeterKnob> {
         onDecrease: () => _changeMode(-1),
         child: child,
       ),
-      child: FocusableActionDetector(
-        mouseCursor:
-            _isDragging ? SystemMouseCursors.grabbing : SystemMouseCursors.grab,
-        shortcuts: const <ShortcutActivator, Intent>{
-          SingleActivator(LogicalKeyboardKey.arrowUp): _AdjustModeIntent(1),
-          SingleActivator(LogicalKeyboardKey.arrowRight): _AdjustModeIntent(1),
-          SingleActivator(LogicalKeyboardKey.arrowDown): _AdjustModeIntent(-1),
-          SingleActivator(LogicalKeyboardKey.arrowLeft): _AdjustModeIntent(-1),
-        },
-        actions: <Type, Action<Intent>>{
-          _AdjustModeIntent: CallbackAction<_AdjustModeIntent>(
-            onInvoke: (intent) {
-              _changeMode(intent.direction);
-              return null;
-            },
-          ),
-        },
-        focusNode: _knobFocusNode,
-        autofocus: true,
-        child: _buildDial(),
-      ),
+      child: _isDesktopOrWeb
+          ? FocusableActionDetector(
+              mouseCursor: _isDragging
+                  ? SystemMouseCursors.grabbing
+                  : SystemMouseCursors.grab,
+              shortcuts: const <ShortcutActivator, Intent>{
+                SingleActivator(LogicalKeyboardKey.arrowUp):
+                    _AdjustModeIntent(1),
+                SingleActivator(LogicalKeyboardKey.arrowRight):
+                    _AdjustModeIntent(1),
+                SingleActivator(LogicalKeyboardKey.arrowDown):
+                    _AdjustModeIntent(-1),
+                SingleActivator(LogicalKeyboardKey.arrowLeft):
+                    _AdjustModeIntent(-1),
+              },
+              actions: <Type, Action<Intent>>{
+                _AdjustModeIntent: CallbackAction<_AdjustModeIntent>(
+                  onInvoke: (intent) {
+                    _changeMode(intent.direction);
+                    return null;
+                  },
+                ),
+              },
+              focusNode: _knobFocusNode,
+              autofocus: true,
+              child: _buildDial(),
+            )
+          : _buildDial(),
     );
   }
 }
