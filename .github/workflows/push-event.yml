@@ -49,7 +49,7 @@ jobs:
 
           IFS='.' read -r major minor patch < versionName.txt
 
-          if [[ "$commit_message" =~ ^feat: ]]; then
+          if [[ "$commit_message" =~ ^feat(\(.*\))?: ]]; then
             next_minor=$((minor + 1))
             next_patch=0
           else
