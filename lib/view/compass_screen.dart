@@ -327,56 +327,66 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
                             ).clamp(170.0, 300.0);
 
                             return Center(
-                              child: Container(
-                                width: compassSize,
-                                height: compassSize,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          Colors.black.withValues(alpha: 0.12),
-                                      blurRadius: 18,
-                                      offset: const Offset(0, 6),
-                                    ),
-                                  ],
-                                ),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    RepaintBoundary(
-                                      child: CustomPaint(
-                                        size: Size(compassSize, compassSize),
-                                        painter: _StaticBezelPainter(
-                                          accentRed: primaryRed,
+                              child: Semantics(
+                                container: true,
+                                label: appLocalizations.compassTitle,
+                                value:
+                                    '${headingDegrees.toStringAsFixed(1)}° $cardinal ($fullDirection), ${compassProvider.selectedAxis}-Axis',
+                                child: Container(
+                                  width: compassSize,
+                                  height: compassSize,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.12,
                                         ),
+                                        blurRadius: 18,
+                                        offset: const Offset(0, 6),
                                       ),
-                                    ),
-                                    Transform.rotate(
-                                      angle: compassProvider.currentDegree,
-                                      child: RepaintBoundary(
+                                    ],
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      RepaintBoundary(
                                         child: CustomPaint(
                                           size: Size(compassSize, compassSize),
-                                          painter: _StaticDialDiskPainter(
+                                          painter: _StaticBezelPainter(
                                             accentRed: primaryRed,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    RepaintBoundary(
-                                      child: CustomPaint(
-                                        size: Size(compassSize, compassSize),
-                                        painter: _UprightCenterHubPainter(
-                                          headingText:
-                                              '${headingDegrees.toStringAsFixed(1)}°',
-                                          cardinalText: cardinal,
-                                          axisText:
-                                              '${compassProvider.selectedAxis}-Axis',
-                                          accentRed: primaryRed,
+                                      Transform.rotate(
+                                        angle: compassProvider.currentDegree,
+                                        child: RepaintBoundary(
+                                          child: CustomPaint(
+                                            size: Size(
+                                              compassSize,
+                                              compassSize,
+                                            ),
+                                            painter: _StaticDialDiskPainter(
+                                              accentRed: primaryRed,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      RepaintBoundary(
+                                        child: CustomPaint(
+                                          size: Size(compassSize, compassSize),
+                                          painter: _UprightCenterHubPainter(
+                                            headingText:
+                                                '${headingDegrees.toStringAsFixed(1)}°',
+                                            cardinalText: cardinal,
+                                            axisText:
+                                                '${compassProvider.selectedAxis}-Axis',
+                                            accentRed: primaryRed,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -668,25 +678,31 @@ class _CompassScreenContentState extends State<CompassScreenContent> {
     String label,
   ) {
     final bool isSelected = compassProvider.selectedAxis == axis;
-    return GestureDetector(
-      onTap: () => compassProvider.onAxisSelected(axis),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 7),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isSelected ? primaryRed : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? primaryRed : primaryRed.withValues(alpha: 0.35),
-            width: 0.9,
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: label,
+      child: GestureDetector(
+        onTap: () => compassProvider.onAxisSelected(axis),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 7),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? primaryRed : Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color:
+                  isSelected ? primaryRed : primaryRed.withValues(alpha: 0.35),
+              width: 0.9,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.5,
-            color: isSelected ? Colors.white : blackTextColor,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.5,
+              color: isSelected ? Colors.white : blackTextColor,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+            ),
           ),
         ),
       ),
