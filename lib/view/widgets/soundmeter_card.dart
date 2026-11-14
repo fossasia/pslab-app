@@ -98,6 +98,9 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
                   color: Colors.red,
                   size: 20,
                 ),
+                tooltip: _showClassification
+                    ? appLocalizations.soundMeter
+                    : appLocalizations.analysis,
                 onPressed: _toggleTopPanel,
               ),
             ),
@@ -129,6 +132,7 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
                 interval: 20,
                 unit: appLocalizations.db,
                 decimalPlaces: 1,
+                semanticLabel: appLocalizations.soundMeter,
               ),
             ),
           ),

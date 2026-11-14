@@ -75,6 +75,7 @@ class _GasSensorCardState extends State<GasSensorCard> {
                 interval: gaugeInterval,
                 unit: unitText,
                 decimalPlaces: 0,
+                semanticLabel: appLocalizations.gasSensor,
               ),
             ),
           ),

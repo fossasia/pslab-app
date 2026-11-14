@@ -72,6 +72,7 @@ class _ThermometerCardState extends State<ThermometerCard> {
                   interval: gaugeInterval,
                   unit: activeUnit,
                   decimalPlaces: 1,
+                  semanticLabel: appLocalizations.thermometer,
                 ),
               ),
             ),
