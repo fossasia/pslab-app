@@ -27,28 +27,35 @@ class CompassDial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final normalizedDegree = (headingDegrees % 360 + 360) % 360;
+    final cardinal = _getCardinalDirection(normalizedDegree);
+    final String headingFormatted = '${normalizedDegree.toStringAsFixed(1)}°';
 
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: RepaintBoundary(
-        child: CustomPaint(
-          painter: _CompassCanvasPainter(
-            rotationRadians: rotationRadians,
-            headingText: '${normalizedDegree.toStringAsFixed(1)}°',
-            cardinalText: _getCardinalDirection(normalizedDegree),
-            axisText: '$selectedAxis-Axis',
-            accentRed: primaryRed,
+    return Semantics(
+      container: true,
+      label: 'Compass Heading',
+      value: '$headingFormatted $cardinal ($selectedAxis-Axis)',
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: RepaintBoundary(
+          child: CustomPaint(
+            painter: _CompassCanvasPainter(
+              rotationRadians: rotationRadians,
+              headingText: headingFormatted,
+              cardinalText: cardinal,
+              axisText: '$selectedAxis-Axis',
+              accentRed: primaryRed,
+            ),
           ),
         ),
       ),
