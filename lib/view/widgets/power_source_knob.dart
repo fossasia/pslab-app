@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/providers/power_source_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
 
@@ -214,7 +215,7 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
       updateOuterValue(angle);
     }
 
-    return RawGestureDetector(
+    final Widget dial = RawGestureDetector(
       behavior: HitTestBehavior.opaque,
       gestures: {
         _SelectivePanGestureRecognizer: GestureRecognizerFactoryWithHandlers<
@@ -278,6 +279,66 @@ class _PowerSourceKnobState extends State<PowerSourceKnob> {
           ),
         ],
       ),
+    );
+
+    final AppLocalizations? appLocalizations = AppLocalizations.of(context);
+    String pinLabel;
+    String unitSuffix;
+    List<double> pinRange;
+    switch (widget.pin) {
+      case Pin.pv1:
+        pinLabel = appLocalizations?.pinPV1 ?? 'PV1';
+        unitSuffix = ' V';
+        pinRange = powerSourceStateProvider.rangePV1;
+        break;
+      case Pin.pv2:
+        pinLabel = appLocalizations?.pinPV2 ?? 'PV2';
+        unitSuffix = ' V';
+        pinRange = powerSourceStateProvider.rangePV2;
+        break;
+      case Pin.pv3:
+        pinLabel = appLocalizations?.pinPV3 ?? 'PV3';
+        unitSuffix = ' V';
+        pinRange = powerSourceStateProvider.rangePV3;
+        break;
+      case Pin.pcs:
+        pinLabel = appLocalizations?.pinPCS ?? 'PCS';
+        unitSuffix = ' mA';
+        pinRange = powerSourceStateProvider.rangePCS;
+        break;
+      case Pin.psu:
+        pinLabel = 'PSU';
+        unitSuffix = ' V';
+        pinRange = powerSourceStateProvider.rangePSU;
+        break;
+    }
+
+    final double currentValue = powerSourceStateProvider.getValue(widget.pin);
+    final String valueText = '${currentValue.toStringAsFixed(2)}$unitSuffix';
+    final double step = powerSourceStateProvider.step;
+    final double targetIncreased =
+        (currentValue + step).clamp(pinRange[0], pinRange[1]);
+    final double targetDecreased =
+        (currentValue - step).clamp(pinRange[0], pinRange[1]);
+    final String increasedText =
+        '${targetIncreased.toStringAsFixed(2)}$unitSuffix';
+    final String decreasedText =
+        '${targetDecreased.toStringAsFixed(2)}$unitSuffix';
+
+    return Semantics(
+      container: true,
+      slider: true,
+      label: pinLabel,
+      value: valueText,
+      increasedValue: increasedText,
+      decreasedValue: decreasedText,
+      onIncrease: () {
+        powerSourceStateProvider.setValue(targetIncreased, widget.pin);
+      },
+      onDecrease: () {
+        powerSourceStateProvider.setValue(targetDecreased, widget.pin);
+      },
+      child: dial,
     );
   }
 }
