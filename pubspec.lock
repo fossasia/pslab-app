@@ -1264,10 +1264,10 @@ packages:
     dependency: transitive
     description:
       name: record_platform_interface
-      sha256: d94b37cadb8fe203e64b0e9893271c0b71b34f2550ee7fb0c6105d650e00c1f5
+      sha256: "970b2a2c4ac4dc666adca8a41fefc3c4b0c62ef1dfc3c46ba5400def7155ac1a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   record_use:
     dependency: transitive
     description:
