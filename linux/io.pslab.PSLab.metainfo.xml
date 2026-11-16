@@ -42,27 +42,27 @@
       <caption>Main interface of PSLab</caption>
       <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/view_instrument_panel.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <caption>About PSLab</caption>
       <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/view_about_us.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <caption>Pin Layout</caption>
       <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/view_pin_layout_front.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <caption>Oscilloscope</caption>
       <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_oscilloscope_channel_view.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <caption>Dust Sensor</caption>
       <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_dust_sensor_view.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <caption>Robotic arm</caption>
       <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_robotic_arm_controller_view.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <caption>Logical Analyzer</caption>
       <image>https://raw.githubusercontent.com/fossasia/pslab-app/main/docs/images/instrument_logical_analyzer_view.png</image>
     </screenshot>
@@ -85,13 +85,34 @@
     <control>pointing</control>
     <control>touch</control>
   </supports>
-  
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+
   <content_rating type="oars-1.1" />
-  <releases> 
+
+  <releases>
+
+    <release version="4.60.9" date="2024-01-18">
+      <description>
+        <p>This release restores and enhances features and sensor support from the 3.x app, while adding major capabilities including:</p>
+        <ul>
+          <li>In-app firmware updates</li>
+          <li>OLED display instrument and retro games</li>
+          <li>Multimeter continuity-beep mode</li>
+          <li>Oscilloscope stacked and buffer-overlay modes</li>
+          <li>Sound classification in the sound meter</li>
+          <li>Labrador board support</li>
+          <li>Builds for Android, iOS, Windows, macOS, Linux, and the web</li>
+        </ul>
+      </description>
+    </release>
+
     <release version="4.17.68" date="2026-05-08">
       <description>
         <p>First upload on Flathub!</p>
       </description>
     </release>
+
   </releases>
 </component>
