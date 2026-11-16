@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 Color blackTextColor = Colors.black;
 Color primaryRed = const Color(0xFFD32F2F);

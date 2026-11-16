@@ -6,7 +6,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ^3.5.4
-  flutter: '3.47.9'
+  flutter: '3.50.0'
 
 dependencies:
   flutter:
@@ -63,6 +63,8 @@ dependencies:
   archive: ^4.6.0
   http: ^1.6.0
   gx_gauge: ^1.1.0
+  material_ui: any
+  cupertino_ui: any
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_test:

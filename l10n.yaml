@@ -2,3 +2,5 @@ arb-dir: lib/l10n
 template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
 output-dir: lib/l10n
+# Ignore deprecations because we cannot do anything about it, and we don't want the CI build job to fail.
+header: "// ignore_for_file: deprecated_member_use\n"

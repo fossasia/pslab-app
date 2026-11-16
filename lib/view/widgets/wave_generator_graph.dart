@@ -1,5 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/wave_generator_state_provider.dart';
 import 'package:pslab/theme/colors.dart';
