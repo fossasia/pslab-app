@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pslab/l10n/app_localizations.dart';
 import 'package:pslab/others/logger_service.dart';
 import 'package:pslab/oss_licenses.dart';

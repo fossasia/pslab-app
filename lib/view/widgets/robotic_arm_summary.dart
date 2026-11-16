@@ -1,5 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pslab/theme/colors.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/locator.dart';

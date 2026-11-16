@@ -1,5 +1,5 @@
 import 'package:pslab/theme/colors.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/view/widgets/instruments_stats.dart';

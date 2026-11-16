@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pslab/models/oscilloscope_measurements.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 
