@@ -93,7 +93,7 @@
 
   <releases>
 
-    <release version="4.60.9" date="2024-01-18">
+    <release version="4.60.9" date="2026-11-02">
       <description>
         <p>This release restores and enhances features and sensor support from the 3.x app, while adding major capabilities including:</p>
         <ul>
