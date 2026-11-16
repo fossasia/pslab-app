@@ -1224,50 +1224,42 @@ packages:
     dependency: "direct main"
     description:
       name: record
-      sha256: "7c4467dec63435c9206db183f8a4672cf8a62f5e5579e45803ceada8330756e7"
+      sha256: "3bbb68002de8bb2fc7178b6c955254fa882e2fe4c33fa98db4b98dd662d8a1d6"
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.2"
+    version: "7.2.0"
   record_android:
     dependency: transitive
     description:
       name: record_android
-      sha256: "28f1108626a190e249b01ffa9f639070e31e5157474b64a5ae380bf36aec9559"
+      sha256: "68c8cb40628a460b2a8bdf746697bd798a71cca7b03b8dac20e752d50425900f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.2"
-  record_ios:
+    version: "2.3.0"
+  record_darwin:
     dependency: transitive
     description:
-      name: record_ios
-      sha256: "21d189f49a598af4697dac4cc9e48389ac0a1fb3e916622b5504a58d9b96313e"
+      name: record_darwin
+      sha256: "6ff6477febaa928ae3a294014f1254c766aaf6bb8f288f02cbe7cda1b9e9be87"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.0.0"
   record_linux:
     dependency: transitive
     description:
       name: record_linux
-      sha256: b7484fdaf1f6d291543b9cf615e78096662b02df68d7a4728b13f352bde58d27
+      sha256: a2c1680b908c899e8198ad46e553adbfba4d66fe41c1314705cf3afb888f8033
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
-  record_macos:
-    dependency: transitive
-    description:
-      name: record_macos
-      sha256: ced7495abf3d683e8a7dbe8fc96df8ea5722837a26f922b7cb7c5de11661bb46
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
+    version: "2.2.0"
   record_platform_interface:
     dependency: transitive
     description:
       name: record_platform_interface
-      sha256: d94b37cadb8fe203e64b0e9893271c0b71b34f2550ee7fb0c6105d650e00c1f5
+      sha256: "970b2a2c4ac4dc666adca8a41fefc3c4b0c62ef1dfc3c46ba5400def7155ac1a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   record_use:
     dependency: transitive
     description:
@@ -1280,18 +1272,18 @@ packages:
     dependency: transitive
     description:
       name: record_web
-      sha256: "7d75ed681b5bf40c3a9b51b6c105fe53705f752284d859d5f030ab5a2bfd49cf"
+      sha256: "15852c45e3ac621090d919373faa5400ddffaf28403525359041132526a02b1d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.2.0"
   record_windows:
     dependency: transitive
     description:
       name: record_windows
-      sha256: "9cedfacee553a02b48977a5e1d74bf08a36cc5647eba56fb83e57da20552f443"
+      sha256: c708162ff3195e4b8898242410b66233a5081699f519226c4afe985d1eb877e0
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.2"
+    version: "2.4.0"
   rust_lib_pslab:
     dependency: "direct main"
     description:
