@@ -1,11 +1,15 @@
 import 'dart:io';
 
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show GlobalCupertinoLocalizations;
 import 'package:pslab/console_helper_dummy.dart'
     if (dart.library.io) 'package:pslab/console_helper.dart' as console_helper;
 import 'package:pslab/providers/instrument_filter_provider.dart';
 
 import 'package:pslab/providers/sht21_provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'
+    as flutter_localizations;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -114,7 +118,12 @@ class MyApp extends StatelessWidget {
                 colorSchemeSeed: Colors.white,
                 useMaterial3: true,
               ),
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                flutter_localizations.GlobalWidgetsLocalizations.delegate,
+              ],
               supportedLocales: AppLocalizations.supportedLocales,
               initialRoute: '/',
               routes: {
