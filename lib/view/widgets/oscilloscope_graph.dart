@@ -1,5 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/view/widgets/xyplot_graph.dart';

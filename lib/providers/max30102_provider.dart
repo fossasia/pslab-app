@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pslab/communication/peripherals/i2c.dart';
 import 'package:pslab/communication/science_lab.dart';
 import 'package:pslab/communication/sensors/max30102.dart';
