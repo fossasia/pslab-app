@@ -17,7 +17,7 @@ class GasSensorCard extends StatefulWidget {
 }
 
 class _GasSensorCardState extends State<GasSensorCard> {
-  AppLocalizations appLocalizations = getIt.get<AppLocalizations>();
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +75,7 @@ class _GasSensorCardState extends State<GasSensorCard> {
                 interval: gaugeInterval,
                 unit: unitText,
                 decimalPlaces: 0,
+                semanticLabel: appLocalizations.gasSensor,
               ),
             ),
           ),

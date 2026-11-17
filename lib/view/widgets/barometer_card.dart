@@ -61,6 +61,7 @@ class _BarometerCardState extends State<BarometerCard> {
                   interval: 1,
                   unit: appLocalizations.atm,
                   decimalPlaces: 3,
+                  semanticLabel: appLocalizations.barometer,
                 ),
               ),
             ),

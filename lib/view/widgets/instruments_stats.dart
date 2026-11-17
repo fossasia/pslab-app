@@ -66,53 +66,59 @@ class Instrumentstats extends StatelessWidget {
         ? value.toInt().toString()
         : value.toStringAsFixed(2);
 
-    return Stack(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(top: 8, bottom: 4),
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          decoration: BoxDecoration(
-            border: Border.all(width: 1.2, color: primaryRed),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                displayValue,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black87,
+    return Semantics(
+      container: true,
+      label: label,
+      value: '$displayValue $displayUnit',
+      excludeSemantics: true,
+      child: Stack(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 8, bottom: 4),
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            decoration: BoxDecoration(
+              border: Border.all(width: 1.2, color: primaryRed),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  displayValue,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 3,
-          child: Align(
-            alignment: Alignment.center,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              color: cardBackgroundColor,
-              child: Text(
-                fullLabel.toUpperCase(),
-                style: TextStyle(
-                  color: primaryRed,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 8,
-                  letterSpacing: 0.5,
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 3,
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                color: cardBackgroundColor,
+                child: Text(
+                  fullLabel.toUpperCase(),
+                  style: TextStyle(
+                    color: primaryRed,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 8,
+                    letterSpacing: 0.5,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

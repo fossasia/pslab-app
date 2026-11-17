@@ -1,3 +1,5 @@
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:pslab/providers/luxmeter_state_provider.dart';
@@ -13,6 +15,8 @@ class LuxMeterCard extends StatefulWidget {
 }
 
 class _LuxMeterCardState extends State<LuxMeterCard> {
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -57,6 +61,7 @@ class _LuxMeterCardState extends State<LuxMeterCard> {
                     interval: 2000,
                     unit: 'Lx',
                     decimalPlaces: 0,
+                    semanticLabel: appLocalizations.luxMeter,
                   ),
                 ),
               ),
