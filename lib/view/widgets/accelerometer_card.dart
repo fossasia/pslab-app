@@ -67,30 +67,49 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
       height: 1.1,
     );
 
-    final Widget currentText = Text(
-      'Current: ${currVal.toStringAsFixed(1)} $axisLabel',
-      maxLines: 1,
-      softWrap: false,
-      overflow: TextOverflow.ellipsis,
-      style: currentStyle,
+    final Widget currentText = Semantics(
+      container: true,
+      label: 'Current',
+      value: '${currVal.toStringAsFixed(1)} $axisLabel',
+      excludeSemantics: true,
+      child: Text(
+        'Current: ${currVal.toStringAsFixed(1)} $axisLabel',
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
+        style: currentStyle,
+      ),
     );
-    final Widget minText = Text(
-      '${appLocalizations.minValue}${minVal.toStringAsFixed(1)}',
-      maxLines: 1,
-      softWrap: false,
-      overflow: TextOverflow.ellipsis,
-      style: minMaxStyle,
+    final Widget minText = Semantics(
+      container: true,
+      label: appLocalizations.minLabel,
+      value: '${minVal.toStringAsFixed(1)} $axisLabel',
+      excludeSemantics: true,
+      child: Text(
+        '${appLocalizations.minValue}${minVal.toStringAsFixed(1)}',
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
+        style: minMaxStyle,
+      ),
     );
-    final Widget maxText = Text(
-      '${appLocalizations.maxValue}${maxVal.toStringAsFixed(1)}',
-      maxLines: 1,
-      softWrap: false,
-      overflow: TextOverflow.ellipsis,
-      style: minMaxStyle,
+    final Widget maxText = Semantics(
+      container: true,
+      label: appLocalizations.maxLabel,
+      value: '${maxVal.toStringAsFixed(1)} $axisLabel',
+      excludeSemantics: true,
+      child: Text(
+        '${appLocalizations.maxValue}${maxVal.toStringAsFixed(1)}',
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
+        style: minMaxStyle,
+      ),
     );
 
     final Widget axisImg = Image.asset(
       axisImage,
+      excludeFromSemantics: true,
       width: imageSize,
       height: imageSize,
       fit: BoxFit.contain,
@@ -220,97 +239,101 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
     final double topPadding = (6.0 * scale).clamp(10.0, 16.0);
     final double bottomPadding = (18.0 * scale).clamp(8.0, 16.0);
 
-    return ClipRect(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: leftPadding,
-          right: rightPadding,
-          top: topPadding,
-          bottom: bottomPadding,
-        ),
-        child: RepaintBoundary(
-          child: LineChart(
-            LineChartData(
-              backgroundColor: Colors.black,
-              minX: 0,
-              maxX: safeMaxX,
-              minY: yMinLimit,
-              maxY: yMaxLimit,
-              clipData: const FlClipData.none(),
-              gridData: FlGridData(
-                show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: true,
-                horizontalInterval: tickInterval,
-                verticalInterval: yTickInterval,
-              ),
-              borderData: FlBorderData(
-                show: true,
-                border: Border(
-                  left: BorderSide(color: chartBorderColor),
-                  bottom: BorderSide(color: chartBorderColor),
-                  top: BorderSide(color: chartBorderColor),
-                  right: BorderSide(color: chartBorderColor),
+    return Semantics(
+      container: true,
+      label: '${widget.axis.toUpperCase()}-Axis Graph',
+      child: ClipRect(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: leftPadding,
+            right: rightPadding,
+            top: topPadding,
+            bottom: bottomPadding,
+          ),
+          child: RepaintBoundary(
+            child: LineChart(
+              LineChartData(
+                backgroundColor: Colors.black,
+                minX: 0,
+                maxX: safeMaxX,
+                minY: yMinLimit,
+                maxY: yMaxLimit,
+                clipData: const FlClipData.none(),
+                gridData: FlGridData(
+                  show: true,
+                  drawHorizontalLine: true,
+                  drawVerticalLine: true,
+                  horizontalInterval: tickInterval,
+                  verticalInterval: yTickInterval,
                 ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                topTitles: AxisTitles(
-                  axisNameWidget: showTopTitle
-                      ? FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            appLocalizations.timeAxisLabel,
-                            style: TextStyle(
-                              fontSize: axisLabelFontSize,
-                              color: chartTextColor,
-                              fontWeight: FontWeight.bold,
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    left: BorderSide(color: chartBorderColor),
+                    bottom: BorderSide(color: chartBorderColor),
+                    top: BorderSide(color: chartBorderColor),
+                    right: BorderSide(color: chartBorderColor),
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  topTitles: AxisTitles(
+                    axisNameWidget: showTopTitle
+                        ? FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              appLocalizations.timeAxisLabel,
+                              style: TextStyle(
+                                fontSize: axisLabelFontSize,
+                                color: chartTextColor,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        )
-                      : null,
-                  axisNameSize: topAxisNameSize,
-                  sideTitles: const SideTitles(showTitles: false),
-                ),
-                bottomTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                leftTitles: AxisTitles(
-                  axisNameWidget: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      appLocalizations.accelerationAxisLabel,
-                      style: TextStyle(
-                        fontSize: axisLabelFontSize,
-                        color: chartTextColor,
-                        fontWeight: FontWeight.bold,
+                          )
+                        : null,
+                    axisNameSize: topAxisNameSize,
+                    sideTitles: const SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  leftTitles: AxisTitles(
+                    axisNameWidget: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        appLocalizations.accelerationAxisLabel,
+                        style: TextStyle(
+                          fontSize: axisLabelFontSize,
+                          color: chartTextColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
+                    axisNameSize: leftAxisNameSize,
+                    sideTitles: SideTitles(
+                      reservedSize: reservedSize,
+                      showTitles: showLeftTickLabels,
+                      interval: yTickInterval,
+                      getTitlesWidget: (value, meta) =>
+                          _sideTitleWidget(meta, fontSize: tickFontSize),
+                    ),
                   ),
-                  axisNameSize: leftAxisNameSize,
-                  sideTitles: SideTitles(
-                    reservedSize: reservedSize,
-                    showTitles: showLeftTickLabels,
-                    interval: yTickInterval,
-                    getTitlesWidget: (value, meta) =>
-                        _sideTitleWidget(meta, fontSize: tickFontSize),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
                   ),
                 ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: safeSpots,
+                    isCurved: safeSpots.length > 2,
+                    color: widget.color,
+                    barWidth: lineBarWidth,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: false),
+                    belowBarData: BarAreaData(show: false),
+                  ),
+                ],
               ),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: safeSpots,
-                  isCurved: safeSpots.length > 2,
-                  color: widget.color,
-                  barWidth: lineBarWidth,
-                  isStrokeCapRound: true,
-                  dotData: const FlDotData(show: false),
-                  belowBarData: BarAreaData(show: false),
-                ),
-              ],
             ),
           ),
         ),
@@ -407,103 +430,109 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
           imageSize = (imageSize * shrink).clamp(10.0, imageSize).toDouble();
         }
 
-        return Container(
-          margin: const EdgeInsets.symmetric(
-            vertical: outerVMargin,
-            horizontal: outerHMargin,
-          ),
-          height: boundedHeight ? null : effectiveHeight,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: cardTopOffset),
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: cardBackgroundColor,
-                  border: Border.all(width: borderWidth, color: Colors.red),
-                  borderRadius: BorderRadius.circular(borderRadius),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        rowHPad,
-                        rowTopPad,
-                        rowHPad,
-                        rowBottomPad,
+        return Semantics(
+          container: true,
+          label:
+              '${widget.axis.toUpperCase()}-Axis ${appLocalizations.accelerometer}',
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              vertical: outerVMargin,
+              horizontal: outerHMargin,
+            ),
+            height: boundedHeight ? null : effectiveHeight,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: cardTopOffset),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: cardBackgroundColor,
+                    border: Border.all(width: borderWidth, color: Colors.red),
+                    borderRadius: BorderRadius.circular(borderRadius),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          rowHPad,
+                          rowTopPad,
+                          rowHPad,
+                          rowBottomPad,
+                        ),
+                        child: _buildTopInfoRow(
+                          axisImage: axisImage,
+                          axisLabel: axisLabel,
+                          currVal: currVal,
+                          minVal: minVal,
+                          maxVal: maxVal,
+                          imageSize: imageSize,
+                          imageGap: imageGap,
+                          currentFontSize: currentFontSize,
+                          minMaxFontSize: minMaxFontSize,
+                          currentToMinGap: currentToMinGap,
+                          minToMaxGap: minToMaxGap,
+                        ),
                       ),
-                      child: _buildTopInfoRow(
-                        axisImage: axisImage,
-                        axisLabel: axisLabel,
-                        currVal: currVal,
-                        minVal: minVal,
-                        maxVal: maxVal,
-                        imageSize: imageSize,
-                        imageGap: imageGap,
-                        currentFontSize: currentFontSize,
-                        minMaxFontSize: minMaxFontSize,
-                        currentToMinGap: currentToMinGap,
-                        minToMaxGap: minToMaxGap,
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Colors.red.withValues(alpha: 0.5),
                       ),
-                    ),
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Colors.red.withValues(alpha: 0.5),
-                    ),
-                    Expanded(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: chartMinHeight),
-                        child: Container(
-                          color: Colors.black,
-                          child: _buildChartSection(
-                            spots: spots,
-                            dataLength: dataLength,
-                            width: width,
-                            scale: scale,
-                            minVal: minVal,
-                            maxVal: maxVal,
-                            autoScale: autoScale,
-                            manualHighLimit: highLimit,
-                            manualLowLimit: lowLimit,
+                      Expanded(
+                        child: ConstrainedBox(
+                          constraints:
+                              BoxConstraints(minHeight: chartMinHeight),
+                          child: Container(
+                            color: Colors.black,
+                            child: _buildChartSection(
+                              spots: spots,
+                              dataLength: dataLength,
+                              width: width,
+                              scale: scale,
+                              minVal: minVal,
+                              maxVal: maxVal,
+                              autoScale: autoScale,
+                              manualHighLimit: highLimit,
+                              manualLowLimit: lowLimit,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                top: 0,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: titleHPadding,
-                      vertical: titleVPadding,
-                    ),
-                    color: cardBackgroundColor,
-                    child: Text(
-                      '${widget.axis.toUpperCase()} AXIS',
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: titleFontSize,
-                        height: 1.0,
-                        letterSpacing: 0.4,
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: titleHPadding,
+                        vertical: titleVPadding,
+                      ),
+                      color: cardBackgroundColor,
+                      child: Text(
+                        '${widget.axis.toUpperCase()} AXIS',
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: titleFontSize,
+                          height: 1.0,
+                          letterSpacing: 0.4,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
