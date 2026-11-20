@@ -55,7 +55,7 @@ mod desktop_audio {
 
             let stream_result = match sample_format {
                 cpal::SampleFormat::I16 => device.build_input_stream(
-                    &stream_config,
+                    stream_config,
                     move |data: &[i16], _| {
                         let f64_data: Vec<f64> = data
                             .iter()
@@ -68,7 +68,7 @@ mod desktop_audio {
                     None,
                 ),
                 cpal::SampleFormat::F32 => device.build_input_stream(
-                    &stream_config,
+                    stream_config,
                     move |data: &[f32], _| {
                         let f64_data: Vec<f64> = data
                             .iter()
