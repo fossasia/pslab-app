@@ -666,7 +666,7 @@ pub fn wifi_connect(host: String, port: u16) -> Result<()> {
 
         let stream = tungstenite::stream::MaybeTlsStream::Plain(tcp_stream);
 
-        let (socket, _) = tungstenite::client::client(url::Url::parse(&ws_url)?, stream)
+        let (socket, _) = tungstenite::client::client(ws_url.as_str(), stream)
             .map_err(|e| anyhow!("WebSocket connection failed: {}", e))?;
 
         *WIFI_WS_STREAM.lock().unwrap() = Some(socket);
@@ -754,7 +754,7 @@ pub fn wifi_write(data: Vec<u8>) -> Result<()> {
     #[cfg(not(target_family = "wasm"))]
     {
         if let Some(socket) = WIFI_WS_STREAM.lock().unwrap().as_mut() {
-            socket.write_message(Message::Binary(data))
+            socket.send(Message::Binary(data.into()))
                 .map_err(|e| anyhow!("WebSocket write failed: {}", e))?;
             Ok(())
         } else {
@@ -880,7 +880,7 @@ pub fn send_scpi_raw_rust(mut command: Vec<u8>) {
     write_data(command);
 }
 
-pub fn query_scpi_binary_raw_rust(mut command: Vec<u8>, timeout_ms: u32) -> Vec<u8> {
+pub fn query_scpi_binary_raw_rust(command: Vec<u8>, timeout_ms: u32) -> Vec<u8> {
     send_scpi_raw_rust(command);
 
     let mut raw_buffer = Vec::new();
