@@ -19,13 +19,13 @@ rusb = { version = "0.9.4", features = ["vendored"] }
 
 # Shared native (non-WASM) dependencies (Desktop + Android + iOS)
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-tungstenite = "0.20.1"
+tungstenite = "0.30.0"
 url = "2.4.0"
 
 # Desktop platforms
 [target.'cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))'.dependencies]
 serialport = "4.3.0"
-cpal = "0.15.2"
+cpal = "0.18.2"
 
 # WebAssembly dependencies
 [target.'cfg(target_family = "wasm")'.dependencies]
