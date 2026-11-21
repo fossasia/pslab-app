@@ -5,6 +5,24 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # Prevent out-of-sync bumps; update this manually with the Rust crate
+      - dependency-name: "flutter_rust_bridge"
+  - package-ecosystem: "cargo"
+    directory: "/rust"
+    schedule:
+      interval: "daily"
+    ignore:
+      # Prevent out-of-sync bumps; update this manually with flutter_rust
+      - dependency-name: "flutter_rust_bridge"
+    groups:
+      rust-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
   - package-ecosystem: "gradle"
     directory: "/android"
     schedule:

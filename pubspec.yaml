@@ -23,7 +23,7 @@ dependencies:
   get_it: ^9.3.0
   record: ^7.1.2
   record_platform_interface: ^2.1.0
-  flutter_litert: ^4.1.1
+  flutter_litert: ^4.2.0
   data: ^0.15.1
   logger: ^2.8.0
   url_launcher: ^6.3.3
@@ -40,7 +40,7 @@ dependencies:
   csv: ^8.0.0
   share_plus: ^13.3.1
   path_provider: ^2.1.6
-  file_picker: ^13.3.2
+  file_picker: ^13.4.0
   flutter_screenutil: ^5.9.3
   inno_bundle: ^0.12.0
   flutter_map: ^8.3.2
@@ -63,8 +63,8 @@ dependencies:
   archive: ^4.6.0
   http: ^1.6.0
   gx_gauge: ^1.1.0
-  material_ui: any
-  cupertino_ui: any
+  material_ui: 1.11.1
+  cupertino_ui: 1.1.7
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_test:

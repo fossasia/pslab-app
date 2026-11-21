@@ -22,7 +22,7 @@ runs:
     - name: Update Podfile
       shell: bash
       run: |
-        cd ./iOS
+        cd ./ios
         flutter pub get
         pod install --repo-update
 

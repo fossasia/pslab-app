@@ -218,7 +218,7 @@ fn process_raw_bulk_frames(
     last_good_all: &mut [u8],
     last_good_valid: &mut bool,
 ) {
-    let mut add_data = |ch1_data: &[u8], ch2_data: Option<&[u8]>| {
+    let add_data = |ch1_data: &[u8], ch2_data: Option<&[u8]>| {
         if let Ok(mut ch1) = LABRADOR_CH1_BUFFER.lock() {
             ch1.extend(ch1_data);
             let c = ch1.len();
@@ -397,7 +397,7 @@ pub fn labrador_fetch_interpolated(
         return vec![0.0; num_samples as usize];
     }
     let (local_data, len, trigger_start_of_win) = {
-        let mut buffer_guard = if channel == 2 {
+        let buffer_guard = if channel == 2 {
             LABRADOR_CH2_BUFFER.lock().unwrap()
         } else {
             LABRADOR_CH1_BUFFER.lock().unwrap()
