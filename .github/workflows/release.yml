@@ -94,7 +94,7 @@ jobs:
 
       - name: Update Fastlane Metadata (iOS)
         run: |
-          cd ./iOS
+          cd ./ios
           git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
           cd fastlane
           
@@ -110,7 +110,7 @@ jobs:
 
       - name: Push version to production (iOS)
         run: |
-          cd ./iOS
+          cd ./ios
           VERSION_TAG="${{ github.event.release.tag_name }}"
           CLEAN_VERSION="${VERSION_TAG#v}"
           fastlane promoteToProduction build_number:${{ steps.download-assets.outputs.VERSION_CODE }} version_name:${CLEAN_VERSION}

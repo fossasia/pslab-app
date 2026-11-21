@@ -18,7 +18,7 @@ runs:
     - name: Update Podfile
       shell: bash
       run: |
-        cd ./iOS
+        cd ./ios
         flutter pub get
         pod install --repo-update
 
@@ -41,7 +41,7 @@ runs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         
-        cd ./iOS
+        cd ./ios
         git clone --branch=fastlane-ios --depth=1 https://${{ github.repository_owner }}:${{ github.token }}@github.com/${{ github.repository }} fastlane
         cd fastlane
         
