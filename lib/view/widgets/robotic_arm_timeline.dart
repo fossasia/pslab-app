@@ -49,67 +49,81 @@ class TimelineScrollView extends StatelessWidget {
                   ),
                   const SizedBox(height: 1),
                   ...List.generate(4, (boxIndex) {
+                    final degree = timelineDegrees[index][boxIndex];
+                    final degreeText = degree != null
+                        ? '${degree.toStringAsFixed(0)}${appLocalizations.degreeSymbol}'
+                        : null;
                     return Padding(
                       padding: const EdgeInsets.all(0.5),
                       child: SizedBox(
                         width: boxWidth,
                         height: boxHeight,
-                        child: DragTarget<Map<String, dynamic>>(
-                          builder: (context, candidateData, rejectedData) {
-                            bool isHighlighted = candidateData.isNotEmpty;
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: isHighlighted
-                                    ? Colors.blue.withAlpha((0.3 * 255).round())
-                                    : Colors.black,
-                              ),
-                              padding: const EdgeInsets.all(5),
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    top: -MediaQuery.of(context).size.height *
-                                        0.005,
-                                    left: 1,
-                                    child: Text(
-                                      timelineDegrees[index][boxIndex] != null
-                                          ? '${timelineDegrees[index][boxIndex]!.toStringAsFixed(0)}${appLocalizations.degreeSymbol}'
-                                          : '',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize:
-                                            MediaQuery.of(context).size.height *
+                        child: Semantics(
+                          container: true,
+                          label: degreeText != null
+                              ? 'Servo ${boxIndex + 1} at ${index + 1}s: $degreeText'
+                              : 'Servo ${boxIndex + 1} at ${index + 1}s',
+                          child: DragTarget<Map<String, dynamic>>(
+                            builder: (context, candidateData, rejectedData) {
+                              bool isHighlighted = candidateData.isNotEmpty;
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: isHighlighted
+                                      ? Colors.blue
+                                          .withAlpha((0.3 * 255).round())
+                                      : Colors.black,
+                                ),
+                                padding: const EdgeInsets.all(5),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      top: -MediaQuery.of(context).size.height *
+                                          0.005,
+                                      left: 1,
+                                      child: ExcludeSemantics(
+                                        child: Text(
+                                          degreeText ?? '',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.05,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 1,
-                                    child: Text(
-                                      '${index + 1}s',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 1,
+                                      child: ExcludeSemantics(
+                                        child: Text(
+                                          '${index + 1}s',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          onWillAcceptWithDetails:
-                              (DragTargetDetails<Map<String, dynamic>>
-                                  details) {
-                            final data = details.data;
-                            return data['servoId'] == boxIndex;
-                          },
-                          onAcceptWithDetails:
-                              (DragTargetDetails<Map<String, dynamic>>
-                                  details) {
-                            final data = details.data;
-                            onUpdate(index, boxIndex,
-                                data['degree'].floorToDouble());
-                          },
+                                  ],
+                                ),
+                              );
+                            },
+                            onWillAcceptWithDetails:
+                                (DragTargetDetails<Map<String, dynamic>>
+                                    details) {
+                              final data = details.data;
+                              return data['servoId'] == boxIndex;
+                            },
+                            onAcceptWithDetails:
+                                (DragTargetDetails<Map<String, dynamic>>
+                                    details) {
+                              final data = details.data;
+                              onUpdate(index, boxIndex,
+                                  data['degree'].floorToDouble());
+                            },
+                          ),
                         ),
                       ),
                     );
