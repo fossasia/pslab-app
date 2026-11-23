@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../locator.dart';
+import 'package:pslab/providers/locator.dart';
 import '../../theme/colors.dart';
 
 class InstrumentsGraph extends StatelessWidget {
