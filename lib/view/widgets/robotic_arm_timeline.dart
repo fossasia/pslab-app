@@ -68,8 +68,8 @@ class TimelineScrollView extends StatelessWidget {
                         child: Semantics(
                           container: true,
                           label: degreeText != null
-                              ? '$servoName at ${index + 1}s: $degreeText'
-                              : '$servoName at ${index + 1}s',
+                              ? '$servoName (${index + 1}s): $degreeText'
+                              : '$servoName (${index + 1}s)',
                           child: DragTarget<Map<String, dynamic>>(
                             builder: (context, candidateData, rejectedData) {
                               bool isHighlighted = candidateData.isNotEmpty;
