@@ -62,7 +62,7 @@ class ServoCard extends StatelessWidget {
               child: Draggable<Map<String, dynamic>>(
                 data: {
                   'servoId': servoId,
-                  'degree': currentValue,
+                  'degree': value,
                 },
                 feedback: Material(
                   color: Colors.transparent,
@@ -73,7 +73,7 @@ class ServoCard extends StatelessWidget {
                       color: Colors.black,
                     ),
                     child: Text(
-                      '${currentValue.floor()} °',
+                      '${value.floor()} °',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
