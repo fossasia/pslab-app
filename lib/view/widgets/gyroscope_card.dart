@@ -69,7 +69,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
 
     final Widget currentText = Semantics(
       container: true,
-      label: 'Current',
+      label: widget.axis.toUpperCase(),
       value: '${currVal.toStringAsFixed(1)} $axisLabel',
       excludeSemantics: true,
       child: Text(
@@ -245,7 +245,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
 
     return Semantics(
       container: true,
-      label: '${widget.axis.toUpperCase()}-Axis Graph',
+      label: '${widget.axis.toUpperCase()} ${appLocalizations.plot}',
       child: ClipRect(
         child: Padding(
           padding: EdgeInsets.only(
@@ -437,8 +437,8 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
 
         return Semantics(
           container: true,
-          label:
-              '${widget.axis.toUpperCase()}-Axis ${appLocalizations.gyroscope}',
+          explicitChildNodes: true,
+          label: '${widget.axis.toUpperCase()} ${appLocalizations.gyroscope}',
           child: Container(
             margin: const EdgeInsets.symmetric(
               vertical: outerVMargin,

@@ -69,7 +69,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
 
     final Widget currentText = Semantics(
       container: true,
-      label: 'Current',
+      label: widget.axis.toUpperCase(),
       value: '${currVal.toStringAsFixed(1)} $axisLabel',
       excludeSemantics: true,
       child: Text(
@@ -241,7 +241,7 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
 
     return Semantics(
       container: true,
-      label: '${widget.axis.toUpperCase()}-Axis Graph',
+      label: '${widget.axis.toUpperCase()} ${appLocalizations.plot}',
       child: ClipRect(
         child: Padding(
           padding: EdgeInsets.only(
@@ -432,8 +432,9 @@ class _AccelerometerCardState extends State<AccelerometerCard> {
 
         return Semantics(
           container: true,
+          explicitChildNodes: true,
           label:
-              '${widget.axis.toUpperCase()}-Axis ${appLocalizations.accelerometer}',
+              '${widget.axis.toUpperCase()} ${appLocalizations.accelerometer}',
           child: Container(
             margin: const EdgeInsets.symmetric(
               vertical: outerVMargin,
