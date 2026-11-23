@@ -69,7 +69,7 @@ class _GyroscopeCardState extends State<GyroscopeCard> {
 
     final Widget currentText = Semantics(
       container: true,
-      label: widget.axis.toUpperCase(),
+      label: 'Current',
       value: '${currVal.toStringAsFixed(1)} $axisLabel',
       excludeSemantics: true,
       child: Text(
