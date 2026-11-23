@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../../locator.dart';
 import '../../theme/colors.dart';
 
 class InstrumentsGraph extends StatelessWidget {
@@ -89,6 +91,7 @@ class InstrumentsGraph extends StatelessWidget {
   }
 
   Widget _buildChart(double screenWidth) {
+    final appLocalizations = getIt.get<AppLocalizations>();
     final axisNameFontSize = screenWidth < 400 ? 10.0 : 11.0;
     final labelFontSize = screenWidth < 400 ? 8.0 : 9.0;
     final rightReservedSize = rightTitlesWidget != null ? 28.0 : 0.0;
@@ -96,7 +99,7 @@ class InstrumentsGraph extends StatelessWidget {
 
     return Semantics(
       container: true,
-      label: semanticLabel ?? '$yAxisLabel Graph',
+      label: semanticLabel ?? '$yAxisLabel ${appLocalizations.plot}',
       child: Padding(
         padding: const EdgeInsets.only(right: 8.0, top: 4.0, left: 0.0),
         child: LineChart(

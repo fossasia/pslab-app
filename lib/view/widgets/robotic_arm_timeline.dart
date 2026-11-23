@@ -53,6 +53,13 @@ class TimelineScrollView extends StatelessWidget {
                     final degreeText = degree != null
                         ? '${degree.toStringAsFixed(0)}${appLocalizations.degreeSymbol}'
                         : null;
+                    final servoLabels = [
+                      appLocalizations.servo1,
+                      appLocalizations.servo2,
+                      appLocalizations.servo3,
+                      appLocalizations.servo4,
+                    ];
+                    final servoName = servoLabels[boxIndex];
                     return Padding(
                       padding: const EdgeInsets.all(0.5),
                       child: SizedBox(
@@ -61,8 +68,8 @@ class TimelineScrollView extends StatelessWidget {
                         child: Semantics(
                           container: true,
                           label: degreeText != null
-                              ? 'Servo ${boxIndex + 1} at ${index + 1}s: $degreeText'
-                              : 'Servo ${boxIndex + 1} at ${index + 1}s',
+                              ? '$servoName at ${index + 1}s: $degreeText'
+                              : '$servoName at ${index + 1}s',
                           child: DragTarget<Map<String, dynamic>>(
                             builder: (context, candidateData, rejectedData) {
                               bool isHighlighted = candidateData.isNotEmpty;

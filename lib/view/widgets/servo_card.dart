@@ -29,8 +29,9 @@ class ServoCard extends StatelessWidget {
     final sliderSize =
         provider.maxAngle == 180 ? cardHeight * 0.95 : cardHeight * 0.75;
     final double maxAngle = provider.maxAngle.toDouble();
-    final double targetIncreased = (value + 1).clamp(0.0, maxAngle);
-    final double targetDecreased = (value - 1).clamp(0.0, maxAngle);
+    final double currentValue = value.clamp(0.0, maxAngle);
+    final double targetIncreased = (currentValue + 1.0).clamp(0.0, maxAngle);
+    final double targetDecreased = (currentValue - 1.0).clamp(0.0, maxAngle);
 
     return Container(
       decoration: BoxDecoration(
@@ -61,7 +62,7 @@ class ServoCard extends StatelessWidget {
               child: Draggable<Map<String, dynamic>>(
                 data: {
                   'servoId': servoId,
-                  'degree': value,
+                  'degree': currentValue,
                 },
                 feedback: Material(
                   color: Colors.transparent,
@@ -72,7 +73,7 @@ class ServoCard extends StatelessWidget {
                       color: Colors.black,
                     ),
                     child: Text(
-                      '${value.floor()} °',
+                      '${currentValue.floor()} °',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -94,7 +95,7 @@ class ServoCard extends StatelessWidget {
               container: true,
               slider: true,
               label: label,
-              value: '${value.round()}°',
+              value: '${currentValue.round()}°',
               increasedValue: '${targetIncreased.round()}°',
               decreasedValue: '${targetDecreased.round()}°',
               onIncrease: () => onChanged(targetIncreased),
@@ -103,7 +104,7 @@ class ServoCard extends StatelessWidget {
                 onTap: onTap,
                 child: Center(
                   child: SleekCircularSlider(
-                    initialValue: value.clamp(0, provider.maxAngle.toDouble()),
+                    initialValue: currentValue,
                     key: ValueKey(provider.maxAngle),
                     min: 0,
                     max: provider.maxAngle.toDouble(),
