@@ -1,0 +1,152 @@
+name: Flutter Rust Bridge Upgrade Check
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-flutter-rust-bridge-upgrade:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Read current flutter_rust_bridge versions
+        id: read-versions
+        run: |
+          PUB_VERSION=$(yq '.dependencies.flutter_rust_bridge' pubspec.yaml | sed "s/^['\"]//;s/['\"]$//;s/^[=^~]//")
+          CARGO_VERSION=$(python3 -c "import tomllib; data = tomllib.load(open('rust/Cargo.toml', 'rb')); print(str(data['dependencies']['flutter_rust_bridge']).lstrip('=^~'))")
+          echo "Current pubspec.yaml version: $PUB_VERSION"
+          echo "Current rust/Cargo.toml version: $CARGO_VERSION"
+          echo "pub_version=$PUB_VERSION" >> $GITHUB_ENV
+          echo "cargo_version=$CARGO_VERSION" >> $GITHUB_ENV
+
+      - name: Find latest common flutter_rust_bridge version
+        id: check-latest
+        run: |
+          LATEST_VERSION=$(python3 - <<'EOF'
+          import json
+          import re
+          import urllib.request
+
+          SEMVER_STABLE = re.compile(r'^(\d+)\.(\d+)\.(\d+)$')
+
+          def fetch_json(url):
+              req = urllib.request.Request(
+                  url,
+                  headers={'User-Agent': 'pslab-app-ci (https://github.com/fossasia/pslab-app)'},
+              )
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.loads(resp.read().decode('utf-8'))
+
+          pub_data = fetch_json('https://pub.dev/api/packages/flutter_rust_bridge')
+          pub_versions = {
+              v['version']
+              for v in pub_data.get('versions', [])
+              if not v.get('retracted', False) and SEMVER_STABLE.match(v['version'])
+          }
+
+          crate_data = fetch_json('https://crates.io/api/v1/crates/flutter_rust_bridge')
+          crate_versions = {
+              v['num']
+              for v in crate_data.get('versions', [])
+              if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
+          }
+
+          codegen_data = fetch_json('https://crates.io/api/v1/crates/flutter_rust_bridge_codegen')
+          codegen_versions = {
+              v['num']
+              for v in codegen_data.get('versions', [])
+              if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
+          }
+
+          common = pub_versions & crate_versions & codegen_versions
+          if not common:
+              raise SystemExit('No common stable flutter_rust_bridge version found across pub.dev and crates.io')
+
+          latest = max(common, key=lambda ver: tuple(int(p) for p in ver.split('.')))
+          print(latest)
+          EOF
+          )
+          echo "Latest common flutter_rust_bridge version: $LATEST_VERSION"
+          echo "latest_frb_version=$LATEST_VERSION" >> $GITHUB_ENV
+
+      - name: Compare versions
+        id: compare-versions
+        run: |
+          if [ "$pub_version" != "$latest_frb_version" ] || [ "$cargo_version" != "$latest_frb_version" ]; then
+            echo "Update needed to sync flutter_rust_bridge to ${latest_frb_version}."
+            echo "update_needed=true" >> $GITHUB_ENV
+          else
+            echo "flutter_rust_bridge is up to date and in sync at ${latest_frb_version}."
+            echo "update_needed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Set up Flutter
+        if: env.update_needed == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+          flutter-version-file: pubspec.yaml
+
+      - name: Install system and Rust dependencies
+        if: env.update_needed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libudev-dev libusb-1.0-0-dev libasound2-dev
+          rustup component add rust-src
+          cargo install flutter_rust_bridge_codegen --version "${{ env.latest_frb_version }}" --locked
+
+      - name: Update manifests, lockfiles, and bridge code
+        if: env.update_needed == 'true'
+        run: |
+          sed -i -E "s/^(\s*flutter_rust_bridge:\s*).*/\1${latest_frb_version}/" pubspec.yaml
+          sed -i -E "s/^(flutter_rust_bridge\s*=\s*).*/\1\"=${latest_frb_version}\"/" rust/Cargo.toml
+          flutter pub get
+          cargo update -p flutter_rust_bridge --manifest-path rust/Cargo.toml
+          flutter_rust_bridge_codegen generate
+          dart format .
+          git --no-pager diff
+
+      - name: Run checks
+        if: env.update_needed == 'true'
+        run: |
+          dart format --output=none --set-exit-if-changed .
+          flutter analyze
+          flutter test
+          cargo check --manifest-path rust/Cargo.toml --locked
+
+      - name: Commit and create PR if update is needed
+        if: env.update_needed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "dependabot[bot]"
+          git config --global user.email "49699333+dependabot[bot]@users.noreply.github.com"
+
+          BRANCH_NAME="flutter-rust-bridge-upgrade-${{ env.latest_frb_version }}"
+          git checkout -b "$BRANCH_NAME"
+          git add pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(deps): sync flutter_rust_bridge to ${{ env.latest_frb_version }}"
+          git push origin -f "$BRANCH_NAME"
+
+          EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --state open --json url --jq '.[0].url')
+          if [ -z "$EXISTING_PR" ]; then
+            gh pr create \
+              --title "chore(deps): sync flutter_rust_bridge to ${{ env.latest_frb_version }}" \
+              --body "This PR updates \`flutter_rust_bridge\` in \`pubspec.yaml\`, \`rust/Cargo.toml\`, lockfiles, and generated bridge code in lockstep to \`${{ env.latest_frb_version }}\`." \
+              --base main \
+              --head "$BRANCH_NAME"
+          else
+            echo "PR already exists: $EXISTING_PR"
+          fi
