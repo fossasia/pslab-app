@@ -169,7 +169,8 @@ class SignalPieChart extends StatelessWidget {
       container: true,
       excludeSemantics: true,
       label: appLocalizations.amplitudeZones,
-      value: '${low.toInt()}%, ${mid.toInt()}%, ${high.toInt()}%',
+      value:
+          '${appLocalizations.low} ${low.toInt()}%, ${appLocalizations.mid} ${mid.toInt()}%, ${appLocalizations.high} ${high.toInt()}%',
       child: SizedBox(
         height: 120,
         child: PieChart(
@@ -242,6 +243,7 @@ class MinimalSparkline extends StatelessWidget {
       container: true,
       excludeSemantics: true,
       label: appLocalizations.signalTrendChart,
+      value: '${rawMinY.toStringAsFixed(1)} - ${rawMaxY.toStringAsFixed(1)}',
       child: SizedBox(
         height: 140,
         width: double.infinity,
@@ -317,7 +319,8 @@ class DistributionHistogram extends StatelessWidget {
     return Semantics(
       container: true,
       label: appLocalizations.frequencySpread,
-      value: '${min.toStringAsFixed(1)} - ${max.toStringAsFixed(1)}',
+      value:
+          '${min.toStringAsFixed(1)} - ${max.toStringAsFixed(1)} (${bins.join(', ')})',
       child: SizedBox(
         height: 110,
         width: double.infinity,

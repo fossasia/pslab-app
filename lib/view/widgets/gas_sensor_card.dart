@@ -113,7 +113,6 @@ class _GasSensorCardState extends State<GasSensorCard> {
               }).toList();
             },
             child: Semantics(
-              container: true,
               excludeSemantics: true,
               label: appLocalizations.gasSensor,
               value: currentMode,
