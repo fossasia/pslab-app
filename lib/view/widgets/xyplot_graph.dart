@@ -73,7 +73,7 @@ class _XYPlotGraphState extends State<XYPlotGraph> {
           container: true,
           excludeSemantics: true,
           label:
-              '${appLocalizations.xyPlot}: ${oscilloscopeStateProvider.xyPlotAxis1} / ${oscilloscopeStateProvider.xyPlotAxis2}',
+              '${appLocalizations.xyPlot}: ${appLocalizations.yAxis.toUpperCase()} ${oscilloscopeStateProvider.xyPlotAxis1}, ${appLocalizations.xAxis.toUpperCase()} ${oscilloscopeStateProvider.xyPlotAxis2}',
           child: LineChart(
             LineChartData(
               backgroundColor: chartBackgroundColor,

@@ -38,7 +38,7 @@ class SensorChartWidget extends StatelessWidget {
     required this.title,
     required this.yAxisLabel,
     required this.data,
-    this.xAxisLabel = 'Time (s)',
+    this.xAxisLabel,
     this.lineColor = chartLineColor,
     this.data2,
     this.lineColor2,
