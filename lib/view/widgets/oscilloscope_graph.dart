@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/providers/oscilloscope_state_provider.dart';
 import 'package:pslab/view/widgets/xyplot_graph.dart';
 
@@ -14,6 +16,8 @@ class OscilloscopeGraph extends StatefulWidget {
 }
 
 class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
+  AppLocalizations get appLocalizations => getIt.get<AppLocalizations>();
+
   Widget sideTitleWidgets(double value, TitleMeta meta) {
     final style = TextStyle(
       color: chartTextColor,
@@ -85,122 +89,131 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: LineChart(
-            LineChartData(
-              backgroundColor: chartBackgroundColor,
-              lineTouchData: LineTouchData(
-                enabled: !provider.isPlayingBack,
-                /* Removes popups with values in overlay mode because otherwise 
+          child: Semantics(
+            container: true,
+            excludeSemantics: true,
+            label: provider.isFourierTransformSelected
+                ? appLocalizations.fourierAnalysis
+                : '${appLocalizations.oscilloscope} ${appLocalizations.plot}',
+            child: LineChart(
+              LineChartData(
+                backgroundColor: chartBackgroundColor,
+                lineTouchData: LineTouchData(
+                  enabled: !provider.isPlayingBack,
+                  /* Removes popups with values in overlay mode because otherwise 
                 we would see data of all lines, even old ones, which would be confusing. */
-                handleBuiltInTouches: !provider.isBufferOverlayEnabled(),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                topTitles: AxisTitles(
-                  axisNameWidget: Text(
-                    provider.isFourierTransformSelected
-                        ? 'Frequency (Hz)'
-                        : (provider.oscilloscopeAxesScale.xAxisScale == 875
-                            ? 'Time (\u00b5s)'
-                            : 'Time (ms)'),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: chartTextColor,
-                      fontWeight: FontWeight.bold,
+                  handleBuiltInTouches: !provider.isBufferOverlayEnabled(),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  topTitles: AxisTitles(
+                    axisNameWidget: Text(
+                      provider.isFourierTransformSelected
+                          ? 'Frequency (Hz)'
+                          : (provider.oscilloscopeAxesScale.xAxisScale == 875
+                              ? 'Time (\u00b5s)'
+                              : 'Time (ms)'),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: chartTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    sideTitles: SideTitles(
+                      maxIncluded: false,
+                      interval:
+                          provider.oscilloscopeAxesScale.getTimebaseInterval(),
+                      reservedSize: 20,
+                      showTitles: true,
+                      getTitlesWidget: topTitleWidgets,
                     ),
                   ),
-                  sideTitles: SideTitles(
-                    maxIncluded: false,
-                    interval:
-                        provider.oscilloscopeAxesScale.getTimebaseInterval(),
-                    reservedSize: 20,
-                    showTitles: true,
-                    getTitlesWidget: topTitleWidgets,
-                  ),
-                ),
-                bottomTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                leftTitles: AxisTitles(
-                  axisNameWidget: Text(
-                    provider.isFourierTransformSelected
-                        ? 'Magnitude (V)'
-                        : '(V)',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: chartTextColor,
-                      fontWeight: FontWeight.bold,
+                  bottomTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    axisNameWidget: Text(
+                      provider.isFourierTransformSelected
+                          ? 'Magnitude (V)'
+                          : '(V)',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: chartTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    sideTitles: SideTitles(
+                      interval:
+                          provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+                      reservedSize: 30,
+                      showTitles: true,
+                      getTitlesWidget: sideTitleWidgets,
                     ),
                   ),
-                  sideTitles: SideTitles(
-                    interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-                    reservedSize: 30,
-                    showTitles: true,
-                    getTitlesWidget: sideTitleWidgets,
-                  ),
-                ),
-                rightTitles: AxisTitles(
-                  axisNameWidget: Text(
-                    provider.isFourierTransformSelected
-                        ? 'Magnitude (V)'
-                        : '(V)',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: chartTextColor,
-                      fontWeight: FontWeight.bold,
+                  rightTitles: AxisTitles(
+                    axisNameWidget: Text(
+                      provider.isFourierTransformSelected
+                          ? 'Magnitude (V)'
+                          : '(V)',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: chartTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    sideTitles: SideTitles(
+                      interval:
+                          provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+                      reservedSize: 30,
+                      showTitles: true,
+                      getTitlesWidget: sideTitleWidgets,
                     ),
                   ),
-                  sideTitles: SideTitles(
-                    interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-                    reservedSize: 30,
-                    showTitles: true,
-                    getTitlesWidget: sideTitleWidgets,
+                ),
+                gridData: FlGridData(
+                  show: true,
+                  drawHorizontalLine: true,
+                  drawVerticalLine: true,
+                  horizontalInterval:
+                      provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+                  verticalInterval:
+                      provider.oscilloscopeAxesScale.getTimebaseInterval(),
+                  getDrawingHorizontalLine: (value) {
+                    return const FlLine(
+                      color: Color.fromARGB(50, 255, 255, 255),
+                      strokeWidth: 1,
+                    );
+                  },
+                  getDrawingVerticalLine: (value) {
+                    return const FlLine(
+                      color: Color.fromARGB(50, 255, 255, 255),
+                      strokeWidth: 1,
+                    );
+                  },
+                ),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: chartBorderColor,
+                    ),
+                    left: BorderSide(
+                      color: chartBorderColor,
+                    ),
+                    top: BorderSide(
+                      color: chartBorderColor,
+                    ),
+                    right: BorderSide(
+                      color: chartBorderColor,
+                    ),
                   ),
                 ),
+                maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
+                minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
+                maxX: _maxX(provider),
+                minX: 0,
+                clipData: const FlClipData.all(),
+                lineBarsData: provider.createPlots(),
               ),
-              gridData: FlGridData(
-                show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: true,
-                horizontalInterval:
-                    provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-                verticalInterval:
-                    provider.oscilloscopeAxesScale.getTimebaseInterval(),
-                getDrawingHorizontalLine: (value) {
-                  return const FlLine(
-                    color: Color.fromARGB(50, 255, 255, 255),
-                    strokeWidth: 1,
-                  );
-                },
-                getDrawingVerticalLine: (value) {
-                  return const FlLine(
-                    color: Color.fromARGB(50, 255, 255, 255),
-                    strokeWidth: 1,
-                  );
-                },
-              ),
-              borderData: FlBorderData(
-                show: true,
-                border: Border(
-                  bottom: BorderSide(
-                    color: chartBorderColor,
-                  ),
-                  left: BorderSide(
-                    color: chartBorderColor,
-                  ),
-                  top: BorderSide(
-                    color: chartBorderColor,
-                  ),
-                  right: BorderSide(
-                    color: chartBorderColor,
-                  ),
-                ),
-              ),
-              maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
-              minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
-              maxX: _maxX(provider),
-              minX: 0,
-              clipData: const FlClipData.all(),
-              lineBarsData: provider.createPlots(),
             ),
           ),
         ),
@@ -223,106 +236,113 @@ class _OscilloscopeGraphState extends State<OscilloscopeGraph> {
     required String channelName,
     required bool showTimeAxis,
   }) {
-    return LineChart(
-      LineChartData(
-        backgroundColor: chartBackgroundColor,
-        lineTouchData: LineTouchData(
-          enabled: !provider.isPlayingBack,
-          /* Removes popups with values in overlay mode because otherwise 
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label:
+          '$channelName ${provider.isFourierTransformSelected ? appLocalizations.fourierAnalysis : appLocalizations.plot}',
+      child: LineChart(
+        LineChartData(
+          backgroundColor: chartBackgroundColor,
+          lineTouchData: LineTouchData(
+            enabled: !provider.isPlayingBack,
+            /* Removes popups with values in overlay mode because otherwise 
                 we would see data of all lines, even old ones, which would be confusing. */
-          handleBuiltInTouches: !provider.isBufferOverlayEnabled(),
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          topTitles: AxisTitles(
-            axisNameWidget: showTimeAxis
-                ? Text(
-                    provider.isFourierTransformSelected
-                        ? 'Frequency (Hz)'
-                        : (provider.oscilloscopeAxesScale.xAxisScale == 875
-                            ? 'Time (\u00b5s)'
-                            : 'Time (ms)'),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: chartTextColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                : const SizedBox.shrink(),
-            sideTitles: SideTitles(
-              maxIncluded: false,
-              interval: provider.oscilloscopeAxesScale.getTimebaseInterval(),
-              reservedSize: showTimeAxis ? 20 : 8,
-              showTitles: showTimeAxis,
-              getTitlesWidget: topTitleWidgets,
-            ),
+            handleBuiltInTouches: !provider.isBufferOverlayEnabled(),
           ),
-          bottomTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          leftTitles: AxisTitles(
-            axisNameWidget: Text(
-              provider.isFourierTransformSelected
-                  ? '$channelName (V)'
-                  : '$channelName (V)',
-              style: TextStyle(
-                fontSize: 10,
-                color: chartTextColor,
-                fontWeight: FontWeight.bold,
+          titlesData: FlTitlesData(
+            show: true,
+            topTitles: AxisTitles(
+              axisNameWidget: showTimeAxis
+                  ? Text(
+                      provider.isFourierTransformSelected
+                          ? 'Frequency (Hz)'
+                          : (provider.oscilloscopeAxesScale.xAxisScale == 875
+                              ? 'Time (\u00b5s)'
+                              : 'Time (ms)'),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: chartTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              sideTitles: SideTitles(
+                maxIncluded: false,
+                interval: provider.oscilloscopeAxesScale.getTimebaseInterval(),
+                reservedSize: showTimeAxis ? 20 : 8,
+                showTitles: showTimeAxis,
+                getTitlesWidget: topTitleWidgets,
               ),
             ),
-            sideTitles: SideTitles(
-              interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-              reservedSize: 30,
-              showTitles: true,
-              getTitlesWidget: sideTitleWidgets,
+            bottomTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles: AxisTitles(
+              axisNameWidget: Text(
+                provider.isFourierTransformSelected
+                    ? '$channelName (V)'
+                    : '$channelName (V)',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: chartTextColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              sideTitles: SideTitles(
+                interval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+                reservedSize: 30,
+                showTitles: true,
+                getTitlesWidget: sideTitleWidgets,
+              ),
+            ),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawHorizontalLine: true,
+            drawVerticalLine: true,
+            horizontalInterval:
+                provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
+            verticalInterval:
+                provider.oscilloscopeAxesScale.getTimebaseInterval(),
+            getDrawingHorizontalLine: (value) {
+              return const FlLine(
+                color: Color.fromARGB(50, 255, 255, 255),
+                strokeWidth: 1,
+              );
+            },
+            getDrawingVerticalLine: (value) {
+              return const FlLine(
+                color: Color.fromARGB(50, 255, 255, 255),
+                strokeWidth: 1,
+              );
+            },
+          ),
+          borderData: FlBorderData(
+            show: true,
+            border: Border(
+              bottom: BorderSide(
+                color: chartBorderColor,
+              ),
+              left: BorderSide(
+                color: chartBorderColor,
+              ),
+              top: BorderSide(
+                color: chartBorderColor,
+              ),
+              right: BorderSide(
+                color: chartBorderColor,
+              ),
             ),
           ),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
+          minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
+          maxX: _maxX(provider),
+          minX: 0,
+          clipData: const FlClipData.all(),
+          lineBarsData: provider.createPlotForChannel(channelName),
         ),
-        gridData: FlGridData(
-          show: true,
-          drawHorizontalLine: true,
-          drawVerticalLine: true,
-          horizontalInterval: provider.oscilloscopeAxesScale.yAxisScaleMax / 4,
-          verticalInterval:
-              provider.oscilloscopeAxesScale.getTimebaseInterval(),
-          getDrawingHorizontalLine: (value) {
-            return const FlLine(
-              color: Color.fromARGB(50, 255, 255, 255),
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return const FlLine(
-              color: Color.fromARGB(50, 255, 255, 255),
-              strokeWidth: 1,
-            );
-          },
-        ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border(
-            bottom: BorderSide(
-              color: chartBorderColor,
-            ),
-            left: BorderSide(
-              color: chartBorderColor,
-            ),
-            top: BorderSide(
-              color: chartBorderColor,
-            ),
-            right: BorderSide(
-              color: chartBorderColor,
-            ),
-          ),
-        ),
-        maxY: provider.oscilloscopeAxesScale.yAxisScaleMax,
-        minY: provider.oscilloscopeAxesScale.yAxisScaleMin,
-        maxX: _maxX(provider),
-        minX: 0,
-        clipData: const FlClipData.all(),
-        lineBarsData: provider.createPlotForChannel(channelName),
       ),
     );
   }

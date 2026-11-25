@@ -52,90 +52,96 @@ class _LogicAnalyzerGraphState extends State<LogicAnalyzerGraph> {
       return !provider.isProcessing
           ? SizedBox(
               child: provider.isData
-                  ? LineChart(
-                      transformationConfig: FlTransformationConfig(
-                        minScale: 1,
-                        maxScale: 1000,
-                        scaleAxis: FlScaleAxis.horizontal,
-                        panEnabled: true,
-                        scaleEnabled: true,
-                      ),
-                      LineChartData(
-                        backgroundColor: chartBackgroundColor,
-                        titlesData: FlTitlesData(
-                          show: true,
-                          topTitles: AxisTitles(
-                            axisNameWidget: Text(
-                              appLocalizations.logicAnalyzerAxisTitle,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: chartTextColor,
-                                fontWeight: FontWeight.bold,
+                  ? Semantics(
+                      container: true,
+                      excludeSemantics: true,
+                      label:
+                          '${appLocalizations.logicAnalyzer} ${appLocalizations.plot}',
+                      child: LineChart(
+                        transformationConfig: FlTransformationConfig(
+                          minScale: 1,
+                          maxScale: 1000,
+                          scaleAxis: FlScaleAxis.horizontal,
+                          panEnabled: true,
+                          scaleEnabled: true,
+                        ),
+                        LineChartData(
+                          backgroundColor: chartBackgroundColor,
+                          titlesData: FlTitlesData(
+                            show: true,
+                            topTitles: AxisTitles(
+                              axisNameWidget: Text(
+                                appLocalizations.logicAnalyzerAxisTitle,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: chartTextColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              axisNameSize: 20,
+                              sideTitles: SideTitles(
+                                maxIncluded: false,
+                                reservedSize: 20,
+                                showTitles: true,
+                                getTitlesWidget: topTitleWidgets,
                               ),
                             ),
-                            axisNameSize: 20,
-                            sideTitles: SideTitles(
-                              maxIncluded: false,
-                              reservedSize: 20,
-                              showTitles: true,
-                              getTitlesWidget: topTitleWidgets,
+                            bottomTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                maxIncluded: false,
+                                minIncluded: false,
+                                interval: 1,
+                                reservedSize: 30,
+                                showTitles: true,
+                                getTitlesWidget: sideTitleWidgets,
+                              ),
+                            ),
+                            rightTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: false,
+                              ),
                             ),
                           ),
-                          bottomTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              maxIncluded: false,
-                              minIncluded: false,
-                              interval: 1,
-                              reservedSize: 30,
-                              showTitles: true,
-                              getTitlesWidget: sideTitleWidgets,
+                          gridData: FlGridData(
+                            show: true,
+                            drawHorizontalLine: true,
+                            drawVerticalLine: true,
+                          ),
+                          borderData: FlBorderData(
+                            show: true,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: chartBorderColor,
+                              ),
+                              left: BorderSide(
+                                color: chartBorderColor,
+                              ),
+                              top: BorderSide(
+                                color: chartBorderColor,
+                              ),
+                              right: BorderSide(
+                                color: chartBorderColor,
+                              ),
                             ),
                           ),
-                          rightTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: false,
-                            ),
-                          ),
+                          clipData: const FlClipData.all(),
+                          lineBarsData: provider.createPlots(),
+                          extraLinesData: provider.isPlayingBack
+                              ? ExtraLinesData(
+                                  verticalLines: [
+                                    VerticalLine(
+                                      x: provider.playbackPositionUs,
+                                      color: primaryRed,
+                                      strokeWidth: 1.5,
+                                    ),
+                                  ],
+                                )
+                              : const ExtraLinesData(),
+                          maxY: provider.getMaxY(),
+                          minY: provider.getMinY(),
                         ),
-                        gridData: FlGridData(
-                          show: true,
-                          drawHorizontalLine: true,
-                          drawVerticalLine: true,
-                        ),
-                        borderData: FlBorderData(
-                          show: true,
-                          border: Border(
-                            bottom: BorderSide(
-                              color: chartBorderColor,
-                            ),
-                            left: BorderSide(
-                              color: chartBorderColor,
-                            ),
-                            top: BorderSide(
-                              color: chartBorderColor,
-                            ),
-                            right: BorderSide(
-                              color: chartBorderColor,
-                            ),
-                          ),
-                        ),
-                        clipData: const FlClipData.all(),
-                        lineBarsData: provider.createPlots(),
-                        extraLinesData: provider.isPlayingBack
-                            ? ExtraLinesData(
-                                verticalLines: [
-                                  VerticalLine(
-                                    x: provider.playbackPositionUs,
-                                    color: primaryRed,
-                                    strokeWidth: 1.5,
-                                  ),
-                                ],
-                              )
-                            : const ExtraLinesData(),
-                        maxY: provider.getMaxY(),
-                        minY: provider.getMinY(),
                       ),
                     )
                   : Center(

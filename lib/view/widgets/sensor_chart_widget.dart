@@ -193,75 +193,81 @@ class SensorChartWidget extends StatelessWidget {
   }
 
   Widget _buildLineChart() {
-    return Stack(
-      children: [
-        _buildAxisLabels(),
-        Padding(
-          padding:
-              const EdgeInsets.only(left: 50, right: 16, top: 16, bottom: 40),
-          child: LineChart(
-            LineChartData(
-              backgroundColor: Colors.transparent,
-              gridData: FlGridData(
-                show: showGrid,
-                drawVerticalLine: showGrid,
-                drawHorizontalLine: showGrid,
-                horizontalInterval: _calculateGridInterval(),
-                getDrawingHorizontalLine: (value) => FlLine(
-                  color: Colors.grey.withAlpha(77),
-                  strokeWidth: 0.8,
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label:
+          '$title ${appLocalizations.plot} ($yAxisLabel / ${xAxisLabel ?? appLocalizations.timeAxisLabel})',
+      child: Stack(
+        children: [
+          _buildAxisLabels(),
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 50, right: 16, top: 16, bottom: 40),
+            child: LineChart(
+              LineChartData(
+                backgroundColor: Colors.transparent,
+                gridData: FlGridData(
+                  show: showGrid,
+                  drawVerticalLine: showGrid,
+                  drawHorizontalLine: showGrid,
+                  horizontalInterval: _calculateGridInterval(),
+                  getDrawingHorizontalLine: (value) => FlLine(
+                    color: Colors.grey.withAlpha(77),
+                    strokeWidth: 0.8,
+                  ),
+                  getDrawingVerticalLine: (value) => FlLine(
+                    color: Colors.grey.withAlpha(77),
+                    strokeWidth: 0.8,
+                  ),
                 ),
-                getDrawingVerticalLine: (value) => FlLine(
-                  color: Colors.grey.withAlpha(77),
-                  strokeWidth: 0.8,
+                titlesData: FlTitlesData(show: false),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border.all(
+                    color: Colors.grey.withAlpha(120),
+                    width: 1,
+                  ),
                 ),
-              ),
-              titlesData: FlTitlesData(show: false),
-              borderData: FlBorderData(
-                show: true,
-                border: Border.all(
-                  color: Colors.grey.withAlpha(120),
-                  width: 1,
-                ),
-              ),
-              minX: _getMinX(),
-              maxX: _getMaxX(),
-              minY: _getMinY(),
-              maxY: _getMaxY(),
-              lineBarsData: [
-                if (_validData1.isNotEmpty)
-                  _buildBarData(_validData1, lineColor),
-                if (_validData2.isNotEmpty)
-                  _buildBarData(_validData2, lineColor2 ?? Colors.green),
-                if (_validData3.isNotEmpty)
-                  _buildBarData(_validData3, lineColor3 ?? Colors.red),
-              ],
-              lineTouchData: LineTouchData(
-                enabled: true,
-                touchTooltipData: LineTouchTooltipData(
-                  getTooltipItems: (touchedSpots) {
-                    return touchedSpots.map((spot) {
-                      final yValue = spot.y.isFinite
-                          ? spot.y.toStringAsFixed(2)
-                          : appLocalizations.notAvailable;
+                minX: _getMinX(),
+                maxX: _getMaxX(),
+                minY: _getMinY(),
+                maxY: _getMaxY(),
+                lineBarsData: [
+                  if (_validData1.isNotEmpty)
+                    _buildBarData(_validData1, lineColor),
+                  if (_validData2.isNotEmpty)
+                    _buildBarData(_validData2, lineColor2 ?? Colors.green),
+                  if (_validData3.isNotEmpty)
+                    _buildBarData(_validData3, lineColor3 ?? Colors.red),
+                ],
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final yValue = spot.y.isFinite
+                            ? spot.y.toStringAsFixed(2)
+                            : appLocalizations.notAvailable;
 
-                      // Using the bar's color to match the tooltip text to the line
-                      return LineTooltipItem(
-                        '$yValue${unit ?? ''}',
-                        TextStyle(
-                          color: spot.bar.color ?? chartTextColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      );
-                    }).toList();
-                  },
+                        // Using the bar's color to match the tooltip text to the line
+                        return LineTooltipItem(
+                          '$yValue${unit ?? ''}',
+                          TextStyle(
+                            color: spot.bar.color ?? chartTextColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        );
+                      }).toList();
+                    },
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
