@@ -365,10 +365,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: c3780977700b8962c3b9b6a9aa4e2c988956893d70d4a4fa2d7adf4ec9b9eaee
+      sha256: "5b99250437a4d34ee2cdc0686924452103540eaa1c248094b63f07f9d7216f6c"
       url: "https://pub.dev"
     source: hosted
-    version: "13.4.0"
+    version: "13.4.1"
   file_picker_darwin:
     dependency: transitive
     description:
@@ -381,10 +381,10 @@ packages:
     dependency: transitive
     description:
       name: file_picker_linux
-      sha256: "9215ee8c672508cdd9a325202669f849e1baac883658626b3abed5d7777e6a4b"
+      sha256: cf3889644e8e54551f5c3a4f98b6b6ef5f0ef85c07d2a0c1a969538983be2f9b
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4"
+    version: "2.0.5"
   file_picker_platform_interface:
     dependency: transitive
     description:
