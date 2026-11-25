@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:pslab/l10n/app_localizations.dart';
+import 'package:pslab/providers/locator.dart';
 import 'package:pslab/theme/colors.dart';
 
 class ReportGroupBox extends StatelessWidget {
@@ -62,25 +64,33 @@ class UniversalStatText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-              fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black54),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: isHighlight ? primaryRed : Colors.black87,
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: label,
+      value: value,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54),
           ),
-        ),
-      ],
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: isHighlight ? primaryRed : Colors.black87,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -98,40 +108,48 @@ class SpecificMetricText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-              fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black54),
-        ),
-        const SizedBox(height: 2),
-        RichText(
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          text: TextSpan(
-            text: value,
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: label,
+      value: unit.isNotEmpty ? '$value $unit' : value,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-                fontSize: 16,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87),
-            children: [
-              if (unit.isNotEmpty)
-                TextSpan(
-                  text: ' $unit',
-                  style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54),
-                ),
-            ],
+                color: Colors.black54),
           ),
-        ),
-      ],
+          const SizedBox(height: 2),
+          RichText(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
+              text: value,
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87),
+              children: [
+                if (unit.isNotEmpty)
+                  TextSpan(
+                    text: ' $unit',
+                    style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -146,41 +164,49 @@ class SignalPieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 120,
-      child: PieChart(
-        PieChartData(
-          sectionsSpace: 2,
-          centerSpaceRadius: 24,
-          sections: [
-            PieChartSectionData(
-                color: Colors.blue.shade400,
-                value: low,
-                title: '${low.toInt()}%',
-                radius: 18,
-                titleStyle: const TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            PieChartSectionData(
-                color: Colors.grey.shade400,
-                value: mid,
-                title: '${mid.toInt()}%',
-                radius: 18,
-                titleStyle: const TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-            PieChartSectionData(
-                color: primaryRed,
-                value: high,
-                title: '${high.toInt()}%',
-                radius: 18,
-                titleStyle: const TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
-          ],
+    final appLocalizations = getIt.get<AppLocalizations>();
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: appLocalizations.amplitudeZones,
+      value:
+          '${appLocalizations.low} ${low.toInt()}%, ${appLocalizations.mid} ${mid.toInt()}%, ${appLocalizations.high} ${high.toInt()}%',
+      child: SizedBox(
+        height: 120,
+        child: PieChart(
+          PieChartData(
+            sectionsSpace: 2,
+            centerSpaceRadius: 24,
+            sections: [
+              PieChartSectionData(
+                  color: Colors.blue.shade400,
+                  value: low,
+                  title: '${low.toInt()}%',
+                  radius: 18,
+                  titleStyle: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+              PieChartSectionData(
+                  color: Colors.grey.shade400,
+                  value: mid,
+                  title: '${mid.toInt()}%',
+                  radius: 18,
+                  titleStyle: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+              PieChartSectionData(
+                  color: primaryRed,
+                  value: high,
+                  title: '${high.toInt()}%',
+                  radius: 18,
+                  titleStyle: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white)),
+            ],
+          ),
         ),
       ),
     );
@@ -212,33 +238,40 @@ class MinimalSparkline extends StatelessWidget {
     double paddedMaxY =
         rawMinY == rawMaxY ? rawMaxY + 1 : rawMaxY + (rawMaxY - rawMinY) * 0.1;
 
-    return SizedBox(
-      height: 140,
-      width: double.infinity,
-      child: LineChart(
-        LineChartData(
-          minY: paddedMinY,
-          maxY: paddedMaxY,
-          minX: spots.first.x,
-          maxX: maxX,
-          gridData: FlGridData(
-              show: true,
-              drawVerticalLine: false,
-              getDrawingHorizontalLine: (value) =>
-                  FlLine(color: Colors.grey.shade200, strokeWidth: 1)),
-          titlesData: const FlTitlesData(show: false),
-          borderData: FlBorderData(show: false),
-          lineBarsData: [
-            LineChartBarData(
-              spots: spots,
-              isCurved: true,
-              color: Colors.black87,
-              barWidth: 1.5,
-              dotData: const FlDotData(show: false),
-              belowBarData: BarAreaData(
-                  show: true, color: primaryRed.withValues(alpha: 0.05)),
-            ),
-          ],
+    final appLocalizations = getIt.get<AppLocalizations>();
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: appLocalizations.signalTrendChart,
+      value: '${rawMinY.toStringAsFixed(1)} - ${rawMaxY.toStringAsFixed(1)}',
+      child: SizedBox(
+        height: 140,
+        width: double.infinity,
+        child: LineChart(
+          LineChartData(
+            minY: paddedMinY,
+            maxY: paddedMaxY,
+            minX: spots.first.x,
+            maxX: maxX,
+            gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                getDrawingHorizontalLine: (value) =>
+                    FlLine(color: Colors.grey.shade200, strokeWidth: 1)),
+            titlesData: const FlTitlesData(show: false),
+            borderData: FlBorderData(show: false),
+            lineBarsData: [
+              LineChartBarData(
+                spots: spots,
+                isCurved: true,
+                color: Colors.black87,
+                barWidth: 1.5,
+                dotData: const FlDotData(show: false),
+                belowBarData: BarAreaData(
+                    show: true, color: primaryRed.withValues(alpha: 0.05)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -279,20 +312,27 @@ class DistributionHistogram extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appLocalizations = getIt.get<AppLocalizations>();
     final bins = _computeBins();
     final maxCount = bins.isEmpty ? 0 : bins.reduce((a, b) => a > b ? a : b);
 
-    return SizedBox(
-      height: 110,
-      width: double.infinity,
-      child: CustomPaint(
-        painter: _HistogramWithAxesPainter(
-          bins: bins,
-          minVal: min,
-          maxVal: max,
-          maxCount: maxCount,
-          barColor: Colors.grey.shade700,
-          axisColor: Colors.black54,
+    return Semantics(
+      container: true,
+      label: appLocalizations.frequencySpread,
+      value:
+          '${min.toStringAsFixed(1)} - ${max.toStringAsFixed(1)} (${bins.join(', ')})',
+      child: SizedBox(
+        height: 110,
+        width: double.infinity,
+        child: CustomPaint(
+          painter: _HistogramWithAxesPainter(
+            bins: bins,
+            minVal: min,
+            maxVal: max,
+            maxCount: maxCount,
+            barColor: Colors.grey.shade700,
+            axisColor: Colors.black54,
+          ),
         ),
       ),
     );
