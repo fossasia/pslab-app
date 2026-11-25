@@ -82,6 +82,7 @@ class _GasSensorCardState extends State<GasSensorCard> {
           const SizedBox(height: 8),
           PopupMenuButton<String>(
             initialValue: currentMode,
+            tooltip: '${appLocalizations.gasSensor}: $currentMode',
             color: Colors.white,
             position: PopupMenuPosition.under,
             constraints: const BoxConstraints(minWidth: 160, maxWidth: 160),
@@ -111,48 +112,54 @@ class _GasSensorCardState extends State<GasSensorCard> {
                 );
               }).toList();
             },
-            child: SizedBox(
-              width: 160,
-              height: 36,
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      currentMode.toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black87,
-                        letterSpacing: 1.2,
+            child: Semantics(
+              container: true,
+              excludeSemantics: true,
+              label: appLocalizations.gasSensor,
+              value: currentMode,
+              child: SizedBox(
+                width: 160,
+                height: 36,
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        currentMode.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black87,
+                          letterSpacing: 1.2,
+                        ),
                       ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.black12, width: 1.2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 2,
-                            offset: const Offset(0, 1),
-                          )
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.black87,
-                        size: 20,
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.black12, width: 1.2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.02),
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            )
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.black87,
+                          size: 20,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
