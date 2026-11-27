@@ -42,7 +42,7 @@ class BH1750 {
 
   Future<double> getRaw() async {
     List<int> vals = await getVals(2);
-    if (vals.length == 2) {
+    if (vals.length == 2 && vals[0] >= 0 && vals[1] >= 0) {
       return ((vals[0] << 8) | vals[1]) / 1.2;
     } else {
       return 0.0;
