@@ -199,54 +199,60 @@ class _SoundMeterCardState extends State<SoundMeterCard> {
     final percent = (event.confidence * 100).toInt();
     final fraction = event.confidence.clamp(0.0, 1.0);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                event.label,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
+    return Semantics(
+      container: true,
+      excludeSemantics: true,
+      label: event.label,
+      value: '$percent%',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  event.label,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              "$percent%",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).textTheme.bodySmall?.color ??
-                    Colors.grey[700],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            return Container(
-              height: 10,
-              width: constraints.maxWidth * fraction,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF29B6F6),
-                    const Color(0xFF29B6F6).withValues(alpha: 0.0),
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+              Text(
+                "$percent%",
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).textTheme.bodySmall?.color ??
+                      Colors.grey[700],
                 ),
-                borderRadius: BorderRadius.circular(2),
               ),
-            );
-          },
-        ),
-      ],
+            ],
+          ),
+          const SizedBox(height: 8),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                height: 10,
+                width: constraints.maxWidth * fraction,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF29B6F6),
+                      const Color(0xFF29B6F6).withValues(alpha: 0.0),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
