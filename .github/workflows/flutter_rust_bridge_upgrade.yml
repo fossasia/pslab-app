@@ -17,15 +17,27 @@ jobs:
     permissions:
       contents: read
     outputs:
+      base_sha: ${{ steps.resolve-sha.outputs.base_sha }}
       update_needed: ${{ steps.compare-versions.outputs.update_needed }}
       latest_version: ${{ steps.check-latest.outputs.latest_version }}
       has_changes: ${{ steps.export-patch.outputs.has_changes }}
 
     steps:
+      - name: Validate dispatch ref
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        run: |
+          echo "Manual workflow dispatch is restricted to refs/heads/main (got ${{ github.ref }})."
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          ref: refs/heads/main
           persist-credentials: false
+
+      - name: Record main base SHA
+        id: resolve-sha
+        run: echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Read current flutter_rust_bridge versions
         id: read-versions
@@ -185,6 +197,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          ref: ${{ needs.check-and-prepare.outputs.base_sha }}
           persist-credentials: false
 
       - name: Download upgrade patch
@@ -298,7 +311,7 @@ jobs:
           fi
 
           # Close superseded open flutter_rust_bridge upgrade PRs only after replacement PR exists.
-          OLD_PRS=$(gh pr list --state open --json number,headRefName --jq ".[] | select((.headRefName | startswith(\"flutter-rust-bridge-upgrade-\")) and .headRefName != \"${BRANCH_NAME}\") | .number")
+          OLD_PRS=$(gh api --paginate "repos/${{ github.repository }}/pulls?state=open&per_page=100" --jq ".[] | select((.head.ref | startswith(\"flutter-rust-bridge-upgrade-\")) and .head.ref != \"${BRANCH_NAME}\") | .number")
           for old_pr in $OLD_PRS; do
             gh pr close "$old_pr" --delete-branch --comment "Superseded by flutter_rust_bridge ${TARGET} (${PR_URL})."
           done
