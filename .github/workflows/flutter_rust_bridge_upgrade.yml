@@ -46,6 +46,7 @@ jobs:
           LATEST_VERSION=$(python3 - <<'EOF'
           import json
           import re
+          import urllib.parse
           import urllib.request
 
           SEMVER_STABLE = re.compile(r'^(\d+)\.(\d+)\.(\d+)$')
@@ -58,6 +59,23 @@ jobs:
               with urllib.request.urlopen(req, timeout=30) as resp:
                   return json.loads(resp.read().decode('utf-8'))
 
+          def fetch_crate_versions(crate):
+              base = f'https://crates.io/api/v1/crates/{crate}/versions'
+              url = f'{base}?per_page=100'
+              versions = set()
+              seen_urls = set()
+              while url and url not in seen_urls:
+                  seen_urls.add(url)
+                  data = fetch_json(url)
+                  versions.update(
+                      v['num']
+                      for v in data.get('versions', [])
+                      if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
+                  )
+                  next_page = data.get('meta', {}).get('next_page')
+                  url = urllib.parse.urljoin(base, next_page) if next_page else None
+              return versions
+
           pub_data = fetch_json('https://pub.dev/api/packages/flutter_rust_bridge')
           pub_versions = {
               v['version']
@@ -65,19 +83,8 @@ jobs:
               if not v.get('retracted', False) and SEMVER_STABLE.match(v['version'])
           }
 
-          crate_data = fetch_json('https://crates.io/api/v1/crates/flutter_rust_bridge/versions?per_page=100')
-          crate_versions = {
-              v['num']
-              for v in crate_data.get('versions', [])
-              if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
-          }
-
-          codegen_data = fetch_json('https://crates.io/api/v1/crates/flutter_rust_bridge_codegen/versions?per_page=100')
-          codegen_versions = {
-              v['num']
-              for v in codegen_data.get('versions', [])
-              if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
-          }
+          crate_versions = fetch_crate_versions('flutter_rust_bridge')
+          codegen_versions = fetch_crate_versions('flutter_rust_bridge_codegen')
 
           common = pub_versions & crate_versions & codegen_versions
           if not common:
@@ -192,6 +199,7 @@ jobs:
           CURRENT_LATEST=$(python3 - <<'EOF'
           import json
           import re
+          import urllib.parse
           import urllib.request
 
           SEMVER_STABLE = re.compile(r'^(\d+)\.(\d+)\.(\d+)$')
@@ -204,6 +212,23 @@ jobs:
               with urllib.request.urlopen(req, timeout=30) as resp:
                   return json.loads(resp.read().decode('utf-8'))
 
+          def fetch_crate_versions(crate):
+              base = f'https://crates.io/api/v1/crates/{crate}/versions'
+              url = f'{base}?per_page=100'
+              versions = set()
+              seen_urls = set()
+              while url and url not in seen_urls:
+                  seen_urls.add(url)
+                  data = fetch_json(url)
+                  versions.update(
+                      v['num']
+                      for v in data.get('versions', [])
+                      if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
+                  )
+                  next_page = data.get('meta', {}).get('next_page')
+                  url = urllib.parse.urljoin(base, next_page) if next_page else None
+              return versions
+
           pub_data = fetch_json('https://pub.dev/api/packages/flutter_rust_bridge')
           pub_versions = {
               v['version']
@@ -211,21 +236,13 @@ jobs:
               if not v.get('retracted', False) and SEMVER_STABLE.match(v['version'])
           }
 
-          crate_data = fetch_json('https://crates.io/api/v1/crates/flutter_rust_bridge/versions?per_page=100')
-          crate_versions = {
-              v['num']
-              for v in crate_data.get('versions', [])
-              if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
-          }
-
-          codegen_data = fetch_json('https://crates.io/api/v1/crates/flutter_rust_bridge_codegen/versions?per_page=100')
-          codegen_versions = {
-              v['num']
-              for v in codegen_data.get('versions', [])
-              if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
-          }
+          crate_versions = fetch_crate_versions('flutter_rust_bridge')
+          codegen_versions = fetch_crate_versions('flutter_rust_bridge_codegen')
 
           common = pub_versions & crate_versions & codegen_versions
+          if not common:
+              raise SystemExit('No common stable flutter_rust_bridge version found across pub.dev and crates.io')
+
           print(max(common, key=lambda ver: tuple(int(p) for p in ver.split('.'))))
           EOF
           )
@@ -236,7 +253,7 @@ jobs:
             echo "still_latest=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Commit, clean up older upgrade PRs, and open PR
+      - name: Commit, open PR, and clean up older upgrade PRs
         if: steps.verify-latest.outputs.still_latest == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -244,39 +261,44 @@ jobs:
           TARGET="${{ needs.check-and-prepare.outputs.latest_version }}"
           BRANCH_NAME="flutter-rust-bridge-upgrade-${TARGET}"
 
-          EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --state open --json url --jq '.[0].url')
-          if [ -n "$EXISTING_PR" ]; then
-            echo "PR already exists: $EXISTING_PR"
-            exit 0
+          PR_URL=$(gh pr list --head "$BRANCH_NAME" --state open --json url --jq '.[0].url')
+          if [ -z "$PR_URL" ]; then
+            git config user.name "dependabot[bot]"
+            git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
+
+            git apply frb-upgrade.patch
+            git checkout -b "$BRANCH_NAME"
+            git add pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/
+            if git diff --cached --quiet; then
+              echo "No changes to commit."
+              exit 0
+            fi
+            git commit -m "chore(deps): sync flutter_rust_bridge to ${TARGET}"
+
+            AUTH_HEADER="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+            if git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
+              echo "Remote branch ${BRANCH_NAME} already exists; verifying upgrade contents before opening PR."
+              git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" fetch --depth=1 origin "refs/heads/${BRANCH_NAME}:refs/remotes/origin/${BRANCH_NAME}"
+              if ! git diff --quiet HEAD "origin/${BRANCH_NAME}" -- pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/; then
+                echo "Remote branch ${BRANCH_NAME} does not match intended upgrade ${TARGET}; aborting."
+                exit 1
+              fi
+              echo "Remote branch ${BRANCH_NAME} verified; skipping push."
+            else
+              git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" push origin "$BRANCH_NAME"
+            fi
+
+            PR_URL=$(gh pr create \
+              --title "chore(deps): sync flutter_rust_bridge to ${TARGET}" \
+              --body "This PR updates \`flutter_rust_bridge\` in \`pubspec.yaml\`, \`rust/Cargo.toml\`, lockfiles, and generated bridge code in lockstep to \`${TARGET}\`." \
+              --base main \
+              --head "$BRANCH_NAME")
+          else
+            echo "PR already exists: $PR_URL"
           fi
 
-          git config user.name "dependabot[bot]"
-          git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
-
-          git apply frb-upgrade.patch
-          git checkout -b "$BRANCH_NAME"
-          git add pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-          git commit -m "chore(deps): sync flutter_rust_bridge to ${TARGET}"
-
-          AUTH_HEADER="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
-          if git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
-            echo "Remote branch ${BRANCH_NAME} already exists; skipping push."
-            exit 0
-          fi
-
-          # Close superseded open flutter_rust_bridge upgrade PRs before opening the newer one.
+          # Close superseded open flutter_rust_bridge upgrade PRs only after replacement PR exists.
           OLD_PRS=$(gh pr list --state open --json number,headRefName --jq ".[] | select((.headRefName | startswith(\"flutter-rust-bridge-upgrade-\")) and .headRefName != \"${BRANCH_NAME}\") | .number")
           for old_pr in $OLD_PRS; do
-            gh pr close "$old_pr" --delete-branch --comment "Superseded by flutter_rust_bridge ${TARGET}."
+            gh pr close "$old_pr" --delete-branch --comment "Superseded by flutter_rust_bridge ${TARGET} (${PR_URL})."
           done
-
-          git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" push origin "$BRANCH_NAME"
-          gh pr create \
-            --title "chore(deps): sync flutter_rust_bridge to ${TARGET}" \
-            --body "This PR updates \`flutter_rust_bridge\` in \`pubspec.yaml\`, \`rust/Cargo.toml\`, lockfiles, and generated bridge code in lockstep to \`${TARGET}\`." \
-            --base main \
-            --head "$BRANCH_NAME"
