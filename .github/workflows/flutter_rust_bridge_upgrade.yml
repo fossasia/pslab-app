@@ -1,0 +1,317 @@
+name: Flutter Rust Bridge Upgrade Check
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  check-and-prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      base_sha: ${{ steps.resolve-sha.outputs.base_sha }}
+      update_needed: ${{ steps.compare-versions.outputs.update_needed }}
+      latest_version: ${{ steps.check-latest.outputs.latest_version }}
+      has_changes: ${{ steps.export-patch.outputs.has_changes }}
+
+    steps:
+      - name: Validate dispatch ref
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        run: |
+          echo "Manual workflow dispatch is restricted to refs/heads/main (got ${{ github.ref }})."
+          exit 1
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: refs/heads/main
+          persist-credentials: false
+
+      - name: Record main base SHA
+        id: resolve-sha
+        run: echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Read current flutter_rust_bridge versions
+        id: read-versions
+        run: |
+          PUB_VERSION=$(yq '.dependencies.flutter_rust_bridge' pubspec.yaml | sed "s/^['\"]//;s/['\"]$//;s/^[=^~]//")
+          PUB_LOCK_VERSION=$(yq '.packages.flutter_rust_bridge.version' pubspec.lock | sed "s/^['\"]//;s/['\"]$//")
+          CARGO_VERSION=$(python3 -c "import tomllib; data = tomllib.load(open('rust/Cargo.toml', 'rb')); print(str(data['dependencies']['flutter_rust_bridge']).lstrip('=^~'))")
+          echo "Current pubspec.yaml version: $PUB_VERSION"
+          echo "Current pubspec.lock version: $PUB_LOCK_VERSION"
+          echo "Current rust/Cargo.toml version: $CARGO_VERSION"
+          echo "pub_version=$PUB_VERSION" >> "$GITHUB_OUTPUT"
+          echo "pub_lock_version=$PUB_LOCK_VERSION" >> "$GITHUB_OUTPUT"
+          echo "cargo_version=$CARGO_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Find latest common flutter_rust_bridge version
+        id: check-latest
+        run: |
+          LATEST_VERSION=$(python3 - <<'EOF'
+          import json
+          import re
+          import urllib.parse
+          import urllib.request
+
+          SEMVER_STABLE = re.compile(r'^(\d+)\.(\d+)\.(\d+)$')
+
+          def fetch_json(url):
+              req = urllib.request.Request(
+                  url,
+                  headers={'User-Agent': 'pslab-app-ci (https://github.com/fossasia/pslab-app)'},
+              )
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.loads(resp.read().decode('utf-8'))
+
+          def fetch_crate_versions(crate):
+              base = f'https://crates.io/api/v1/crates/{crate}/versions'
+              url = f'{base}?per_page=100'
+              versions = set()
+              seen_urls = set()
+              while url and url not in seen_urls:
+                  seen_urls.add(url)
+                  data = fetch_json(url)
+                  versions.update(
+                      v['num']
+                      for v in data.get('versions', [])
+                      if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
+                  )
+                  next_page = data.get('meta', {}).get('next_page')
+                  url = urllib.parse.urljoin(base, next_page) if next_page else None
+              return versions
+
+          pub_data = fetch_json('https://pub.dev/api/packages/flutter_rust_bridge')
+          pub_versions = {
+              v['version']
+              for v in pub_data.get('versions', [])
+              if not v.get('retracted', False) and SEMVER_STABLE.match(v['version'])
+          }
+
+          crate_versions = fetch_crate_versions('flutter_rust_bridge')
+          codegen_versions = fetch_crate_versions('flutter_rust_bridge_codegen')
+
+          common = pub_versions & crate_versions & codegen_versions
+          if not common:
+              raise SystemExit('No common stable flutter_rust_bridge version found across pub.dev and crates.io')
+
+          latest = max(common, key=lambda ver: tuple(int(p) for p in ver.split('.')))
+          print(latest)
+          EOF
+          )
+          echo "Latest common flutter_rust_bridge version: $LATEST_VERSION"
+          echo "latest_version=$LATEST_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Compare versions
+        id: compare-versions
+        run: |
+          PUB_VERSION="${{ steps.read-versions.outputs.pub_version }}"
+          PUB_LOCK_VERSION="${{ steps.read-versions.outputs.pub_lock_version }}"
+          CARGO_VERSION="${{ steps.read-versions.outputs.cargo_version }}"
+          LATEST="${{ steps.check-latest.outputs.latest_version }}"
+          if [ "$PUB_VERSION" != "$LATEST" ] || [ "$PUB_LOCK_VERSION" != "$LATEST" ] || [ "$CARGO_VERSION" != "$LATEST" ]; then
+            echo "Update needed to sync flutter_rust_bridge to ${LATEST}."
+            echo "update_needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "flutter_rust_bridge is up to date and in sync at ${LATEST}."
+            echo "update_needed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Flutter
+        if: steps.compare-versions.outputs.update_needed == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+          flutter-version-file: pubspec.yaml
+
+      - name: Install system and Rust dependencies
+        if: steps.compare-versions.outputs.update_needed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libudev-dev libusb-1.0-0-dev libasound2-dev
+          rustup component add rust-src
+          cargo install cargo-expand --locked
+          cargo install flutter_rust_bridge_codegen --version "${{ steps.check-latest.outputs.latest_version }}" --locked
+
+      - name: Update manifests, lockfiles, and bridge code
+        if: steps.compare-versions.outputs.update_needed == 'true'
+        run: |
+          LATEST="${{ steps.check-latest.outputs.latest_version }}"
+          sed -i -E "s/^(\s*flutter_rust_bridge:\s*).*/\1${LATEST}/" pubspec.yaml
+          sed -i -E "s/^(flutter_rust_bridge\s*=\s*).*/\1\"=${LATEST}\"/" rust/Cargo.toml
+          flutter pub get
+          RESOLVED_PUB=$(yq '.packages.flutter_rust_bridge.version' pubspec.lock | sed "s/^['\"]//;s/['\"]$//")
+          if [ "$RESOLVED_PUB" != "$LATEST" ]; then
+            echo "Error: pubspec.lock resolved flutter_rust_bridge to ${RESOLVED_PUB} instead of ${LATEST}."
+            exit 1
+          fi
+          cargo update -p flutter_rust_bridge --manifest-path rust/Cargo.toml
+          flutter_rust_bridge_codegen generate
+          dart format .
+          git --no-pager diff
+
+      - name: Run checks
+        if: steps.compare-versions.outputs.update_needed == 'true'
+        run: |
+          dart format --output=none --set-exit-if-changed .
+          flutter analyze
+          flutter test
+          cargo check --manifest-path rust/Cargo.toml --locked
+
+      - name: Export upgrade patch
+        id: export-patch
+        if: steps.compare-versions.outputs.update_needed == 'true'
+        run: |
+          git add -N pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/
+          git diff --binary -- pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/ > frb-upgrade.patch
+          if [ -s frb-upgrade.patch ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload upgrade patch artifact
+        if: steps.export-patch.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: frb-upgrade-patch
+          path: frb-upgrade.patch
+          retention-days: 1
+
+  create-upgrade-pr:
+    needs: check-and-prepare
+    if: needs.check-and-prepare.outputs.update_needed == 'true' && needs.check-and-prepare.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.check-and-prepare.outputs.base_sha }}
+          persist-credentials: false
+
+      - name: Download upgrade patch
+        uses: actions/download-artifact@v8
+        with:
+          name: frb-upgrade-patch
+
+      - name: Verify target version is still the latest common release
+        id: verify-latest
+        run: |
+          TARGET="${{ needs.check-and-prepare.outputs.latest_version }}"
+          CURRENT_LATEST=$(python3 - <<'EOF'
+          import json
+          import re
+          import urllib.parse
+          import urllib.request
+
+          SEMVER_STABLE = re.compile(r'^(\d+)\.(\d+)\.(\d+)$')
+
+          def fetch_json(url):
+              req = urllib.request.Request(
+                  url,
+                  headers={'User-Agent': 'pslab-app-ci (https://github.com/fossasia/pslab-app)'},
+              )
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.loads(resp.read().decode('utf-8'))
+
+          def fetch_crate_versions(crate):
+              base = f'https://crates.io/api/v1/crates/{crate}/versions'
+              url = f'{base}?per_page=100'
+              versions = set()
+              seen_urls = set()
+              while url and url not in seen_urls:
+                  seen_urls.add(url)
+                  data = fetch_json(url)
+                  versions.update(
+                      v['num']
+                      for v in data.get('versions', [])
+                      if not v.get('yanked', False) and SEMVER_STABLE.match(v['num'])
+                  )
+                  next_page = data.get('meta', {}).get('next_page')
+                  url = urllib.parse.urljoin(base, next_page) if next_page else None
+              return versions
+
+          pub_data = fetch_json('https://pub.dev/api/packages/flutter_rust_bridge')
+          pub_versions = {
+              v['version']
+              for v in pub_data.get('versions', [])
+              if not v.get('retracted', False) and SEMVER_STABLE.match(v['version'])
+          }
+
+          crate_versions = fetch_crate_versions('flutter_rust_bridge')
+          codegen_versions = fetch_crate_versions('flutter_rust_bridge_codegen')
+
+          common = pub_versions & crate_versions & codegen_versions
+          if not common:
+              raise SystemExit('No common stable flutter_rust_bridge version found across pub.dev and crates.io')
+
+          print(max(common, key=lambda ver: tuple(int(p) for p in ver.split('.'))))
+          EOF
+          )
+          if [ "$CURRENT_LATEST" != "$TARGET" ]; then
+            echo "Newer common release ${CURRENT_LATEST} appeared while running; skipping ${TARGET}."
+            echo "still_latest=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "still_latest=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit, open PR, and clean up older upgrade PRs
+        if: steps.verify-latest.outputs.still_latest == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TARGET="${{ needs.check-and-prepare.outputs.latest_version }}"
+          BRANCH_NAME="flutter-rust-bridge-upgrade-${TARGET}"
+
+          PR_URL=$(gh pr list --head "$BRANCH_NAME" --state open --json url --jq '.[0].url')
+          if [ -z "$PR_URL" ]; then
+            git config user.name "dependabot[bot]"
+            git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
+
+            git apply frb-upgrade.patch
+            git checkout -b "$BRANCH_NAME"
+            git add pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/
+            if git diff --cached --quiet; then
+              echo "No changes to commit."
+              exit 0
+            fi
+            git commit -m "chore(deps): sync flutter_rust_bridge to ${TARGET}"
+
+            AUTH_HEADER="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+            if git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
+              echo "Remote branch ${BRANCH_NAME} already exists; verifying upgrade contents before opening PR."
+              git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" fetch --depth=1 origin "refs/heads/${BRANCH_NAME}:refs/remotes/origin/${BRANCH_NAME}"
+              if ! git diff --quiet HEAD "origin/${BRANCH_NAME}" -- pubspec.yaml pubspec.lock rust/Cargo.toml rust/Cargo.lock lib/src/rust/ rust/src/; then
+                echo "Remote branch ${BRANCH_NAME} does not match intended upgrade ${TARGET}; aborting."
+                exit 1
+              fi
+              echo "Remote branch ${BRANCH_NAME} verified; skipping push."
+            else
+              git -c "http.https://github.com/.extraheader=${AUTH_HEADER}" push origin "$BRANCH_NAME"
+            fi
+
+            PR_URL=$(gh pr create \
+              --title "chore(deps): sync flutter_rust_bridge to ${TARGET}" \
+              --body "This PR updates \`flutter_rust_bridge\` in \`pubspec.yaml\`, \`rust/Cargo.toml\`, lockfiles, and generated bridge code in lockstep to \`${TARGET}\`." \
+              --base main \
+              --head "$BRANCH_NAME")
+          else
+            echo "PR already exists: $PR_URL"
+          fi
+
+          # Close superseded open flutter_rust_bridge upgrade PRs only after replacement PR exists.
+          OLD_PRS=$(gh api --paginate "repos/${{ github.repository }}/pulls?state=open&per_page=100" --jq ".[] | select((.head.ref | startswith(\"flutter-rust-bridge-upgrade-\")) and .head.ref != \"${BRANCH_NAME}\") | .number")
+          for old_pr in $OLD_PRS; do
+            gh pr close "$old_pr" --delete-branch --comment "Superseded by flutter_rust_bridge ${TARGET} (${PR_URL})."
+          done
